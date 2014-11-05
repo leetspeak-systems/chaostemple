@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% for issue in issues reversed %}
+    {% include 'core/stub/stub_issue.html' with issue=issue %}
+{% endfor %}
+
+{% endblock %}
+

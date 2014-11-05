@@ -1,0 +1,107 @@
+# Temple of Chaos
+# Copyright (C) 2014
+# This file is distributed under the same license as the PACKAGE package.
+# Helgi Hrafn Gunnarsson <helgi@binary.is>, 2014.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-11-03 17:19+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
+"Language-Team: Icelandic <helgi@binary.is>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: chaostemple/middleware.py:23 templates/base.html:52
+msgid "Home"
+msgstr ""
+
+#: chaostemple/middleware.py:30 templates/base.html:54
+msgid "parliament"
+msgstr "þing"
+
+#: chaostemple/middleware.py:37 templates/core/parliament.html:7
+msgid "Issues"
+msgstr "Þingmál"
+
+#: chaostemple/middleware.py:44 templates/base.html:56
+msgid "issue"
+msgstr "mál"
+
+#: chaostemple/middleware.py:51 templates/base.html:30
+#: templates/core/parliament.html:8 templates/core/parliament_sessions.html:6
+msgid "Parliamentary Sessions"
+msgstr "Þingfundir"
+
+#: chaostemple/middleware.py:58
+msgid "parliamentary session"
+msgstr "þingfundur"
+
+#: core/models.py:17
+msgid "None"
+msgstr ""
+
+#: core/models.py:18
+msgid "Question"
+msgstr ""
+
+#: core/models.py:19
+msgid "Exclamation"
+msgstr ""
+
+#: core/models.py:27
+msgid "Unread"
+msgstr ""
+
+#: core/models.py:28
+msgid "Briefly examined"
+msgstr ""
+
+#: core/models.py:29
+msgid "Examined"
+msgstr ""
+
+#: core/models.py:30
+msgid "Thoroughly examined"
+msgstr ""
+
+#: templates/base.html:17
+msgid "Parliaments"
+msgstr "Þing"
+
+#: templates/base.html:64
+msgid "Logout"
+msgstr "Útskrá"
+
+#: templates/base.html:66 templates/registration/login.html:12
+msgid "Login"
+msgstr "Innskrá"
+
+#: templates/core/parliament_issue.html:9
+#: templates/core/stub/stub_issue.html:7
+msgid "Parliamentary Documents"
+msgstr "Þingskjöl"
+
+#: templates/core/parliament_issue.html:16
+#: templates/core/stub/stub_issue.html:8
+msgid "Reviews"
+msgstr "Umsagnir"
+
+#: templates/core/stub/stub_document.html:11
+msgid "Proposers"
+msgstr "Flutningsmenn"
+
+#: templates/core/stub/stub_issue.html:6
+msgid "Type"
+msgstr "Tegund"
+
+#, fuzzy
+#~| msgid "Parliamentary Sessions"
+#~ msgid "Parliamentary sessions"
+#~ msgstr "Þingfundir"

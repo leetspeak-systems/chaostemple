@@ -1,0 +1,38 @@
+{% load i18n %}
+
+<div class="document">
+    <div class="document-timing">{{ document.time_published|date }}</div>
+    <div class="document-id">
+        <a href="{{ document.pdf_link }}" target="_blank">{{ document.doc_num }}</a>
+    </div>
+    <div class="document-type">{{ document.get_doc_type_display }}</div>
+    {% if document.proposers.all.count %}
+        <div class="document-proposers">
+            <label>{% trans "Proposers" %}:</label>
+            {% for proposer in document.proposers.all %}
+                {{ proposer }}{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% if user.is_authenticated %}
+    <div class="document-drawer">
+        {% for dossier in document.dossiers.all %}
+            <div class="user">{{ user }}</div>
+            <div class="attention-state">
+                <ul>
+                    {% for attentionstate in dossier.ATTENTION_STATES %}
+                        {% if dossier.attention == attentionstate.0 %}
+                            {{ attentionstate.1 }}
+                        {% else %}
+                            <a href="#">{{ attentionstate.1 }}</a>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="knowledge-state">
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+

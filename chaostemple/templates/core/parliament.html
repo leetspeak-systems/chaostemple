@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+
+<ul>
+    <li><a href="{% url 'parliament_issues' parliament_num %}">{% trans 'Issues' %}</a></li>
+    <li><a href="{% url 'parliament_sessions' parliament_num %}">{% trans 'Parliamentary Sessions' %}</a></li>
+</ul>
+
+{% endblock %}

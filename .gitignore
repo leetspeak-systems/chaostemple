@@ -1,0 +1,10 @@
+*.pyc
+*.mo
+*.swp
+.*swo
+bin
+include
+lib/python2.7
+local
+share
+local_settings.py

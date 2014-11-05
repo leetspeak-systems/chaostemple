@@ -1,0 +1,85 @@
+{% load i18n %}
+{% load static %}
+
+<html>
+<head>
+    <link rel="stylesheet" href="{% static 'core/css/chaostemple.css' %}" />
+    <script type="text/javascript" language="javascript" src="{% static 'core/js/jquery/jquery-2.1.1.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'core/js/chaostemple.js' %}"></script>
+    {% block javascript %}
+    {% endblock %}
+</head>
+<body>
+
+    <div id="pagecontainer">
+
+        <div id="pageheader">
+
+            <div id="parliament-list">
+                <label>{% trans 'Parliaments' %}:</label>
+                {% for parliament in parliaments %}
+
+                    {% if parliament.parliament_num == parliament_num %}
+                        <a class="selected" href="{% url 'parliament' parliament.parliament_num %}">{{ parliament.parliament_num }}</a>
+                    {% else %}
+                        <a href="{% url 'parliament' parliament.parliament_num %}">{{ parliament.parliament_num }}</a>
+                    {% endif %}
+
+                {% endfor %}
+            </div>
+
+            <div id="session-list">
+                <label>{% trans 'Parliamentary Sessions' %}:</label>
+                {% for session in next_sessions %}
+                    <a href="{% url 'parliament_session' session.parliament.parliament_num session.session_num %}">{{ session.name }}</a>
+                {% endfor %}
+            </div>
+
+            <div id="breadcrumbs">
+
+                {% for urlpath, caption in breadcrumbs %}
+                    {% if urlpath|length > 2 %}
+                        &gt; <a href="{% url urlpath.0 urlpath.1 urlpath.2 %}">{{ caption }}</a>
+                    {% elif urlpath|length > 1 %}
+                        &gt; <a href="{% url urlpath.0 urlpath.1 %}">{{ caption }}</a>
+                    {% else %}
+                        &gt; <a href="{% url urlpath.0 %}">{{ caption }}</a>
+                    {% endif %}
+                {% endfor %}
+
+            </div>
+
+            <!--
+            <div id="breadcrumbs">
+                &gt; <a href="{% url 'home' %}">{% trans 'Home' %}</a>
+                {% if parliament_num %}
+                    &gt; <a href="{% url 'parliament_issues' parliament_num %}">{{ parliament_num }}. {% trans 'parliament' %}</a>
+                    {% if issue_num %}
+                        &gt; <a href="{% url 'parliament_issue' parliament_num issue_num %}">{{ issue_num }}. {% trans 'issue' %}</a>
+                    {% endif %}
+                {% endif %}
+            </div>
+            -->
+
+            <div id="pageheader-user">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'auth_logout' %}">{% trans "Logout" %}</a>
+                {% else %}
+                    <a href="{% url 'auth_login' %}">{% trans "Login" %}</a>
+                {% endif %}
+            </div>
+
+        </div>
+
+        <div id="content">
+            {% block content %}{% endblock %}
+        </div>
+
+        <div id="pagefooter">
+            [ Footer ]
+        </div>
+
+    </div>
+
+</body>
+</html>

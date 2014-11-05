@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block javascript %}
+    <script language="javascript" type="text/javascript" src="{% static 'core/js/document_control.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+    <h2>{{ issue.name|capfirst }}</h2>
+
+    <h3>{% trans 'Parliamentary Documents' %}</h3>
+    <div class="documents">
+        {% for document in documents %}
+            {% include "core/stub/stub_document.html" %}
+        {% endfor %}
+    </div>
+
+    <h3>{% trans 'Reviews' %}</h3>
+    <div class="reviews">
+        {% for review in issue.reviews.all %}
+            {% include "core/stub/stub_review.html" %}
+        {% endfor %}
+    </div>
+
+{% endblock %}
+

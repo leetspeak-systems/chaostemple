@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+
+<h2>{{ session.name }}</h2>
+
+<div id="parliament-session-agenda">
+    {% for item in session.agenda_items.all %}
+        {% with item.issue as issue %}
+
+                {% include 'core/stub/stub_issue.html' %}
+
+        {% endwith %}
+    {% endfor %}
+</div>
+
+{% endblock %}

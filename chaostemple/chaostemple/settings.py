@@ -28,7 +28,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
 
     'registration',
-    'debug_toolbar.apps.DebugToolbarConfig',
+    #'debug_toolbar.apps.DebugToolbarConfig',
 
     'core',
     'althingi',

@@ -18,6 +18,7 @@ def globals(request):
         'next_sessions': next_sessions,
     }
 
-    ctx.update(request.extravars) # See chaostemple.middleware.ExtraVarsMiddleware
+    if hasattr(request, 'extravars'):
+        ctx.update(request.extravars) # See chaostemple.middleware.ExtraVarsMiddleware
 
     return ctx

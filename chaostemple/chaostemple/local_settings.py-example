@@ -41,3 +41,19 @@ STATIC_URL = '/static/'
 DATE_FORMAT = 'Y-m-d'
 DATETIME_FORMAT = 'Y-m-d H:i:s'
 
+# To test email smtp:
+# $ python -m smtpd -n -c DebuggingServer 127.0.0.1:25000
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = '25000'
+#EMAIL_HOST_USER = ''
+#EMAIL_HOST_PASSWORD = ''
+#EMAIL_USE_TLS = True
+
+SERVER_EMAIL = 'no-reply@localhost'
+
+EMAIL_CONNECTION_KEEP_ALIVE = True
+
+ADMINS = (
+    ('someone', 'someone@localhost'),
+)
+

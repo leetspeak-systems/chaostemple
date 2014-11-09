@@ -28,7 +28,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
 
     'registration',
-    #'debug_toolbar.apps.DebugToolbarConfig',
 
     'core',
     'althingi',
@@ -90,4 +89,6 @@ TEMPLATE_DIRS = (
 LOGIN_REDIRECT_URL = '/'
 
 from chaostemple.local_settings import *
+if DEBUG:
+    INSTALLED_APPS += ('debug_toolbar.apps.DebugToolbarConfig',)
 

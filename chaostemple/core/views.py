@@ -1,6 +1,8 @@
 from django.db.models import Count
 from django.shortcuts import render
 
+from core.models import Dossier
+
 from althingi.models import Document
 from althingi.models import Issue
 from althingi.models import Session
@@ -35,6 +37,7 @@ def parliament_issue(request, parliament_num, issue_num):
     ctx = {
         'issue': issue,
         'documents': documents,
+        'attentionstates': Dossier.ATTENTION_STATES
     }
     return render(request, 'core/parliament_issue.html', ctx)
 

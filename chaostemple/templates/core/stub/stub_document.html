@@ -18,18 +18,20 @@
 
 {% if user.is_authenticated %}
 
-    <div class="document-dossier" data-parliament-num="{{ parliament_num }}" data-document-num="{{ document.doc_num }}">
+    <div class="document-dossier-container" data-parliament-num="{{ parliament_num }}" data-document-num="{{ document.doc_num }}">
         {% for dossier in document.dossiers.all %}
-            <div class="user">{{ dossier.user }}</div>
-            <div class="attention-state">
-                [
-                {% for attentionstate in dossier.ATTENTION_STATES %}
-                    <a data-attentionstate="{{ attentionstate.0 }}" class="{% if dossier.attention == attentionstate.0 %}selected{% endif %}">{{ attentionstate.1 }}</a>
-                    {% if not forloop.last %}|{% endif %}
-                {% endfor %}
-                ]
-            </div>
-            <div class="knowledge-state">
+            <div class="document-dossier" data-id="{{ dossier.id }}">
+                <div class="user">{{ dossier.user }}</div>
+                <div class="attention-state">
+                    [
+                    {% for attentionstate in attentionstates %}
+                        <a data-attentionstate="{{ attentionstate.0 }}" class="{% if dossier.attention == attentionstate.0 %}selected{% endif %}">{{ attentionstate.1 }}</a>
+                        {% if not forloop.last %}|{% endif %}
+                    {% endfor %}
+                    ]
+                </div>
+                <div class="knowledge-state">
+                </div>
             </div>
         {% endfor %}
     </div>

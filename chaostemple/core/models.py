@@ -12,7 +12,7 @@ class Dossier(models.Model):
     ATTENTION_STATES = (
         ('n', _('None')),
         ('q', _('Question')),
-        ('x', _('Exclamation')),
+        ('a', _('Attention')),
     )
 
     KNOWLEDGE_STATES = (

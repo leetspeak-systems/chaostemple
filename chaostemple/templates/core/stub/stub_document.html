@@ -15,24 +15,24 @@
         </div>
     {% endif %}
 </div>
+
 {% if user.is_authenticated %}
-    <div class="document-drawer">
+
+    <div class="document-dossier" data-parliament-num="{{ parliament_num }}" data-document-num="{{ document.doc_num }}">
         {% for dossier in document.dossiers.all %}
-            <div class="user">{{ user }}</div>
+            <div class="user">{{ dossier.user }}</div>
             <div class="attention-state">
-                <ul>
-                    {% for attentionstate in dossier.ATTENTION_STATES %}
-                        {% if dossier.attention == attentionstate.0 %}
-                            {{ attentionstate.1 }}
-                        {% else %}
-                            <a href="#">{{ attentionstate.1 }}</a>
-                        {% endif %}
-                    {% endfor %}
-                </ul>
+                [
+                {% for attentionstate in dossier.ATTENTION_STATES %}
+                    <a data-attentionstate="{{ attentionstate.0 }}" class="{% if dossier.attention == attentionstate.0 %}selected{% endif %}">{{ attentionstate.1 }}</a>
+                    {% if not forloop.last %}|{% endif %}
+                {% endfor %}
+                ]
             </div>
             <div class="knowledge-state">
             </div>
         {% endfor %}
     </div>
+
 {% endif %}
 

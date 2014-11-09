@@ -89,6 +89,6 @@ TEMPLATE_DIRS = (
 LOGIN_REDIRECT_URL = '/'
 
 from chaostemple.local_settings import *
-if DEBUG:
+if DEBUG and DEBUG_TOOLBAR:
     INSTALLED_APPS += ('debug_toolbar.apps.DebugToolbarConfig',)
 

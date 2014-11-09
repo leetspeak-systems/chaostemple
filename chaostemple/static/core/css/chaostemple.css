@@ -1,16 +1,16 @@
 body {
     /* background: #ffffff; */
-    background: url('/static/core/img/surface-wall-paint-yellow.png');
-    font-family: sans-serif;
+    background: url('../img/surface-wall-paint-yellow.jpg');
+    background-attachment: fixed;
+    font-family: Arial, Helvetica, 'sans-serif';
     font-size: 12px;
-    width: 700px;
-    margin: 0px auto 0px auto;
+    margin: 0px 0px 0px 0px;
     border-left: 1px solid #909090;
     border-right: 1px solid #909090;
-    padding: 12px 8px 8px 8px;
+    padding: 0px 0px 0px 0px;
 }
 
-a { color: #336699; text-decoration: none; }
+a { color: #003050; text-decoration: none; }
 a:hover { text-decoration: underline; }
 a.selected { text-decoration: underline; }
 
@@ -21,27 +21,36 @@ form { width: 600px; }
 form label { display: block; margin: 2px 0px 2px 0px; }
 form input { margin: 4px 0px 12px 0px; }
 
-#pageheader { float: left; width: 100%; border-bottom: 1px solid #000000; padding-bottom: 12px; }
-#pageheader #parliament-list { float: left; }
-#pageheader #breadcrumbs { clear: left; float: left; border: 1px solid #a0a0a0; padding: 2px 4px 2px 4px; }
+#pagecontainer { width: 750px; padding: 12px 24px 0px 24px; margin-left: auto; margin-right: auto; }
+
+#pageheader { border: 1px solid rgb(114, 59, 0); border-radius: 10px; background: rgb(214, 159, 0); position: fixed; float: left; width: 750px; padding: 0px 0px 0px 0px; }
+#pageheader #parliament-list { float: left; padding: 12px 12px 0px 12px; }
+#pageheader #breadcrumbs { clear: left; float: left; font-size: 15px; padding: 12px 12px 12px 12px; }
 #pageheader-user { float: right; }
 
-#content { margin: 24px 0px 0px 0px; padding: 12px 0px 0px 0px; float: left; width: 100%; }
+#content { margin: 72px 0px 0px 0px; padding: 12px 0px 0px 0px; float: left; width: 100%; }
 
-.issue { background: rgba(0, 255, 153, 0.1); border: 1px solid #505050; margin-bottom: 8px; float: left; width: 100%; }
-.issue .issue-num { border: 1px solid #ccbbaa; padding: 6px 8px 6px 8px; font-size: 11px; float: left; margin: 6px 0px 6px 6px; }
-.issue .issue-name { padding: 6px 8px 6px 8px; font-size: 13px; float: left; margin: 6px 6px 6px 0px; }
-.issue .issue-type { border: 1px solid #aabbcc; padding: 2px 4px 2px 4px; font-size: 11px; clear: left; float: left; margin: 0px 6px 6px 6px; }
-.issue .issue-document-count { border: 1px solid #aabbcc; padding: 2px 4px 2px 4px; font-size: 11px; float: left; margin: 0px 6px 6px 0px; }
-.issue .issue-review-count { border: 1px solid #aabbcc; padding: 2px 4px 2px 4px; font-size: 11px; float: left; margin: 0px 6px 6px 0px; }
+#content h2 { float: left; width: 100%; }
+#content h3 { float: left; width: 100%; }
 
-.document { float: left; border: 1px solid #505050; margin-bottom: 8px; width: 100%; }
+.issue { background: rgba(155, 155, 155, 0.5); border: 1px solid #505050; margin-bottom: 12px; float: left; width: 100%; }
+.issue .issue-num { border: 0px solid #404040; width: 28px; padding: 6px 0px 6px 0px; float: left; margin: 6px 0px 6px 6px; text-align: right; }
+.issue .issue-name { padding: 6px 12px 6px 12px; font-size: 12px; font-weight: bold; float: left; margin: 6px 6px 6px 0px; }
+.issue .issue-type { border: 1px solid #404040; padding: 2px 6px 2px 6px; font-size: 11px; clear: left; float: left; margin: 0px 6px 6px 6px; }
+.issue .issue-document-count { border: 1px solid #404040; padding: 2px 6px 2px 6px; font-size: 11px; float: left; margin: 0px 6px 6px 0px; }
+.issue .issue-review-count { border: 1px solid #404040; padding: 2px 6px 2px 6px; font-size: 11px; float: left; margin: 0px 6px 6px 0px; }
+
+.document { background: rgba(155, 155, 155, 0.5); float: left; border: 1px solid #505050; margin-top: 8px; width: 100%; }
 .document .document-timing { float: left; padding: 6px 8px 6px 8px; }
-.document .document-id { float: left; margin-left: 8px; padding: 6px 8px 6px 8px; width: 35px; text-align: right; }
+.document .document-id { float: left; margin-left: 8px; padding: 6px 8px 6px 8px; width: 35px; text-align: right; font-weight: bold; }
 .document .document-type { float: left; margin-left: 8px; padding: 6px 8px 6px 8px; }
 .document .document-proposers { clear: left; float: left; margin-left: 8px; padding: 0px 0px 6px 0px; font-size: 11px; }
 
-.review { float: left; border: 1px solid #505050; margin-bottom: 8px; width: 100%; }
+.document-dossier { background: rgba(155, 155, 155, 0.8); float: left; border-left: 1px solid #505050; border-bottom: 1px solid #505050; border-right: 1px solid #505050; }
+.document-dossier div { float: left; margin: 6px 0px 6px 12px; }
+.document-dossier div:last-child { margin-right: 12px; }
+
+.review { background: rgba(155, 155, 155, 0.5); float: left; border: 1px solid #505050; margin-bottom: 8px; width: 100%; }
 .review .review-date-arrived { float: left; padding: 6px 8px 6px 8px; }
-.review .review-sender-name { float: left; margin-left: 8px; padding: 6px 8px 6px 8px; }
+.review .review-sender-name { float: left; margin-left: 8px; padding: 6px 8px 6px 8px; font-weight: bold; }
 

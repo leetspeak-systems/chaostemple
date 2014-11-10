@@ -1,4 +1,4 @@
-from datetime import datetime
+from django.utils import timezone
 
 from althingi.models import Parliament
 from althingi.models import Session
@@ -6,7 +6,7 @@ from althingi.models import Session
 def globals(request):
 
     parliaments = Parliament.objects.order_by('-parliament_num')
-    next_sessions = Session.objects.select_related('parliament').filter(timing_start_planned__gt=datetime.now())
+    next_sessions = Session.objects.select_related('parliament').filter(timing_start_planned__gt=timezone.now())
 
     # Since XML cannot determine the planned timing of a session that comes immediately after
     # another, we need to make an extra call to include all the sessions with a higher session_num

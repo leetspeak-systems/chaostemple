@@ -9,6 +9,8 @@ urlpatterns = patterns('',
     url(r'^parliament/(?P<parliament_num>\d+)/sessions/$', 'core.views.parliament_sessions', name='parliament_sessions'),
     url(r'^parliament/(?P<parliament_num>\d+)/session/(?P<session_num>\d+)/$', 'core.views.parliament_session', name='parliament_session'),
 
-    url(r'^json/parliament/(?P<parliament_num>\d+)/document/(?P<document_num>\d+)/attentionstate/$', 'core.json_views.attentionstate', name='json_attentionstate'),
+    url(r'^stub/document/(?P<document_id>\d+)/dossier/$', 'core.stub_views.dossier', name='stub_dossier'),
+
+    url(r'^json/dossier/(?P<dossier_id>\d+)/attentionstate/$', 'core.json_views.attentionstate', name='json_attentionstate'),
 )
 

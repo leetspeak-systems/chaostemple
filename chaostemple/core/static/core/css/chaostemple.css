@@ -45,10 +45,12 @@ form input { margin: 4px 0px 12px 0px; }
 .document .document-id { float: left; margin-left: 8px; padding: 6px 8px 6px 8px; width: 35px; text-align: right; font-weight: bold; }
 .document .document-type { float: left; margin-left: 8px; padding: 6px 8px 6px 8px; }
 .document .document-proposers { clear: left; float: left; margin-left: 8px; padding: 0px 0px 6px 0px; font-size: 11px; }
+.document .btn-add-dossier-container { float: right; }
+.document .btn-add-dossier-container-hidden { visibility: hidden; }
 
-.document-dossier { background: rgba(155, 155, 155, 0.8); float: left; border-left: 1px solid #505050; border-bottom: 1px solid #505050; border-right: 1px solid #505050; }
-.document-dossier div { float: left; margin: 6px 0px 6px 12px; }
-.document-dossier div:last-child { margin-right: 12px; }
+.dossier { background: rgba(155, 155, 155, 0.8); float: left; border-left: 1px solid #505050; border-bottom: 1px solid #505050; border-right: 1px solid #505050; width: 100%; }
+.dossier div { float: left; margin: 6px 0px 6px 12px; }
+.dossier div:last-child { margin-right: 12px; }
 
 .review { background: rgba(155, 155, 155, 0.5); float: left; border: 1px solid #505050; margin-bottom: 8px; width: 100%; }
 .review .review-date-arrived { float: left; padding: 6px 8px 6px 8px; }

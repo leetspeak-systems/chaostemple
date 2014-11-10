@@ -1,6 +1,6 @@
 {% load i18n %}
 
-<div class="document">
+<div class="document" data-document-id="{{ document.id }}">
     <div class="document-timing">{{ document.time_published|date }}</div>
     <div class="document-id">
         <a href="{{ document.pdf_link }}" target="_blank">{{ document.doc_num }}</a>
@@ -14,25 +14,16 @@
             {% endfor %}
         </div>
     {% endif %}
+    <div class="btn-add-dossier-container btn-add-dossier-container-hidden">
+        <a class="btn-add-dossier">{% trans 'Add' %}</a>
+    </div>
 </div>
 
 {% if user.is_authenticated %}
 
-    <div class="document-dossier-container" data-parliament-num="{{ parliament_num }}" data-document-num="{{ document.doc_num }}">
+    <div class="dossier-container" data-document-id="{{ document.id }}">
         {% for dossier in document.dossiers.all %}
-            <div class="document-dossier" data-id="{{ dossier.id }}">
-                <div class="user">{{ dossier.user }}</div>
-                <div class="attention-state">
-                    [
-                    {% for attentionstate in attentionstates %}
-                        <a data-attentionstate="{{ attentionstate.0 }}" class="{% if dossier.attention == attentionstate.0 %}selected{% endif %}">{{ attentionstate.1 }}</a>
-                        {% if not forloop.last %}|{% endif %}
-                    {% endfor %}
-                    ]
-                </div>
-                <div class="knowledge-state">
-                </div>
-            </div>
+            {% include 'core/stub/stub_dossier.html' %}
         {% endfor %}
     </div>
 

@@ -3,6 +3,12 @@
 
 <html>
 <head>
+
+    <script type="text/javascript" language="javascript">
+        // Constants with server-side data.
+        USER_ID = {% if user.is_authenticated %}{{ user.id }}{% else %}0{% endif %};
+    </script>
+
     <!-- jQuery -->
     <script type="text/javascript" language="javascript" src="{% static 'core/js/jquery/jquery-2.1.1.js' %}"></script>
 

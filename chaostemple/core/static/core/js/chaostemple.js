@@ -1,19 +1,19 @@
 
 // Generalized function for handling JSON on our site
-$.jsonize = function(url, data, done, error) {
+$.jsonize = function(args) {
     result = $.get(
-        url,
-        data,
+        args.url,
+        args.data,
         dataType = 'json'
     ).done(function(data, textStatus) {
-        data = $.parseJSON(data);
-        if (data.ok) {
-            done(data, textStatus);
+        var data = $.parseJSON(data);
+        if (data.ok && args.done) {
+            args.done(data, textStatus);
         }
         else {
             alert('Server error: ' + data.error);
-            if (error != null) {
-                error(data, textStatus);
+            if (args.error != null) {
+                args.error(data, textStatus);
             }
         }
     });

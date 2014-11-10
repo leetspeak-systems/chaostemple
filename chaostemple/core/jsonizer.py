@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.http import HttpResponse
 import json
 
@@ -11,7 +12,10 @@ def jsonize(f):
             m['ok'] = True
             return HttpResponse(json.dumps(m))
         except Exception as e:
-            return HttpResponse(json.dumps(json_error(e.message)))
+            if settings.DEBUG:
+                return HttpResponse(json.dumps(json_error(e.message)))
+            else:
+                raise
 
     return wrapped
 

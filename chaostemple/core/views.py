@@ -1,14 +1,20 @@
+from django.core.urlresolvers import reverse
+from django.shortcuts import redirect
 from django.shortcuts import render
 
 from core.models import Dossier
 
 from althingi.models import Document
 from althingi.models import Issue
+from althingi.models import Parliament
 from althingi.models import Session
 
 def home(request):
-    ctx = {'issues': 'ISSUES'}
-    return render(request, 'core/home.html', ctx)
+    try:
+        parliament = Parliament.objects.order_by('-parliament_num')[0]
+        return redirect(reverse('parliament', args=(parliament.parliament_num,)))
+    except IndexError:
+        return render(request, 'core/parliament_none.html', {})
 
 def parliament(request, parliament_num):
 

@@ -28,6 +28,19 @@ function obtainDossier(document_id) {
     });
 }
 
+function deleteDossier(dossier_id) {
+    $.jsonize({
+        url: '/json/dossier/' + dossier_id + '/delete/',
+        done: function(data, textStatus) {
+            $dossier = $('.dossier[data-id=' + dossier_id + ']');
+            document_id = $dossier.attr('data-document-id');
+
+            $dossier.remove();
+            showAddButton(document_id, true);
+        }
+    });
+}
+
 function setAttention(dossier_id, attentionstate) {
     $dossier = $('.dossier[data-id=' + dossier_id + ']');
     $dossier.find('a').each(function(index) {
@@ -58,13 +71,21 @@ $(document).ready(function() {
         });
     });
 
-    $('.btn-add-dossier').click(function() {
+    $(document).on('click', '.btn-add-dossier', function() {
         $container = $(this).parent().parent();
 
         document_id = $container.data('document-id');
 
         obtainDossier(document_id);
 
+    });
+
+    $(document).on('click', '.btn-delete-dossier', function() {
+        $container = $(this).parent().parent();
+
+        dossier_id = $container.data('id');
+
+        deleteDossier(dossier_id);
     });
 });
 

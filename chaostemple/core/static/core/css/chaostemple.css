@@ -51,6 +51,7 @@ form input { margin: 4px 0px 12px 0px; }
 .dossier { background: rgba(155, 155, 155, 0.8); float: left; border-left: 1px solid #505050; border-bottom: 1px solid #505050; border-right: 1px solid #505050; width: 100%; }
 .dossier div { float: left; margin: 6px 0px 6px 12px; }
 .dossier div:last-child { margin-right: 12px; }
+.dossier .btn-delete-dossier-container { float: right; }
 
 .review { background: rgba(155, 155, 155, 0.5); float: left; border: 1px solid #505050; margin-bottom: 8px; width: 100%; }
 .review .review-date-arrived { float: left; padding: 6px 8px 6px 8px; }

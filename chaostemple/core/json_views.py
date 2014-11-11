@@ -20,3 +20,11 @@ def attentionstate(request, dossier_id):
     }
     return ctx
 
+@login_required
+@jsonize
+def delete_dossier(request, dossier_id):
+
+    Dossier.objects.get(id=dossier_id, user=request.user).delete()
+
+    return {}
+

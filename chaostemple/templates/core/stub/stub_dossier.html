@@ -1,4 +1,6 @@
-<div class="dossier" data-id="{{ dossier.id }}" data-user-id="{{ dossier.user_id }}">
+{% load i18n %}
+
+<div class="dossier" data-id="{{ dossier.id }}" data-document-id="{{ dossier.document_id }}" data-user-id="{{ dossier.user_id }}">
     <div class="user">{{ dossier.user }}</div>
     <div class="attention-state">
         [
@@ -9,5 +11,8 @@
         ]
     </div>
     <div class="knowledge-state">
+    </div>
+    <div class="btn-delete-dossier-container">
+        <a class="btn-delete-dossier">{% trans 'Delete' %}</a>
     </div>
 </div>

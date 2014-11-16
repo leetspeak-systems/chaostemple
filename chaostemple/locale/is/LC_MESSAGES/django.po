@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-03 17:19+0000\n"
+"POT-Creation-Date: 2014-11-16 23:40+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -18,90 +18,119 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: chaostemple/middleware.py:23 templates/base.html:52
-msgid "Home"
-msgstr ""
+#: chaostemple/constants.py:3
+msgid "Temple of Chaos"
+msgstr "Musteri Glundroðans"
 
-#: chaostemple/middleware.py:30 templates/base.html:54
+#: chaostemple/middleware.py:28 templates/base.html:44
 msgid "parliament"
 msgstr "þing"
 
-#: chaostemple/middleware.py:37 templates/core/parliament.html:7
+#: chaostemple/middleware.py:35 templates/base.html:36
+#: templates/core/parliament.html:7
 msgid "Issues"
 msgstr "Þingmál"
 
-#: chaostemple/middleware.py:44 templates/base.html:56
+#: chaostemple/middleware.py:42
 msgid "issue"
 msgstr "mál"
 
-#: chaostemple/middleware.py:51 templates/base.html:30
+#: chaostemple/middleware.py:49 templates/base.html:37
 #: templates/core/parliament.html:8 templates/core/parliament_sessions.html:6
 msgid "Parliamentary Sessions"
 msgstr "Þingfundir"
 
-#: chaostemple/middleware.py:58
+#: chaostemple/middleware.py:56
 msgid "parliamentary session"
 msgstr "þingfundur"
 
-#: core/models.py:17
+#: core/models.py:13
 msgid "None"
-msgstr ""
+msgstr "Ekkert"
 
-#: core/models.py:18
+#: core/models.py:14
 msgid "Question"
-msgstr ""
+msgstr "Spurning"
+
+#: core/models.py:15
+msgid "Attention"
+msgstr "Athygli"
 
 #: core/models.py:19
-msgid "Exclamation"
-msgstr ""
-
-#: core/models.py:27
 msgid "Unread"
-msgstr ""
+msgstr "Ólesið"
 
-#: core/models.py:28
+#: core/models.py:20
 msgid "Briefly examined"
-msgstr ""
+msgstr "Lauslega skoðað"
 
-#: core/models.py:29
+#: core/models.py:21
 msgid "Examined"
-msgstr ""
+msgstr "Skoðað"
 
-#: core/models.py:30
+#: core/models.py:22
 msgid "Thoroughly examined"
-msgstr ""
+msgstr "Vel skoðað"
 
-#: templates/base.html:17
-msgid "Parliaments"
+#: templates/base.html:35
+msgid "Parliament"
 msgstr "Þing"
 
-#: templates/base.html:64
+#: templates/base.html:40
+msgid "Other Parliaments"
+msgstr "Önnur þing"
+
+#: templates/base.html:52
+msgid "Upcoming Parliamentary Sessions"
+msgstr "Næstu þingfundir"
+
+#: templates/base.html:66
 msgid "Logout"
 msgstr "Útskrá"
 
-#: templates/base.html:66 templates/registration/login.html:12
+#: templates/base.html:68 templates/registration/login.html:12
 msgid "Login"
 msgstr "Innskrá"
 
-#: templates/core/parliament_issue.html:9
-#: templates/core/stub/stub_issue.html:7
+#: templates/core/dialog/dialog_delete_dossier.html:8
+msgid "Are you certain that you wish to delete your dossier for this document?"
+msgstr "Ertu viss um að þú viljir eyða skrá þinni fyrir þetta skjal?"
+
+#: templates/core/dialog/dialog_delete_dossier.html:9
+msgid "This action cannot be undone."
+msgstr "Þessa aðgerð er ekki hægt að taka til baka."
+
+#: templates/core/dialog/dialog_delete_dossier.html:12
+msgid "Cancel"
+msgstr "Hætta við"
+
+#: templates/core/dialog/dialog_delete_dossier.html:13
+#: templates/core/stub/stub_dossier.html:15
+msgid "Delete"
+msgstr "Eyða"
+
+#: templates/core/parliament_issue.html:15
+#: templates/core/stub/stub_issue.html:14
 msgid "Parliamentary Documents"
 msgstr "Þingskjöl"
 
-#: templates/core/parliament_issue.html:16
-#: templates/core/stub/stub_issue.html:8
+#: templates/core/parliament_issue.html:22
+#: templates/core/stub/stub_issue.html:13
 msgid "Reviews"
 msgstr "Umsagnir"
 
-#: templates/core/stub/stub_document.html:11
+#: templates/core/stub/stub_document.html:8
 msgid "Proposers"
 msgstr "Flutningsmenn"
 
-#: templates/core/stub/stub_issue.html:6
-msgid "Type"
-msgstr "Tegund"
+#: templates/core/stub/stub_document.html:14
+msgid "parliamentary document"
+msgstr "þingskjal"
 
-#, fuzzy
-#~| msgid "Parliamentary Sessions"
-#~ msgid "Parliamentary sessions"
-#~ msgstr "Þingfundir"
+#: templates/core/stub/stub_document.html:22
+msgid "Add"
+msgstr "Bæta við"
+
+#: templates/core/stub/stub_issue.html:12
+msgid "parliamentary issue"
+msgstr "þingmál"

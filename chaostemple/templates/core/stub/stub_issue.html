@@ -1,12 +1,19 @@
 {% load i18n %}
-<div class="issue">
+<div class="panel panel-default">
     {% if issue.issue_group == 'A' %}
-        <div class="issue-num">{{ issue.issue_num }}</div>
-        <div class="issue-name"><a href="{% url 'parliament_issue' issue.parliament.parliament_num issue.issue_num %}">{{ issue.name|capfirst }}</a></div>
-        <div class="issue-type">{% trans "Type" %}: {{ issue.get_issue_type_display|capfirst }}</div>
-        <div class="issue-document-count">{% trans "Parliamentary Documents" %}: {{ issue.document_count }}</div>
-        <div class="issue-review-count">{% trans "Reviews" %}: {{ issue.review_count }}</div>
+        <div class="panel-heading">{{ issue.get_issue_type_display|capfirst }}</div>
+        <div class="panel-body">
+            <p>
+                <a href="{% url 'parliament_issue' issue.parliament.parliament_num issue.issue_num %}">{{ issue.name|capfirst }}</a>
+                {% if issue.description %}
+                    <small>({{ issue.description }})</small>
+                {% endif %}
+            </p>
+            <span class="label label-primary">{{ issue.issue_num }}. {% trans 'parliamentary issue' %}</span>
+            <span class="label label-default">{% trans 'Reviews' %}: {{ issue.review_count }}</span>
+            <span class="label label-default">{% trans "Parliamentary Documents" %}: {{ issue.document_count }}</span>
+        </div>
     {% elif issue.issue_group == 'B' %}
-        <div class="issue-name">{{ issue.name|capfirst }}</div>
+        <div class="panel-body">{{ issue.name|capfirst }}</div>
     {% endif %}
 </div>

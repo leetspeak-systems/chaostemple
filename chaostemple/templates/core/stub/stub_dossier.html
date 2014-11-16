@@ -1,18 +1,11 @@
 {% load i18n %}
 
-<div class="dossier" data-id="{{ dossier.id }}" data-document-id="{{ dossier.document_id }}" data-user-id="{{ dossier.user_id }}">
-    <div class="user">{{ dossier.user }}</div>
-    <div class="attention-state">
-        [
+<div control="dossier" data-id="{{ dossier.id }}" data-user-id="{{ dossier.user_id }}">
+    <label><a href="#">{{ dossier.user }}</a></label>
+    <div class="btn-group" role="group">
         {% for attentionstate in attentionstates %}
-            <a data-attentionstate="{{ attentionstate.0 }}" class="{% if dossier.attention == attentionstate.0 %}selected{% endif %}">{{ attentionstate.1 }}</a>
-            {% if not forloop.last %}|{% endif %}
+            <button control="set-attentionstate" data-dossier-id="{{ dossier.id }}" class="btn btn-default {% if dossier.attention == attentionstate.0 %}active{% endif %}" data-attentionstate="{{ attentionstate.0 }}">{{ attentionstate.1 }}</button>
         {% endfor %}
-        ]
     </div>
-    <div class="knowledge-state">
-    </div>
-    <div class="btn-delete-dossier-container">
-        <a class="btn-delete-dossier">{% trans 'Delete' %}</a>
-    </div>
+    <button control="delete-dossier" class="btn btn-xs btn-danger pull-right" data-id="{{ dossier.id }}">{% trans 'Delete' %}</button>
 </div>

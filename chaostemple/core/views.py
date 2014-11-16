@@ -37,12 +37,20 @@ def parliament_issues(request, parliament_num):
 def parliament_issue(request, parliament_num, issue_num):
 
     issue = Issue.objects.get(parliament__parliament_num=parliament_num, issue_group='A', issue_num=issue_num)
-    documents = Document.objects.prefetch_related('proposers__person', 'proposers__committee').filter(issue=issue)
+    documents = Document.objects.prefetch_related('proposers__person', 'proposers__committee', 'dossiers__user').filter(issue=issue)
+
+    # A container to determine whether a document already has currently logged in user's dossier
+    my_dossiered_documents = []
+    dossiers = Dossier.objects.filter(document__in=documents)
+    for dossier in dossiers:
+        if dossier.user_id == request.user.id:
+            my_dossiered_documents.append(dossier.document_id)
 
     ctx = {
         'issue': issue,
         'documents': documents,
-        'attentionstates': Dossier.ATTENTION_STATES
+        'attentionstates': Dossier.ATTENTION_STATES,
+        'my_dossiered_documents': my_dossiered_documents,
     }
     return render(request, 'core/parliament_issue.html', ctx)
 

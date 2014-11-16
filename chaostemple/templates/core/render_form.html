@@ -1,0 +1,16 @@
+{{ form.non_field_error }}
+{% for field in form %}
+    <div class="row">
+        <div class="{{ extraclasses }}">
+            <p>
+            {{ field.label_tag }}
+            {% if field.field.widget.input_type %}
+                <input class="form-control input-mini" type="{{ field.field.widget.input_type }}" name="{{ field.html_name }}" {% if field.field.max_length %}maxlength="{{ field.field.max_length }}"{% endif %} {% if field.value %}value="{{ field.value }}"{% endif %} id="{{ field.id_for_label }}" />
+                {% for error in field.errors %}
+                    <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
+                {% endfor %}
+            {% endif %}
+            </p>
+        </div>
+    </div>
+{% endfor %}

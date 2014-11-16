@@ -6,10 +6,10 @@
 <form method="post">
     {% csrf_token %}
 
-    {{ form }}
+    {% include 'core/render_form_short.html' %}
 
     <div>
-        <button type="submit">{% trans "Login" %}</button>
+        <button class="btn btn-primary" type="submit">{% trans "Login" %}</button>
     </div>
 
 </form>

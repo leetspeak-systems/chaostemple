@@ -1,31 +1,26 @@
 {% load i18n %}
 
-<div class="document" data-document-id="{{ document.id }}">
-    <div class="document-timing">{{ document.time_published|date }}</div>
-    <div class="document-id">
-        <a href="{{ document.pdf_link }}" target="_blank">{{ document.doc_num }}</a>
+<div class="panel panel-default" control="document" data-id="{{ document.id }}">
+    <div class="panel-body">
+        <p><a href="{{ document.pdf_link }}" target="_blank">{{ document.get_doc_type_display|capfirst }}</a></p>
+        {% if document.proposers.all.count %}
+            <p>
+                <strong>{% trans "Proposers" %}:</strong>
+                {% for proposer in document.proposers.all %}
+                    <a href="#">{{ proposer }}</a>{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </p>
+        {% endif %}
+        <span class="label label-primary">{{ document.doc_num }}. {% trans 'parliamentary document' %}</span>
+        <span class="label label-default">{{ document.time_published|date }}</span>
     </div>
-    <div class="document-type">{{ document.get_doc_type_display }}</div>
-    {% if document.proposers.all.count %}
-        <div class="document-proposers">
-            <label>{% trans "Proposers" %}:</label>
-            {% for proposer in document.proposers.all %}
-                {{ proposer }}{% if not forloop.last %}, {% endif %}
+    {% if user.is_authenticated %}
+        <div class="panel-footer">
+            {% for dossier in document.dossiers.all %}
+                {% include 'core/stub/stub_dossier.html' %}
             {% endfor %}
+            <button type="button" class="btn btn-default btn-xs" control="add-dossier" data-document-id="{{ document.id }}" {% if document.id in my_dossiered_documents %}style="display: none;"{% endif %}>{% trans 'Add' %}</button>
         </div>
     {% endif %}
-    <div class="btn-add-dossier-container btn-add-dossier-container-hidden">
-        <a class="btn-add-dossier">{% trans 'Add' %}</a>
-    </div>
 </div>
-
-{% if user.is_authenticated %}
-
-    <div class="dossier-container" data-document-id="{{ document.id }}">
-        {% for dossier in document.dossiers.all %}
-            {% include 'core/stub/stub_dossier.html' %}
-        {% endfor %}
-    </div>
-
-{% endif %}
 

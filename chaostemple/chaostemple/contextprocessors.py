@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.utils import timezone
 
 from althingi.models import Parliament
@@ -14,6 +15,8 @@ def globals(request):
         next_sessions = next_sessions | Session.objects.filter(session_num__gt=next_sessions.last().session_num)
 
     ctx = {
+        'PROJECT_NAME': settings.PROJECT_NAME,
+        'PROJECT_VERSION': settings.PROJECT_VERSION,
         'parliaments': parliaments,
         'next_sessions': next_sessions,
     }

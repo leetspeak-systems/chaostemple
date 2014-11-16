@@ -19,9 +19,7 @@ class ExtraVarsMiddleware():
         if session_num:
             session_num = int(session_num)
 
-        breadcrumbs = (
-            (('home',), _('Home')),
-        )
+        breadcrumbs = ()
 
         if parliament_num:
             breadcrumbs = self.leave_breadcrumb(
@@ -62,6 +60,7 @@ class ExtraVarsMiddleware():
             'parliament_num': parliament_num,
             'issue_num': issue_num,
             'breadcrumbs': breadcrumbs,
+            'urlname': view_func.func_name,
         }
 
 class ForceLoginMiddleware():

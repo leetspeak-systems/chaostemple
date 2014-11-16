@@ -24,7 +24,13 @@ def attentionstate(request, dossier_id):
 @jsonize
 def delete_dossier(request, dossier_id):
 
-    Dossier.objects.get(id=dossier_id, user=request.user).delete()
+    dossier = Dossier.objects.get(id=dossier_id, user=request.user)
+    document_id = dossier.document_id
 
-    return {}
+    dossier.delete()
+
+    ctx = {
+        'document_id': document_id
+    }
+    return ctx
 

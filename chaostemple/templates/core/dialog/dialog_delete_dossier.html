@@ -1,0 +1,17 @@
+{% load i18n %}
+
+<div class="modal fade" control="delete-dossier-dialog" role="dialog">
+    <input type="hidden" id="delete-dossier-id" value="0" />
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                {% trans 'Are you certain that you wish to delete your dossier for this document?' %}
+                {% trans 'This action cannot be undone.' %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Cancel' %}</button>
+                <button type="button" class="btn btn-danger" control="delete-dossier-confirmed" data-id="0" data-dismiss="modal">{% trans 'Delete' %}</button>
+            </div>
+        </div>
+    </div>
+</div>

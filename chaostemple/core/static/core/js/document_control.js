@@ -41,6 +41,13 @@ $(document).ready(function() {
     // Button: delete-dossier
     $(document).on('click', 'button[control="delete-dossier"]', function() {
         dossier_id = $(this).data('id');
+        $('input#delete-dossier-id').val(dossier_id); // Store the dossier_id in the modal dialog
+        $('div[control="delete-dossier-dialog"]').modal(); // Open the modal dialog
+    });
+
+    // Button: delete-dossier-confirmed
+    $(document).on('click', 'button[control="delete-dossier-confirmed"]', function() {
+        dossier_id = $('input#delete-dossier-id').val();
 
         $.jsonize({
             url: '/json/dossier/' + dossier_id + '/delete/',

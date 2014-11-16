@@ -8,6 +8,8 @@
 
 {% block content %}
 
+    {% include 'core/dialog/dialog_delete_dossier.html' %}
+
     <h2>{{ issue.name|capfirst }}</h2>
 
     <h3>{% trans 'Parliamentary Documents' %}</h3>

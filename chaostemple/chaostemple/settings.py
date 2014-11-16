@@ -92,3 +92,4 @@ from chaostemple.local_settings import *
 if DEBUG and DEBUG_TOOLBAR:
     INSTALLED_APPS += ('debug_toolbar.apps.DebugToolbarConfig',)
 
+from chaostemple.constants import *

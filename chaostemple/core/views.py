@@ -50,6 +50,7 @@ def parliament_issue(request, parliament_num, issue_num):
         'issue': issue,
         'documents': documents,
         'attentionstates': Dossier.ATTENTION_STATES,
+        'knowledgestates': Dossier.KNOWLEDGE_STATES,
         'my_dossiered_documents': my_dossiered_documents,
     }
     return render(request, 'core/parliament_issue.html', ctx)

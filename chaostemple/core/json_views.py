@@ -22,6 +22,22 @@ def attentionstate(request, dossier_id):
 
 @login_required
 @jsonize
+def knowledgestate(request, dossier_id):
+
+    knowledgestate = request.GET.get('knowledgestate', None)
+
+    dossier = Dossier.objects.get(id=dossier_id, user=request.user)
+    if knowledgestate and dossier.knowledge != knowledgestate:
+        dossier.knowledge = knowledgestate
+        dossier.save()
+
+    ctx = {
+        'knowledgestate': dossier.knowledge
+    }
+    return ctx
+
+@login_required
+@jsonize
 def delete_dossier(request, dossier_id):
 
     dossier = Dossier.objects.get(id=dossier_id, user=request.user)

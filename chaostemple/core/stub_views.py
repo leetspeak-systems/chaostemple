@@ -8,11 +8,11 @@ from core.models import Dossier
 def dossier(request, document_id):
 
     dossier, created = Dossier.objects.get_or_create(user=request.user, document_id=document_id)
-    attentionstates = Dossier.ATTENTION_STATES
 
     ctx = {
         'dossier': dossier,
-        'attentionstates': attentionstates
+        'attentionstates': Dossier.ATTENTION_STATES,
+        'knowledgestates': Dossier.KNOWLEDGE_STATES,
     }
 
     return render(request, 'core/stub/stub_dossier.html', ctx)

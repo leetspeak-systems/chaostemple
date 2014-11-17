@@ -22,6 +22,27 @@ $(document).ready(function() {
         });
     });
 
+    // Button: set-knowledgestate
+    $(document).on('click', 'button[control="set-knowledgestate"]', function() {
+        dossier_id = $(this).data('dossier-id');
+        knowledgestate = $(this).data('knowledgestate');
+
+        $.jsonize({
+            url: '/json/dossier/' + dossier_id + '/knowledgestate/',
+            data: { knowledgestate: knowledgestate },
+            done: function(data, textStatus) {
+                $('button[control="set-knowledgestate"][data-dossier-id=' + dossier_id + ']').each(function() {
+                    if ($(this).data('knowledgestate') == data.knowledgestate) {
+                        $(this).addClass('active');
+                    }
+                    else {
+                        $(this).removeClass('active');
+                    }
+                });
+            }
+        });
+    });
+
     // Button: add-dossier
     $(document).on('click', 'button[control="add-dossier"]', function() {
         document_id = $(this).data('document-id');

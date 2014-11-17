@@ -12,6 +12,14 @@
                         data-attentionstate="{{ attentionstate.0 }}">{{ attentionstate.1 }}</button>
             {% endfor %}
         </div>
+        <div class="btn-group" role="group">
+            {% for knowledgestate in knowledgestates %}
+                <button control="set-knowledgestate"
+                        data-dossier-id="{{ dossier.id }}"
+                        class="btn btn-default btn-sm {% if dossier.knowledge == knowledgestate.0 %}active{% endif %}"
+                        data-knowledgestate="{{ knowledgestate.0 }}">{{ knowledgestate.1 }}</button>
+            {% endfor %}
+        </div>
         <button control="delete-dossier" class="btn btn-xs btn-danger pull-right" data-id="{{ dossier.id }}">{% trans 'Delete' %}</button>
     {% else %}
         {{ dossier|attention }}

@@ -1,8 +1,16 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load static %}
+{% load dossier %}
 
 {% block javascript %}
+    <script language="javascript" type="text/javascript">
+
+        attention_css = {% attention_css_json %};
+        knowledge_css = {% knowledge_css_json %};
+
+    </script>
+
     <script language="javascript" type="text/javascript" src="{% static 'core/js/document_control.js' %}"></script>
 {% endblock %}
 

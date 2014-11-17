@@ -2,7 +2,7 @@
 $(document).ready(function() {
 
     // Button: set-attentionstate
-    $(document).on('click', 'button[control="set-attentionstate"]', function() {
+    $(document).on('click', 'a[control="set-attentionstate"]', function() {
         dossier_id = $(this).data('dossier-id');
         attentionstate = $(this).data('attentionstate');
 
@@ -10,12 +10,27 @@ $(document).ready(function() {
             url: '/json/dossier/' + dossier_id + '/attentionstate/',
             data: { attentionstate: attentionstate },
             done: function(data, textStatus) {
-                $('button[control="set-attentionstate"][data-dossier-id=' + dossier_id + ']').each(function() {
-                    if ($(this).data('attentionstate') == data.attentionstate) {
-                        $(this).addClass('active');
+                $('a[control="set-attentionstate"][data-dossier-id=' + dossier_id + ']').each(function() {
+                    $anchor = $(this);
+                    $dropdown = $('button[control="dropdown-attentionstate"][data-id=' + dossier_id + ']');
+
+                    if ($anchor.data('attentionstate') == data.attentionstate) {
+                        $anchor.parent().addClass('active');
+
+                        $dropdown.find('.display').text($anchor.text());
+                        keepclass = ''; // This is needed in case two attentionstates have the same CSS class
+                        for (var key in attention_css) {
+                            if (key == data.attentionstate) {
+                                keepclass = attention_css[key];
+                            }
+                            $dropdown.removeClass(attention_css[key]);
+                        }
+                        if (keepclass) {
+                            $dropdown.addClass(keepclass);
+                        }
                     }
                     else {
-                        $(this).removeClass('active');
+                        $anchor.parent().removeClass('active');
                     }
                 });
             }
@@ -23,7 +38,7 @@ $(document).ready(function() {
     });
 
     // Button: set-knowledgestate
-    $(document).on('click', 'button[control="set-knowledgestate"]', function() {
+    $(document).on('click', 'a[control="set-knowledgestate"]', function() {
         dossier_id = $(this).data('dossier-id');
         knowledgestate = $(this).data('knowledgestate');
 
@@ -31,12 +46,27 @@ $(document).ready(function() {
             url: '/json/dossier/' + dossier_id + '/knowledgestate/',
             data: { knowledgestate: knowledgestate },
             done: function(data, textStatus) {
-                $('button[control="set-knowledgestate"][data-dossier-id=' + dossier_id + ']').each(function() {
-                    if ($(this).data('knowledgestate') == data.knowledgestate) {
-                        $(this).addClass('active');
+                $('a[control="set-knowledgestate"][data-dossier-id=' + dossier_id + ']').each(function() {
+                    $anchor = $(this);
+                    $dropdown = $('button[control="dropdown-knowledgestate"][data-id=' + dossier_id + ']');
+
+                    if ($anchor.data('knowledgestate') == data.knowledgestate) {
+                        $anchor.parent().addClass('active');
+
+                        $dropdown.find('.display').text($anchor.text());
+                        keepclass = ''; // This is needed in case two knowledgestates have the same CSS class
+                        for (var key in knowledge_css) {
+                            if (key == data.knowledgestate) {
+                                keepclass = knowledge_css[key];
+                            }
+                            $dropdown.removeClass(knowledge_css[key]);
+                        }
+                        if (keepclass) {
+                            $dropdown.addClass(keepclass);
+                        }
                     }
                     else {
-                        $(this).removeClass('active');
+                        $anchor.parent().removeClass('active');
                     }
                 });
             }

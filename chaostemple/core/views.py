@@ -37,7 +37,11 @@ def parliament_issues(request, parliament_num):
 def parliament_issue(request, parliament_num, issue_num):
 
     issue = Issue.objects.get(parliament__parliament_num=parliament_num, issue_group='A', issue_num=issue_num)
-    documents = Document.objects.prefetch_related('proposers__person', 'proposers__committee', 'dossiers__user').filter(issue=issue)
+    documents = Document.objects.prefetch_related(
+        'proposers__person',
+        'proposers__committee',
+        'dossiers__user'
+    ).filter(issue=issue)
 
     # A container to determine whether a document already has currently logged in user's dossier
     my_dossiered_documents = []

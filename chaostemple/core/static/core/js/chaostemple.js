@@ -25,3 +25,7 @@ $(document).ready(function() {
     $("form input[type='text']").focus();
 });
 
+$(document).on('click', 'a[href="#"]', function(event) {
+    event.preventDefault();
+});
+

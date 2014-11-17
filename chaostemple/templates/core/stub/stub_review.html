@@ -1,4 +1,8 @@
-<div class="review">
-    <div class="review-date-arrived">{{ review.date_arrived|date }}</div>
-    <div class="review-sender-name"><a href="{{ review.pdf_link }}" target="_blank">{{ review.sender_name }}</a></div>
+
+<div class="panel panel-default">
+    <div class="panel-body">
+        <p><a href="{{ review.pdf_link }}" target="_blank">{{ review.sender_name }}</a></p>
+        <span class="label label-default">{{ review.date_arrived|date }}</span>
+    </div>
 </div>
+

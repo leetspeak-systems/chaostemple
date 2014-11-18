@@ -43,8 +43,9 @@ def parliament_issue(request, parliament_num, issue_num):
         'dossiers__user'
     ).filter(issue=issue)
 
-    for document in documents:
-        document.mydossier, created = Dossier.objects.select_related('user').get_or_create(document=document, user=request.user)
+    if request.user.is_authenticated():
+        for document in documents:
+            document.mydossier, created = Dossier.objects.select_related('user').get_or_create(document=document, user=request.user)
 
     ctx = {
         'issue': issue,

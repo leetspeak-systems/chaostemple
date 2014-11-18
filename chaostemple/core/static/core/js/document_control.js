@@ -73,22 +73,6 @@ $(document).ready(function() {
         });
     });
 
-    // Button: add-dossier
-    $(document).on('click', 'button[control="add-dossier"]', function() {
-        document_id = $(this).data('document-id');
-
-        $.get('/stub/document/' + document_id + '/dossier/', function(data, textStatus) {
-            $data = $(data);
-            dossier_id = $data.attr('data-id');
-            if ($('div[control="dossier"][data-id=' + dossier_id + ']').length == 0) {
-                $add_dossier = $('div[control="document"][data-id=' + document_id + '] button[control="add-dossier"]');
-                $add_dossier.before($data);
-                $add_dossier.hide();
-            }
-        });
-
-    });
-
     // Button: delete-dossier
     $(document).on('click', 'button[control="delete-dossier"]', function() {
         dossier_id = $(this).data('id');
@@ -103,8 +87,7 @@ $(document).ready(function() {
         $.jsonize({
             url: '/json/dossier/' + dossier_id + '/delete/',
             done: function(data, textStatus) {
-                $('div[control="dossier"][data-id=' + dossier_id + ']').remove();
-                $('div[control="document"][data-id=' + data.document_id + '] button[control="add-dossier"]').show();
+                $('div[control="document"][data-id=' + data.document_id + '] .panel-footer').remove();
             }
         });
     });

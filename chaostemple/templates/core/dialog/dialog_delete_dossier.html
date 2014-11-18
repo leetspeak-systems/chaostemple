@@ -5,8 +5,9 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-body">
-                {% trans 'Are you certain that you wish to delete your dossier for this document?' %}
-                {% trans 'This action cannot be undone.' %}
+                <p>{% trans 'Are you sure that you want to mark this document as new and delete your dossier on it?' %}</p>
+                <p>{% trans 'Your dossier contains information such as glossaries, knowledge status etc.' %}</p>
+                <p><strong>{% trans 'This action cannot be undone.' %}</strong></p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Cancel' %}</button>

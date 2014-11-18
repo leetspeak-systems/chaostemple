@@ -3,42 +3,38 @@
 
 <div control="dossier" data-id="{{ dossier.id }}" data-user-id="{{ dossier.user_id }}">
     <label><a href="#">{{ dossier.user }}</a></label>
-    {% if user == dossier.user %}
 
-        <div class="btn-group" role="group">
-            <button control="dropdown-attentionstate" data-id="{{ dossier.id }}" type="button"
-                        class="btn btn-default btn-sm dropdown-toggle {{ dossier.attention|attention_css }}" data-toggle="dropdown">
-                <span class="display">{{ dossier.get_attention_display }}</span>
-                <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu" role="menu">
-                {% for attentionstate in attentionstates %}
-                    <li {% if dossier.attention == attentionstate.0 %}class="active"{% endif %}>
-                        <a href="#" control="set-attentionstate" data-dossier-id="{{ dossier.id }}"
-                                data-attentionstate="{{ attentionstate.0 }}">{{ attentionstate.1 }}</a>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
+    <div class="btn-group" role="group">
+        <button control="dropdown-attentionstate" data-id="{{ dossier.id }}" type="button"
+                    class="btn btn-default btn-sm dropdown-toggle {{ dossier.attention|attention_css }}" data-toggle="dropdown">
+            <span class="display">{{ dossier.get_attention_display }}</span>
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+            {% for attentionstate in attentionstates %}
+                <li {% if dossier.attention == attentionstate.0 %}class="active"{% endif %}>
+                    <a href="#" control="set-attentionstate" data-dossier-id="{{ dossier.id }}"
+                            data-attentionstate="{{ attentionstate.0 }}">{{ attentionstate.1 }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
 
-        <div class="btn-group" role="group">
-            <button control="dropdown-knowledgestate" data-id="{{ dossier.id }}" type="button"
-                        class="btn btn-default btn-sm dropdown-toggle {{ dossier.knowledge|knowledge_css }}" data-toggle="dropdown">
-                <span class="display">{{ dossier.get_knowledge_display }}</span>
-                <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu" role="menu">
-                {% for knowledgestate in knowledgestates %}
-                    <li {% if dossier.knowledge == knowledgestate.0 %}class="active"{% endif %}>
-                        <a href="#" control="set-knowledgestate" data-dossier-id="{{ dossier.id }}"
-                                data-knowledgestate="{{ knowledgestate.0 }}">{{ knowledgestate.1 }}</a>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
+    <div class="btn-group" role="group">
+        <button control="dropdown-knowledgestate" data-id="{{ dossier.id }}" type="button"
+                    class="btn btn-default btn-sm dropdown-toggle {{ dossier.knowledge|knowledge_css }}" data-toggle="dropdown">
+            <span class="display">{{ dossier.get_knowledge_display }}</span>
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+            {% for knowledgestate in knowledgestates %}
+                <li {% if dossier.knowledge == knowledgestate.0 %}class="active"{% endif %}>
+                    <a href="#" control="set-knowledgestate" data-dossier-id="{{ dossier.id }}"
+                            data-knowledgestate="{{ knowledgestate.0 }}">{{ knowledgestate.1 }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
 
-        <button control="delete-dossier" class="btn btn-xs btn-danger pull-right" data-id="{{ dossier.id }}">{% trans 'Delete' %}</button>
-    {% else %}
-        {{ dossier|attention }}
-    {% endif %}
+    <button control="delete-dossier" class="btn btn-xs btn-danger pull-right" data-id="{{ dossier.id }}">{% trans 'Mark as New' %}</button>
 </div>

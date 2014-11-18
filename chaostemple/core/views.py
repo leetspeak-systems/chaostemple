@@ -43,19 +43,14 @@ def parliament_issue(request, parliament_num, issue_num):
         'dossiers__user'
     ).filter(issue=issue)
 
-    # A container to determine whether a document already has currently logged in user's dossier
-    my_dossiered_documents = []
-    dossiers = Dossier.objects.filter(document__in=documents)
-    for dossier in dossiers:
-        if dossier.user_id == request.user.id:
-            my_dossiered_documents.append(dossier.document_id)
+    for document in documents:
+        document.mydossier, created = Dossier.objects.select_related('user').get_or_create(document=document, user=request.user)
 
     ctx = {
         'issue': issue,
         'documents': documents,
         'attentionstates': Dossier.ATTENTION_STATES,
         'knowledgestates': Dossier.KNOWLEDGE_STATES,
-        'my_dossiered_documents': my_dossiered_documents,
     }
     return render(request, 'core/parliament_issue.html', ctx)
 

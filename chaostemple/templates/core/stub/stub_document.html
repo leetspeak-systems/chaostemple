@@ -13,13 +13,15 @@
         {% endif %}
         <span class="label label-primary">{{ document.doc_num }}. {% trans 'parliamentary document' %}</span>
         <span class="label label-default">{{ document.time_published|date }}</span>
+        {% for dossier in document.dossiers.all %}
+            {% if dossier.user_id != user.id %}
+                <span class="label label-info">{{ dossier.user }}</span>
+            {% endif %}
+        {% endfor %}
     </div>
-    {% if user.is_authenticated %}
+    {% if document.mydossier %}
         <div class="panel-footer">
-            {% for dossier in document.dossiers.all %}
-                {% include 'core/stub/stub_dossier.html' %}
-            {% endfor %}
-            <button type="button" class="btn btn-default btn-xs" control="add-dossier" data-document-id="{{ document.id }}" {% if document.id in my_dossiered_documents %}style="display: none;"{% endif %}>{% trans 'Add' %}</button>
+            {% include 'core/stub/stub_dossier.html' with dossier=document.mydossier %}
         </div>
     {% endif %}
 </div>

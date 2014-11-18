@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-16 23:40+0000\n"
+"POT-Creation-Date: 2014-11-18 10:57+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -93,28 +93,37 @@ msgid "Login"
 msgstr "Innskrá"
 
 #: templates/core/dialog/dialog_delete_dossier.html:8
-msgid "Are you certain that you wish to delete your dossier for this document?"
-msgstr "Ertu viss um að þú viljir eyða skrá þinni fyrir þetta skjal?"
+msgid ""
+"Are you sure that you want to mark this document as new and delete your "
+"dossier on it?"
+msgstr ""
+"Ertu viss um að þú viljir merkja þetta skjal sem nýtt og eyða skrá þinni um "
+"það?"
 
 #: templates/core/dialog/dialog_delete_dossier.html:9
+msgid ""
+"Your dossier contains information such as glossaries, knowledge status etc."
+msgstr ""
+"Skráin þín inniheldur upplýsingar eins og glósur, þekkingarstöðu o.s.frv."
+
+#: templates/core/dialog/dialog_delete_dossier.html:10
 msgid "This action cannot be undone."
 msgstr "Þessa aðgerð er ekki hægt að taka til baka."
 
-#: templates/core/dialog/dialog_delete_dossier.html:12
+#: templates/core/dialog/dialog_delete_dossier.html:13
 msgid "Cancel"
 msgstr "Hætta við"
 
-#: templates/core/dialog/dialog_delete_dossier.html:13
-#: templates/core/stub/stub_dossier.html:15
+#: templates/core/dialog/dialog_delete_dossier.html:14
 msgid "Delete"
 msgstr "Eyða"
 
-#: templates/core/parliament_issue.html:15
+#: templates/core/parliament_issue.html:23
 #: templates/core/stub/stub_issue.html:14
 msgid "Parliamentary Documents"
 msgstr "Þingskjöl"
 
-#: templates/core/parliament_issue.html:22
+#: templates/core/parliament_issue.html:30
 #: templates/core/stub/stub_issue.html:13
 msgid "Reviews"
 msgstr "Umsagnir"
@@ -127,9 +136,9 @@ msgstr "Flutningsmenn"
 msgid "parliamentary document"
 msgstr "þingskjal"
 
-#: templates/core/stub/stub_document.html:22
-msgid "Add"
-msgstr "Bæta við"
+#: templates/core/stub/stub_dossier.html:39
+msgid "Mark as New"
+msgstr "Merkja sem nýtt"
 
 #: templates/core/stub/stub_issue.html:12
 msgid "parliamentary issue"

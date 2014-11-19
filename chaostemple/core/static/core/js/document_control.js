@@ -87,7 +87,12 @@ $(document).ready(function() {
         $.jsonize({
             url: '/json/dossier/' + dossier_id + '/delete/',
             done: function(data, textStatus) {
-                $('div[control="document"][data-id=' + data.document_id + '] .panel-footer').remove();
+                if (data.document_id) {
+                    $('div[control="document"][data-id=' + data.document_id + '] .panel-footer').remove();
+                }
+                else if (data.review_id) {
+                    $('div[control="review"][data-id=' + data.review_id + '] .panel-footer').remove();
+                }
             }
         });
     });

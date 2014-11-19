@@ -1,8 +1,13 @@
 
-<div class="panel panel-default">
+<div class="panel panel-default" control="review" data-id="{{ review.id }}">
     <div class="panel-body">
         <p><a href="{{ review.pdf_link }}" target="_blank">{{ review.sender_name }}</a></p>
         <span class="label label-default">{{ review.date_arrived|date }}</span>
     </div>
+    {% if review.mydossier %}
+        <div class="panel-footer">
+            {% include 'core/stub/stub_dossier.html' with dossier=review.mydossier %}
+        </div>
+    {% endif %}
 </div>
 

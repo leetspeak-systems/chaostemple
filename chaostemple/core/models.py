@@ -4,6 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from althingi.models import Document
 from althingi.models import Person
+from althingi.models import Review
 
 class UserProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='userprofile')
@@ -22,8 +23,10 @@ class Dossier(models.Model):
         (3, _('Thoroughly examined')),
     )
 
+    document = models.ForeignKey(Document, null=True, related_name='dossiers')
+    review = models.ForeignKey(Review, null=True, related_name='dossiers')
+
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='dossiers')
-    document = models.ForeignKey(Document, related_name='dossiers')
     attention = models.CharField(max_length=1, default='n', choices=ATTENTION_STATES)
     knowledge = models.IntegerField(default=0, choices=KNOWLEDGE_STATES)
 

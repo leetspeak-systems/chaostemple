@@ -42,11 +42,13 @@ def delete_dossier(request, dossier_id):
 
     dossier = Dossier.objects.get(id=dossier_id, user=request.user)
     document_id = dossier.document_id
+    review_id = dossier.review_id
 
     dossier.delete()
 
     ctx = {
-        'document_id': document_id
+        'document_id': document_id,
+        'review_id': review_id,
     }
     return ctx
 

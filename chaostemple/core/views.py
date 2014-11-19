@@ -7,6 +7,7 @@ from core.models import Dossier
 from althingi.models import Document
 from althingi.models import Issue
 from althingi.models import Parliament
+from althingi.models import Review
 from althingi.models import Session
 
 def home(request):
@@ -42,14 +43,19 @@ def parliament_issue(request, parliament_num, issue_num):
         'proposers__committee',
         'dossiers__user'
     ).filter(issue=issue)
+    reviews = Review.objects.filter(issue=issue)
 
     if request.user.is_authenticated():
         for document in documents:
-            document.mydossier, created = Dossier.objects.select_related('user').get_or_create(document=document, user=request.user)
+            document.mydossier, c = Dossier.objects.select_related('user').get_or_create(document=document, user=request.user)
+
+        for review in reviews:
+            review.mydossier, c = Dossier.objects.select_related('user').get_or_create(review=review, user=request.user)
 
     ctx = {
         'issue': issue,
         'documents': documents,
+        'reviews': reviews,
         'attentionstates': Dossier.ATTENTION_STATES,
         'knowledgestates': Dossier.KNOWLEDGE_STATES,
     }

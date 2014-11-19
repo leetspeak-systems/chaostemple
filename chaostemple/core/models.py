@@ -3,6 +3,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from althingi.models import Document
+from althingi.models import Issue
 from althingi.models import Person
 from althingi.models import Review
 
@@ -11,9 +12,9 @@ class UserProfile(models.Model):
 
 class Dossier(models.Model):
     ATTENTION_STATES = (
-        ('n', _('None')),
-        ('q', _('Question')),
-        ('a', _('Attention')),
+        ('none', _('None')),
+        ('question', _('Question')),
+        ('attention', _('Attention')),
     )
 
     KNOWLEDGE_STATES = (
@@ -27,7 +28,7 @@ class Dossier(models.Model):
     review = models.ForeignKey(Review, null=True, related_name='dossiers')
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='dossiers')
-    attention = models.CharField(max_length=1, default='n', choices=ATTENTION_STATES)
+    attention = models.CharField(max_length=10, default='none', choices=ATTENTION_STATES)
     knowledge = models.IntegerField(default=0, choices=KNOWLEDGE_STATES)
 
 class Memo(models.Model):

@@ -8,9 +8,9 @@ from core.models import Dossier
 register = template.Library()
 
 attention_css_classes = {
-    'n': 'btn-default',
-    'q': 'btn-warning',
-    'a': 'btn-warning',
+    'none': 'btn-default',
+    'question': 'btn-warning',
+    'attention': 'btn-warning',
 }
 
 knowledge_css_classes = {

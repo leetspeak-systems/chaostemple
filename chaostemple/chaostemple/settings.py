@@ -47,8 +47,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
-    'chaostemple.middleware.ForceLoginMiddleware',
-    'chaostemple.middleware.ExtraVarsMiddleware',
+    'core.middleware.ForceLoginMiddleware',
+    'core.middleware.ExtraVarsMiddleware',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -60,7 +60,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.tz',
     'django.contrib.messages.context_processors.messages',
 
-    'chaostemple.contextprocessors.globals',
+    'core.contextprocessors.globals',
 )
 
 ROOT_URLCONF = 'chaostemple.urls'

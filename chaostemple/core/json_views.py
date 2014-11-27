@@ -25,9 +25,11 @@ def attentionstate(request, dossier_id):
 def knowledgestate(request, dossier_id):
 
     knowledgestate = request.GET.get('knowledgestate', None)
+    if knowledgestate:
+        knowledgestate = int(knowledgestate)
 
     dossier = Dossier.objects.get(id=dossier_id, user=request.user)
-    if knowledgestate and dossier.knowledge != knowledgestate:
+    if knowledgestate is not None and dossier.knowledge != knowledgestate:
         dossier.knowledge = knowledgestate
         dossier.save()
 

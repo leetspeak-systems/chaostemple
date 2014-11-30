@@ -6,7 +6,7 @@
 
     <div class="btn-group" role="group">
         <button control="dropdown-attentionstate" data-id="{{ dossier.id }}" type="button"
-                    class="btn btn-default btn-sm dropdown-toggle {{ dossier.attention|attention_css }}" data-toggle="dropdown">
+                    class="btn btn-default btn-sm dropdown-toggle btn-{{ dossier.attention|attention_css }}" data-toggle="dropdown">
             <span class="display">{{ dossier.get_attention_display }}</span>
             <span class="caret"></span>
         </button>
@@ -22,7 +22,7 @@
 
     <div class="btn-group" role="group">
         <button control="dropdown-knowledgestate" data-id="{{ dossier.id }}" type="button"
-                    class="btn btn-default btn-sm dropdown-toggle {{ dossier.knowledge|knowledge_css }}" data-toggle="dropdown">
+                    class="btn btn-default btn-sm dropdown-toggle btn-{{ dossier.knowledge|knowledge_css }}" data-toggle="dropdown">
             <span class="display">{{ dossier.get_knowledge_display }}</span>
             <span class="caret"></span>
         </button>

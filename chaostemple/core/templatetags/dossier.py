@@ -8,16 +8,16 @@ from core.models import Dossier
 register = template.Library()
 
 attention_css_classes = {
-    'none': 'btn-default',
-    'question': 'btn-warning',
-    'attention': 'btn-warning',
+    'none': 'default',
+    'question': 'warning',
+    'attention': 'warning',
 }
 
 knowledge_css_classes = {
-    0: 'btn-warning',
-    1: 'btn-info',
-    2: 'btn-success',
-    3: 'btn-success',
+    0: 'warning',
+    1: 'info',
+    2: 'success',
+    3: 'success',
 }
 
 @register.filter(name='attention')

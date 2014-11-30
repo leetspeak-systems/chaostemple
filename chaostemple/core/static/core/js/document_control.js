@@ -23,10 +23,10 @@ $(document).ready(function() {
                             if (key == data.attentionstate) {
                                 keepclass = attention_css[key];
                             }
-                            $dropdown.removeClass(attention_css[key]);
+                            $dropdown.removeClass('btn-' + attention_css[key]);
                         }
                         if (keepclass) {
-                            $dropdown.addClass(keepclass);
+                            $dropdown.addClass('btn-' + keepclass);
                         }
                     }
                     else {
@@ -59,10 +59,10 @@ $(document).ready(function() {
                             if (key == data.knowledgestate) {
                                 keepclass = knowledge_css[key];
                             }
-                            $dropdown.removeClass(knowledge_css[key]);
+                            $dropdown.removeClass('btn-' + knowledge_css[key]);
                         }
                         if (keepclass) {
-                            $dropdown.addClass(keepclass);
+                            $dropdown.addClass('btn-' + keepclass);
                         }
                     }
                     else {

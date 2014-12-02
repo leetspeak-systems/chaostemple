@@ -1,0 +1,9 @@
+{% load dossier %}
+
+{% with dossier_statistic as stat %}
+{% if stat.attention != 'none' %}
+<span class="label label-{{ stat|statistic_css }}">
+    <span class="glyphicon glyphicon-{% if stat.dossier_type == 'document' %}file{% else %}inbox{% endif %}"></span>
+    {{ stat.get_status_type_display }}: {{ stat.get_status_display }}: {{ stat.count }}</span>
+{% endif %}
+{% endwith %}

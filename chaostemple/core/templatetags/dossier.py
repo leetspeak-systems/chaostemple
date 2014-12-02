@@ -46,3 +46,18 @@ def knowledge_css(knowledge):
 def knowledge_css_json():
     return knowledge_css_classes
 
+@register.filter
+def statistic_css(stat):
+    if stat.status_type == 'attention':
+        return attention_css(stat.attention)
+    elif stat.status_type == 'knowledge':
+        return knowledge_css(stat.knowledge)
+
+@register.filter
+def dossier_type(dossier_statistics, dossier_type):
+    result = []
+    for dossier_statistic in dossier_statistics:
+        if dossier_statistic.dossier_type == dossier_type:
+            result.append(dossier_statistic)
+    return result
+

@@ -3,6 +3,7 @@ from django.shortcuts import redirect
 from django.shortcuts import render
 
 from core.models import Dossier
+from core.models import DossierStatistic
 
 from althingi.models import Document
 from althingi.models import Issue
@@ -25,7 +26,7 @@ def parliament(request, parliament_num):
 
 def parliament_issues(request, parliament_num):
 
-    issues = Issue.objects.select_related('parliament').filter(
+    issues = Issue.objects.select_related('parliament').prefetch_related('dossier_statistics').filter(
         parliament__parliament_num=parliament_num,
         document_count__gt=0
     )
@@ -45,12 +46,26 @@ def parliament_issue(request, parliament_num, issue_num):
     ).filter(issue=issue)
     reviews = Review.objects.filter(issue=issue)
 
+    dossiers_created = False
     if request.user.is_authenticated():
         for document in documents:
-            document.mydossier, c = Dossier.objects.select_related('user').get_or_create(document=document, user=request.user)
+            try:
+                document.mydossier = Dossier.objects.select_related('user').get(document=document, user=request.user)
+            except Dossier.DoesNotExist:
+                document.mydossier = Dossier(document=document, user=request.user)
+                document.mydossier.save(update_statistics=False)
+                dossiers_created = True
 
         for review in reviews:
-            review.mydossier, c = Dossier.objects.select_related('user').get_or_create(review=review, user=request.user)
+            try:
+                review.mydossier = Dossier.objects.select_related('user').get(review=review, user=request.user)
+            except Dossier.DoesNotExist:
+                review.mydossier = Dossier(review=review, user=request.user)
+                review.mydossier.save(update_statistics=False)
+                dossiers_created = True
+
+        if dossiers_created:
+            DossierStatistic.objects.generate_statistics(issue.id, request.user.id)
 
     ctx = {
         'issue': issue,
@@ -74,7 +89,8 @@ def parliament_session(request, parliament_num, session_num):
 
     session = Session.objects.prefetch_related(
         'agenda_items__issue',
-        'agenda_items__issue__parliament'
+        'agenda_items__issue__parliament',
+        'agenda_items__issue__dossier_statistics'
     ).get(parliament__parliament_num=parliament_num, session_num=session_num)
 
     ctx = {

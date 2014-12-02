@@ -1,4 +1,6 @@
 {% load i18n %}
+{% load dossier %}
+
 <div class="panel panel-default">
     {% if issue.issue_group == 'A' %}
         <div class="panel-heading">{{ issue.get_issue_type_display|capfirst }}</div>
@@ -9,9 +11,21 @@
                     <small>({{ issue.description }})</small>
                 {% endif %}
             </p>
-            <span class="label label-primary">{{ issue.issue_num }}. {% trans 'parliamentary issue' %}</span>
-            <span class="label label-default">{% trans 'Reviews' %}: {{ issue.review_count }}</span>
-            <span class="label label-default">{% trans "Parliamentary Documents" %}: {{ issue.document_count }}</span>
+            <p>
+                <span class="label label-primary">{{ issue.issue_num }}. {% trans 'parliamentary issue' %}</span>
+                <span class="label label-default">{% trans 'Reviews' %}: {{ issue.review_count }}</span>
+                <span class="label label-default">{% trans "Parliamentary Documents" %}: {{ issue.document_count }}</span>
+            </p>
+            <p>
+                {% for dossier_statistic in issue.dossier_statistics.all|dossier_type:'document' %}
+                    {% include 'core/stub/stub_dossier_statistic.html' %}
+                {% endfor %}
+            </p>
+            <p>
+                {% for dossier_statistic in issue.dossier_statistics.all|dossier_type:'review' %}
+                    {% include 'core/stub/stub_dossier_statistic.html' %}
+                {% endfor %}
+            </p>
         </div>
     {% elif issue.issue_group == 'B' %}
         <div class="panel-body">{{ issue.name|capfirst }}</div>

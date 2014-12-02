@@ -20,7 +20,7 @@ knowledge_css_classes = {
     3: 'success',
 }
 
-@register.filter(name='attention')
+@register.filter
 def attention(dossier):
     t = loader.get_template('core/stub/stub_attention.html')
 
@@ -30,19 +30,19 @@ def attention(dossier):
     })
     return t.render(ctx)
 
-@register.filter(name='attention_css')
+@register.filter
 def attention_css(attention):
     return attention_css_classes[attention]
 
-@register.simple_tag(name='attention_css_json')
+@register.simple_tag
 def attention_css_json():
     return attention_css_classes
 
-@register.filter(name='knowledge_css')
+@register.filter
 def knowledge_css(knowledge):
     return knowledge_css_classes[knowledge]
 
-@register.simple_tag(name='knowledge_css_json')
+@register.simple_tag
 def knowledge_css_json():
     return knowledge_css_classes
 

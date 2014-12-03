@@ -15,7 +15,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         # update_sessions()
         update_next_sessions()
-        # update_session(25, 144)
+        update_session(35, 144)
 
         # update_issues()
         # update_issue(167, 143)

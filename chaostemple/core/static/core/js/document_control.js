@@ -73,6 +73,42 @@ $(document).ready(function() {
         });
     });
 
+    // Button: set-supportstate
+    $(document).on('click', 'a[control="set-supportstate"]', function() {
+        dossier_id = $(this).data('dossier-id');
+        supportstate = $(this).data('supportstate');
+
+        $.jsonize({
+            url: '/json/dossier/' + dossier_id + '/supportstate/',
+            data: { supportstate: supportstate },
+            done: function(data, textStatus) {
+                $('a[control="set-supportstate"][data-dossier-id=' + dossier_id + ']').each(function() {
+                    $anchor = $(this);
+                    $dropdown = $('button[control="dropdown-supportstate"][data-id=' + dossier_id + ']');
+
+                    if ($anchor.data('supportstate') == data.supportstate) {
+                        $anchor.parent().addClass('active');
+
+                        $dropdown.find('.display').text($anchor.text());
+                        keepclass = ''; // This is needed in case two supportstates have the same CSS class
+                        for (var key in support_css) {
+                            if (key == data.supportstate) {
+                                keepclass = support_css[key];
+                            }
+                            $dropdown.removeClass('btn-' + support_css[key]);
+                        }
+                        if (keepclass) {
+                            $dropdown.addClass('btn-' + keepclass);
+                        }
+                    }
+                    else {
+                        $anchor.parent().removeClass('active');
+                    }
+                });
+            }
+        });
+    });
+
     // Button: delete-dossier
     $(document).on('click', 'button[control="delete-dossier"]', function() {
         dossier_id = $(this).data('id');

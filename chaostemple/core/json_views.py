@@ -22,6 +22,22 @@ def attentionstate(request, dossier_id):
 
 @login_required
 @jsonize
+def supportstate(request, dossier_id):
+
+    supportstate = request.GET.get('supportstate', None)
+
+    dossier = Dossier.objects.get(id=dossier_id, user=request.user)
+    if supportstate and dossier.support != supportstate:
+        dossier.support = supportstate
+        dossier.save()
+
+    ctx = {
+        'supportstate': dossier.support
+    }
+    return ctx
+
+@login_required
+@jsonize
 def knowledgestate(request, dossier_id):
 
     knowledgestate = request.GET.get('knowledgestate', None)

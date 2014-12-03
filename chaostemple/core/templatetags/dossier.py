@@ -20,6 +20,16 @@ knowledge_css_classes = {
     3: 'success',
 }
 
+support_css_classes = {
+    'undefined': 'default',
+    'total_opposition': 'danger',
+    'oppose': 'warning',
+    'neutral': 'info',
+    'support': 'primary',
+    'total_support': 'success',
+    'other': 'info',
+}
+
 @register.filter
 def attention(dossier):
     t = loader.get_template('core/stub/stub_attention.html')
@@ -47,11 +57,21 @@ def knowledge_css_json():
     return knowledge_css_classes
 
 @register.filter
+def support_css(support):
+    return support_css_classes[support]
+
+@register.simple_tag
+def support_css_json():
+    return support_css_classes
+
+@register.filter
 def statistic_css(stat):
     if stat.status_type == 'attention':
         return attention_css(stat.attention)
     elif stat.status_type == 'knowledge':
         return knowledge_css(stat.knowledge)
+    elif stat.status_type == 'support':
+        return support_css(stat.support)
 
 @register.filter
 def dossier_type(dossier_statistics, dossier_type):

@@ -51,7 +51,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='userprofile')
 
 class Dossier(models.Model):
-    tracker = FieldTracker(fields=['attention', 'knowledge'])
+    tracker = FieldTracker(fields=['attention', 'knowledge', 'support'])
 
     DOSSIER_TYPES = (
         ('document', _('Document')),
@@ -61,6 +61,7 @@ class Dossier(models.Model):
     STATUS_TYPES = (
         ('attention', _('Attention')),
         ('knowledge', _('Knowledge')),
+        ('support', _('Support')),
     )
 
     ATTENTION_STATES = (
@@ -76,6 +77,16 @@ class Dossier(models.Model):
         (3, _('Thoroughly examined')),
     )
 
+    SUPPORT_STATES = (
+        ('undefined', _('Undefined')),
+        ('total_opposition', _('Total Opposition')),
+        ('oppose', _('Oppose')),
+        ('neutral', _('Neutral')),
+        ('support', _('Support')),
+        ('total_support', _('Total Support')),
+        ('other', _('Other')),
+    )
+
     issue = models.ForeignKey(Issue, related_name='dossiers')
     dossier_type = models.CharField(max_length=10, choices=DOSSIER_TYPES)
 
@@ -85,6 +96,7 @@ class Dossier(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='dossiers')
     attention = models.CharField(max_length=10, default='none', choices=ATTENTION_STATES)
     knowledge = models.IntegerField(default=0, choices=KNOWLEDGE_STATES)
+    support = models.CharField(max_length=20, default='undefined', choices=SUPPORT_STATES)
 
     def update_statistic(self, field, old_value, new_value):
         # Short-hands
@@ -145,6 +157,7 @@ class DossierStatistic(models.Model):
 
     attention = models.CharField(max_length=10, null=True, choices=Dossier.ATTENTION_STATES)
     knowledge = models.IntegerField(null=True, choices=Dossier.KNOWLEDGE_STATES)
+    support = models.CharField(max_length=20, null=True, choices=Dossier.SUPPORT_STATES)
 
     count = models.IntegerField(default=0)
 
@@ -158,6 +171,8 @@ class DossierStatistic(models.Model):
             return self.get_attention_display()
         elif self.status_type == 'knowledge':
             return self.get_knowledge_display()
+        elif self.status_type == 'support':
+            return self.get_support_display()
 
     def save(self, *args, **kwargs):
         for status_type, status_type_label in Dossier.STATUS_TYPES:

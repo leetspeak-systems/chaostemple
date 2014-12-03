@@ -13,6 +13,7 @@ urlpatterns = patterns('',
 
     url(r'^json/dossier/(?P<dossier_id>\d+)/attentionstate/$', 'core.json_views.attentionstate', name='json_attentionstate'),
     url(r'^json/dossier/(?P<dossier_id>\d+)/knowledgestate/$', 'core.json_views.knowledgestate', name='json_knowledgestate'),
+    url(r'^json/dossier/(?P<dossier_id>\d+)/supportstate/$', 'core.json_views.supportstate', name='json_supportstate'),
     url(r'^json/dossier/(?P<dossier_id>\d+)/delete/$', 'core.json_views.delete_dossier', name='json_delete_dossier'),
 )
 

@@ -36,5 +36,21 @@
         </ul>
     </div>
 
+    <div class="btn-group" role="group">
+        <button control="dropdown-supportstate" data-id="{{ dossier.id }}" type="button"
+                    class="btn btn-default btn-sm dropdown-toggle btn-{{ dossier.support|support_css }}" data-toggle="dropdown">
+            <span class="display">{{ dossier.get_support_display }}</span>
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+            {% for supportstate in supportstates %}
+                <li {% if dossier.support == supportstate.0 %}class="active"{% endif %}>
+                    <a href="#" control="set-supportstate" data-dossier-id="{{ dossier.id }}"
+                            data-supportstate="{{ supportstate.0 }}">{{ supportstate.1 }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
     <button control="delete-dossier" class="btn btn-xs btn-danger pull-right" data-id="{{ dossier.id }}">{% trans 'Mark as New' %}</button>
 </div>

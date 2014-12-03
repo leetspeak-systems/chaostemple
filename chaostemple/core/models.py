@@ -67,7 +67,7 @@ class Dossier(models.Model):
     ATTENTION_STATES = (
         ('none', _('None')),
         ('question', _('Question')),
-        ('attention', _('Attention')),
+        ('exclamation', _('Exclamation')),
     )
 
     KNOWLEDGE_STATES = (
@@ -94,7 +94,7 @@ class Dossier(models.Model):
     review = models.ForeignKey(Review, null=True, related_name='dossiers')
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='dossiers')
-    attention = models.CharField(max_length=10, default='none', choices=ATTENTION_STATES)
+    attention = models.CharField(max_length=20, default='none', choices=ATTENTION_STATES)
     knowledge = models.IntegerField(default=0, choices=KNOWLEDGE_STATES)
     support = models.CharField(max_length=20, default='undefined', choices=SUPPORT_STATES)
 
@@ -155,7 +155,7 @@ class DossierStatistic(models.Model):
 
     status_type = models.CharField(max_length=10, choices=Dossier.STATUS_TYPES)
 
-    attention = models.CharField(max_length=10, null=True, choices=Dossier.ATTENTION_STATES)
+    attention = models.CharField(max_length=20, null=True, choices=Dossier.ATTENTION_STATES)
     knowledge = models.IntegerField(null=True, choices=Dossier.KNOWLEDGE_STATES)
     support = models.CharField(max_length=20, null=True, choices=Dossier.SUPPORT_STATES)
 

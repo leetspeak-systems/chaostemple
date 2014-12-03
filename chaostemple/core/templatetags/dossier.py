@@ -10,7 +10,7 @@ register = template.Library()
 attention_css_classes = {
     'none': 'default',
     'question': 'warning',
-    'attention': 'warning',
+    'exclamation': 'warning',
 }
 
 knowledge_css_classes = {

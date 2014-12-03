@@ -9,44 +9,6 @@ from althingi.models import Issue
 from althingi.models import Person
 from althingi.models import Review
 
-class DossierStatisticManager(models.Manager):
-
-    def generate_statistics(self, issue_id, user_id):
-
-        result = {}
-        dossiers = Dossier.objects.filter(issue_id=issue_id, user_id=user_id)
-        for dossier in dossiers:
-            dossier_type = dossier.dossier_type # Short-hand
-
-            if not dossier_type in result:
-                result[dossier_type] = {}
-
-            for field in Dossier.tracker.fields:
-                value = getattr(dossier, field)
-
-                if not field in result[dossier_type]:
-                    result[dossier_type][field] = {}
-
-                if not value in result[dossier_type][field]:
-                    result[dossier_type][field][getattr(dossier, field)] = 0
-
-                result[dossier_type][field][value] = result[dossier_type][field][value] + 1
-
-        DossierStatistic.objects.filter(issue_id=issue_id, user_id=user_id).delete()
-        for dossier_type in result:
-            for field in Dossier.tracker.fields:
-                for value in result[dossier_type][field]:
-                    kwargs = {
-                        'issue_id': issue_id,
-                        'user_id': user_id,
-                        'dossier_type': dossier_type,
-                        field: value
-                    }
-                    stat = DossierStatistic(**kwargs)
-                    stat.count = result[dossier_type][field][value]
-                    stat.save()
-
-
 class UserProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='userprofile')
 
@@ -146,8 +108,6 @@ class Dossier(models.Model):
 
 
 class DossierStatistic(models.Model):
-    objects = DossierStatisticManager()
-
     issue = models.ForeignKey(Issue, related_name='dossier_statistics')
     dossier_type = models.CharField(max_length=10, choices=Dossier.DOSSIER_TYPES)
 

@@ -5,6 +5,8 @@ from django.shortcuts import render
 from core.models import Dossier
 from core.models import DossierStatistic
 
+from core.utils import generate_dossier_statistics
+
 from althingi.models import Document
 from althingi.models import Issue
 from althingi.models import Parliament
@@ -65,7 +67,7 @@ def parliament_issue(request, parliament_num, issue_num):
                 dossiers_created = True
 
         if dossiers_created:
-            DossierStatistic.objects.generate_statistics(issue.id, request.user.id)
+            generate_dossier_statistics(issue.id, request.user.id)
 
     ctx = {
         'issue': issue,

@@ -2,10 +2,9 @@ from django.conf import settings
 from django.shortcuts import redirect
 from django.utils.translation import ugettext as _
 
-class ExtraVarsMiddleware():
-    def leave_breadcrumb(self, breadcrumbs, urlname, caption):
-        return breadcrumbs + ((urlname, caption),)
+from core.breadcrumbs import make_breadcrumbs
 
+class ExtraVarsMiddleware():
     # For handing certain variables over to the context processor for global display.
     def process_view(self, request, view_func, view_args, view_kwargs):
 
@@ -19,47 +18,10 @@ class ExtraVarsMiddleware():
         if session_num:
             session_num = int(session_num)
 
-        breadcrumbs = ()
-
-        if parliament_num:
-            breadcrumbs = self.leave_breadcrumb(
-                breadcrumbs,
-                ('parliament', parliament_num),
-                '%d. %s' % (parliament_num, _('parliament'))
-            )
-
-        if view_func.func_name in ('parliament_issues', 'parliament_issue'):
-            breadcrumbs = self.leave_breadcrumb(
-                breadcrumbs,
-                ('parliament_issues', parliament_num),
-                _('Issues')
-            )
-        
-        if view_func.func_name == 'parliament_issue':
-            breadcrumbs = self.leave_breadcrumb(
-                breadcrumbs,
-                ('parliament_issue', parliament_num, issue_num),
-                '%d. %s' % (issue_num, _('issue'))
-            )
-
-        if view_func.func_name in ('parliament_sessions', 'parliament_session'):
-            breadcrumbs = self.leave_breadcrumb(
-                breadcrumbs,
-                ('parliament_sessions', parliament_num),
-                _('Parliamentary Sessions')
-            )
-
-        if view_func.func_name == 'parliament_session':
-            breadcrumbs = self.leave_breadcrumb(
-                breadcrumbs,
-                ('parliament_session', parliament_num, session_num),
-                '%d. %s' % (session_num, _('parliamentary session'))
-            )
-
         request.extravars = {
             'parliament_num': parliament_num,
             'issue_num': issue_num,
-            'breadcrumbs': breadcrumbs,
+            'breadcrumbs': make_breadcrumbs(view_func.func_name, parliament_num, issue_num, session_num),
             'urlname': view_func.func_name,
         }
 

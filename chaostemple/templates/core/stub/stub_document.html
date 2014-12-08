@@ -2,17 +2,22 @@
 
 <div class="panel panel-default" control="document" data-id="{{ document.id }}">
     <div class="panel-body">
-        <p><a href="{{ document.pdf_link }}" target="_blank">{{ document.get_doc_type_display|capfirst }}</a></p>
+        <div style="float: right;">
+            <span class="label label-info">{{ document.doc_num }}. {% trans 'parliamentary document' %}</span>
+            <span class="label label-info">{{ document.time_published|date }}</span>
+        </div>
+        <div>
+            <span class="glyphicon glyphicon-file"></span>
+            <a class="title" href="{{ document.pdf_link }}" target="_blank">{{ document.get_doc_type_display|capfirst }}</a>
+        </div>
         {% if document.proposers.all.count %}
-            <p>
+            <div class="proposers">
                 <strong>{% trans "Proposers" %}:</strong>
                 {% for proposer in document.proposers.all %}
                     <a href="#">{{ proposer }}</a>{% if not forloop.last %}, {% endif %}
                 {% endfor %}
-            </p>
+            </div>
         {% endif %}
-        <span class="label label-primary">{{ document.doc_num }}. {% trans 'parliamentary document' %}</span>
-        <span class="label label-default">{{ document.time_published|date }}</span>
         {% for dossier in document.dossiers.all %}
             {% if dossier.user_id != user.id %}
                 <span class="label label-info">{{ dossier.user }}</span>
@@ -25,4 +30,3 @@
         </div>
     {% endif %}
 </div>
-

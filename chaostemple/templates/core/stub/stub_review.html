@@ -1,8 +1,14 @@
+{% load i18n %}
 
 <div class="panel panel-default" control="review" data-id="{{ review.id }}">
     <div class="panel-body">
-        <p><a href="{{ review.pdf_link }}" target="_blank">{{ review.sender_name }}</a></p>
-        <span class="label label-default">{{ review.date_arrived|date }}</span>
+        <div style="float: right;">
+            <span class="label label-info">{{ review.date_arrived|date }}</span>
+        </div>
+        <div>
+            <span class="glyphicon glyphicon-inbox"></span>
+            <a class="title" href="{{ review.pdf_link }}" target="_blank">{{ review.sender_name }}</a>
+        </div>
     </div>
     {% if review.mydossier %}
         <div class="panel-footer">

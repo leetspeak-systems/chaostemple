@@ -4,23 +4,8 @@
 <div control="dossier" data-id="{{ dossier.id }}" data-user-id="{{ dossier.user_id }}">
     <label><a href="#">{{ dossier.user }}</a></label>
 
-    <div class="btn-group" role="group">
-        <button control="dropdown-attentionstate" data-id="{{ dossier.id }}" type="button"
-                    class="btn btn-default btn-sm dropdown-toggle btn-{{ dossier.attention|attention_css }}" data-toggle="dropdown">
-            <span class="display">{{ dossier.get_attention_display }}</span>
-            <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu" role="menu">
-            {% for attentionstate in attentionstates %}
-                <li {% if dossier.attention == attentionstate.0 %}class="active"{% endif %}>
-                    <a href="#" control="set-attentionstate" data-dossier-id="{{ dossier.id }}"
-                            data-attentionstate="{{ attentionstate.0 }}">{{ attentionstate.1 }}</a>
-                </li>
-            {% endfor %}
-        </ul>
-    </div>
-
-    <div class="btn-group" role="group">
+    <label class="fieldname">{% trans 'Knowledge' %}:</label>
+    <div class="btn-group dropup" role="group">
         <button control="dropdown-knowledgestate" data-id="{{ dossier.id }}" type="button"
                     class="btn btn-default btn-sm dropdown-toggle btn-{{ dossier.knowledge|knowledge_css }}" data-toggle="dropdown">
             <span class="display">{{ dossier.get_knowledge_display }}</span>
@@ -36,7 +21,8 @@
         </ul>
     </div>
 
-    <div class="btn-group" role="group">
+    <label class="fieldname">{% trans 'Support' %}:</label>
+    <div class="btn-group dropup" role="group">
         <button control="dropdown-supportstate" data-id="{{ dossier.id }}" type="button"
                     class="btn btn-default btn-sm dropdown-toggle btn-{{ dossier.support|support_css }}" data-toggle="dropdown">
             <span class="display">{{ dossier.get_support_display }}</span>
@@ -47,6 +33,23 @@
                 <li {% if dossier.support == supportstate.0 %}class="active"{% endif %}>
                     <a href="#" control="set-supportstate" data-dossier-id="{{ dossier.id }}"
                             data-supportstate="{{ supportstate.0 }}">{{ supportstate.1 }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <label class="fieldname">{% trans 'Attention' %}:</label>
+    <div class="btn-group dropup" role="group">
+        <button control="dropdown-attentionstate" data-id="{{ dossier.id }}" type="button"
+                    class="btn btn-default btn-sm dropdown-toggle btn-{{ dossier.attention|attention_css }}" data-toggle="dropdown">
+            <span class="display">{{ dossier.get_attention_display }}</span>
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+            {% for attentionstate in attentionstates %}
+                <li {% if dossier.attention == attentionstate.0 %}class="active"{% endif %}>
+                    <a href="#" control="set-attentionstate" data-dossier-id="{{ dossier.id }}"
+                            data-attentionstate="{{ attentionstate.0 }}">{{ attentionstate.1 }}</a>
                 </li>
             {% endfor %}
         </ul>

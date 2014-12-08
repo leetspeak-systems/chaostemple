@@ -3,6 +3,10 @@ body { padding-top: 50px; }
 div[control="dossier"] { margin-top: 10px; }
 div[control="dossier"]:first-child { margin-top: 0px; }
 div[control="dossier"] label { font-weight: normal; width: 60px; margin-right: 8px; }
+div[control="dossier"] label.fieldname { display: inline; margin: 0px 12px 0px 12px; font-size: small; }
+div[control="document"] a.title { font-size: large; font-weight: bold; margin-left: 6px; }
+div[control="document"] div.proposers { margin-top: 10px; font-size: small; }
 div[control="document"] button[control="add-dossier"] { margin-top: 10px; }
 div[control="document"] button[control="add-dossier"]:first-child { margin-top: 0px; }
+div[control="review"] a.title { font-size: large; font-weight: bold; margin-left: 6px; }
 

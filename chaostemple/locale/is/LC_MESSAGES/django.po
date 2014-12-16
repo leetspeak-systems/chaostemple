@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-12-03 20:42+0000\n"
+"POT-Creation-Date: 2014-12-16 16:51+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -22,37 +22,39 @@ msgstr ""
 msgid "Temple of Chaos"
 msgstr "Musteri Glundroðans"
 
-#: core/middleware.py:28 templates/base.html:44
+#: core/breadcrumbs.py:13 templates/base.html:44
 msgid "parliament"
 msgstr "þing"
 
-#: core/middleware.py:35 templates/base.html:36
+#: core/breadcrumbs.py:20 templates/base.html:36
 #: templates/core/parliament.html:7
 msgid "Issues"
 msgstr "Þingmál"
 
-#: core/middleware.py:42
+#: core/breadcrumbs.py:27
 msgid "issue"
 msgstr "mál"
 
-#: core/middleware.py:49 templates/base.html:37
+#: core/breadcrumbs.py:34 templates/base.html:37
 #: templates/core/parliament.html:8 templates/core/parliament_sessions.html:6
 msgid "Parliamentary Sessions"
 msgstr "Þingfundir"
 
-#: core/middleware.py:56
+#: core/breadcrumbs.py:41
 msgid "parliamentary session"
 msgstr "þingfundur"
 
-#: core/models.py:19
-msgid "Document"
-msgstr ""
+#: core/models.py:19 templates/core/parliament_issue.html:24
+#: templates/core/stub/stub_issue.html:17
+msgid "Parliamentary Documents"
+msgstr "Þingskjöl"
 
-#: core/models.py:20
-msgid "Review"
-msgstr "Umsögn"
+#: core/models.py:20 templates/core/parliament_issue.html:31
+#: templates/core/stub/stub_issue.html:16
+msgid "Reviews"
+msgstr "Umsagnir"
 
-#: core/models.py:24 templates/core/stub/stub_dossier.html:24
+#: core/models.py:24 templates/core/stub/stub_dossier.html:41
 msgid "Attention"
 msgstr "Aðvörun"
 
@@ -61,7 +63,7 @@ msgid "Knowledge"
 msgstr "Þekking"
 
 #: core/models.py:26 core/models.py:47
-#: templates/core/stub/stub_dossier.html:41
+#: templates/core/stub/stub_dossier.html:24
 msgid "Support"
 msgstr "Stuðningur"
 
@@ -98,8 +100,8 @@ msgid "Undefined"
 msgstr "Ótilgreint"
 
 #: core/models.py:44
-msgid "Total Opposition"
-msgstr "Alger andstaða"
+msgid "Strong Opposition"
+msgstr "Eindregin andstaða"
 
 #: core/models.py:45
 msgid "Oppose"
@@ -110,8 +112,8 @@ msgid "Neutral"
 msgstr "Hlutleysi"
 
 #: core/models.py:48
-msgid "Total Support"
-msgstr "Alger stuðningur"
+msgid "Strong Support"
+msgstr "Eindreginn stuðningur"
 
 #: core/models.py:49
 msgid "Other"
@@ -163,23 +165,13 @@ msgstr "Hætta við"
 msgid "Delete"
 msgstr "Eyða"
 
-#: templates/core/parliament_issue.html:24
-#: templates/core/stub/stub_issue.html:17
-msgid "Parliamentary Documents"
-msgstr "Þingskjöl"
-
-#: templates/core/parliament_issue.html:31
-#: templates/core/stub/stub_issue.html:16
-msgid "Reviews"
-msgstr "Umsagnir"
-
-#: templates/core/stub/stub_document.html:8
-msgid "Proposers"
-msgstr "Flutningsmenn"
-
-#: templates/core/stub/stub_document.html:14
+#: templates/core/stub/stub_document.html:6
 msgid "parliamentary document"
 msgstr "þingskjal"
+
+#: templates/core/stub/stub_document.html:15
+msgid "Proposers"
+msgstr "Flutningsmenn"
 
 #: templates/core/stub/stub_dossier.html:58
 msgid "Mark as New"
@@ -188,3 +180,9 @@ msgstr "Merkja sem nýtt"
 #: templates/core/stub/stub_issue.html:15
 msgid "parliamentary issue"
 msgstr "þingmál"
+
+#~ msgid "Parliamentary Document"
+#~ msgstr "Þingskjal"
+
+#~ msgid "Review"
+#~ msgstr "Umsögn"

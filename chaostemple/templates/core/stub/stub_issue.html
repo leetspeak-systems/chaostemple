@@ -1,7 +1,7 @@
 {% load i18n %}
 {% load dossier %}
 
-<div class="panel panel-default">
+<div class="panel panel-default" control="issue">
     {% if issue.issue_group == 'A' %}
         <div class="panel-heading">{{ issue.get_issue_type_display|capfirst }}</div>
         <div class="panel-body">
@@ -17,13 +17,8 @@
                 <span class="label label-default">{% trans "Parliamentary Documents" %}: {{ issue.document_count }}</span>
             </p>
             <p>
-                {% for dossier_statistic in issue.dossier_statistics.all|dossier_type:'document' %}
-                    {% include 'core/stub/stub_dossier_statistic.html' %}
-                {% endfor %}
-            </p>
-            <p>
-                {% for dossier_statistic in issue.dossier_statistics.all|dossier_type:'review' %}
-                    {% include 'core/stub/stub_dossier_statistic.html' %}
+                {% for dossier_statistic in issue.dossier_statistics.all %}
+                    {% display_dossier_statistic dossier_statistic %}
                 {% endfor %}
             </p>
         </div>

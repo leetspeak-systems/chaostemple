@@ -5,8 +5,6 @@ from django.shortcuts import render
 from core.models import Dossier
 from core.models import DossierStatistic
 
-from core.utils import generate_dossier_statistics
-
 from althingi.models import Document
 from althingi.models import Issue
 from althingi.models import Parliament
@@ -34,7 +32,8 @@ def parliament_issues(request, parliament_num):
     )
 
     ctx = {
-        'issues': issues
+        'issues': issues,
+        'dossier_types': [{'fieldname': fieldname, 'name': name} for fieldname, name in Dossier.DOSSIER_TYPES],
     }
     return render(request, 'core/parliament_issues.html', ctx)
 
@@ -48,7 +47,6 @@ def parliament_issue(request, parliament_num, issue_num):
     ).filter(issue=issue)
     reviews = Review.objects.filter(issue=issue)
 
-    dossiers_created = False
     if request.user.is_authenticated():
         for document in documents:
             try:
@@ -56,7 +54,6 @@ def parliament_issue(request, parliament_num, issue_num):
             except Dossier.DoesNotExist:
                 document.mydossier = Dossier(document=document, user=request.user)
                 document.mydossier.save(update_statistics=False)
-                dossiers_created = True
 
         for review in reviews:
             try:
@@ -64,10 +61,6 @@ def parliament_issue(request, parliament_num, issue_num):
             except Dossier.DoesNotExist:
                 review.mydossier = Dossier(review=review, user=request.user)
                 review.mydossier.save(update_statistics=False)
-                dossiers_created = True
-
-        if dossiers_created:
-            generate_dossier_statistics(issue.id, request.user.id)
 
     ctx = {
         'issue': issue,

@@ -16,8 +16,8 @@ class Dossier(models.Model):
     tracker = FieldTracker(fields=['attention', 'knowledge', 'support'])
 
     DOSSIER_TYPES = (
-        ('document', _('Document')),
-        ('review', _('Review')),
+        ('document', _('Parliamentary Documents')),
+        ('review', _('Reviews')),
     )
 
     STATUS_TYPES = (
@@ -41,11 +41,11 @@ class Dossier(models.Model):
 
     SUPPORT_STATES = (
         ('undefined', _('Undefined')),
-        ('total_opposition', _('Total Opposition')),
+        ('strongopposition', _('Strong Opposition')),
         ('oppose', _('Oppose')),
         ('neutral', _('Neutral')),
         ('support', _('Support')),
-        ('total_support', _('Total Support')),
+        ('strongsupport', _('Strong Support')),
         ('other', _('Other')),
     )
 
@@ -66,24 +66,24 @@ class Dossier(models.Model):
         user_id = self.user_id
         dossier_type = self.dossier_type
 
-        if old_value is not None:
-            kwargs = {'issue_id': issue_id, 'user_id': user_id, 'dossier_type': dossier_type, field: old_value}
-            old_stat = DossierStatistic.objects.get(**kwargs)
+        new_stat, c = DossierStatistic.objects.get_or_create(issue_id=issue_id, user_id=user_id)
 
-            if old_stat.count == 1:
-                old_stat.delete()
-            else:
-                # count() is used instead of -1 for self-healing if stats go bad
-                old_stat.count = Dossier.objects.filter(**kwargs).count()
-                old_stat.save()
+        if old_value is not None:
+            statistic_field = '%s_%s_%s' % (dossier_type, field, old_value)
+            if hasattr(new_stat, statistic_field):
+                kwargs = {'issue_id': issue_id, 'user_id': user_id, 'dossier_type': dossier_type, field: old_value}
+                count = Dossier.objects.filter(**kwargs).count()
+                setattr(new_stat, statistic_field, count)
+                new_stat.save()
 
         if new_value is not None:
-            kwargs = {'issue_id': issue_id, 'user_id': user_id, 'dossier_type': dossier_type, field: new_value}
-            new_stat, c = DossierStatistic.objects.get_or_create(**kwargs)
-
-            # count() is used instead of +1 for self-healing if stats go bad
-            new_stat.count = Dossier.objects.filter(**kwargs).count()
-            new_stat.save()
+            statistic_field = '%s_%s_%s' % (dossier_type, field, new_value)
+            new_stat, c = DossierStatistic.objects.get_or_create(issue_id=issue_id, user_id=user_id)
+            if hasattr(new_stat, statistic_field):
+                kwargs = {'issue_id': issue_id, 'user_id': user_id, 'dossier_type': dossier_type, field: new_value}
+                count = Dossier.objects.filter(**kwargs).count()
+                setattr(new_stat, statistic_field, count)
+                new_stat.save()
 
 
     def save(self, update_statistics=True, *args, **kwargs):
@@ -96,7 +96,7 @@ class Dossier(models.Model):
 
         super(Dossier, self).save(*args, **kwargs)
 
-        if update_statistics:
+        if update_statistics or True:
             for field, old_value in self.tracker.changed().items():
                 self.update_statistic(field, old_value, getattr(self, field))
 
@@ -109,22 +109,38 @@ class Dossier(models.Model):
 
 class DossierStatistic(models.Model):
     issue = models.ForeignKey(Issue, related_name='dossier_statistics')
-    dossier_type = models.CharField(max_length=10, choices=Dossier.DOSSIER_TYPES)
-
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='dossier_statistics')
 
-    status_type = models.CharField(max_length=10, choices=Dossier.STATUS_TYPES)
+    document_attention_exclamation = models.IntegerField(default=0)
+    document_attention_question = models.IntegerField(default=0)
+    document_knowledge_0 = models.IntegerField(default=0)
+    document_knowledge_1 = models.IntegerField(default=0)
+    document_knowledge_2 = models.IntegerField(default=0)
+    document_knowledge_3 = models.IntegerField(default=0)
+    document_support_undefined = models.IntegerField(default=0)
+    document_support_strongopposition = models.IntegerField(default=0)
+    document_support_oppose = models.IntegerField(default=0)
+    document_support_neutral = models.IntegerField(default=0)
+    document_support_support = models.IntegerField(default=0)
+    document_support_strongsupport = models.IntegerField(default=0)
+    document_support_other = models.IntegerField(default=0)
 
-    attention = models.CharField(max_length=20, null=True, choices=Dossier.ATTENTION_STATES)
-    knowledge = models.IntegerField(null=True, choices=Dossier.KNOWLEDGE_STATES)
-    support = models.CharField(max_length=20, null=True, choices=Dossier.SUPPORT_STATES)
-
-    count = models.IntegerField(default=0)
-
-    def __unicode__(self):
-        return "[ dossier_type: '%s', 'attention': %s, 'knowledge': %s, 'count': %d ]" % (self.dossier_type, self.attention, self.knowledge, self.count)
+    review_attention_exclamation = models.IntegerField(default=0)
+    review_attention_question = models.IntegerField(default=0)
+    review_knowledge_0 = models.IntegerField(default=0)
+    review_knowledge_1 = models.IntegerField(default=0)
+    review_knowledge_2 = models.IntegerField(default=0)
+    review_knowledge_3 = models.IntegerField(default=0)
+    review_support_undefined = models.IntegerField(default=0)
+    review_support_strongopposition = models.IntegerField(default=0)
+    review_support_oppose = models.IntegerField(default=0)
+    review_support_neutral = models.IntegerField(default=0)
+    review_support_support = models.IntegerField(default=0)
+    review_support_strongsupport = models.IntegerField(default=0)
+    review_support_other = models.IntegerField(default=0)
 
     def get_status_display(self):
+        '''
         # Explicit is better than implicit. It may seem tempting to generalize this but keep in
         # mind that more statii will no doubt be added later which may be displayed differently.
         if self.status_type == 'attention':
@@ -133,14 +149,7 @@ class DossierStatistic(models.Model):
             return self.get_knowledge_display()
         elif self.status_type == 'support':
             return self.get_support_display()
-
-    def save(self, *args, **kwargs):
-        for status_type, status_type_label in Dossier.STATUS_TYPES:
-            if getattr(self, status_type) is not None:
-                self.status_type = status_type
-
-        super(DossierStatistic, self).save(*args, **kwargs)
-
+        '''
 
 class Memo(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='memos')

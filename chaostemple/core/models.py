@@ -139,17 +139,6 @@ class DossierStatistic(models.Model):
     review_support_strongsupport = models.IntegerField(default=0)
     review_support_other = models.IntegerField(default=0)
 
-    def get_status_display(self):
-        '''
-        # Explicit is better than implicit. It may seem tempting to generalize this but keep in
-        # mind that more statii will no doubt be added later which may be displayed differently.
-        if self.status_type == 'attention':
-            return self.get_attention_display()
-        elif self.status_type == 'knowledge':
-            return self.get_knowledge_display()
-        elif self.status_type == 'support':
-            return self.get_support_display()
-        '''
 
 class Memo(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='memos')

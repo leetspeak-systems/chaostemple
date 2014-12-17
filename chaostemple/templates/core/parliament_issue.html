@@ -6,9 +6,9 @@
 {% block javascript %}
     <script language="javascript" type="text/javascript">
 
-        attention_css = {% attention_css_json %};
-        knowledge_css = {% knowledge_css_json %};
-        support_css = {% support_css_json %};
+        attention_css = {% dossier_css 'attention' %};
+        knowledge_css = {% dossier_css 'knowledge' %};
+        support_css = {% dossier_css 'support' %};
 
     </script>
 

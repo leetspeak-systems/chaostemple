@@ -7,52 +7,36 @@ from core.models import Dossier
 
 register = template.Library()
 
-attention_css_classes = {
-    'none': 'default',
-    'question': 'warning',
-    'exclamation': 'warning',
+css_classes = {
+    'attention': {
+        'none': 'default',
+        'question': 'warning',
+        'exclamation': 'warning',
+    },
+    'knowledge': {
+        0: 'warning',
+        1: 'info',
+        2: 'success',
+        3: 'success',
+    },
+    'support': {
+        'undefined': 'default',
+        'strongopposition': 'danger',
+        'oppose': 'warning',
+        'neutral': 'info',
+        'support': 'primary',
+        'strongsupport': 'success',
+        'other': 'info',
+    }
 }
 
-knowledge_css_classes = {
-    0: 'warning',
-    1: 'info',
-    2: 'success',
-    3: 'success',
-}
-
-support_css_classes = {
-    'undefined': 'default',
-    'strongopposition': 'danger',
-    'oppose': 'warning',
-    'neutral': 'info',
-    'support': 'primary',
-    'strongsupport': 'success',
-    'other': 'info',
-}
-
-@register.filter
-def attention_css(attention):
-    return attention_css_classes[attention]
-
 @register.simple_tag
-def attention_css_json():
-    return attention_css_classes
-
-@register.filter
-def knowledge_css(knowledge):
-    return knowledge_css_classes[knowledge]
-
-@register.simple_tag
-def knowledge_css_json():
-    return knowledge_css_classes
-
-@register.filter
-def support_css(support):
-    return support_css_classes[support]
-
-@register.simple_tag
-def support_css_json():
-    return support_css_classes
+def dossier_css(status_type, *args):
+    if len(args) == 0:
+        return css_classes[status_type]
+    elif len(args) == 1:
+        value = args[0]
+        return css_classes[status_type][value]
 
 # TODO: Needs clean-up... especially clearer file- and variable names
 @register.simple_tag
@@ -72,14 +56,7 @@ def display_dossier_statistic(dossier_statistic):
 
             field_states = '%s_STATES' % status_type.upper()
             for field_state, field_state_name in getattr(Dossier, field_states):
-
-                # TODO: *_css_classes needs to be generalized, change this when that's done
-                if status_type == 'attention':
-                    css_classes = attention_css_classes
-                elif status_type == 'knowledge':
-                    css_classes = knowledge_css_classes
-                elif status_type == 'support':
-                    css_classes = support_css_classes
+                css_classes = dossier_css(status_type)
 
                 stat_field_name = '%s_%s_%s' % (dossier_type, status_type, field_state)
                 if hasattr(stat, stat_field_name):

@@ -7,7 +7,7 @@
     <label class="fieldname">{% trans 'Knowledge' %}:</label>
     <div class="btn-group dropup" role="group">
         <button control="dropdown-knowledgestate" data-id="{{ dossier.id }}" type="button"
-                    class="btn btn-default btn-sm dropdown-toggle btn-{{ dossier.knowledge|knowledge_css }}" data-toggle="dropdown">
+                    class="btn btn-default btn-sm dropdown-toggle btn-{% dossier_css 'knowledge' dossier.knowledge %}" data-toggle="dropdown">
             <span class="display">{{ dossier.get_knowledge_display }}</span>
             <span class="caret"></span>
         </button>
@@ -24,7 +24,7 @@
     <label class="fieldname">{% trans 'Support' %}:</label>
     <div class="btn-group dropup" role="group">
         <button control="dropdown-supportstate" data-id="{{ dossier.id }}" type="button"
-                    class="btn btn-default btn-sm dropdown-toggle btn-{{ dossier.support|support_css }}" data-toggle="dropdown">
+                    class="btn btn-default btn-sm dropdown-toggle btn-{% dossier_css 'support' dossier.support %}" data-toggle="dropdown">
             <span class="display">{{ dossier.get_support_display }}</span>
             <span class="caret"></span>
         </button>
@@ -41,7 +41,7 @@
     <label class="fieldname">{% trans 'Attention' %}:</label>
     <div class="btn-group dropup" role="group">
         <button control="dropdown-attentionstate" data-id="{{ dossier.id }}" type="button"
-                    class="btn btn-default btn-sm dropdown-toggle btn-{{ dossier.attention|attention_css }}" data-toggle="dropdown">
+                    class="btn btn-default btn-sm dropdown-toggle btn-{% dossier_css 'attention' dossier.attention %}" data-toggle="dropdown">
             <span class="display">{{ dossier.get_attention_display }}</span>
             <span class="caret"></span>
         </button>

@@ -9,7 +9,7 @@
     {% for item in session.agenda_items.all %}
         {% with item.issue as issue %}
 
-                {% include 'core/stub/stub_issue.html' %}
+                {% include 'core/stub/issue.html' %}
 
         {% endwith %}
     {% endfor %}

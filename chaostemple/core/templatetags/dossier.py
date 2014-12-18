@@ -42,9 +42,9 @@ def dossier_css(status_type, *args):
 @register.simple_tag
 def display_dossier_statistic(dossier_statistic):
 
-    template_statistic = loader.get_template('core/stub/stub_issue_dossier_statistic.html')
-    template_field_state_content = loader.get_template('core/stub/stub_issue_dossier_statistic_field_state_content.html')
-    template_dossier_type_content = loader.get_template('core/stub/stub_issue_dossier_statistic_dossier_type_content.html')
+    template_statistic = loader.get_template('core/stub/issue_dossier_statistic.html')
+    template_field_state_content = loader.get_template('core/stub/issue_dossier_statistic_field_state_content.html')
+    template_dossier_type_content = loader.get_template('core/stub/issue_dossier_statistic_dossier_type_content.html')
 
     result = []
     stat = dossier_statistic

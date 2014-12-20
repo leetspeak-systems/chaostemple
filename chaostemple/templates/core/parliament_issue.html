@@ -19,7 +19,12 @@
 
     {% include 'core/dialog/dialog_delete_dossier.html' %}
 
-    <h2>{{ issue.name|capfirst }}</h2>
+    <h2>
+        {{ issue.name|capfirst }}
+        {% if issue.description %}
+            <small>({{ issue.description }})</small>
+        {% endif %}
+    </h2>
 
     <h3>{% trans 'Parliamentary Documents' %}</h3>
     <div class="documents">

@@ -1,4 +1,10 @@
 body { padding-top: 50px; }
+.btn-default .grey { color: #b0b0b0; }
+.btn-primary .grey { color: #d0d0d0; }
+.btn-success .grey { color: #d0d0d0; }
+.btn-info .grey { color: #d0d0d0; }
+.btn-warning .grey { color: #e0e0e0; }
+.btn-danger .grey { color: #d0d0d0; }
 
 div[control="dossier"] { margin-top: 10px; }
 div[control="dossier"]:first-child { margin-top: 0px; }

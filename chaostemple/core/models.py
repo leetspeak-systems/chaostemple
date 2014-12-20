@@ -12,6 +12,10 @@ from althingi.models import Review
 class UserProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='userprofile')
 
+class IssueBookmark(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='issue_bookmarks')
+    issue = models.ForeignKey(Issue, related_name='issue_bookmarks')
+
 class Dossier(models.Model):
     tracker = FieldTracker(fields=['attention', 'knowledge', 'support'])
 

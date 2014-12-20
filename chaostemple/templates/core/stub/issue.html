@@ -22,6 +22,9 @@
                 {% endfor %}
             </p>
         </div>
+        <div class="panel-footer">
+            {% include 'core/stub/issue_bookmark.html' %}
+        </div>
     {% elif issue.issue_group == 'B' %}
         <div class="panel-body">{{ issue.name|capfirst }}</div>
     {% endif %}

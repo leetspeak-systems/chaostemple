@@ -1,0 +1,10 @@
+{% for issue in bookmarked_issues reversed %}
+    <li>
+        <a href="{% url 'parliament_issue' issue.parliament.parliament_num issue.issue_num %}">
+            ({{ issue.issue_num}}) {{ issue.name|capfirst }}
+            {% if issue.description %}
+                <small>({{ issue.description }})</small>
+            {% endif %}
+        </a>
+    </li>
+{% endfor %}

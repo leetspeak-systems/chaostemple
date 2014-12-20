@@ -4,6 +4,7 @@ from django.shortcuts import render
 
 from core.models import Dossier
 from core.models import DossierStatistic
+from core.models import IssueBookmark
 
 from althingi.models import Document
 from althingi.models import Issue
@@ -30,6 +31,11 @@ def parliament_issues(request, parliament_num):
         parliament__parliament_num=parliament_num,
         document_count__gt=0
     )
+
+    bookmarked_issue_ids = [b.issue_id for b in IssueBookmark.objects.filter(user_id=request.user.id)]
+    for issue in issues:
+        if issue.id in bookmarked_issue_ids:
+            issue.is_bookmarked = True
 
     ctx = {
         'issues': issues,

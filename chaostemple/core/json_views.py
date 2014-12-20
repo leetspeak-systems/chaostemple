@@ -1,7 +1,11 @@
 from django.contrib.auth.decorators import login_required
+from django.template import RequestContext
+from django.template.loader import render_to_string
 
 from core.models import Document
 from core.models import Dossier
+from core.models import IssueBookmark
+
 from core.jsonizer import jsonize
 
 @login_required
@@ -67,6 +71,41 @@ def delete_dossier(request, dossier_id):
     ctx = {
         'document_id': document_id,
         'review_id': review_id,
+    }
+    return ctx
+
+@login_required
+@jsonize
+def issue_bookmark_toggle(request, issue_id):
+
+    is_bookmarked = None
+
+    try:
+        issue_bookmark = IssueBookmark.objects.get(user_id=request.user.id, issue_id=issue_id)
+        issue_bookmark.delete()
+        is_bookmarked = False
+    except IssueBookmark.DoesNotExist:
+        issue_bookmark = IssueBookmark.objects.create(user_id=request.user.id, issue_id=issue_id)
+        is_bookmarked = True
+
+    ctx = {
+        'is_bookmarked': is_bookmarked,
+    }
+    return ctx
+
+@login_required
+@jsonize
+def issue_bookmark_menu(request):
+    request_context = RequestContext(request)
+
+    bookmarked_issues = request_context['bookmarked_issues']
+
+    content = render_to_string('core/stub/issue_bookmark_menuitems.html', {}, request_context)
+    bookmarked_issue_count = len(bookmarked_issues)
+
+    ctx = {
+        'content': content,
+        'bookmarked_issue_count': bookmarked_issue_count,
     }
     return ctx
 

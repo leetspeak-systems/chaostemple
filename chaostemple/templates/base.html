@@ -60,6 +60,13 @@
                             </li>
                         {% endif %}
 
+                        <li class="dropdown" control="bookmark-menu" {% if not bookmarked_issues %}style="display: none;" {% endif %}>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans 'Bookmarks' %} <span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                                {% include 'core/stub/issue_bookmark_menuitems.html' %}
+                            </ul>
+                        </li>
+
                     </ul>
                     <ul class="nav navbar-nav pull-right">
                         {% if user.is_authenticated %}

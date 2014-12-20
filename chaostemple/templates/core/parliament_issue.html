@@ -13,6 +13,7 @@
     </script>
 
     <script language="javascript" type="text/javascript" src="{% static 'core/js/document_control.js' %}"></script>
+    <script language="javascript" type="text/javascript" src="{% static 'core/js/issue_control.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -25,6 +26,10 @@
             <small>({{ issue.description }})</small>
         {% endif %}
     </h2>
+
+    <div>
+        {% include 'core/stub/issue_bookmark.html' %}
+    </div>
 
     <h3>{% trans 'Parliamentary Documents' %}</h3>
     <div class="documents">

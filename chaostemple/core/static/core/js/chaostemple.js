@@ -25,6 +25,7 @@ $(document).ready(function() {
     $("form input[type='text']").focus();
 });
 
+// Prevent anchors used as buttons from scrolling to top of page
 $(document).on('click', 'a[href="#"]', function(event) {
     event.preventDefault();
 });

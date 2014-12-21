@@ -19,6 +19,7 @@ class Issue(models.Model):
         ('a', 'þingsályktunartillaga'),
         ('m', 'fyrirspurn'),
         ('q', 'fyrirspurn til skrifl. svars'),
+        ('s', 'skýrsla'),
     )
 
     ISSUE_GROUPS = (
@@ -97,6 +98,7 @@ class Document(models.Model):
         (u'þáltill.', u'þingsályktunartillaga'),
         (u'nál. með brtt.', u'nefndarálit með breytingartillögu'),
         (u'þál. í heild', u'þingsályktun í heild'),
+        (u'skýrsla rh. (frumskjal)', u'Skýrsla ráðherra (frumskjal)'),
     )
 
     issue = models.ForeignKey('Issue', related_name='documents')

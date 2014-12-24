@@ -27,9 +27,11 @@
         {% endif %}
     </h2>
 
-    <div>
-        {% include 'core/stub/issue_bookmark.html' %}
-    </div>
+    {% if user.is_authenticated %}
+        <div>
+            {% include 'core/stub/issue_bookmark.html' %}
+        </div>
+    {% endif %}
 
     <h3>{% trans 'Parliamentary Documents' %}</h3>
     <div class="documents">

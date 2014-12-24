@@ -16,13 +16,15 @@ def globals(request):
     if next_sessions.count() > 0:
         next_sessions = next_sessions | Session.objects.filter(session_num__gt=next_sessions.last().session_num)
 
-    last_parliament_num = None
-    bookmarked_issues = Issue.objects.select_related('parliament').filter(issue_bookmarks__user_id=request.user.id)
-    for bookmarked_issue in reversed(bookmarked_issues):
-        if bookmarked_issue.parliament.parliament_num != last_parliament_num:
-            bookmarked_issue.display_parliament = True
+    bookmarked_issues = None
+    if request.user.is_authenticated():
+        last_parliament_num = None
+        bookmarked_issues = Issue.objects.select_related('parliament').filter(issue_bookmarks__user_id=request.user.id)
+        for bookmarked_issue in reversed(bookmarked_issues):
+            if bookmarked_issue.parliament.parliament_num != last_parliament_num:
+                bookmarked_issue.display_parliament = True
 
-        last_parliament_num = bookmarked_issue.parliament.parliament_num
+            last_parliament_num = bookmarked_issue.parliament.parliament_num
 
     ctx = {
         'PROJECT_NAME': settings.PROJECT_NAME,

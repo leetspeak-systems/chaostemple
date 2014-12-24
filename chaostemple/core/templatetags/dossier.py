@@ -27,7 +27,13 @@ css_classes = {
         'support': 'primary',
         'strongsupport': 'success',
         'other': 'info',
-    }
+    },
+    'proposal': {
+        'none': 'default',
+        'minor': 'primary',
+        'some': 'primary',
+        'major': 'primary',
+    },
 }
 
 @register.simple_tag

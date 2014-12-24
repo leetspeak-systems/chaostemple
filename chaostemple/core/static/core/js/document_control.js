@@ -1,6 +1,8 @@
 
 $(document).ready(function() {
 
+    // TODO: Generalize these click-functions into one and designate the field name as a parameter.
+
     // Button: set-attentionstate
     $(document).on('click', 'a[control="set-attentionstate"]', function() {
         dossier_id = $(this).data('dossier-id');
@@ -96,6 +98,42 @@ $(document).ready(function() {
                                 keepclass = support_css[key];
                             }
                             $dropdown.removeClass('btn-' + support_css[key]);
+                        }
+                        if (keepclass) {
+                            $dropdown.addClass('btn-' + keepclass);
+                        }
+                    }
+                    else {
+                        $anchor.parent().removeClass('active');
+                    }
+                });
+            }
+        });
+    });
+
+    // Button: set-proposalstate
+    $(document).on('click', 'a[control="set-proposalstate"]', function() {
+        dossier_id = $(this).data('dossier-id');
+        proposalstate = $(this).data('proposalstate');
+
+        $.jsonize({
+            url: '/json/dossier/' + dossier_id + '/proposalstate/',
+            data: { proposalstate: proposalstate },
+            done: function(data, textStatus) {
+                $('a[control="set-proposalstate"][data-dossier-id=' + dossier_id + ']').each(function() {
+                    $anchor = $(this);
+                    $dropdown = $('button[control="dropdown-proposalstate"][data-id=' + dossier_id + ']');
+
+                    if ($anchor.data('proposalstate') == data.proposalstate) {
+                        $anchor.parent().addClass('active');
+
+                        $dropdown.find('.display').text($anchor.text());
+                        keepclass = ''; // This is needed in case two proposalstates have the same CSS class
+                        for (var key in proposal_css) {
+                            if (key == data.proposalstate) {
+                                keepclass = proposal_css[key];
+                            }
+                            $dropdown.removeClass('btn-' + proposal_css[key]);
                         }
                         if (keepclass) {
                             $dropdown.addClass('btn-' + keepclass);

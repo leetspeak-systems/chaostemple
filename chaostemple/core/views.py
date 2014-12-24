@@ -75,6 +75,7 @@ def parliament_issue(request, parliament_num, issue_num):
         'attentionstates': Dossier.ATTENTION_STATES,
         'knowledgestates': Dossier.KNOWLEDGE_STATES,
         'supportstates': Dossier.SUPPORT_STATES,
+        'proposalstates': Dossier.PROPOSAL_STATES,
     }
     return render(request, 'core/parliament_issue.html', ctx)
 

@@ -17,7 +17,7 @@ class IssueBookmark(models.Model):
     issue = models.ForeignKey(Issue, related_name='issue_bookmarks')
 
 class Dossier(models.Model):
-    tracker = FieldTracker(fields=['attention', 'knowledge', 'support'])
+    tracker = FieldTracker(fields=['attention', 'knowledge', 'support', 'proposal'])
 
     DOSSIER_TYPES = (
         ('document', _('Parliamentary Documents')),
@@ -28,6 +28,7 @@ class Dossier(models.Model):
         ('attention', _('Attention')),
         ('knowledge', _('Knowledge')),
         ('support', _('Support')),
+        ('proposal', _('Proposals')),
     )
 
     ATTENTION_STATES = (
@@ -53,6 +54,13 @@ class Dossier(models.Model):
         ('other', _('Other')),
     )
 
+    PROPOSAL_STATES = (
+        ('none', _('None')),
+        ('minor', _('Minor')),
+        ('some', _('Some')),
+        ('major', _('Major')),
+    )
+
     issue = models.ForeignKey(Issue, related_name='dossiers')
     dossier_type = models.CharField(max_length=10, choices=DOSSIER_TYPES)
 
@@ -63,6 +71,7 @@ class Dossier(models.Model):
     attention = models.CharField(max_length=20, default='none', choices=ATTENTION_STATES)
     knowledge = models.IntegerField(default=0, choices=KNOWLEDGE_STATES)
     support = models.CharField(max_length=20, default='undefined', choices=SUPPORT_STATES)
+    proposal = models.CharField(max_length=20, default='none', choices=PROPOSAL_STATES)
 
     def update_statistic(self, field, old_value, new_value):
         # Short-hands
@@ -128,6 +137,9 @@ class DossierStatistic(models.Model):
     document_support_support = models.IntegerField(default=0)
     document_support_strongsupport = models.IntegerField(default=0)
     document_support_other = models.IntegerField(default=0)
+    document_proposal_minor = models.IntegerField(default=0)
+    document_proposal_some = models.IntegerField(default=0)
+    document_proposal_major = models.IntegerField(default=0)
 
     review_attention_exclamation = models.IntegerField(default=0)
     review_attention_question = models.IntegerField(default=0)
@@ -142,6 +154,9 @@ class DossierStatistic(models.Model):
     review_support_support = models.IntegerField(default=0)
     review_support_strongsupport = models.IntegerField(default=0)
     review_support_other = models.IntegerField(default=0)
+    review_proposal_minor = models.IntegerField(default=0)
+    review_proposal_some = models.IntegerField(default=0)
+    review_proposal_major = models.IntegerField(default=0)
 
 
 class Memo(models.Model):

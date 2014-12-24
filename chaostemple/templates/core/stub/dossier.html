@@ -55,5 +55,22 @@
         </ul>
     </div>
 
+    <label class="fieldname">{% trans 'Proposals' %}:</label>
+    <div class="btn-group dropup" role="group">
+        <button control="dropdown-proposalstate" data-id="{{ dossier.id }}" type="button"
+                    class="btn btn-default btn-sm dropdown-toggle btn-{% dossier_css 'proposal' dossier.proposal %}" data-toggle="dropdown">
+            <span class="display">{{ dossier.get_proposal_display }}</span>
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+            {% for proposalstate in proposalstates %}
+                <li {% if dossier.proposal == proposalstate.0 %}class="active"{% endif %}>
+                    <a href="#" control="set-proposalstate" data-dossier-id="{{ dossier.id }}"
+                            data-proposalstate="{{ proposalstate.0 }}">{{ proposalstate.1 }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
     <button control="delete-dossier" class="btn btn-xs btn-danger pull-right" data-id="{{ dossier.id }}">{% trans 'Mark as New' %}</button>
 </div>

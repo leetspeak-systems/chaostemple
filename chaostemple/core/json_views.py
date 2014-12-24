@@ -42,6 +42,22 @@ def supportstate(request, dossier_id):
 
 @login_required
 @jsonize
+def proposalstate(request, dossier_id):
+
+    proposalstate = request.GET.get('proposalstate', None)
+
+    dossier = Dossier.objects.get(id=dossier_id, user=request.user)
+    if proposalstate and dossier.proposal != proposalstate:
+        dossier.proposal = proposalstate
+        dossier.save()
+
+    ctx = {
+        'proposalstate': dossier.proposal
+    }
+    return ctx
+
+@login_required
+@jsonize
 def knowledgestate(request, dossier_id):
 
     knowledgestate = request.GET.get('knowledgestate', None)

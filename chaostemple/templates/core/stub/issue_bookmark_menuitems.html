@@ -1,4 +1,9 @@
+{% load i18n %}
+
 {% for issue in bookmarked_issues reversed %}
+    {% if issue.display_parliament %}
+        <li class="menu-header"><strong>{{ issue.parliament.parliament_num }}. {% trans 'parliament' %}</strong></li>
+    {% endif %}
     <li>
         <a href="{% url 'parliament_issue' issue.parliament.parliament_num issue.issue_num %}">
             ({{ issue.issue_num}}) {{ issue.name|capfirst }}

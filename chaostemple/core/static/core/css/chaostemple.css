@@ -5,6 +5,7 @@ body { padding-top: 50px; }
 .btn-info .grey { color: #d0d0d0; }
 .btn-warning .grey { color: #e0e0e0; }
 .btn-danger .grey { color: #d0d0d0; }
+.menu-header { padding: 6px 0px 4px 12px; margin-bottom: 4px; border-bottom: 1px solid #e0e0e0; }
 
 div[control="dossier"] { margin-top: 10px; }
 div[control="dossier"]:first-child { margin-top: 0px; }

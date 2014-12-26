@@ -43,8 +43,13 @@ def fieldstate_css(status_type=None, value=None):
     else:
         return fieldstate_css_dict
 
-@register.simple_tag
-def display_dossier_statistics(dossier_statistics):
+@register.simple_tag(takes_context=True)
+def display_dossier_statistics(context, issue):
+
+    request = context['request']
+
+    if not request.user.is_authenticated():
+        return ''
 
     template_statistic = loader.get_template('core/stub/issue_dossier_statistic.html')
     template_status_type = loader.get_template('core/stub/issue_dossier_statistic_status_type.html')
@@ -53,7 +58,8 @@ def display_dossier_statistics(dossier_statistics):
     fieldstate_css_dict = fieldstate_css()
 
     content = []
-    for stat in dossier_statistics:
+    for stat in issue.dossier_statistics.filter(user_id=request.user.id):
+
         for dossier_type, dossier_type_name in Dossier.DOSSIER_TYPES:
             status_type_content = []
 

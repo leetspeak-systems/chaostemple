@@ -27,7 +27,7 @@ def parliament(request, parliament_num):
 
 def parliament_issues(request, parliament_num):
 
-    issues = Issue.objects.select_related('parliament').prefetch_related('dossier_statistics').filter(
+    issues = Issue.objects.select_related('parliament').filter(
         parliament__parliament_num=parliament_num,
         document_count__gt=0
     )
@@ -85,9 +85,7 @@ def parliament_sessions(request, parliament_num):
 def parliament_session(request, parliament_num, session_num):
 
     session = Session.objects.prefetch_related(
-        'agenda_items__issue',
         'agenda_items__issue__parliament',
-        'agenda_items__issue__dossier_statistics'
     ).get(parliament__parliament_num=parliament_num, session_num=session_num)
 
     ctx = {

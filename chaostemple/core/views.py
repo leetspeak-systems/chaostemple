@@ -39,7 +39,6 @@ def parliament_issues(request, parliament_num):
 
     ctx = {
         'issues': issues,
-        'dossier_types': [{'fieldname': fieldname, 'name': name} for fieldname, name in Dossier.DOSSIER_TYPES],
     }
     return render(request, 'core/parliament_issues.html', ctx)
 

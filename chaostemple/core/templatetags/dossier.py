@@ -7,7 +7,7 @@ from core.models import Dossier
 
 register = template.Library()
 
-css_classes = {
+fieldstate_css_dict = {
     'attention': {
         'none': 'default',
         'question': 'warning',
@@ -37,62 +37,59 @@ css_classes = {
 }
 
 @register.simple_tag
-def dossier_css(status_type=None, value=None):
-    if status_type is not None:
-        if value is not None:
-            return css_classes[status_type][value]
-        else:
-            return css_classes[status_type]
+def fieldstate_css(status_type=None, value=None):
+    if status_type is not None and value is not None:
+        return fieldstate_css_dict[status_type][value]
     else:
-        return css_classes
+        return fieldstate_css_dict
 
 # TODO: Needs clean-up... especially clearer file- and variable names
 @register.simple_tag
-def display_dossier_statistic(dossier_statistic):
+def display_dossier_statistics(dossier_statistics):
 
     template_statistic = loader.get_template('core/stub/issue_dossier_statistic.html')
-    template_field_state_content = loader.get_template('core/stub/issue_dossier_statistic_field_state_content.html')
-    template_dossier_type_content = loader.get_template('core/stub/issue_dossier_statistic_dossier_type_content.html')
+    template_status_type = loader.get_template('core/stub/issue_dossier_statistic_status_type.html')
+    template_fieldstate = loader.get_template('core/stub/issue_dossier_statistic_fieldstate.html')
 
-    result = []
-    stat = dossier_statistic
-    for dossier_type, dossier_type_name in Dossier.DOSSIER_TYPES:
-        dossier_type_content = []
+    fieldstate_css_dict = fieldstate_css()
 
-        for status_type, status_type_name in Dossier.STATUS_TYPES:
-            field_state_content = []
+    content = []
+    for stat in dossier_statistics:
+        for dossier_type, dossier_type_name in Dossier.DOSSIER_TYPES:
+            status_type_content = []
 
-            field_states = '%s_STATES' % status_type.upper()
-            for field_state, field_state_name in getattr(Dossier, field_states):
-                css_classes = dossier_css(status_type)
+            for status_type, status_type_name in Dossier.STATUS_TYPES:
+                fieldstate_content = []
 
-                stat_field_name = '%s_%s_%s' % (dossier_type, status_type, field_state)
-                if hasattr(stat, stat_field_name):
-                    value = getattr(stat, stat_field_name)
-                    if value:
-                        field_state_content.append(template_field_state_content.render(Context({
-                            'css_class': css_classes[field_state],
-                            'field_state_name': field_state_name,
-                            'value': value
-                        })))
+                fieldstates = '%s_STATES' % status_type.upper()
+                for fieldstate, fieldstate_name in getattr(Dossier, fieldstates):
+                    stat_field_name = '%s_%s_%s' % (dossier_type, status_type, fieldstate)
+                    if hasattr(stat, stat_field_name):
+                        count = getattr(stat, stat_field_name)
+                        if count:
+                            fieldstate_content.append(template_fieldstate.render(Context({
+                                'css_class': fieldstate_css_dict[status_type][fieldstate],
+                                'fieldstate_name': fieldstate_name,
+                                'count': count
+                            })))
 
-            if field_state_content:
-                dossier_type_content.append(template_dossier_type_content.render(Context({
-                    'status_type_name': status_type_name,
-                    'field_state_content': mark_safe(''.join(field_state_content))
+                if fieldstate_content:
+                    status_type_content.append(template_status_type.render(Context({
+                        'status_type_name': status_type_name,
+                        'fieldstate_content': mark_safe(''.join(fieldstate_content))
+                    })))
+
+            if status_type_content:
+                if dossier_type == 'document':
+                    icon = 'file'
+                elif dossier_type == 'review':
+                    icon = 'inbox'
+
+                content.append(template_statistic.render(Context({
+                    'icon': icon,
+                    'dossier_type_name': dossier_type_name,
+                    'status_type_content': mark_safe(''.join(status_type_content))
                 })))
 
-        if dossier_type_content:
-            if dossier_type == 'document':
-                icon = 'file'
-            elif dossier_type == 'review':
-                icon = 'inbox'
-
-            result.append(template_statistic.render(Context({
-                'icon': icon,
-                'dossier_type_name': dossier_type_name,
-                'dossier_type_content': mark_safe(''.join(dossier_type_content))
-            })))
-
-    return ''.join(result)
+    return ''.join(content)
 

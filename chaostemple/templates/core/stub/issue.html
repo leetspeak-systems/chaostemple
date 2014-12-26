@@ -17,9 +17,7 @@
                 <span class="label label-default">{% trans "Parliamentary Documents" %}: {{ issue.document_count }}</span>
             </p>
             <p>
-                {% for dossier_statistic in issue.dossier_statistics.all %}
-                    {% display_dossier_statistic dossier_statistic %}
-                {% endfor %}
+                {% display_dossier_statistics issue.dossier_statistics.all %}
             </p>
         </div>
         {% if user.is_authenticated %}

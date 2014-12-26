@@ -7,7 +7,7 @@
     <label class="fieldname">{% trans 'Knowledge' %}:</label>
     <div class="btn-group dropup" role="group">
         <button control="dropdown-fieldstate" data-id="{{ dossier.id }}" data-fieldname="knowledge" type="button"
-                    class="btn btn-default btn-sm dropdown-toggle btn-{% dossier_css 'knowledge' dossier.knowledge %}" data-toggle="dropdown">
+                    class="btn btn-default btn-sm dropdown-toggle btn-{% fieldstate_css 'knowledge' dossier.knowledge %}" data-toggle="dropdown">
             <span class="display">{{ dossier.get_knowledge_display }}</span>
             <span class="caret"></span>
         </button>
@@ -24,7 +24,7 @@
     <label class="fieldname">{% trans 'Support' %}:</label>
     <div class="btn-group dropup" role="group">
         <button control="dropdown-fieldstate" data-id="{{ dossier.id }}" data-fieldname="support" type="button"
-                    class="btn btn-default btn-sm dropdown-toggle btn-{% dossier_css 'support' dossier.support %}" data-toggle="dropdown">
+                    class="btn btn-default btn-sm dropdown-toggle btn-{% fieldstate_css 'support' dossier.support %}" data-toggle="dropdown">
             <span class="display">{{ dossier.get_support_display }}</span>
             <span class="caret"></span>
         </button>
@@ -41,7 +41,7 @@
     <label class="fieldname">{% trans 'Attention' %}:</label>
     <div class="btn-group dropup" role="group">
         <button control="dropdown-fieldstate" data-id="{{ dossier.id }}" data-fieldname="attention" type="button"
-                    class="btn btn-default btn-sm dropdown-toggle btn-{% dossier_css 'attention' dossier.attention %}" data-toggle="dropdown">
+                    class="btn btn-default btn-sm dropdown-toggle btn-{% fieldstate_css 'attention' dossier.attention %}" data-toggle="dropdown">
             <span class="display">{{ dossier.get_attention_display }}</span>
             <span class="caret"></span>
         </button>
@@ -58,7 +58,7 @@
     <label class="fieldname">{% trans 'Proposals' %}:</label>
     <div class="btn-group dropup" role="group">
         <button control="dropdown-fieldstate" data-id="{{ dossier.id }}" data-fieldname="proposal" type="button"
-                    class="btn btn-default btn-sm dropdown-toggle btn-{% dossier_css 'proposal' dossier.proposal %}" data-toggle="dropdown">
+                    class="btn btn-default btn-sm dropdown-toggle btn-{% fieldstate_css 'proposal' dossier.proposal %}" data-toggle="dropdown">
             <span class="display">{{ dossier.get_proposal_display }}</span>
             <span class="caret"></span>
         </button>

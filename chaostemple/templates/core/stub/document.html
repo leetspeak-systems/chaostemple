@@ -18,11 +18,6 @@
                 {% endfor %}
             </div>
         {% endif %}
-        {% for dossier in document.dossiers.all %}
-            {% if dossier.user_id != user.id %}
-                <span class="label label-info">{{ dossier.user }}</span>
-            {% endif %}
-        {% endfor %}
     </div>
     {% if document.mydossier %}
         <div class="panel-footer">

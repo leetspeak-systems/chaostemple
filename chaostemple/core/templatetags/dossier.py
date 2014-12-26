@@ -37,12 +37,14 @@ css_classes = {
 }
 
 @register.simple_tag
-def dossier_css(status_type, *args):
-    if len(args) == 0:
-        return css_classes[status_type]
-    elif len(args) == 1:
-        value = args[0]
-        return css_classes[status_type][value]
+def dossier_css(status_type=None, value=None):
+    if status_type is not None:
+        if value is not None:
+            return css_classes[status_type][value]
+        else:
+            return css_classes[status_type]
+    else:
+        return css_classes
 
 # TODO: Needs clean-up... especially clearer file- and variable names
 @register.simple_tag

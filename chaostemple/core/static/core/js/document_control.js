@@ -1,139 +1,31 @@
 
 $(document).ready(function() {
 
-    // TODO: Generalize these click-functions into one and designate the field name as a parameter.
-
-    // Button: set-attentionstate
-    $(document).on('click', 'a[control="set-attentionstate"]', function() {
-        dossier_id = $(this).data('dossier-id');
-        attentionstate = $(this).data('attentionstate');
+    // Buttons: Fieldstates
+    $(document).on('click', 'a[control="set-fieldstate"]', function() {
+        $this = $(this);
+        dossier_id = $this.data('dossier-id');
+        fieldname = $this.data('fieldname');
+        fieldstate = $this.data('fieldstate');
 
         $.jsonize({
-            url: '/json/dossier/' + dossier_id + '/attentionstate/',
-            data: { attentionstate: attentionstate },
+            url: '/json/dossier/' + dossier_id + '/fieldstate/' + fieldname + '/',
+            data: { 'fieldstate': fieldstate },
             done: function(data, textStatus) {
-                $('a[control="set-attentionstate"][data-dossier-id=' + dossier_id + ']').each(function() {
+                $('a[control="set-fieldstate"][data-dossier-id=' + dossier_id + '][data-fieldname=' + fieldname + ']').each(function() {
                     $anchor = $(this);
-                    $dropdown = $('button[control="dropdown-attentionstate"][data-id=' + dossier_id + ']');
+                    $dropdown = $('button[control="dropdown-fieldstate"][data-id=' + dossier_id + '][data-fieldname=' + fieldname + ']');
 
-                    if ($anchor.data('attentionstate') == data.attentionstate) {
+                    if ($anchor.data('fieldstate') == data[fieldname]) {
                         $anchor.parent().addClass('active');
 
                         $dropdown.find('.display').text($anchor.text());
-                        keepclass = ''; // This is needed in case two attentionstates have the same CSS class
-                        for (var key in attention_css) {
-                            if (key == data.attentionstate) {
-                                keepclass = attention_css[key];
+                        keepclass = ''; // This is needed in case two fieldstates have the same CSS class
+                        for (var key in fieldstate_css[fieldname]) {
+                            if (key == data[fieldname]) {
+                                keepclass = fieldstate_css[fieldname][key];
                             }
-                            $dropdown.removeClass('btn-' + attention_css[key]);
-                        }
-                        if (keepclass) {
-                            $dropdown.addClass('btn-' + keepclass);
-                        }
-                    }
-                    else {
-                        $anchor.parent().removeClass('active');
-                    }
-                });
-            }
-        });
-    });
-
-    // Button: set-knowledgestate
-    $(document).on('click', 'a[control="set-knowledgestate"]', function() {
-        dossier_id = $(this).data('dossier-id');
-        knowledgestate = $(this).data('knowledgestate');
-
-        $.jsonize({
-            url: '/json/dossier/' + dossier_id + '/knowledgestate/',
-            data: { knowledgestate: knowledgestate },
-            done: function(data, textStatus) {
-                $('a[control="set-knowledgestate"][data-dossier-id=' + dossier_id + ']').each(function() {
-                    $anchor = $(this);
-                    $dropdown = $('button[control="dropdown-knowledgestate"][data-id=' + dossier_id + ']');
-
-                    if ($anchor.data('knowledgestate') == data.knowledgestate) {
-                        $anchor.parent().addClass('active');
-
-                        $dropdown.find('.display').text($anchor.text());
-                        keepclass = ''; // This is needed in case two knowledgestates have the same CSS class
-                        for (var key in knowledge_css) {
-                            if (key == data.knowledgestate) {
-                                keepclass = knowledge_css[key];
-                            }
-                            $dropdown.removeClass('btn-' + knowledge_css[key]);
-                        }
-                        if (keepclass) {
-                            $dropdown.addClass('btn-' + keepclass);
-                        }
-                    }
-                    else {
-                        $anchor.parent().removeClass('active');
-                    }
-                });
-            }
-        });
-    });
-
-    // Button: set-supportstate
-    $(document).on('click', 'a[control="set-supportstate"]', function() {
-        dossier_id = $(this).data('dossier-id');
-        supportstate = $(this).data('supportstate');
-
-        $.jsonize({
-            url: '/json/dossier/' + dossier_id + '/supportstate/',
-            data: { supportstate: supportstate },
-            done: function(data, textStatus) {
-                $('a[control="set-supportstate"][data-dossier-id=' + dossier_id + ']').each(function() {
-                    $anchor = $(this);
-                    $dropdown = $('button[control="dropdown-supportstate"][data-id=' + dossier_id + ']');
-
-                    if ($anchor.data('supportstate') == data.supportstate) {
-                        $anchor.parent().addClass('active');
-
-                        $dropdown.find('.display').text($anchor.text());
-                        keepclass = ''; // This is needed in case two supportstates have the same CSS class
-                        for (var key in support_css) {
-                            if (key == data.supportstate) {
-                                keepclass = support_css[key];
-                            }
-                            $dropdown.removeClass('btn-' + support_css[key]);
-                        }
-                        if (keepclass) {
-                            $dropdown.addClass('btn-' + keepclass);
-                        }
-                    }
-                    else {
-                        $anchor.parent().removeClass('active');
-                    }
-                });
-            }
-        });
-    });
-
-    // Button: set-proposalstate
-    $(document).on('click', 'a[control="set-proposalstate"]', function() {
-        dossier_id = $(this).data('dossier-id');
-        proposalstate = $(this).data('proposalstate');
-
-        $.jsonize({
-            url: '/json/dossier/' + dossier_id + '/proposalstate/',
-            data: { proposalstate: proposalstate },
-            done: function(data, textStatus) {
-                $('a[control="set-proposalstate"][data-dossier-id=' + dossier_id + ']').each(function() {
-                    $anchor = $(this);
-                    $dropdown = $('button[control="dropdown-proposalstate"][data-id=' + dossier_id + ']');
-
-                    if ($anchor.data('proposalstate') == data.proposalstate) {
-                        $anchor.parent().addClass('active');
-
-                        $dropdown.find('.display').text($anchor.text());
-                        keepclass = ''; // This is needed in case two proposalstates have the same CSS class
-                        for (var key in proposal_css) {
-                            if (key == data.proposalstate) {
-                                keepclass = proposal_css[key];
-                            }
-                            $dropdown.removeClass('btn-' + proposal_css[key]);
+                            $dropdown.removeClass('btn-' + fieldstate_css[fieldname][key]);
                         }
                         if (keepclass) {
                             $dropdown.addClass('btn-' + keepclass);

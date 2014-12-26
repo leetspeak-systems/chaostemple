@@ -10,67 +10,23 @@ from core.jsonizer import jsonize
 
 @login_required
 @jsonize
-def attentionstate(request, dossier_id):
+def dossier_fieldstate(request, dossier_id, fieldname):
+    fieldstate = request.GET.get('fieldstate', None)
 
-    attentionstate = request.GET.get('attentionstate', None)
+    if not fieldname in Dossier.tracker.fields:
+        raise Exception('"%s" is not a recognized fieldname of a dossier' % fieldname)
 
     dossier = Dossier.objects.get(id=dossier_id, user=request.user)
-    if attentionstate and dossier.attention != attentionstate:
-        dossier.attention = attentionstate
+    if fieldstate is not None and getattr(dossier, fieldname) != fieldstate:
+        # Ensure proper type of field
+        fieldtype = type(getattr(dossier, fieldname))
+        fieldstate = fieldtype(fieldstate)
+
+        setattr(dossier, fieldname, fieldstate)
         dossier.save()
 
     ctx = {
-        'attentionstate': dossier.attention
-    }
-    return ctx
-
-@login_required
-@jsonize
-def supportstate(request, dossier_id):
-
-    supportstate = request.GET.get('supportstate', None)
-
-    dossier = Dossier.objects.get(id=dossier_id, user=request.user)
-    if supportstate and dossier.support != supportstate:
-        dossier.support = supportstate
-        dossier.save()
-
-    ctx = {
-        'supportstate': dossier.support
-    }
-    return ctx
-
-@login_required
-@jsonize
-def proposalstate(request, dossier_id):
-
-    proposalstate = request.GET.get('proposalstate', None)
-
-    dossier = Dossier.objects.get(id=dossier_id, user=request.user)
-    if proposalstate and dossier.proposal != proposalstate:
-        dossier.proposal = proposalstate
-        dossier.save()
-
-    ctx = {
-        'proposalstate': dossier.proposal
-    }
-    return ctx
-
-@login_required
-@jsonize
-def knowledgestate(request, dossier_id):
-
-    knowledgestate = request.GET.get('knowledgestate', None)
-    if knowledgestate:
-        knowledgestate = int(knowledgestate)
-
-    dossier = Dossier.objects.get(id=dossier_id, user=request.user)
-    if knowledgestate is not None and dossier.knowledge != knowledgestate:
-        dossier.knowledge = knowledgestate
-        dossier.save()
-
-    ctx = {
-        'knowledgestate': dossier.knowledge
+        fieldname: getattr(dossier, fieldname),
     }
     return ctx
 

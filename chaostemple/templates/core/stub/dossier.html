@@ -6,7 +6,7 @@
 
     <label class="fieldname">{% trans 'Knowledge' %}:</label>
     <div class="btn-group dropup" role="group">
-        <button control="dropdown-knowledgestate" data-id="{{ dossier.id }}" type="button"
+        <button control="dropdown-fieldstate" data-id="{{ dossier.id }}" data-fieldname="knowledge" type="button"
                     class="btn btn-default btn-sm dropdown-toggle btn-{% dossier_css 'knowledge' dossier.knowledge %}" data-toggle="dropdown">
             <span class="display">{{ dossier.get_knowledge_display }}</span>
             <span class="caret"></span>
@@ -14,8 +14,8 @@
         <ul class="dropdown-menu" role="menu">
             {% for knowledgestate in knowledgestates %}
                 <li {% if dossier.knowledge == knowledgestate.0 %}class="active"{% endif %}>
-                    <a href="#" control="set-knowledgestate" data-dossier-id="{{ dossier.id }}"
-                            data-knowledgestate="{{ knowledgestate.0 }}">{{ knowledgestate.1 }}</a>
+                    <a href="#" control="set-fieldstate" data-dossier-id="{{ dossier.id }}" data-fieldname="knowledge"
+                            data-fieldstate="{{ knowledgestate.0 }}">{{ knowledgestate.1 }}</a>
                 </li>
             {% endfor %}
         </ul>
@@ -23,7 +23,7 @@
 
     <label class="fieldname">{% trans 'Support' %}:</label>
     <div class="btn-group dropup" role="group">
-        <button control="dropdown-supportstate" data-id="{{ dossier.id }}" type="button"
+        <button control="dropdown-fieldstate" data-id="{{ dossier.id }}" data-fieldname="support" type="button"
                     class="btn btn-default btn-sm dropdown-toggle btn-{% dossier_css 'support' dossier.support %}" data-toggle="dropdown">
             <span class="display">{{ dossier.get_support_display }}</span>
             <span class="caret"></span>
@@ -31,8 +31,8 @@
         <ul class="dropdown-menu" role="menu">
             {% for supportstate in supportstates %}
                 <li {% if dossier.support == supportstate.0 %}class="active"{% endif %}>
-                    <a href="#" control="set-supportstate" data-dossier-id="{{ dossier.id }}"
-                            data-supportstate="{{ supportstate.0 }}">{{ supportstate.1 }}</a>
+                    <a href="#" control="set-fieldstate" data-dossier-id="{{ dossier.id }}" data-fieldname="support"
+                            data-fieldstate="{{ supportstate.0 }}">{{ supportstate.1 }}</a>
                 </li>
             {% endfor %}
         </ul>
@@ -40,7 +40,7 @@
 
     <label class="fieldname">{% trans 'Attention' %}:</label>
     <div class="btn-group dropup" role="group">
-        <button control="dropdown-attentionstate" data-id="{{ dossier.id }}" type="button"
+        <button control="dropdown-fieldstate" data-id="{{ dossier.id }}" data-fieldname="attention" type="button"
                     class="btn btn-default btn-sm dropdown-toggle btn-{% dossier_css 'attention' dossier.attention %}" data-toggle="dropdown">
             <span class="display">{{ dossier.get_attention_display }}</span>
             <span class="caret"></span>
@@ -48,8 +48,8 @@
         <ul class="dropdown-menu" role="menu">
             {% for attentionstate in attentionstates %}
                 <li {% if dossier.attention == attentionstate.0 %}class="active"{% endif %}>
-                    <a href="#" control="set-attentionstate" data-dossier-id="{{ dossier.id }}"
-                            data-attentionstate="{{ attentionstate.0 }}">{{ attentionstate.1 }}</a>
+                    <a href="#" control="set-fieldstate" data-dossier-id="{{ dossier.id }}" data-fieldname="attention"
+                            data-fieldstate="{{ attentionstate.0 }}">{{ attentionstate.1 }}</a>
                 </li>
             {% endfor %}
         </ul>
@@ -57,7 +57,7 @@
 
     <label class="fieldname">{% trans 'Proposals' %}:</label>
     <div class="btn-group dropup" role="group">
-        <button control="dropdown-proposalstate" data-id="{{ dossier.id }}" type="button"
+        <button control="dropdown-fieldstate" data-id="{{ dossier.id }}" data-fieldname="proposal" type="button"
                     class="btn btn-default btn-sm dropdown-toggle btn-{% dossier_css 'proposal' dossier.proposal %}" data-toggle="dropdown">
             <span class="display">{{ dossier.get_proposal_display }}</span>
             <span class="caret"></span>
@@ -65,8 +65,8 @@
         <ul class="dropdown-menu" role="menu">
             {% for proposalstate in proposalstates %}
                 <li {% if dossier.proposal == proposalstate.0 %}class="active"{% endif %}>
-                    <a href="#" control="set-proposalstate" data-dossier-id="{{ dossier.id }}"
-                            data-proposalstate="{{ proposalstate.0 }}">{{ proposalstate.1 }}</a>
+                    <a href="#" control="set-fieldstate" data-dossier-id="{{ dossier.id }}" data-fieldname="proposal"
+                            data-fieldstate="{{ proposalstate.0 }}">{{ proposalstate.1 }}</a>
                 </li>
             {% endfor %}
         </ul>

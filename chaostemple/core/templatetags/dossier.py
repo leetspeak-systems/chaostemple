@@ -43,7 +43,6 @@ def fieldstate_css(status_type=None, value=None):
     else:
         return fieldstate_css_dict
 
-# TODO: Needs clean-up... especially clearer file- and variable names
 @register.simple_tag
 def display_dossier_statistics(dossier_statistics):
 

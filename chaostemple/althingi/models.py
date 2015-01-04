@@ -18,8 +18,9 @@ class Issue(models.Model):
         ('l', 'lagafrumvarp'),
         ('a', 'þingsályktunartillaga'),
         ('m', 'fyrirspurn'),
-        ('q', 'fyrirspurn til skrifl. svars'),
+        ('q', 'fyrirspurn til skriflegs svars'),
         ('s', 'skýrsla'),
+        ('b', 'beiðni um skýrslu'),
     )
 
     ISSUE_GROUPS = (
@@ -95,10 +96,25 @@ class Review(models.Model):
 
 class Document(models.Model):
     DOCUMENT_TYPES = (
-        (u'þáltill.', u'þingsályktunartillaga'),
+        (u'beiðni um skýrslu', u'beiðni um skýrslu'),
+        (u'breytingartillaga', u'breytingartillaga'),
+        (u'frumvarp', u'frumvarp'),
+        (u'frumvarp eftir 2. umræðu', u'frumvarp eftir 2. umræðu'),
+        (u'frumvarp nefndar', u'frumvarp nefndar'),
+        (u'fsp. til munnl. svars', u'fyrirspurn til munnlegs svars'),
+        (u'fsp. til skrifl. svars', u'fyrirspurn til skriflegs svars'),
+        (u'lög (samhlj.)', u'lög (samhljóða)'),
+        (u'lög í heild', u'lög í heild'),
         (u'nál. með brtt.', u'nefndarálit með breytingartillögu'),
-        (u'þál. í heild', u'þingsályktun í heild'),
-        (u'skýrsla rh. (frumskjal)', u'Skýrsla ráðherra (frumskjal)'),
+        (u'nefndarálit', u'nefndarálit'),
+        (u'skýrsla n. (frumskjal)', u'skýrsla nefndar (frumskjal)'),
+        (u'skýrsla rh. (frumskjal)', u'skýrsla ráðherra (frumskjal)'),
+        (u'stjórnarfrumvarp', u'stjórnarfrumvarp'),
+        (u'stjórnartillaga', u'stjórnartillaga'),
+        (u'svar', u'svar'),
+        (u'þál. (samhlj.)', u'þingsályktunartillaga (samhljóða)'),
+        (u'þál. í heild', u'þingsályktunartillaga í heild'),
+        (u'þáltill.', u'þingsályktunartillaga'),
     )
 
     issue = models.ForeignKey('Issue', related_name='documents')

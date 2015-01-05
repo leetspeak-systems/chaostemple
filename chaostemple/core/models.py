@@ -107,24 +107,23 @@ class Dossier(models.Model):
         user_id = self.user_id
         dossier_type = self.dossier_type
 
-        new_stat, c = DossierStatistic.objects.get_or_create(issue_id=issue_id, user_id=user_id)
+        statistic, c = DossierStatistic.objects.get_or_create(issue_id=issue_id, user_id=user_id)
 
         if old_value is not None:
             statistic_field = '%s_%s_%s' % (dossier_type, field, old_value)
-            if hasattr(new_stat, statistic_field):
+            if hasattr(statistic, statistic_field):
                 kwargs = {'issue_id': issue_id, 'user_id': user_id, 'dossier_type': dossier_type, field: old_value}
                 count = Dossier.objects.filter(**kwargs).count()
-                setattr(new_stat, statistic_field, count)
-                new_stat.save()
+                setattr(statistic, statistic_field, count)
+                statistic.save()
 
         if new_value is not None:
             statistic_field = '%s_%s_%s' % (dossier_type, field, new_value)
-            new_stat, c = DossierStatistic.objects.get_or_create(issue_id=issue_id, user_id=user_id)
-            if hasattr(new_stat, statistic_field):
+            if hasattr(statistic, statistic_field):
                 kwargs = {'issue_id': issue_id, 'user_id': user_id, 'dossier_type': dossier_type, field: new_value}
                 count = Dossier.objects.filter(**kwargs).count()
-                setattr(new_stat, statistic_field, count)
-                new_stat.save()
+                setattr(statistic, statistic_field, count)
+                statistic.save()
 
 
     def save(self, update_statistics=True, *args, **kwargs):

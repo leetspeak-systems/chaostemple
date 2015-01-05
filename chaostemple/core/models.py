@@ -36,7 +36,7 @@ class UserProfile(models.Model):
 
 class IssueBookmark(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='issue_bookmarks')
-    issue = models.ForeignKey('Issue', related_name='issue_bookmarks')
+    issue = models.ForeignKey(AlthingiIssue, related_name='issue_bookmarks')
 
 class Issue(AlthingiIssue):
     objects = IssueManager()
@@ -89,7 +89,7 @@ class Dossier(models.Model):
         ('major', _('Major')),
     )
 
-    issue = models.ForeignKey('Issue', related_name='dossiers')
+    issue = models.ForeignKey(AlthingiIssue, related_name='dossiers')
     dossier_type = models.CharField(max_length=10, choices=DOSSIER_TYPES)
 
     document = models.ForeignKey(Document, null=True, related_name='dossiers')
@@ -149,7 +149,7 @@ class Dossier(models.Model):
 
 
 class DossierStatistic(models.Model):
-    issue = models.ForeignKey('Issue')
+    issue = models.ForeignKey(AlthingiIssue)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='dossier_statistics')
 
     document_attention_exclamation = models.IntegerField(default=0)

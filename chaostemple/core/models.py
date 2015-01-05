@@ -5,16 +5,44 @@ from django.utils.translation import ugettext_lazy as _
 from model_utils import FieldTracker
 
 from althingi.models import Document
-from althingi.models import Issue
+from althingi.models import Issue as AlthingiIssue
 from althingi.models import Person
 from althingi.models import Review
+
+### QuerySets
+
+class IssueQuerySet(models.QuerySet):
+    def populate_dossier_statistics(self, user_id):
+        issues = self
+        dossier_statistics = DossierStatistic.objects.filter(user_id=user_id)
+        for issue in issues:
+            for dossier_statistic in dossier_statistics:
+                if dossier_statistic.issue_id == issue.id:
+                    if not hasattr(issue, 'dossier_statistics'):
+                        issue.dossier_statistics = []
+                    issue.dossier_statistics.append(dossier_statistic)
+        return issues
+
+### Managers
+
+class IssueManager(models.Manager):
+    def get_queryset(self):
+        return IssueQuerySet(self.model, using=self._db)
+
+### Models
 
 class UserProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='userprofile')
 
 class IssueBookmark(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='issue_bookmarks')
-    issue = models.ForeignKey(Issue, related_name='issue_bookmarks')
+    issue = models.ForeignKey('Issue', related_name='issue_bookmarks')
+
+class Issue(AlthingiIssue):
+    objects = IssueManager()
+
+    class Meta:
+        proxy = True
 
 class Dossier(models.Model):
     tracker = FieldTracker(fields=['attention', 'knowledge', 'support', 'proposal'])
@@ -61,7 +89,7 @@ class Dossier(models.Model):
         ('major', _('Major')),
     )
 
-    issue = models.ForeignKey(Issue, related_name='dossiers')
+    issue = models.ForeignKey('Issue', related_name='dossiers')
     dossier_type = models.CharField(max_length=10, choices=DOSSIER_TYPES)
 
     document = models.ForeignKey(Document, null=True, related_name='dossiers')
@@ -121,7 +149,7 @@ class Dossier(models.Model):
 
 
 class DossierStatistic(models.Model):
-    issue = models.ForeignKey(Issue, related_name='dossier_statistics')
+    issue = models.ForeignKey('Issue')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='dossier_statistics')
 
     document_attention_exclamation = models.IntegerField(default=0)

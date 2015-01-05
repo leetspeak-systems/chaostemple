@@ -10,12 +10,8 @@
 <h2>{{ session.name }}</h2>
 
 <div id="parliament-session-agenda">
-    {% for item in session.agenda_items.all %}
-        {% with item.issue as issue %}
-
-                {% include 'core/stub/issue.html' %}
-
-        {% endwith %}
+    {% for issue in issues %}
+        {% include 'core/stub/issue.html' %}
     {% endfor %}
 </div>
 

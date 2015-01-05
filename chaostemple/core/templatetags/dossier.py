@@ -51,50 +51,51 @@ def display_dossier_statistics(context, issue):
     if not request.user.is_authenticated():
         return ''
 
-    template_statistic = loader.get_template('core/stub/issue_dossier_statistic.html')
-    template_status_type = loader.get_template('core/stub/issue_dossier_statistic_status_type.html')
-    template_fieldstate = loader.get_template('core/stub/issue_dossier_statistic_fieldstate.html')
-
-    fieldstate_css_dict = fieldstate_css()
-
     content = []
-    for stat in issue.dossier_statistics.filter(user_id=request.user.id):
+    if hasattr(issue, 'dossier_statistics'):
 
-        for dossier_type, dossier_type_name in Dossier.DOSSIER_TYPES:
-            status_type_content = []
+        template_statistic = loader.get_template('core/stub/issue_dossier_statistic.html')
+        template_status_type = loader.get_template('core/stub/issue_dossier_statistic_status_type.html')
+        template_fieldstate = loader.get_template('core/stub/issue_dossier_statistic_fieldstate.html')
 
-            for status_type, status_type_name in Dossier.STATUS_TYPES:
-                fieldstate_content = []
+        fieldstate_css_dict = fieldstate_css()
 
-                fieldstates = '%s_STATES' % status_type.upper()
-                for fieldstate, fieldstate_name in getattr(Dossier, fieldstates):
-                    stat_field_name = '%s_%s_%s' % (dossier_type, status_type, fieldstate)
-                    if hasattr(stat, stat_field_name):
-                        count = getattr(stat, stat_field_name)
-                        if count:
-                            fieldstate_content.append(template_fieldstate.render(Context({
-                                'css_class': fieldstate_css_dict[status_type][fieldstate],
-                                'fieldstate_name': fieldstate_name,
-                                'count': count
-                            })))
+        for stat in issue.dossier_statistics:
+            for dossier_type, dossier_type_name in Dossier.DOSSIER_TYPES:
+                status_type_content = []
 
-                if fieldstate_content:
-                    status_type_content.append(template_status_type.render(Context({
-                        'status_type_name': status_type_name,
-                        'fieldstate_content': mark_safe(''.join(fieldstate_content))
+                for status_type, status_type_name in Dossier.STATUS_TYPES:
+                    fieldstate_content = []
+
+                    fieldstates = '%s_STATES' % status_type.upper()
+                    for fieldstate, fieldstate_name in getattr(Dossier, fieldstates):
+                        stat_field_name = '%s_%s_%s' % (dossier_type, status_type, fieldstate)
+                        if hasattr(stat, stat_field_name):
+                            count = getattr(stat, stat_field_name)
+                            if count:
+                                fieldstate_content.append(template_fieldstate.render(Context({
+                                    'css_class': fieldstate_css_dict[status_type][fieldstate],
+                                    'fieldstate_name': fieldstate_name,
+                                    'count': count
+                                })))
+
+                    if fieldstate_content:
+                        status_type_content.append(template_status_type.render(Context({
+                            'status_type_name': status_type_name,
+                            'fieldstate_content': mark_safe(''.join(fieldstate_content))
+                        })))
+
+                if status_type_content:
+                    if dossier_type == 'document':
+                        icon = 'file'
+                    elif dossier_type == 'review':
+                        icon = 'inbox'
+
+                    content.append(template_statistic.render(Context({
+                        'icon': icon,
+                        'dossier_type_name': dossier_type_name,
+                        'status_type_content': mark_safe(''.join(status_type_content))
                     })))
-
-            if status_type_content:
-                if dossier_type == 'document':
-                    icon = 'file'
-                elif dossier_type == 'review':
-                    icon = 'inbox'
-
-                content.append(template_statistic.render(Context({
-                    'icon': icon,
-                    'dossier_type_name': dossier_type_name,
-                    'status_type_content': mark_safe(''.join(status_type_content))
-                })))
 
     return ''.join(content)
 

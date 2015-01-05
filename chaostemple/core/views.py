@@ -4,10 +4,10 @@ from django.shortcuts import render
 
 from core.models import Dossier
 from core.models import DossierStatistic
+from core.models import Issue
 from core.models import IssueBookmark
 
 from althingi.models import Document
-from althingi.models import Issue
 from althingi.models import Parliament
 from althingi.models import Review
 from althingi.models import Session
@@ -31,6 +31,8 @@ def parliament_issues(request, parliament_num):
         parliament__parliament_num=parliament_num,
         document_count__gt=0
     )
+
+    issues.populate_dossier_statistics(user_id=request.user.id)
 
     ctx = {
         'issues': issues,
@@ -84,12 +86,14 @@ def parliament_sessions(request, parliament_num):
 
 def parliament_session(request, parliament_num, session_num):
 
-    session = Session.objects.prefetch_related(
-        'agenda_items__issue__parliament',
-    ).get(parliament__parliament_num=parliament_num, session_num=session_num)
+    session = Session.objects.get(parliament__parliament_num=parliament_num, session_num=session_num)
+    issues = Issue.objects.select_related('parliament').filter(agenda_items__session=session).order_by('agenda_items__order')
+
+    issues.populate_dossier_statistics(user_id=request.user.id)
 
     ctx = {
-        'session': session
+        'session': session,
+        'issues': issues,
     }
     return render(request, 'core/parliament_session.html', ctx)
 

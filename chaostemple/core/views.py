@@ -52,14 +52,14 @@ def parliament_issue(request, parliament_num, issue_num):
     if request.user.is_authenticated():
         for document in documents:
             try:
-                document.mydossier = Dossier.objects.select_related('user').get(document=document, user=request.user)
+                document.mydossier = Dossier.objects.select_related('user', 'document').get(document=document, user=request.user)
             except Dossier.DoesNotExist:
                 document.mydossier = Dossier(document=document, user=request.user)
                 document.mydossier.save(update_statistics=False)
 
         for review in reviews:
             try:
-                review.mydossier = Dossier.objects.select_related('user').get(review=review, user=request.user)
+                review.mydossier = Dossier.objects.select_related('user', 'document').get(review=review, user=request.user)
             except Dossier.DoesNotExist:
                 review.mydossier = Dossier(review=review, user=request.user)
                 review.mydossier.save(update_statistics=False)

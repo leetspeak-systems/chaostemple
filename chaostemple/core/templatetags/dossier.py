@@ -99,3 +99,7 @@ def display_dossier_statistics(context, issue):
 
     return ''.join(content)
 
+@register.filter
+def fieldstate_applicable(doc_type, fieldstate):
+    return Dossier.fieldstate_applicable(doc_type, fieldstate)
+

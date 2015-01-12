@@ -1,3 +1,4 @@
+# -*- coding: utf-8
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -89,6 +90,28 @@ class Dossier(models.Model):
         ('major', _('Major')),
     )
 
+    DOC_TYPE_EXCLUSIONS = {
+        u'beiðni um skýrslu': ['support', 'proposal'],
+        u'breytingartillaga': ['support'],
+        u'frumvarp': ['support', 'proposal'],
+        u'frumvarp eftir 2. umræðu': ['support', 'proposal'],
+        u'frumvarp nefndar': ['support', 'proposal'],
+        u'fsp. til munnl. svars': ['support', 'proposal'],
+        u'fsp. til skrifl. svars': ['support', 'proposal'],
+        u'lög (samhlj.)': ['support', 'proposal'],
+        u'lög í heild': ['support', 'proposal'],
+        u'nál. með brtt.': [],
+        u'nefndarálit': ['proposal'],
+        u'skýrsla n. (frumskjal)': ['support', 'proposal'],
+        u'skýrsla rh. (frumskjal)': ['support', 'proposal'],
+        u'stjórnarfrumvarp': ['support', 'proposal'],
+        u'stjórnartillaga': ['support', 'proposal'],
+        u'svar': ['support', 'proposal'],
+        u'þál. (samhlj.)': ['support', 'proposal'],
+        u'þál. í heild': ['support', 'proposal'],
+        u'þáltill.': ['support', 'proposal'],
+    }
+
     issue = models.ForeignKey(AlthingiIssue, related_name='dossiers')
     dossier_type = models.CharField(max_length=10, choices=DOSSIER_TYPES)
 
@@ -109,11 +132,20 @@ class Dossier(models.Model):
 
         statistic, c = DossierStatistic.objects.get_or_create(issue_id=issue_id, user_id=user_id)
 
+        exclude_kwargs = {} # Will be empty and without effect if nothing is excluded
+        excluded_doc_types = []
+        if dossier_type == 'document':
+            for doc_type in Dossier.DOC_TYPE_EXCLUSIONS:
+                if field in Dossier.DOC_TYPE_EXCLUSIONS[doc_type]:
+                    excluded_doc_types += [doc_type]
+        if len(excluded_doc_types):
+            exclude_kwargs.update({'document__doc_type__in': excluded_doc_types})
+
         if old_value is not None:
             statistic_field = '%s_%s_%s' % (dossier_type, field, old_value)
             if hasattr(statistic, statistic_field):
                 kwargs = {'issue_id': issue_id, 'user_id': user_id, 'dossier_type': dossier_type, field: old_value}
-                count = Dossier.objects.filter(**kwargs).count()
+                count = Dossier.objects.filter(**kwargs).exclude(**exclude_kwargs).count()
                 setattr(statistic, statistic_field, count)
                 statistic.save()
 
@@ -121,7 +153,7 @@ class Dossier(models.Model):
             statistic_field = '%s_%s_%s' % (dossier_type, field, new_value)
             if hasattr(statistic, statistic_field):
                 kwargs = {'issue_id': issue_id, 'user_id': user_id, 'dossier_type': dossier_type, field: new_value}
-                count = Dossier.objects.filter(**kwargs).count()
+                count = Dossier.objects.filter(**kwargs).exclude(**exclude_kwargs).count()
                 setattr(statistic, statistic_field, count)
                 statistic.save()
 
@@ -145,6 +177,15 @@ class Dossier(models.Model):
         super(Dossier, self).delete()
         for field in self.tracker.fields:
             self.update_statistic(field, getattr(self, field), None)
+
+
+    @staticmethod
+    def fieldstate_applicable(doc_type, fieldstate):
+        if doc_type and Dossier.DOC_TYPE_EXCLUSIONS.has_key(doc_type):
+            if fieldstate in Dossier.DOC_TYPE_EXCLUSIONS[doc_type]:
+                return False
+
+        return True
 
 
 class DossierStatistic(models.Model):

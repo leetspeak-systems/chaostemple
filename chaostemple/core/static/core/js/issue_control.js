@@ -9,7 +9,7 @@ jQuery.fn.extend({
                 $menuitems = $menu.find('ul[class="dropdown-menu"]');
                 if (data.bookmarked_issue_count > 0) {
                     $menu.show();
-                    $menuitems.html(data.content);
+                    $menuitems.html(data.html_content);
                 }
                 else {
                     $menu.hide();

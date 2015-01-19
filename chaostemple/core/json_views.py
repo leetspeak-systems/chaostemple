@@ -72,11 +72,11 @@ def issue_bookmark_menu(request):
 
     bookmarked_issues = request_context['bookmarked_issues']
 
-    content = render_to_string('core/stub/issue_bookmark_menuitems.html', {}, request_context)
+    html_content = render_to_string('core/stub/issue_bookmark_menuitems.html', {}, request_context)
     bookmarked_issue_count = len(bookmarked_issues)
 
     ctx = {
-        'content': content,
+        'html_content': html_content,
         'bookmarked_issue_count': bookmarked_issue_count,
     }
     return ctx

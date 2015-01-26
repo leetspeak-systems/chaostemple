@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-12-24 18:38+0000\n"
+"POT-Creation-Date: 2015-01-26 20:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -45,93 +45,93 @@ msgstr "Þingfundir"
 msgid "parliamentary session"
 msgstr "þingfundur"
 
-#: core/models.py:23 templates/core/parliament_issue.html:37
+#: core/models.py:52 templates/core/parliament_issue.html:35
 #: templates/core/stub/issue.html:17
 msgid "Parliamentary Documents"
 msgstr "Þingskjöl"
 
-#: core/models.py:24 templates/core/parliament_issue.html:44
+#: core/models.py:53 templates/core/parliament_issue.html:42
 #: templates/core/stub/issue.html:16
 msgid "Reviews"
 msgstr "Umsagnir"
 
-#: core/models.py:28 templates/core/stub/dossier.html:41
+#: core/models.py:57 templates/core/stub/dossier.html:34
 msgid "Attention"
 msgstr "Aðvörun"
 
-#: core/models.py:29 templates/core/stub/dossier.html:7
+#: core/models.py:58 templates/core/stub/dossier.html:17
 msgid "Knowledge"
 msgstr "Þekking"
 
-#: core/models.py:30 core/models.py:52 templates/core/stub/dossier.html:24
+#: core/models.py:59 core/models.py:81 templates/core/stub/dossier.html:52
 msgid "Support"
 msgstr "Stuðningur"
 
-#: core/models.py:31 templates/core/stub/dossier.html:58
+#: core/models.py:60 templates/core/stub/dossier.html:71
 msgid "Proposals"
 msgstr "Tillögur"
 
-#: core/models.py:35 core/models.py:58
+#: core/models.py:64 core/models.py:87
 msgid "None"
 msgstr "Engin"
 
-#: core/models.py:36
+#: core/models.py:65
 msgid "Question"
 msgstr "Spurning"
 
-#: core/models.py:37
+#: core/models.py:66
 msgid "Exclamation"
 msgstr "Upphrópun"
 
-#: core/models.py:41
+#: core/models.py:70
 msgid "Unread"
 msgstr "Ólesið"
 
-#: core/models.py:42
+#: core/models.py:71
 msgid "Briefly examined"
 msgstr "Lauslega skoðað"
 
-#: core/models.py:43
+#: core/models.py:72
 msgid "Examined"
 msgstr "Skoðað"
 
-#: core/models.py:44
+#: core/models.py:73
 msgid "Thoroughly examined"
 msgstr "Vel skoðað"
 
-#: core/models.py:48
+#: core/models.py:77
 msgid "Undefined"
 msgstr "Ótilgreint"
 
-#: core/models.py:49
+#: core/models.py:78
 msgid "Strong Opposition"
 msgstr "Eindregin andstaða"
 
-#: core/models.py:50
+#: core/models.py:79
 msgid "Oppose"
 msgstr "Andstaða"
 
-#: core/models.py:51
+#: core/models.py:80
 msgid "Neutral"
 msgstr "Hlutleysi"
 
-#: core/models.py:53
+#: core/models.py:82
 msgid "Strong Support"
 msgstr "Eindreginn stuðningur"
 
-#: core/models.py:54
+#: core/models.py:83
 msgid "Other"
 msgstr "Annað"
 
-#: core/models.py:59
+#: core/models.py:88
 msgid "Minor"
 msgstr "Minniháttar"
 
-#: core/models.py:60
+#: core/models.py:89
 msgid "Some"
 msgstr "Einhverjar"
 
-#: core/models.py:61
+#: core/models.py:90
 msgid "Major"
 msgstr "Meiriháttar"
 
@@ -174,16 +174,23 @@ msgstr ""
 "Skráin þín inniheldur upplýsingar eins og glósur, þekkingarstöðu o.s.frv."
 
 #: templates/core/dialog/dialog_delete_dossier.html:10
+#: templates/core/dialog/dialog_delete_memo.html:10
 msgid "This action cannot be undone."
 msgstr "Þessa aðgerð er ekki hægt að taka til baka."
 
 #: templates/core/dialog/dialog_delete_dossier.html:13
+#: templates/core/dialog/dialog_delete_memo.html:13
 msgid "Cancel"
 msgstr "Hætta við"
 
 #: templates/core/dialog/dialog_delete_dossier.html:14
+#: templates/core/dialog/dialog_delete_memo.html:14
 msgid "Delete"
 msgstr "Eyða"
+
+#: templates/core/dialog/dialog_delete_memo.html:8
+msgid "Are you sure you want to delete this memo?"
+msgstr "Ertu viss um að þú viljir eyða þessum minnispunkti?"
 
 #: templates/core/stub/document.html:6
 msgid "parliamentary document"
@@ -193,7 +200,7 @@ msgstr "þingskjal"
 msgid "Proposers"
 msgstr "Flutningsmenn"
 
-#: templates/core/stub/dossier.html:75
+#: templates/core/stub/dossier.html:89
 msgid "Mark as New"
 msgstr "Merkja sem nýtt"
 

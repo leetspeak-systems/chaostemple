@@ -39,12 +39,14 @@
         {% endfor %}
     </div>
 
-    <h3>{% trans 'Reviews' %}</h3>
-    <div class="reviews">
-        {% for review in reviews %}
-            {% include "core/stub/review.html" %}
-        {% endfor %}
-    </div>
+    {% if reviews.count > 0 %}
+        <h3>{% trans 'Reviews' %}</h3>
+        <div class="reviews">
+            {% for review in reviews %}
+                {% include "core/stub/review.html" %}
+            {% endfor %}
+        </div>
+    {% endif %}
 
 {% endblock %}
 

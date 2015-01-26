@@ -22,12 +22,16 @@ function csrfSafeMethod(method) {
 
 // Generalized function for handling JSON on our site
 $.jsonize = function(args) {
-    result = $.get(
-        args.url,
-        args.data,
-        dataType = 'json'
-    ).done(function(data, textStatus) {
-        var data = $.parseJSON(data);
+    if (args.type == null) {
+        args.type = 'GET';
+    }
+    result = $.ajax({
+        url: args.url,
+        type: args.type,
+        data: args.data,
+        dataType: 'json'
+    }).done(function(data, textStatus) {
+        var keys = Object.keys(data);
         if (data.ok && args.done) {
             args.done(data, textStatus);
         }
@@ -53,6 +57,9 @@ $(document).ready(function() {
             }
         }
     });
+
+    // Make things sortable
+    $('.sortable').sortable();
 });
 
 // Prevent anchors used as buttons from scrolling to top of page

@@ -12,6 +12,11 @@ urlpatterns = patterns('',
     url(r'^json/dossier/(?P<dossier_id>\d+)/fieldstate/(?P<fieldname>.+)/$', 'core.json_views.dossier_fieldstate', name='json_dossier_fieldstate'),
     url(r'^json/dossier/(?P<dossier_id>\d+)/delete/$', 'core.json_views.delete_dossier', name='json_delete_dossier'),
 
+    url(r'^json/memo/(?P<dossier_id>\d+)/add/$', 'core.json_views.add_memo', name='json_add_memo'),
+    url(r'^json/memo/(?P<memo_id>\d+)/edit/$', 'core.json_views.edit_memo', name='json_edit_memo'),
+    url(r'^json/memo/(?P<memo_id>\d+)/delete/$', 'core.json_views.delete_memo', name='json_delete_memo'),
+    url(r'^json/memo/sort/(?P<dossier_id>\d+)/', 'core.json_views.sort_memos', name='json_sort_memos'),
+
     url(r'^json/bookmark/issue/toggle/(?P<issue_id>\d+)/$', 'core.json_views.issue_bookmark_toggle', name='json_issue_bookmark_toggle'),
     url(r'^json/bookmark/issue/menu/$', 'core.json_views.issue_bookmark_menu', name='json_issue_bookmark_menu'),
 )

@@ -1,0 +1,18 @@
+{% load i18n %}
+
+<div class="modal fade" control="delete-memo-dialog" role="dialog">
+    <input type="hidden" id="delete-memo-id" value="0" />
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p>{% trans 'Are you sure you want to delete this memo?' %}</p>
+                <p><em><span control="delete-memo-content">[memo-content]</span></em></p>
+                <p><strong>{% trans 'This action cannot be undone.' %}</strong></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Cancel' %}</button>
+                <button type="button" class="btn btn-danger" control="delete-memo-confirmed" data-id="0" data-dismiss="modal">{% trans 'Delete' %}</button>
+            </div>
+        </div>
+    </div>
+</div>

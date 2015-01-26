@@ -1,0 +1,34 @@
+
+<ul control="memo-list" data-dossier-id="{{ dossier_id }}" class="sortable" style="{% if memos.count == 0 %}display: none;{% endif %}">
+    {% for memo in memos %}
+        <li control="memo-line" data-id="{{ memo.id }}">
+            {% comment %}
+                HTML table used to get text field behaving properly - CSS alone did not have the answers.
+                We wanted a text field that auto-expands into visible space while still allowing buttons to its left.
+                Also we needed it to shrink gracefully as browser window is made smaller and/or page is viewed on a hand-held device.
+                CSS alone did not provide the support for this. Table can be replaced if a different solution is found which fulfills these needs.
+            {% endcomment %}
+            <table>
+                <tr>
+                    <td>
+                        <div control="edit-memo-controls" data-id="{{ memo.id }}">
+                            <button control="delete-memo" data-id="{{ memo.id }}" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-remove"></span></button>
+                            <button control="edit-memo-button" data-id="{{ memo.id }}" data-dossier-id="{{ dossier_id }}" class="btn btn-xs btn-default">
+                                <span class="glyphicon glyphicon-edit"></span>
+                            </button>
+                        </div>
+                    </td>
+                    <td>
+                        <span control="memo-content-container" data-id="{{ memo.id }}">&bullet; <span control="memo-content" data-id="{{ memo.id }}">{{ memo.content }}</span></span>
+                        <input control="edit-memo-content" type="text" data-id="{{ memo.id }}" data-dossier-id="{{ dossier_id }}" value="{{ memo.content }}" maxlength="2000" />
+                    </td>
+                </tr>
+            </table>
+        </li>
+    {% endfor %}
+    <li control="add-memo-line" data-dossier-id="{{ dossier_id }}">
+        <!-- "add-memo-content" and "edit-memo-content" are identical except "add-memo-content" don't already have an ID. -->
+        <input control="edit-memo-content" type="text" data-id="0" data-dossier-id="{{ dossier_id }}" maxlength="2000" />
+    </li>
+ </ul>
+

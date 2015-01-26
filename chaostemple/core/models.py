@@ -227,3 +227,12 @@ class DossierStatistic(models.Model):
     review_proposal_major = models.IntegerField(default=0)
 
 
+class Memo(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='memos')
+    dossier = models.ForeignKey('Dossier', related_name='memos')
+    content = models.CharField(max_length=2000)
+    order = models.IntegerField()
+
+    class Meta:
+        ordering = ['order']
+

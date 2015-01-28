@@ -1,9 +1,24 @@
 # -*- coding: utf-8
 from django.db import models
 from django.templatetags.static import static
+from django.utils import timezone
 
 from BeautifulSoup import BeautifulSoup
 import urllib
+
+
+class SessionManager(models.Manager):
+    def upcoming(self):
+        next_sessions = self.select_related('parliament').filter(timing_start_planned__gt=timezone.now())
+
+        # Since the XML cannot determine the planned timing of a session that comes immediately after
+        # another, we need to make an extra call to include all the sessions with a higher session_num
+        if next_sessions.count() > 0:
+            next_sessions = next_sessions | self.select_related('parliament').filter(
+                session_num__gt=next_sessions.last().session_num
+            )
+
+        return next_sessions
 
 
 class Parliament(models.Model):
@@ -213,6 +228,8 @@ class Person(models.Model):
 
 
 class Session(models.Model):
+    objects = SessionManager()
+
     parliament = models.ForeignKey('Parliament', related_name='sessions')
     session_num = models.IntegerField()
     name = models.CharField(max_length=30)

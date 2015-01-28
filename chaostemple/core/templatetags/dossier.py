@@ -91,8 +91,11 @@ def display_dossier_statistics(context, issue):
                     elif dossier_type == 'review':
                         icon = 'inbox'
 
+                    memo_count = getattr(stat, '%s_memo_count' % dossier_type)
+
                     content.append(template_statistic.render(Context({
                         'icon': icon,
+                        'memo_count': memo_count,
                         'dossier_type_name': dossier_type_name,
                         'status_type_content': mark_safe(''.join(status_type_content))
                     })))

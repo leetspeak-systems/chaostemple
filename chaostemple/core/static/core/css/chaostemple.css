@@ -7,12 +7,13 @@ body { padding-top: 50px; }
 .btn-danger .grey { color: #d0d0d0; }
 .menu-header { padding: 6px 0px 4px 12px; margin-bottom: 4px; border-bottom: 1px solid #e0e0e0; }
 
+.memo-count { border-radius: 1em; }
+
 div[control="dossier"] { margin-top: 10px; }
 div[control="dossier"]:first-child { margin-top: 0px; }
 div[control="dossier"] label { font-weight: normal; width: 60px; margin-right: 8px; }
 div[control="dossier"] label.fieldname { display: inline; margin: 0px 12px 0px 12px; font-size: small; }
 div[control="dossier"] .badge { font-size: xx-small; }
-div[control="dossier"] button[control="toggle-dossier-memos"] span.label { border-radius: 1em; }
 
 div[control="dossier-memos"] ul { margin: 10px 0px 0px 0px; padding: 10px 0px 0px 18px; border-top: 1px solid #e0e0e0; font-size: small; }
 div[control="dossier-memos"] ul li { list-style: none; cursor: move; margin-top: 4px; margin-left: -18px; }

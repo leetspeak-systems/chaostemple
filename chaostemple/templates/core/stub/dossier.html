@@ -7,7 +7,7 @@
         <button type="button" class="btn btn-sm btn-default" control="toggle-dossier-memos" data-id="{{ dossier.id }}" {% if dossier.memos.all.count == 0 %}disabled="1"{% endif %}>
             <span class="glyphicon glyphicon-comment"></span>
             &nbsp;
-            <span control="memo-count" class="label label-{% if dossier.memos.all.count > 0 %}primary{% else %}default{% endif %}">{{ dossier.memos.all.count }}</span>
+            <span control="memo-count" class="label label-{% if dossier.memos.all.count > 0 %}primary{% else %}default{% endif %} memo-count">{{ dossier.memos.all.count }}</span>
         </button>
         <button type="button" class="btn btn-sm btn-default" control="edit-memo-button" data-id="0" data-dossier-id="{{ dossier.id }}">
             <span class="glyphicon glyphicon-plus"></span>

@@ -209,6 +209,8 @@ class DossierStatistic(models.Model):
     document_proposal_some = models.IntegerField(default=0)
     document_proposal_major = models.IntegerField(default=0)
 
+    document_memo_count = models.IntegerField(default=0)
+
     review_attention_exclamation = models.IntegerField(default=0)
     review_attention_question = models.IntegerField(default=0)
     review_knowledge_0 = models.IntegerField(default=0)
@@ -226,12 +228,44 @@ class DossierStatistic(models.Model):
     review_proposal_some = models.IntegerField(default=0)
     review_proposal_major = models.IntegerField(default=0)
 
+    review_memo_count = models.IntegerField(default=0)
+
 
 class Memo(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='memos')
     dossier = models.ForeignKey('Dossier', related_name='memos')
     content = models.CharField(max_length=2000)
     order = models.IntegerField()
+
+    def save(self, *args, **kwargs):
+        new = self.pk is None
+
+        super(Memo, self).save(*args, **kwargs)
+
+        if new:
+            self.update_statistic(self.user_id, self.dossier_id)
+
+    def delete(self):
+        user_id = self.user_id
+        dossier_id = self.dossier_id
+
+        super(Memo, self).delete()
+
+        self.update_statistic(user_id, dossier_id)
+
+    def update_statistic(self, user_id, dossier_id):
+        dossier = Dossier.objects.get(id=dossier_id)
+
+        fieldname = '%s_memo_count' % dossier.dossier_type
+        count = Memo.objects.filter(
+            user_id=user_id,
+            dossier__issue_id=dossier.issue_id,
+            dossier__dossier_type=dossier.dossier_type
+        ).count()
+
+        stat = DossierStatistic.objects.get(user_id=user_id, issue_id=dossier.issue_id)
+        setattr(stat, fieldname, count)
+        stat.save()
 
     class Meta:
         ordering = ['order']

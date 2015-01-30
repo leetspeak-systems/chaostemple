@@ -60,7 +60,11 @@ already_haves = {
 }
 
 def sensible_datetime(value):
-    d = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S')
+    try:
+        d = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S')
+    except ValueError:
+        d = datetime.strptime(value, '%Y-%m-%d')
+
     return pytz.timezone('UTC').localize(d)
 
 def mkpath(path):

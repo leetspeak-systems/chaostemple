@@ -10,6 +10,8 @@ from sys import stdout
 from xml.dom import minidom
 
 from althingi.models import Committee
+from althingi.models import CommitteeAgenda
+from althingi.models import CommitteeAgendaItem
 from althingi.models import Document
 from althingi.models import Issue
 from althingi.models import Parliament
@@ -25,6 +27,8 @@ ISSUE_LIST_URL = 'http://www.althingi.is/altext/xml/thingmalalisti/?lthing=%d'
 ISSUE_URL = 'http://www.althingi.is/altext/xml/thingmalalisti/thingmal/?lthing=%d&malnr=%d'
 PERSON_URL = 'http://www.althingi.is/altext/xml/thingmenn/thingmadur/?nr=%d'
 COMMITTEE_LIST_URL = 'http://www.althingi.is/altext/xml/nefndir/?lthing=%d'
+COMMITTEE_AGENDA_LIST_URL = 'http://www.althingi.is/altext/xml/nefndarfundir/?lthing=%d'
+COMMITTEE_AGENDA_URL = 'http://www.althingi.is/altext/xml/nefndarfundir/nefndarfundur/?dagskrarnumer=%d'
 SESSION_LIST_URL = 'http://www.althingi.is/altext/xml/thingfundir/?lthing=%d'
 SESSION_AGENDA_URL = 'http://www.althingi.is/altext/xml/dagskra/thingfundur/?lthing=%d&fundur=%d'
 SESSION_NEXT_AGENDA_URL = 'http://www.althingi.is/altext/xml/dagskra/thingfundur/'
@@ -60,10 +64,17 @@ already_haves = {
 }
 
 def sensible_datetime(value):
-    try:
-        d = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S')
-    except ValueError:
-        d = datetime.strptime(value, '%Y-%m-%d')
+
+    if type(value) is datetime:
+        d = value
+    else:
+        try:
+            d = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S')
+        except ValueError:
+            try:
+                d = datetime.strptime(value, '%Y-%m-%d')
+            except ValueError:
+                d = datetime.strptime(value, '%d.%m.%Y')
 
     return pytz.timezone('UTC').localize(d)
 
@@ -524,6 +535,157 @@ def update_next_sessions():
     for session_xml in sessions_xml:
         _process_session_agenda_xml(session_xml)
 
+
+
+def update_committee_agendas(parliament_num=None, date_limit=None):
+
+    parliament = ensure_parliament(parliament_num)
+
+    # NOTE: Date limit is used until XML offers a way to specify future meetings
+    # This may therefore very well change in the future. Relying on this option is not recommended.
+    if date_limit is not None:
+        date_limit = sensible_datetime(date_limit)
+
+    committee_agenda_list_xml = minidom.parse(urllib.urlopen(COMMITTEE_AGENDA_LIST_URL % parliament.parliament_num))
+    committee_agenda_stubs_xml = committee_agenda_list_xml.getElementsByTagName(u'nefndarfundur')
+    for committee_agenda_stub_xml in reversed(committee_agenda_stubs_xml):
+
+        meeting_date = sensible_datetime(committee_agenda_stub_xml.getElementsByTagName(u'dagur')[0].firstChild.nodeValue)
+        if meeting_date < date_limit:
+            break
+
+        committee_agenda_xml_id = int(committee_agenda_stub_xml.getAttribute(u'númer'))
+        update_committee_agenda(committee_agenda_xml_id, parliament.parliament_num)
+
+
+def update_next_committee_agendas(parliament_num=None):
+    update_committee_agendas(parliament_num=parliament_num, date_limit=datetime.now())
+
+
+def update_committee_agenda(committee_agenda_xml_id, parliament_num=None):
+
+    parliament = ensure_parliament(parliament_num)
+
+    committee_agenda_full_xml = minidom.parse(urllib.urlopen(COMMITTEE_AGENDA_URL % committee_agenda_xml_id))
+    committee_agenda_xml = committee_agenda_full_xml.getElementsByTagName(u'nefndarfundur')[0]
+    _process_committee_agenda_xml(committee_agenda_xml)
+
+
+# NOTE: To become a private function once we turn this into some sort of class
+def _process_committee_agenda_xml(committee_agenda_xml):
+
+    parliament_num = int(committee_agenda_xml.getAttribute(u'þingnúmer'))
+    committee_agenda_xml_id = int(committee_agenda_xml.getAttribute(u'númer'))
+    committee_xml_id = int(committee_agenda_xml.getElementsByTagName(u'nefnd')[0].getAttribute('id'))
+
+    parliament = ensure_parliament(parliament_num)
+    committee = ensure_committee(committee_xml_id, parliament_num)
+
+    begins_xml = committee_agenda_xml.getElementsByTagName(u'hefst')[0]
+    begins_datetime_xml = begins_xml.getElementsByTagName(u'dagurtími')
+    if len(begins_datetime_xml) == 0:
+        # Sometimes only the date is known, not the datetime.
+        begins_date_xml = begins_xml.getElementsByTagName(u'dagur')
+        if len(begins_date_xml) == 0:
+            timing_start_planned = None
+        else:
+            timing_start_planned = sensible_datetime(begins_date_xml[0].firstChild.nodeValue)
+    else:
+        timing_start_planned = sensible_datetime(begins_datetime_xml[0].firstChild.nodeValue)
+
+    try:
+        timing_start = sensible_datetime(committee_agenda_xml.getElementsByTagName(u'fundursettur')[0].firstChild.nodeValue)
+    except (AttributeError, IndexError):
+        timing_start = None
+    try:
+        timing_end = sensible_datetime(committee_agenda_xml.getElementsByTagName(u'fuslit')[0].firstChild.nodeValue)
+    except (AttributeError, IndexError):
+        timing_end = None
+
+    committee_agenda_try = CommitteeAgenda.objects.filter(
+        committee_agenda_xml_id=committee_agenda_xml_id,
+        parliament=parliament
+    )
+    if committee_agenda_try.count() > 0:
+        committee_agenda = committee_agenda_try[0]
+
+        changed = False
+        if committee_agenda.timing_start_planned != timing_start_planned:
+            committee_agenda.timing_start_planned = timing_start_planned
+            changed = True
+        if committee_agenda.timing_start != timing_start:
+            committee_agenda.timing_start = timing_start
+            changed = True
+        if committee_agenda.timing_end != timing_end:
+            committee_agenda.timing_end = timing_end
+            changed = True
+
+        if changed:
+            committee_agenda.save()
+            print 'Updated committee agenda: %s' % committee_agenda
+        else:
+            print 'Already have committee agenda: %s' % committee_agenda
+    else:
+        committee_agenda = CommitteeAgenda()
+        committee_agenda.parliament = parliament
+        committee_agenda.committee = committee
+        committee_agenda.committee_agenda_xml_id = committee_agenda_xml_id
+        committee_agenda.timing_start_planned = timing_start_planned
+        committee_agenda.timing_start = timing_start
+        committee_agenda.timing_end = timing_end
+        committee_agenda.save()
+
+        print 'Added committee agenda: %s' % committee_agenda
+
+    max_order = 0
+    items_xml = committee_agenda_xml.getElementsByTagName(u'dagskrárliður')
+    for item_xml in items_xml:
+        order = int(item_xml.getAttribute(u'númer'))
+        name = item_xml.getElementsByTagName(u'heiti')[0].firstChild.nodeValue
+        issue = None
+
+        if order > max_order:
+            max_order = order
+
+        issues_xml = item_xml.getElementsByTagName(u'mál')
+        if len(issues_xml) > 0:
+            # There can only be one issue per agenda item. Right?
+            issue_xml = issues_xml[0]
+            issue_num = int(issue_xml.getAttribute(u'málsnúmer'))
+            issue_parliament_num = int(issue_xml.getAttribute(u'löggjafarþing'))
+
+            # It is assumed that issue_group will be 'A' (i.e. not 'B', which means an issue without documents)
+            issue = update_issue(issue_num, issue_parliament_num)
+
+        item_try = CommitteeAgendaItem.objects.filter(order=order, committee_agenda=committee_agenda)
+        if item_try.count() > 0:
+            item = item_try[0]
+
+            changed = False
+            if item.name != name:
+                item.name = name
+                changed = True
+            if issue is not None and item.issue != issue:
+                item.issue = issue
+                changed = True
+
+            if changed:
+                item.save()
+                print 'Update committee agenda item: %s' % item
+            else:
+                print 'Already have committee agenda item: %s' % item
+        else:
+            item = CommitteeAgendaItem()
+            item.committee_agenda = committee_agenda
+            item.order = order
+            item.name = name
+            item.issue = issue
+            item.save()
+
+            print 'Added committee agenda item: %s' % item
+
+    # Delete items higher than the max_order since that means items has been dropped
+    CommitteeAgendaItem.objects.filter(order__gt=max_order, committee_agenda=committee_agenda).delete()
 
 # NOTE: To become a private function once we turn this into some sort of class
 def _process_session_agenda_xml(session_xml):

@@ -256,6 +256,38 @@ class SessionAgendaItem(models.Model):
         ordering = ['order']
 
 
+class CommitteeAgenda(models.Model):
+    parliament = models.ForeignKey('Parliament', related_name='committee_agendas')
+    committee = models.ForeignKey('Committee', related_name='committee_agendas')
+    timing_start_planned = models.DateTimeField(null=True)
+    timing_start = models.DateTimeField(null=True)
+    timing_end = models.DateTimeField(null=True)
+
+    committee_agenda_xml_id = models.IntegerField()
+
+    def __unicode__(self):
+        return u'%s @ %s' % (self.committee, self.timing_start_planned)
+
+    class Meta:
+        ordering = ['timing_start_planned']
+
+
+class CommitteeAgendaItem(models.Model):
+    committee_agenda = models.ForeignKey('CommitteeAgenda', related_name='committee_agenda_items')
+    order = models.IntegerField()
+    name = models.CharField(max_length=200)
+    issue = models.ForeignKey('Issue', null=True)
+
+    def __unicode__(self):
+        if self.issue is not None:
+            return u'%d. %s (%d)' % (self.order, self.name, self.issue.issue_num)
+        else:
+            return u'%d. %s' % (self.order, self.name)
+
+    class Meta:
+        ordering = ['order']
+
+
 class Parliamentarian(Person):
     parliament_num = models.ForeignKey('Parliament')
     seat_number = models.IntegerField(default=0)

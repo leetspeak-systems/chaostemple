@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<ul class="nav nav-stacked">
+    {% for committee in committees %}
+        <li role="presentation"><a href="{% url 'parliament_committee' parliament_num committee.id %}">{{ committee }}</a></li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

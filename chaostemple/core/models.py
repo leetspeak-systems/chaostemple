@@ -18,6 +18,9 @@ class IssueUtilities():
     def populate_dossier_statistics(issues, user_id):
         dossier_statistics = DossierStatistic.objects.filter(user_id=user_id)
         for issue in issues:
+            if issue is None:
+                continue
+
             for dossier_statistic in dossier_statistics:
                 if dossier_statistic.issue_id == issue.id:
                     if not hasattr(issue, 'dossier_statistics'):

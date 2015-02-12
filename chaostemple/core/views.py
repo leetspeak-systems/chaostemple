@@ -8,6 +8,8 @@ from core.models import Issue
 from core.models import IssueBookmark
 from core.models import IssueUtilities
 
+from althingi.models import Committee
+from althingi.models import CommitteeAgenda
 from althingi.models import Document
 from althingi.models import Parliament
 from althingi.models import Review
@@ -98,3 +100,37 @@ def parliament_session(request, parliament_num, session_num):
     }
     return render(request, 'core/parliament_session.html', ctx)
 
+def parliament_committees(request, parliament_num):
+
+    committees = Committee.objects.filter(parliaments__parliament_num=parliament_num)
+
+    ctx = {
+        'committees': committees
+    }
+    return render(request, 'core/parliament_committees.html', ctx)
+
+def parliament_committee(request, parliament_num, committee_id):
+
+    committee = Committee.objects.get(id=committee_id)
+    agendas = committee.committee_agendas.all()
+
+    ctx = {
+        'committee': committee,
+        'agendas': agendas,
+    }
+    return render(request, 'core/parliament_committee.html', ctx)
+
+def parliament_committee_agenda(request, parliament_num, committee_id, agenda_id):
+
+    committee = Committee.objects.get(id=committee_id)
+    agenda = committee.committee_agendas.get(id=agenda_id)
+    items = agenda.committee_agenda_items.select_related('issue__parliament').all()
+
+    IssueUtilities.populate_dossier_statistics([i.issue for i in items], request.user.id)
+
+    ctx = {
+        'committee': committee,
+        'agenda': agenda,
+        'items': items,
+    }
+    return render(request, 'core/parliament_committee_agenda.html', ctx)

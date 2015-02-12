@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block javascript %}
+    <script language="javascript" type="text/javascript" src="{% static 'core/js/issue_control.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+    <h2>{{ committee.name|capfirst }}</h2>
+
+    <h4>{% trans 'Meeting' %}, {{ agenda.timing_start_planned|date }}, {{ agenda.timing_start_planned|time }}</h4>
+
+    {% for item in items %}
+        {% include 'core/stub/committee_agenda_item.html' %}
+    {% endfor %}
+
+{% endblock %}

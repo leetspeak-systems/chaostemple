@@ -1,0 +1,9 @@
+{% if item.issue_id %}
+    {% include 'core/stub/issue.html' with issue=item.issue %}
+{% else %}
+    <div class="panel panel-default">
+        <div class="panel-body">
+            {{ item.name }}
+        </div>
+    </div>
+{% endif %}

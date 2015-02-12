@@ -10,11 +10,12 @@ from althingi.models import Issue as AlthingiIssue
 from althingi.models import Person
 from althingi.models import Review
 
-### QuerySets
+# Model utilities
 
-class IssueQuerySet(models.QuerySet):
-    def populate_dossier_statistics(self, user_id):
-        issues = self
+class IssueUtilities():
+
+    @staticmethod
+    def populate_dossier_statistics(issues, user_id):
         dossier_statistics = DossierStatistic.objects.filter(user_id=user_id)
         for issue in issues:
             for dossier_statistic in dossier_statistics:
@@ -23,12 +24,6 @@ class IssueQuerySet(models.QuerySet):
                         issue.dossier_statistics = []
                     issue.dossier_statistics.append(dossier_statistic)
         return issues
-
-### Managers
-
-class IssueManager(models.Manager):
-    def get_queryset(self):
-        return IssueQuerySet(self.model, using=self._db)
 
 ### Models
 
@@ -40,8 +35,6 @@ class IssueBookmark(models.Model):
     issue = models.ForeignKey(AlthingiIssue, related_name='issue_bookmarks')
 
 class Issue(AlthingiIssue):
-    objects = IssueManager()
-
     class Meta:
         proxy = True
 

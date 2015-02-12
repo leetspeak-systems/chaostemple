@@ -6,6 +6,7 @@ from core.models import Dossier
 from core.models import DossierStatistic
 from core.models import Issue
 from core.models import IssueBookmark
+from core.models import IssueUtilities
 
 from althingi.models import Document
 from althingi.models import Parliament
@@ -32,7 +33,7 @@ def parliament_issues(request, parliament_num):
         document_count__gt=0
     )
 
-    issues.populate_dossier_statistics(user_id=request.user.id)
+    IssueUtilities.populate_dossier_statistics(issues, request.user.id)
 
     ctx = {
         'issues': issues,
@@ -89,7 +90,7 @@ def parliament_session(request, parliament_num, session_num):
     session = Session.objects.get(parliament__parliament_num=parliament_num, session_num=session_num)
     issues = Issue.objects.select_related('parliament').filter(agenda_items__session=session).order_by('agenda_items__order')
 
-    issues.populate_dossier_statistics(user_id=request.user.id)
+    IssueUtilities.populate_dossier_statistics(issues, request.user.id)
 
     ctx = {
         'session': session,

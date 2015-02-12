@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-01-26 20:02+0000\n"
+"POT-Creation-Date: 2015-02-12 18:43+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -50,7 +50,7 @@ msgstr "þingfundur"
 msgid "Parliamentary Documents"
 msgstr "Þingskjöl"
 
-#: core/models.py:53 templates/core/parliament_issue.html:42
+#: core/models.py:53 templates/core/parliament_issue.html:43
 #: templates/core/stub/issue.html:16
 msgid "Reviews"
 msgstr "Umsagnir"
@@ -191,6 +191,18 @@ msgstr "Eyða"
 #: templates/core/dialog/dialog_delete_memo.html:8
 msgid "Are you sure you want to delete this memo?"
 msgstr "Ertu viss um að þú viljir eyða þessum minnispunkti?"
+
+#: templates/core/parliament.html:9
+msgid "Committees"
+msgstr "Nefndir"
+
+#: templates/core/parliament_committee.html:6
+msgid "Meetings"
+msgstr "Fundir"
+
+#: templates/core/parliament_committee_agenda.html:7
+msgid "Meeting"
+msgstr "Fundur"
 
 #: templates/core/stub/document.html:6
 msgid "parliamentary document"

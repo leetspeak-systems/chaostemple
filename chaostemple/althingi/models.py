@@ -9,14 +9,19 @@ import urllib
 
 class SessionManager(models.Manager):
     def upcoming(self):
-        next_sessions = self.select_related('parliament').filter(timing_start_planned__gt=timezone.now())
 
-        # Since the XML cannot determine the planned timing of a session that comes immediately after
-        # another, we need to make an extra call to include all the sessions with a higher session_num
-        if next_sessions.count() > 0:
-            next_sessions = next_sessions | self.select_related('parliament').filter(
-                session_num__gt=next_sessions.last().session_num
-            )
+        # The XML cannot determine the planned timing of a session that comes immediately after
+        # another, we first find the next upcoming session, which will need to have a timing_start_planned
+        # configured. Then we look up all sessions with the same session number or higher. Then we return
+        # the QuerySet object so that the calling function can modify the query further.
+
+        try:
+            next_session = Session.objects.filter(timing_start_planned__gt=timezone.now()).order_by('-session_num')[0:1].get()
+            next_num = next_session.session_num
+        except Session.DoesNotExist:
+            return Session.objects.none()
+
+        next_sessions = self.filter(session_num__gte=next_num)
 
         return next_sessions
 

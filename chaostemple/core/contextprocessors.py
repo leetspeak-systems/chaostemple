@@ -8,7 +8,7 @@ from core.models import Issue
 def globals(request):
 
     parliaments = Parliament.objects.order_by('-parliament_num')
-    next_sessions = Session.objects.upcoming()
+    next_sessions = Session.objects.upcoming().select_related('parliament')
 
     bookmarked_issues = None
     if request.user.is_authenticated():

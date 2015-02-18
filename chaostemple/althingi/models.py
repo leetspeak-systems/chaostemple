@@ -15,8 +15,11 @@ class SessionManager(models.Manager):
         # configured. Then we look up all sessions with the same session number or higher. Then we return
         # the QuerySet object so that the calling function can modify the query further.
 
+        now = timezone.now()
+        today = timezone.make_aware(timezone.datetime(now.year, now.month, now.day), now.tzinfo)
+
         try:
-            next_session = Session.objects.filter(timing_start_planned__gt=timezone.now()).order_by('-session_num')[0:1].get()
+            next_session = Session.objects.filter(timing_start_planned__gt=today).order_by('-session_num')[0:1].get()
             next_num = next_session.session_num
         except Session.DoesNotExist:
             return Session.objects.none()
@@ -24,6 +27,14 @@ class SessionManager(models.Manager):
         next_sessions = self.filter(session_num__gte=next_num)
 
         return next_sessions
+
+
+class CommitteeAgendaManager(models.Manager):
+    def upcoming(self):
+        now = timezone.now()
+        today = timezone.make_aware(timezone.datetime(now.year, now.month, now.day), now.tzinfo)
+
+        return self.filter(timing_start_planned__gt=today)
 
 
 class Parliament(models.Model):
@@ -262,6 +273,8 @@ class SessionAgendaItem(models.Model):
 
 
 class CommitteeAgenda(models.Model):
+    objects = CommitteeAgendaManager()
+
     parliament = models.ForeignKey('Parliament', related_name='committee_agendas')
     committee = models.ForeignKey('Committee', related_name='committee_agendas')
     timing_start_planned = models.DateTimeField(null=True)

@@ -559,7 +559,10 @@ def update_committee_agendas(parliament_num=None, date_limit=None):
 
 
 def update_next_committee_agendas(parliament_num=None):
-    update_committee_agendas(parliament_num=parliament_num, date_limit=datetime.now())
+    now = datetime.now()
+    today = datetime(now.year, now.month, now.day)
+
+    update_committee_agendas(parliament_num=parliament_num, date_limit=today)
 
 
 def update_committee_agenda(committee_agenda_xml_id, parliament_num=None):

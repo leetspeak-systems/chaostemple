@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block javascript %}
+    <script language="javascript" type="text/javascript" src="{% static 'core/js/issue_control.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+    <h2>{% trans 'Current and Upcoming' %}</h2>
+
+    <div>
+        {% if next_sessions.count > 0 %}
+            <label>{% trans 'Parliamentary Sessions' %}</label>
+            <ul>
+            {% for session in next_sessions %}
+                <li>
+                    <a href="{% url 'parliament_session' parliament_num session.session_num %}">{{ session }}</a>
+                    {% if session.timing_start_planned %}
+                        <small>{{ session.timing_start_planned|date }} {{ session.timing_start_planned|time }}</small>
+                    {% endif %}
+                </li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if next_committee_agendas.count > 0 %}
+            <label>{% trans 'Committee Meetings' %}</label>
+            <ul>
+            {% for agenda in next_committee_agendas %}
+                <li>
+                    <a href="{% url 'parliament_committee_agenda' parliament_num agenda.committee_id agenda.id %}">{{ agenda.committee }}</a>
+                    {% if agenda.timing_start_planned %}
+                        <small>{{ agenda.timing_start_planned|date }} {{ agenda.timing_start_planned|time }}</small>
+                    {% endif %}
+                </li>
+            {% endfor %}
+            </ul>
+         {% endif %}
+    </div>
+
+{% endblock %}

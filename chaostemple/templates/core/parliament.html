@@ -4,6 +4,7 @@
 {% block content %}
 
 <ul class="nav nav-pills">
+    <li role="presentation"><a href="{% url 'parliament_upcoming' parliament_num %}">{% trans 'Current and Upcoming' %}</a></li>
     <li role="presentation"><a href="{% url 'parliament_issues' parliament_num %}">{% trans 'Issues' %}</a></li>
     <li role="presentation"><a href="{% url 'parliament_sessions' parliament_num %}">{% trans 'Parliamentary Sessions' %}</a></li>
     <li role="presentation"><a href="{% url 'parliament_committees' parliament_num %}">{% trans 'Committees' %}</a></li>

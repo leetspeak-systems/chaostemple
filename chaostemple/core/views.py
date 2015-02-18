@@ -28,6 +28,26 @@ def parliament(request, parliament_num):
     }
     return render(request, 'core/parliament.html', ctx)
 
+def parliament_upcoming(request, parliament_num):
+
+    next_sessions = Session.objects.upcoming().prefetch_related('agenda_items__issue__parliament')
+
+    issues_to_populate = []
+    for session in next_sessions:
+        for item in session.agenda_items.all():
+            if item.issue_id:
+                issues_to_populate.append(item.issue)
+
+    IssueUtilities.populate_dossier_statistics(issues_to_populate, request.user.id)
+
+    next_committee_agendas = CommitteeAgenda.objects.upcoming()
+
+    ctx = {
+        'next_sessions': next_sessions,
+        'next_committee_agendas': next_committee_agendas,
+    }
+    return render(request, 'core/parliament_upcoming.html', ctx)
+
 def parliament_issues(request, parliament_num):
 
     issues = Issue.objects.select_related('parliament').filter(

@@ -33,6 +33,7 @@
                     <ul class="nav navbar-nav">
                         {% if parliament_num %}
                             <li {% if urlname == 'parliament' %}class="active"{% endif %}><a href="{% url 'parliament' parliament_num %}">{% trans 'Parliament' %}</a></li>
+                            <li {% if urlname == 'parliament_upcoming' %}class="active"{% endif %}><a href="{% url 'parliament_upcoming' parliament_num %}">{% trans 'Current and Upcoming' %}</a></li>
                             <li {% if urlname == 'parliament_issues' %}class="active"{% endif %}><a href="{% url 'parliament_issues' parliament_num %}">{% trans 'Issues' %}</a></li>
                             <li {% if urlname == 'parliament_committees' %}class="active"{% endif %}><a href="{% url 'parliament_committees' parliament_num %}">{% trans 'Committees' %}</a></li>
                             <li {% if urlname == 'parliament_sessions' %}class="active"{% endif %}><a href="{% url 'parliament_sessions' parliament_num %}">{% trans 'Parliamentary Sessions' %}</a></li>

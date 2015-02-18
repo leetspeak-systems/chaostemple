@@ -23,17 +23,17 @@ jQuery.fn.extend({
 $(document).ready(function() {
 
     $(document).on('click', 'a[control="issue-bookmark"]', function() {
-        $anchor = $(this);
-        issue_id = $anchor.data('issue-id');
+        issue_id = $(this).data('issue-id');
 
         $.jsonize({
             url: '/json/bookmark/issue/toggle/' + issue_id + '/',
             done: function(data, textStatus) {
+                $icons = $('a[control="issue-bookmark"][data-issue-id=' + issue_id + '] span[control="issue-bookmark-icon"]');
                 if (data.is_bookmarked) {
-                    $anchor.find('span[control="issue-bookmark-icon"]').removeClass('grey');
+                    $icons.removeClass('grey');
                 }
                 else {
-                    $anchor.find('span[control="issue-bookmark-icon"]').addClass('grey');
+                    $icons.addClass('grey');
                 }
 
                 $('li[control="bookmark-menu"]').loadBookmarks();

@@ -1,0 +1,17 @@
+{% load i18n %}
+
+<div class="dropdown">
+    <button class="btn btn-default dropdown-toggle" type="button" id="parliament-menu" data-toggle="dropdown" aria-expanded="true">
+        {{ parliament_num }}. {% trans 'parliament' %}
+        <span class="caret"></span>
+    </button>
+
+    <ul class="dropdown-menu" role="menu">
+        {% for parliament in parliaments %}
+            <li role="presentation" {% if parliament.parliament_num == parliament_num %}class="active"{% endif %}>
+                <a role="menuitem" href="{% url 'parliament' parliament.parliament_num %}">{{ parliament.parliament_num }}. {% trans 'parliament' %}</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+</div>

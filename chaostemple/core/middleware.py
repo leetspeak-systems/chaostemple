@@ -11,17 +11,23 @@ class ExtraVarsMiddleware():
         parliament_num = view_kwargs.get('parliament_num')
         issue_num = view_kwargs.get('issue_num')
         session_num = view_kwargs.get('session_num')
+        committee_id = view_kwargs.get('committee_id')
+        agenda_id = view_kwargs.get('agenda_id')
         if parliament_num:
             parliament_num = int(parliament_num)
         if issue_num:
             issue_num = int(issue_num)
         if session_num:
             session_num = int(session_num)
+        if committee_id:
+            committee_id = int(committee_id)
+        if agenda_id:
+            agenda_id = int(agenda_id)
 
         request.extravars = {
             'parliament_num': parliament_num,
             'issue_num': issue_num,
-            'breadcrumbs': make_breadcrumbs(view_func.func_name, parliament_num, issue_num, session_num),
+            'breadcrumbs': make_breadcrumbs(view_func.func_name, parliament_num, issue_num, session_num, committee_id, agenda_id),
             'urlname': view_func.func_name,
         }
 

@@ -1,9 +1,12 @@
 from django.utils.translation import ugettext as _
 
+from althingi.models import Committee
+from althingi.models import CommitteeAgenda
+
 def leave_breadcrumb(breadcrumbs, urlname, caption):
     return breadcrumbs + ((urlname, caption),)
 
-def make_breadcrumbs(func_name, parliament_num, issue_num, session_num):
+def make_breadcrumbs(func_name, parliament_num, issue_num, session_num, committee_id, agenda_id):
     breadcrumbs = ()
 
     if parliament_num:
@@ -39,6 +42,29 @@ def make_breadcrumbs(func_name, parliament_num, issue_num, session_num):
             breadcrumbs,
             ('parliament_session', parliament_num, session_num),
             '%d. %s' % (session_num, _('parliamentary session'))
+        )
+
+    if func_name in ('parliament_committees', 'parliament_committee', 'parliament_committee_agenda'):
+        breadcrumbs = leave_breadcrumb(
+            breadcrumbs,
+            ('parliament_committees', parliament_num),
+            _('Committees')
+        )
+
+    if func_name in ('parliament_committee', 'parliament_committee_agenda'):
+        committee = Committee.objects.get(id=committee_id)
+        breadcrumbs = leave_breadcrumb(
+            breadcrumbs,
+            ('parliament_committee', parliament_num, committee_id),
+            committee.__str__().capitalize()
+        )
+
+    if func_name == 'parliament_committee_agenda':
+        committee_agenda = CommitteeAgenda.objects.get(id=agenda_id)
+        breadcrumbs = leave_breadcrumb(
+            breadcrumbs,
+            ('parliament_committee_agenda', parliament_num, committee_id, agenda_id),
+            committee_agenda.timing_start_planned
         )
 
     return breadcrumbs

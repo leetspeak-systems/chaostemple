@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-18 09:44+0000\n"
+"POT-Creation-Date: 2015-02-19 19:12+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -22,13 +22,14 @@ msgstr ""
 msgid "Temple of Chaos"
 msgstr "Musteri Glundroðans"
 
-#: core/breadcrumbs.py:13 templates/base.html:45
+#: core/breadcrumbs.py:13 templates/base.html:35
 #: templates/core/stub/issue_bookmark_menuitems.html:5
+#: templates/core/stub/parliament_selection.html:5
+#: templates/core/stub/parliament_selection.html:12
 msgid "parliament"
 msgstr "þing"
 
-#: core/breadcrumbs.py:20 templates/base.html:36
-#: templates/core/parliament.html:7
+#: core/breadcrumbs.py:20 templates/core/parliament.html:14
 msgid "Issues"
 msgstr "Þingmál"
 
@@ -36,15 +37,20 @@ msgstr "Þingmál"
 msgid "issue"
 msgstr "mál"
 
-#: core/breadcrumbs.py:34 templates/base.html:38
-#: templates/core/parliament.html:8 templates/core/parliament_sessions.html:6
-#: templates/core/upcoming.html:15
+#: core/breadcrumbs.py:34 templates/core/parliament.html:15
+#: templates/core/parliament_sessions.html:6
+#: templates/core/parliament_upcoming.html:15
 msgid "Parliamentary Sessions"
 msgstr "Þingfundir"
 
 #: core/breadcrumbs.py:41
 msgid "parliamentary session"
 msgstr "þingfundur"
+
+#: core/breadcrumbs.py:48 templates/core/parliament.html:16
+#: templates/core/parliament_committees.html:6
+msgid "Committees"
+msgstr "Nefndir"
 
 #: core/models.py:48 templates/core/parliament_issue.html:35
 #: templates/core/stub/issue.html:17
@@ -136,31 +142,23 @@ msgstr "Einhverjar"
 msgid "Major"
 msgstr "Meiriháttar"
 
-#: templates/base.html:35
-msgid "Parliament"
-msgstr "Þing"
-
-#: templates/base.html:37 templates/core/parliament.html:9
-msgid "Committees"
-msgstr "Nefndir"
+#: templates/base.html:36 templates/core/parliament_upcoming.html:11
+msgid "Current and Upcoming"
+msgstr "Á döfinni"
 
 #: templates/base.html:41
-msgid "Other Parliaments"
-msgstr "Önnur þing"
-
-#: templates/base.html:53
 msgid "Upcoming Parliamentary Sessions"
 msgstr "Næstu þingfundir"
 
-#: templates/base.html:65
+#: templates/base.html:53
 msgid "Bookmarks"
 msgstr "Bókamerki"
 
-#: templates/base.html:74
+#: templates/base.html:63
 msgid "Logout"
 msgstr "Útskrá"
 
-#: templates/base.html:76 templates/registration/login.html:12
+#: templates/base.html:65 templates/registration/login.html:12
 msgid "Login"
 msgstr "Innskrá"
 
@@ -205,6 +203,34 @@ msgstr "Fundir"
 msgid "Meeting"
 msgstr "Fundur"
 
+#: templates/core/parliament_sessions.html:12
+msgid "Planned Timing"
+msgstr "Tímasetning"
+
+#: templates/core/parliament_sessions.html:13
+msgid "Number"
+msgstr "Númer"
+
+#: templates/core/parliament_sessions.html:14
+msgid "Items"
+msgstr "Liðir"
+
+#: templates/core/parliament_sessions.html:15
+msgid "Start Timing"
+msgstr "Upphafstími"
+
+#: templates/core/parliament_sessions.html:16
+msgid "End Timing"
+msgstr "Lokatími"
+
+#: templates/core/parliament_sessions.html:24
+msgid "Following previous session"
+msgstr "Að loknum fyrri fundi"
+
+#: templates/core/parliament_upcoming.html:29
+msgid "Committee Meetings"
+msgstr "Nefndarfundir"
+
 #: templates/core/stub/document.html:6
 msgid "parliamentary document"
 msgstr "þingskjal"
@@ -225,13 +251,11 @@ msgstr "þingmál"
 msgid "Bookmark"
 msgstr "Bókamerki"
 
-#: templates/core/upcoming.html:11
-msgid "Current and Upcoming"
-msgstr "Á döfinni"
+#~ msgid "Parliament"
+#~ msgstr "Þing"
 
-#: templates/core/upcoming.html:29
-msgid "Committee Meetings"
-msgstr "Nefndarfundir"
+#~ msgid "Other Parliaments"
+#~ msgstr "Önnur þing"
 
 #~ msgid "Proposal"
 #~ msgstr "Tillaga"

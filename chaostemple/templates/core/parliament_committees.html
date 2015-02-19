@@ -1,11 +1,28 @@
 {% extends "base.html" %}
+{% load i18n %}
 
 {% block content %}
 
-<ul class="nav nav-stacked">
-    {% for committee in committees %}
-        <li role="presentation"><a href="{% url 'parliament_committee' parliament_num committee.id %}">{{ committee }}</a></li>
-    {% endfor %}
-</ul>
+    <h2>{% trans 'Committees' %}</h2>
+
+    <div class="row">
+        <div class="col-md-5">
+            <ul class="list-group">
+            <table class="table">
+                <tr>
+                    <th>{% trans 'Committee' %}</th>
+                    <th class="text-right">{% trans 'Meetings' %}</th>
+                </tr>
+                {% for committee in committees %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'parliament_committee' parliament_num committee.id %}">{{ committee|capfirst }}</a>
+                        </td>
+                        <td class="text-right">{{ committee.agenda_count }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
 
 {% endblock %}

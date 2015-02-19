@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-19 19:12+0000\n"
+"POT-Creation-Date: 2015-02-19 19:45+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -22,32 +22,32 @@ msgstr ""
 msgid "Temple of Chaos"
 msgstr "Musteri Glundroðans"
 
-#: core/breadcrumbs.py:13 templates/base.html:35
+#: core/breadcrumbs.py:16 templates/base.html:35
 #: templates/core/stub/issue_bookmark_menuitems.html:5
 #: templates/core/stub/parliament_selection.html:5
 #: templates/core/stub/parliament_selection.html:12
 msgid "parliament"
 msgstr "þing"
 
-#: core/breadcrumbs.py:20 templates/core/parliament.html:14
+#: core/breadcrumbs.py:23 templates/core/parliament.html:14
 msgid "Issues"
 msgstr "Þingmál"
 
-#: core/breadcrumbs.py:27
+#: core/breadcrumbs.py:30
 msgid "issue"
 msgstr "mál"
 
-#: core/breadcrumbs.py:34 templates/core/parliament.html:15
+#: core/breadcrumbs.py:37 templates/core/parliament.html:15
 #: templates/core/parliament_sessions.html:6
 #: templates/core/parliament_upcoming.html:15
 msgid "Parliamentary Sessions"
 msgstr "Þingfundir"
 
-#: core/breadcrumbs.py:41
+#: core/breadcrumbs.py:44
 msgid "parliamentary session"
 msgstr "þingfundur"
 
-#: core/breadcrumbs.py:48 templates/core/parliament.html:16
+#: core/breadcrumbs.py:51 templates/core/parliament.html:16
 #: templates/core/parliament_committees.html:6
 msgid "Committees"
 msgstr "Nefndir"
@@ -196,12 +196,26 @@ msgid "Are you sure you want to delete this memo?"
 msgstr "Ertu viss um að þú viljir eyða þessum minnispunkti?"
 
 #: templates/core/parliament_committee.html:6
+#: templates/core/parliament_committees.html:14
 msgid "Meetings"
 msgstr "Fundir"
+
+#: templates/core/parliament_committee.html:13
+msgid "Timing"
+msgstr "Tímasetning"
+
+#: templates/core/parliament_committee.html:14
+#: templates/core/parliament_sessions.html:14
+msgid "Items"
+msgstr "Liðir"
 
 #: templates/core/parliament_committee_agenda.html:13
 msgid "Meeting"
 msgstr "Fundur"
+
+#: templates/core/parliament_committees.html:13
+msgid "Committee"
+msgstr "Nefnd"
 
 #: templates/core/parliament_sessions.html:12
 msgid "Planned Timing"
@@ -210,10 +224,6 @@ msgstr "Tímasetning"
 #: templates/core/parliament_sessions.html:13
 msgid "Number"
 msgstr "Númer"
-
-#: templates/core/parliament_sessions.html:14
-msgid "Items"
-msgstr "Liðir"
 
 #: templates/core/parliament_sessions.html:15
 msgid "Start Timing"

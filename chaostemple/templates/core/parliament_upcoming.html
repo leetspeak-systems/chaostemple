@@ -11,10 +11,10 @@
     <h2>{% trans 'Current and Upcoming' %}</h2>
 
     <div>
-        {% if next_sessions.count > 0 %}
+        {% if parliament_next_sessions.count > 0 %}
             <label>{% trans 'Parliamentary Sessions' %}</label>
             <ul>
-            {% for session in next_sessions %}
+            {% for session in parliament_next_sessions %}
                 <li>
                     <a href="{% url 'parliament_session' parliament_num session.session_num %}">{{ session }}</a>
                     {% if session.timing_start_planned %}

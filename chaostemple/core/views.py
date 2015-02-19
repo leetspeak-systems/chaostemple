@@ -30,12 +30,13 @@ def parliament(request, parliament_num):
 
 def parliament_upcoming(request, parliament_num):
 
-    next_sessions = Session.objects.upcoming().prefetch_related(
+    # Name chosen to avoid conflict with "global" variable next_sessions
+    parliament_next_sessions = Session.objects.upcoming().prefetch_related(
         'agenda_items__issue__parliament'
     ).filter(parliament__parliament_num=parliament_num)
 
     issues_to_populate = []
-    for session in next_sessions:
+    for session in parliament_next_sessions:
         for item in session.agenda_items.all():
             if item.issue_id:
                 issues_to_populate.append(item.issue)
@@ -45,7 +46,7 @@ def parliament_upcoming(request, parliament_num):
     next_committee_agendas = CommitteeAgenda.objects.upcoming().filter(parliament__parliament_num=parliament_num)
 
     ctx = {
-        'next_sessions': next_sessions,
+        'parliament_next_sessions': parliament_next_sessions,
         'next_committee_agendas': next_committee_agendas,
     }
     return render(request, 'core/parliament_upcoming.html', ctx)

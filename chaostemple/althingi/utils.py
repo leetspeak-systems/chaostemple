@@ -551,7 +551,7 @@ def update_committee_agendas(parliament_num=None, date_limit=None):
     for committee_agenda_stub_xml in reversed(committee_agenda_stubs_xml):
 
         meeting_date = sensible_datetime(committee_agenda_stub_xml.getElementsByTagName(u'dagur')[0].firstChild.nodeValue)
-        if meeting_date < date_limit:
+        if date_limit is not None and meeting_date < date_limit:
             break
 
         committee_agenda_xml_id = int(committee_agenda_stub_xml.getAttribute(u'númer'))

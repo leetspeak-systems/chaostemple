@@ -3,11 +3,43 @@
 
 {% block content %}
 
-<h2>{% trans 'Parliamentary Sessions' %}</h2>
-<ul class="sessions">
-    {% for session in sessions reversed %}
-        <li><a href="{% url 'parliament_session' parliament_num session.session_num %}">{{ session }}</a></li>
-    {% endfor %}
-</ul>
+    <h2>{% trans 'Parliamentary Sessions' %}</h2>
+
+    <div class="row">
+        <div class="col-md-8">
+            <table class="table table-default">
+                <tr>
+                    <th>{% trans 'Planned Timing' %}</th>
+                    <th>{% trans 'Number' %}</th>
+                    <th>{% trans 'Items' %}</th>
+                    <th>{% trans 'Start Timing' %}</th>
+                    <th>{% trans 'End Timing' %}</th>
+                </tr>
+                {% for session in sessions reversed %}
+                    <tr>
+                        <td>
+                            {% if session.timing_start_planned %}
+                                {{ session.timing_start_planned }}
+                            {% else %}
+                                <small>{% trans 'Following previous session' %}</small>
+                            {% endif %}
+                        </td>
+                        <td><a href="{% url 'parliament_session' parliament_num session.session_num %}">{{ session }}</a></td>
+                        <td class="text-right">{{ session.agenda_item_count }}</td>
+                        <td>
+                            {% if session.timing_start %}
+                                {{ session.timing_start }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if session.timing_end %}
+                                {{ session.timing_end }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
 
 {% endblock %}

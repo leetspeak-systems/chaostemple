@@ -1,4 +1,5 @@
 from django.core.urlresolvers import reverse
+from django.db.models import Count
 from django.shortcuts import redirect
 from django.shortcuts import render
 
@@ -103,7 +104,9 @@ def parliament_issue(request, parliament_num, issue_num):
 
 def parliament_sessions(request, parliament_num):
 
-    sessions = Session.objects.filter(parliament__parliament_num=parliament_num)
+    sessions = Session.objects.filter(parliament__parliament_num=parliament_num).annotate(
+        agenda_item_count=Count('agenda_items')
+    )
 
     ctx = {
         'sessions': sessions

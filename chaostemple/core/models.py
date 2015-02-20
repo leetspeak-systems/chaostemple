@@ -120,13 +120,11 @@ class Dossier(models.Model):
     support = models.CharField(max_length=20, default='undefined', choices=SUPPORT_STATES)
     proposal = models.CharField(max_length=20, default='none', choices=PROPOSAL_STATES)
 
-    def update_statistic(self, field, old_value, new_value):
+    def update_statistic(self, statistic, field, old_value, new_value):
         # Short-hands
         issue_id = self.issue_id
         user_id = self.user_id
         dossier_type = self.dossier_type
-
-        statistic, c = DossierStatistic.objects.get_or_create(issue_id=issue_id, user_id=user_id)
 
         exclude_kwargs = {} # Will be empty and without effect if nothing is excluded
         excluded_doc_types = []
@@ -143,7 +141,6 @@ class Dossier(models.Model):
                 kwargs = {'issue_id': issue_id, 'user_id': user_id, 'dossier_type': dossier_type, field: old_value}
                 count = Dossier.objects.filter(**kwargs).exclude(**exclude_kwargs).count()
                 setattr(statistic, statistic_field, count)
-                statistic.save()
 
         if new_value is not None:
             statistic_field = '%s_%s_%s' % (dossier_type, field, new_value)
@@ -151,7 +148,6 @@ class Dossier(models.Model):
                 kwargs = {'issue_id': issue_id, 'user_id': user_id, 'dossier_type': dossier_type, field: new_value}
                 count = Dossier.objects.filter(**kwargs).exclude(**exclude_kwargs).count()
                 setattr(statistic, statistic_field, count)
-                statistic.save()
 
 
     def save(self, update_statistics=True, *args, **kwargs):
@@ -164,15 +160,19 @@ class Dossier(models.Model):
 
         super(Dossier, self).save(*args, **kwargs)
 
+        statistic, c = DossierStatistic.objects.get_or_create(issue_id=self.issue_id, user_id=self.user_id)
         if update_statistics or True:
             for field, old_value in self.tracker.changed().items():
-                self.update_statistic(field, old_value, getattr(self, field))
+                self.update_statistic(statistic, field, old_value, getattr(self, field))
+            statistic.save()
 
 
     def delete(self):
+        statistic, c = DossierStatistic.objects.get_or_create(issue_id=self.issue_id, user_id=self.user_id)
         super(Dossier, self).delete()
         for field in self.tracker.fields:
-            self.update_statistic(field, getattr(self, field), None)
+            self.update_statistic(statistic, field, getattr(self, field), None)
+        statistic.save()
 
 
     @staticmethod

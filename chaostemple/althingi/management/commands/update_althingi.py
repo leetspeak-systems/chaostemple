@@ -20,6 +20,7 @@ class Command(BaseCommand):
         update_next_committee_agendas()
         update_next_sessions()
 
+        # update_committee_agendas()
         # update_committee_agenda(14568)
 
         # update_sessions()

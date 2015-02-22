@@ -61,6 +61,7 @@ already_haves = {
     'parliaments': {},
     'persons': {},
     'committees': {},
+    'issues': {},
 }
 
 def sensible_datetime(value):
@@ -252,6 +253,11 @@ def update_issues(parliament_num=None):
 
 # NOTE: Only updates "A" issues, those with documents, reviews etc.
 def update_issue(issue_num, parliament_num=None):
+
+    ah_key = '%d-%d' % (parliament_num, issue_num)
+    if already_haves['issues'].has_key(ah_key):
+        return already_haves['issues'][ah_key]
+
     parliament = ensure_parliament(parliament_num)
 
     issue_xml = minidom.parse(urllib.urlopen(ISSUE_URL % (parliament.parliament_num, issue_num)))
@@ -472,6 +478,8 @@ def update_issue(issue_num, parliament_num=None):
             review.save()
 
             print 'Added review: %s' % review
+
+    already_haves['issues'][ah_key] = issue
 
     return issue
 

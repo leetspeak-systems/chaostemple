@@ -515,13 +515,26 @@ def update_docless_issue(issue_num, name, parliament_num=None):
     return issue
 
 
-def update_sessions(parliament_num=None):
+def update_sessions(parliament_num=None, date_limit=None):
 
     parliament = ensure_parliament(parliament_num)
 
+    if date_limit is not None:
+        date_limit = sensible_datetime(date_limit)
+
     sessions_xml = minidom.parse(urllib.urlopen(SESSION_LIST_URL % parliament.parliament_num))
-    for session_xml in sessions_xml.getElementsByTagName(u'þingfundur'):
+    for session_xml in reversed(sessions_xml.getElementsByTagName(u'þingfundur')):
         session_num = int(session_xml.getAttribute(u'númer'))
+
+        session_date_tag = session_xml.getElementsByTagName(u'dagur')
+        if len(session_date_tag) == 0: # If 0, then this is a session that started immediately following another.
+            session_date_tag = session_xml.getElementsByTagName(u'fundursettur')
+
+        # If this raises an IndexError, suspect that XML is wrong.
+        session_date = sensible_datetime(session_date_tag[0].firstChild.nodeValue)
+
+        if date_limit is not None and session_date < date_limit:
+            break
 
         update_session(session_num, parliament.parliament_num)
 
@@ -549,8 +562,6 @@ def update_committee_agendas(parliament_num=None, date_limit=None):
 
     parliament = ensure_parliament(parliament_num)
 
-    # NOTE: Date limit is used until XML offers a way to specify future meetings
-    # This may therefore very well change in the future. Relying on this option is not recommended.
     if date_limit is not None:
         date_limit = sensible_datetime(date_limit)
 

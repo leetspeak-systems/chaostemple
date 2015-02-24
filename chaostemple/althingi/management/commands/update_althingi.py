@@ -20,6 +20,8 @@ class Command(BaseCommand):
         update_next_committee_agendas()
         update_next_sessions()
 
+        # update_sessions(date_limit=datetime(2015, 2, 17))
+
         # update_committee_agendas()
         # update_committee_agenda(14568)
 

@@ -185,16 +185,21 @@ class Dossier(models.Model):
 
 
     def delete(self):
-        statistic, c = DossierStatistic.objects.get_or_create(issue_id=self.issue_id, user_id=self.user_id)
+        statistic = DossierStatistic.objects.get(issue_id=self.issue_id, user_id=self.user_id)
         dossier_type = self.dossier_type
 
         super(Dossier, self).delete()
 
-        for field in self.tracker.fields:
-            self.update_statistic(statistic, field, getattr(self, field), None)
-        self.update_counts(statistic, dossier_type)
+        dossier_count = Dossier.objects.filter(issue_id=self.issue_id, user_id=self.user_id).count()
 
-        statistic.save()
+        if dossier_count == 0:
+            statistic.delete()
+        else:
+            for field in self.tracker.fields:
+                self.update_statistic(statistic, field, getattr(self, field), None)
+            self.update_counts(statistic, dossier_type)
+
+            statistic.save()
 
 
     @staticmethod

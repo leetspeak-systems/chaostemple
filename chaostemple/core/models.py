@@ -161,6 +161,19 @@ class Dossier(models.Model):
         statistic.save()
 
 
+    def update_memo_counts(self):
+        fieldname = '%s_memo_count' % self.dossier_type
+        count = Memo.objects.filter(
+            user_id=self.user_id,
+            dossier__issue_id=self.issue_id,
+            dossier__dossier_type=self.dossier_type
+        ).count()
+
+        stat = DossierStatistic.objects.get(user_id=self.user_id, issue_id=self.issue_id)
+        setattr(stat, fieldname, count)
+        stat.save()
+
+
     def save(self, update_statistics=True, *args, **kwargs):
         new = self.pk is None
 
@@ -268,29 +281,12 @@ class Memo(models.Model):
         super(Memo, self).save(*args, **kwargs)
 
         if new:
-            self.update_statistic(self.user_id, self.dossier_id)
+            self.dossier.update_memo_counts()
 
     def delete(self):
-        user_id = self.user_id
-        dossier_id = self.dossier_id
-
         super(Memo, self).delete()
 
-        self.update_statistic(user_id, dossier_id)
-
-    def update_statistic(self, user_id, dossier_id):
-        dossier = Dossier.objects.get(id=dossier_id)
-
-        fieldname = '%s_memo_count' % dossier.dossier_type
-        count = Memo.objects.filter(
-            user_id=user_id,
-            dossier__issue_id=dossier.issue_id,
-            dossier__dossier_type=dossier.dossier_type
-        ).count()
-
-        stat = DossierStatistic.objects.get(user_id=user_id, issue_id=dossier.issue_id)
-        setattr(stat, fieldname, count)
-        stat.save()
+        self.dossier.update_memo_counts()
 
     class Meta:
         ordering = ['order']

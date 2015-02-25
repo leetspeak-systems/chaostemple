@@ -158,8 +158,6 @@ class Dossier(models.Model):
         count = Dossier.objects.filter(issue_id=self.issue_id, user_id=self.user_id, dossier_type=dossier_type).count()
         setattr(statistic, '%s_count' % dossier_type, count)
 
-        statistic.save()
-
 
     def update_memo_counts(self):
         fieldname = '%s_memo_count' % self.dossier_type

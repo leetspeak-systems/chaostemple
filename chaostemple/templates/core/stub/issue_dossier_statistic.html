@@ -1,7 +1,35 @@
+{% load i18n %}
+
 <div class="dossier-statistic">
     <div class="dossier-statistic-type">
         <span class="glyphicon glyphicon-{{ icon }}"></span> {{ dossier_type_name }}:
     </div>
+    {% if new_count %}
+        <div class="dossier-statistic-values">
+            <span class="label label-danger memo-count">{{ new_count }}
+            {% comment %}
+                This bit of spiderweb is because we need separate genders for "document" and "review" (in Icelandic)
+                but also a distinction between singular and plural.
+                If there's a prettier way to provide for both grammatical features, please improve this.
+            {% endcomment %}
+            {% if dossier_type == 'document' %}
+                {% if new_count > 1 %}
+                    {% trans 'new' context 'document_plural' %}
+                {% elif new_count == 1 %}
+                    {% trans 'new' context 'document_singular' %}
+                {% endif %}
+            {% elif dossier_type == 'review' %}
+                {% if new_count > 1 %}
+                    {% trans 'new' context 'review_plural' %}
+                {% elif new_count == 1 %}
+                    {% trans 'new' context 'review_singular' %}
+                {% endif %}
+             {% else %}
+                {% trans 'new' %}
+             {% endif %}
+            </span>
+        </div>
+    {% endif %}
     {% if memo_count > 0 %}
         <div class="dossier-statistic-values">
             <label><span class="glyphicon glyphicon-comment"></span></label>

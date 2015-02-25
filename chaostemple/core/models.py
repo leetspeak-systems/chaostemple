@@ -150,7 +150,20 @@ class Dossier(models.Model):
                 setattr(statistic, statistic_field, count)
 
 
+    def update_counts(self, statistic, dossier_type):
+        # Son, never trust an input value that doesn't drink.
+        if dossier_type not in dict(self.DOSSIER_TYPES).keys():
+            return
+
+        count = Dossier.objects.filter(issue_id=self.issue_id, user_id=self.user_id, dossier_type=dossier_type).count()
+        setattr(statistic, '%s_count' % dossier_type, count)
+
+        statistic.save()
+
+
     def save(self, update_statistics=True, *args, **kwargs):
+        new = self.pk is None
+
         if self.document_id:
             self.issue_id = self.document.issue_id
             self.dossier_type = 'document'
@@ -164,14 +177,23 @@ class Dossier(models.Model):
         if update_statistics or True:
             for field, old_value in self.tracker.changed().items():
                 self.update_statistic(statistic, field, old_value, getattr(self, field))
+
+            if new:
+                self.update_counts(statistic, self.dossier_type)
+
             statistic.save()
 
 
     def delete(self):
         statistic, c = DossierStatistic.objects.get_or_create(issue_id=self.issue_id, user_id=self.user_id)
+        dossier_type = self.dossier_type
+
         super(Dossier, self).delete()
+
         for field in self.tracker.fields:
             self.update_statistic(statistic, field, getattr(self, field), None)
+        self.update_counts(statistic, dossier_type)
+
         statistic.save()
 
 
@@ -205,6 +227,7 @@ class DossierStatistic(models.Model):
     document_proposal_some = models.IntegerField(default=0)
     document_proposal_major = models.IntegerField(default=0)
 
+    document_count = models.IntegerField(default=0)
     document_memo_count = models.IntegerField(default=0)
 
     review_attention_exclamation = models.IntegerField(default=0)
@@ -224,6 +247,7 @@ class DossierStatistic(models.Model):
     review_proposal_some = models.IntegerField(default=0)
     review_proposal_major = models.IntegerField(default=0)
 
+    review_count = models.IntegerField(default=0)
     review_memo_count = models.IntegerField(default=0)
 
 

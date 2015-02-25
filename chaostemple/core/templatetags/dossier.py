@@ -85,17 +85,28 @@ def display_dossier_statistics(context, issue):
                             'fieldstate_content': mark_safe(''.join(fieldstate_content))
                         })))
 
-                if status_type_content:
-                    if dossier_type == 'document':
-                        icon = 'file'
-                    elif dossier_type == 'review':
-                        icon = 'inbox'
+                # Determine icon
+                if dossier_type == 'document':
+                    icon = 'file'
+                elif dossier_type == 'review':
+                    icon = 'inbox'
 
-                    memo_count = getattr(stat, '%s_memo_count' % dossier_type)
+                # Determine memo count
+                memo_count = getattr(stat, '%s_memo_count' % dossier_type)
 
+                # Calculate new documents or reviews
+                new_count = 0
+                stat_type_count = getattr(stat, '%s_count' % dossier_type)
+                issue_type_count = getattr(issue, '%s_count' % dossier_type)
+                if issue_type_count != stat_type_count:
+                    new_count = issue_type_count - stat_type_count
+
+                if status_type_content or new_count:
                     content.append(template_statistic.render(Context({
                         'icon': icon,
                         'memo_count': memo_count,
+                        'new_count': new_count,
+                        'dossier_type': dossier_type,
                         'dossier_type_name': dossier_type_name,
                         'status_type_content': mark_safe(''.join(status_type_content))
                     })))

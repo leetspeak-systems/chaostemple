@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-22 15:38+0000\n"
+"POT-Creation-Date: 2015-02-25 16:07+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -265,11 +265,32 @@ msgstr "þingmál"
 msgid "Bookmark"
 msgstr "Bókamerki"
 
+#: templates/core/stub/issue_dossier_statistic.html:18
+msgctxt "document_plural"
+msgid "new"
+msgstr "ný"
+
+#: templates/core/stub/issue_dossier_statistic.html:20
+msgctxt "document_singular"
+msgid "new"
+msgstr "nýtt"
+
+#: templates/core/stub/issue_dossier_statistic.html:24
+msgctxt "review_plural"
+msgid "new"
+msgstr "nýjar"
+
+#: templates/core/stub/issue_dossier_statistic.html:26
+msgctxt "review_singular"
+msgid "new"
+msgstr "ný"
+
+#: templates/core/stub/issue_dossier_statistic.html:29
+msgid "new"
+msgstr "nýtt"
+
 #~ msgid "Parliament"
 #~ msgstr "Þing"
-
-#~ msgid "Other Parliaments"
-#~ msgstr "Önnur þing"
 
 #~ msgid "Proposal"
 #~ msgstr "Tillaga"

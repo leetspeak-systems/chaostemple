@@ -159,17 +159,15 @@ class Dossier(models.Model):
         setattr(statistic, '%s_count' % dossier_type, count)
 
 
-    def update_memo_counts(self):
-        fieldname = '%s_memo_count' % self.dossier_type
+    def update_memo_counts(self, statistic, dossier_type):
+        fieldname = '%s_memo_count' % dossier_type
         count = Memo.objects.filter(
-            user_id=self.user_id,
-            dossier__issue_id=self.issue_id,
-            dossier__dossier_type=self.dossier_type
+            user_id=statistic.user_id,
+            dossier__issue_id=statistic.issue_id,
+            dossier__dossier_type=dossier_type
         ).count()
 
-        stat = DossierStatistic.objects.get(user_id=self.user_id, issue_id=self.issue_id)
-        setattr(stat, fieldname, count)
-        stat.save()
+        setattr(statistic, fieldname, count)
 
 
     def save(self, update_statistics=True, *args, **kwargs):
@@ -209,6 +207,8 @@ class Dossier(models.Model):
             for field in self.tracker.fields:
                 self.update_statistic(statistic, field, getattr(self, field), None)
             self.update_counts(statistic, dossier_type)
+
+            self.update_memo_counts(statistic, dossier_type)
 
             statistic.save()
 
@@ -279,12 +279,16 @@ class Memo(models.Model):
         super(Memo, self).save(*args, **kwargs)
 
         if new:
-            self.dossier.update_memo_counts()
+            statistic = DossierStatistic.objects.get(user_id=self.user_id, issue_id=self.dossier.issue_id)
+            self.dossier.update_memo_counts(statistic, self.dossier.dossier_type)
+            statistic.save()
 
     def delete(self):
         super(Memo, self).delete()
 
-        self.dossier.update_memo_counts()
+        statistic = DossierStatistic.objects.get(user_id=self.user_id, issue_id=self.dossier.issue_id)
+        self.dossier.update_memo_counts(statistic, self.dossier.dossier_type)
+        statistic.save()
 
     class Meta:
         ordering = ['order']

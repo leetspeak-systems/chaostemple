@@ -30,19 +30,8 @@ def parliament(request, parliament_num):
     return render(request, 'core/parliament.html', ctx)
 
 def parliament_upcoming(request, parliament_num):
-
     # Name chosen to avoid conflict with "global" variable next_sessions
-    parliament_next_sessions = Session.objects.upcoming().prefetch_related(
-        'agenda_items__issue__parliament'
-    ).filter(parliament__parliament_num=parliament_num)
-
-    issues_to_populate = []
-    for session in parliament_next_sessions:
-        for item in session.agenda_items.all():
-            if item.issue_id:
-                issues_to_populate.append(item.issue)
-
-    IssueUtilities.populate_dossier_statistics(issues_to_populate, request.user.id)
+    parliament_next_sessions = Session.objects.upcoming().filter(parliament__parliament_num=parliament_num)
 
     next_committee_agendas = CommitteeAgenda.objects.upcoming().filter(parliament__parliament_num=parliament_num)
 

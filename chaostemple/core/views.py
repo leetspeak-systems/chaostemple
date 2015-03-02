@@ -29,18 +29,6 @@ def parliament(request, parliament_num):
     }
     return render(request, 'core/parliament.html', ctx)
 
-def parliament_upcoming(request, parliament_num):
-    # Name chosen to avoid conflict with "global" variable next_sessions
-    parliament_next_sessions = Session.objects.upcoming().filter(parliament__parliament_num=parliament_num)
-
-    next_committee_agendas = CommitteeAgenda.objects.upcoming().filter(parliament__parliament_num=parliament_num)
-
-    ctx = {
-        'parliament_next_sessions': parliament_next_sessions,
-        'next_committee_agendas': next_committee_agendas,
-    }
-    return render(request, 'core/parliament_upcoming.html', ctx)
-
 def parliament_issues(request, parliament_num):
 
     issues = Issue.objects.select_related('parliament').filter(

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-25 16:07+0000\n"
+"POT-Creation-Date: 2015-03-02 21:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -37,9 +37,8 @@ msgstr "Þingmál"
 msgid "issue"
 msgstr "mál"
 
-#: core/breadcrumbs.py:37 templates/core/parliament.html:15
-#: templates/core/parliament_sessions.html:6
-#: templates/core/parliament_upcoming.html:15
+#: core/breadcrumbs.py:37 templates/base.html:43
+#: templates/core/parliament.html:15 templates/core/parliament_sessions.html:6
 msgid "Parliamentary Sessions"
 msgstr "Þingfundir"
 
@@ -142,23 +141,23 @@ msgstr "Einhverjar"
 msgid "Major"
 msgstr "Meiriháttar"
 
-#: templates/base.html:36 templates/core/parliament_upcoming.html:11
+#: templates/base.html:40
 msgid "Current and Upcoming"
 msgstr "Á döfinni"
 
-#: templates/base.html:41
-msgid "Upcoming Parliamentary Sessions"
-msgstr "Næstu þingfundir"
+#: templates/base.html:57
+msgid "Committee Meetings"
+msgstr "Nefndarfundir"
 
-#: templates/base.html:53
+#: templates/base.html:75
 msgid "Bookmarks"
 msgstr "Bókamerki"
 
-#: templates/base.html:63
+#: templates/base.html:85
 msgid "Logout"
 msgstr "Útskrá"
 
-#: templates/base.html:65 templates/registration/login.html:12
+#: templates/base.html:87 templates/registration/login.html:12
 msgid "Login"
 msgstr "Innskrá"
 
@@ -240,10 +239,6 @@ msgstr "Lokatími"
 #: templates/core/parliament_sessions.html:24
 msgid "Following previous session"
 msgstr "Að loknum fyrri fundi"
-
-#: templates/core/parliament_upcoming.html:29
-msgid "Committee Meetings"
-msgstr "Nefndarfundir"
 
 #: templates/core/stub/document.html:6
 msgid "parliamentary document"

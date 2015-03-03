@@ -122,7 +122,7 @@ class Review(models.Model):
         return u"%s (%s)" % (self.sender_name, self.date_arrived)
 
     class Meta:
-        ordering = ['date_arrived', 'log_num']
+        ordering = ['sender_name', 'date_arrived', 'log_num']
 
 
 class Document(models.Model):

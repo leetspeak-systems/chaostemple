@@ -8,3 +8,4 @@ lib/python2.7
 local
 share
 local_settings.py
+/chaostemple/static

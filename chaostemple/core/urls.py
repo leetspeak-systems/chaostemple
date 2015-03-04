@@ -24,3 +24,5 @@ urlpatterns = patterns('',
     url(r'^json/bookmark/issue/menu/$', 'core.json_views.issue_bookmark_menu', name='json_issue_bookmark_menu'),
 )
 
+handler500 = 'core.views.error500'
+

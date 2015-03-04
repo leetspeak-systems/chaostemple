@@ -139,3 +139,8 @@ def parliament_committee_agenda(request, parliament_num, committee_id, agenda_id
         'items': items,
     }
     return render(request, 'core/parliament_committee_agenda.html', ctx)
+
+
+def error500(request):
+    response = render(request, '500.html')
+    return response

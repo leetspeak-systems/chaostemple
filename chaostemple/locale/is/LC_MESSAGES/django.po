@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-03-02 21:22+0000\n"
+"POT-Creation-Date: 2015-03-07 21:06+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -23,9 +23,10 @@ msgid "Temple of Chaos"
 msgstr "Musteri Glundroðans"
 
 #: core/breadcrumbs.py:16 templates/base.html:35
-#: templates/core/stub/issue_bookmark_menuitems.html:5
+#: templates/core/stub/issue_bookmark_menuitems.html:7
 #: templates/core/stub/parliament_selection.html:5
 #: templates/core/stub/parliament_selection.html:12
+#: templates/core/user_issues_bookmarked.html:15
 msgid "parliament"
 msgstr "þing"
 
@@ -140,6 +141,26 @@ msgstr "Einhverjar"
 #: core/models.py:86
 msgid "Major"
 msgstr "Meiriháttar"
+
+#: templates/500.html:7
+msgid "Something bad happened!"
+msgstr ""
+
+#: templates/500.html:9
+msgid ""
+"A bunch of well-trained monkeys have been notified and they will take a look "
+"at the problem as soon as possible."
+msgstr ""
+
+#: templates/500.html:11
+msgid ""
+"Sometimes things break only for a few seconds, so it may work if you try "
+"again."
+msgstr ""
+
+#: templates/500.html:13
+msgid "Otherwise, please contact us and notify us of the problem."
+msgstr ""
 
 #: templates/base.html:40
 msgid "Current and Upcoming"
@@ -259,6 +280,10 @@ msgstr "þingmál"
 #: templates/core/stub/issue_bookmark.html:5
 msgid "Bookmark"
 msgstr "Bókamerki"
+
+#: templates/core/stub/issue_bookmark_menuitems.html:3
+msgid "Bookmarked Issues"
+msgstr "Bókamerkt mál"
 
 #: templates/core/stub/issue_dossier_statistic.html:18
 msgctxt "document_plural"

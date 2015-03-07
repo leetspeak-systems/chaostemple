@@ -40,7 +40,7 @@
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans 'Current and Upcoming' %} <span class="caret"></span></a>
                                 <ul class="dropdown-menu" role="menu">
                                     {% if next_sessions.count %}
-                                        <li role="presentation"><a href="{% url 'parliament_sessions' parliament_num %}"><strong>{% trans 'Parliamentary Sessions' %}</strong></a></li>
+                                        <li role="presentation"><a href="{% url 'parliament_sessions' newest_parliament_num %}"><strong>{% trans 'Parliamentary Sessions' %}</strong></a></li>
                                         {% for session in next_sessions %}
                                             {% ifchanged session.timing_start_planned|date %}
                                                 <li role="presentation" class="dropdown-header">&nbsp;&nbsp;&nbsp;&nbsp;{{ session.timing_start_planned|date }}</li>
@@ -54,7 +54,7 @@
                                         {% endfor %}
                                     {% endif %}
                                     {% if next_committee_agendas.count %}
-                                        <li role="presentation"><a href="{% url 'parliament_committees' parliament_num %}"><strong>{% trans 'Committee Meetings' %}</strong></a></li>
+                                        <li role="presentation"><a href="{% url 'parliament_committees' newest_parliament_num %}"><strong>{% trans 'Committee Meetings' %}</strong></a></li>
                                         {% for agenda in next_committee_agendas %}
                                             {% ifchanged agenda.timing_start_planned|date %}
                                                 <li role="presentation" class="dropdown-header">&nbsp;&nbsp;&nbsp;&nbsp;{{ agenda.timing_start_planned|date }}</li>

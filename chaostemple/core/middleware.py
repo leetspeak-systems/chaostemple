@@ -4,6 +4,8 @@ from django.utils.translation import ugettext as _
 
 from core.breadcrumbs import make_breadcrumbs
 
+from althingi.models import Parliament
+
 class ExtraVarsMiddleware():
     # For handing certain variables over to the context processor for global display.
     def process_view(self, request, view_func, view_args, view_kwargs):
@@ -24,7 +26,13 @@ class ExtraVarsMiddleware():
         if agenda_id:
             agenda_id = int(agenda_id)
 
+        try:
+            newest_parliament_num = Parliament.objects.order_by('-parliament_num')[0].parliament_num
+        except IndexError:
+            newest_parliament_num = None
+
         request.extravars = {
+            'newest_parliament_num': newest_parliament_num,
             'parliament_num': parliament_num,
             'issue_num': issue_num,
             'breadcrumbs': make_breadcrumbs(view_func.func_name, parliament_num, issue_num, session_num, committee_id, agenda_id),

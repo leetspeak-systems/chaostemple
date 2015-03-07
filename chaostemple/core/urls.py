@@ -12,6 +12,8 @@ urlpatterns = patterns('',
     url(r'^parliament/(?P<parliament_num>\d+)/committee/(?P<committee_id>\d+)/$', 'core.views.parliament_committee', name='parliament_committee'),
     url(r'^parliament/(?P<parliament_num>\d+)/committee/(?P<committee_id>\d+)/agenda/(?P<agenda_id>\d+)/$', 'core.views.parliament_committee_agenda', name='parliament_committee_agenda'),
 
+    url(r'^user/issues/bookmarked/$', 'core.views.user_issues_bookmarked', name='user_issues_bookmarked'),
+
     url(r'^json/dossier/(?P<dossier_id>\d+)/fieldstate/(?P<fieldname>.+)/$', 'core.json_views.dossier_fieldstate', name='json_dossier_fieldstate'),
     url(r'^json/dossier/(?P<dossier_id>\d+)/delete/$', 'core.json_views.delete_dossier', name='json_delete_dossier'),
 

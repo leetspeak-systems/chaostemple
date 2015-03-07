@@ -1,5 +1,7 @@
 {% load i18n %}
 
+<li><a href="{% url 'user_issues_bookmarked' %}"><strong>{% trans 'Bookmarked Issues' %}</strong></a></li>
+<li class="divider"></li>
 {% for issue in bookmarked_issues reversed %}
     {% if issue.display_parliament %}
         <li class="dropdown-header">{{ issue.parliament.parliament_num }}. {% trans 'parliament' %}</li>

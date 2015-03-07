@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block javascript %}
+
+    <script language="javascript" type="text/javascript" src="{% static 'core/js/issue_control.js' %}"></script>
+
+{% endblock %}
+
+{% block content %}
+
+    {% for issue in issues %}
+        {% ifchanged issue.parliament.parliament_num %}
+            <h3>{{ issue.parliament.parliament_num }}. {% trans 'parliament' %}</h3>
+        {% endifchanged %}
+        {% include 'core/stub/issue.html' %}
+    {% endfor %}
+
+{% endblock %}
+

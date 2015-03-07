@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.db.models import Count
 from django.shortcuts import redirect
@@ -139,6 +140,18 @@ def parliament_committee_agenda(request, parliament_num, committee_id, agenda_id
         'items': items,
     }
     return render(request, 'core/parliament_committee_agenda.html', ctx)
+
+@login_required
+def user_issues_bookmarked(request):
+
+    issues = Issue.objects.select_related('parliament').filter(issue_bookmarks__user_id=request.user.id)
+
+    IssueUtilities.populate_dossier_statistics(issues, request.user.id)
+
+    ctx = {
+        'issues': issues
+    }
+    return render(request, 'core/user_issues_bookmarked.html', ctx)
 
 
 def error500(request):

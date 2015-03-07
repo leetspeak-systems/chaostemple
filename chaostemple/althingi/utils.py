@@ -8,6 +8,7 @@ import urllib
 from datetime import datetime
 from sys import stdout
 from xml.dom import minidom
+from xml.parsers.expat import ExpatError
 
 from althingi.models import Committee
 from althingi.models import CommitteeAgenda
@@ -20,6 +21,8 @@ from althingi.models import Proposer
 from althingi.models import Review
 from althingi.models import Session
 from althingi.models import SessionAgendaItem
+
+from althingi.exceptions import AlthingiException
 
 from althingi import althingi_settings
 
@@ -254,16 +257,19 @@ def update_issues(parliament_num=None):
 # NOTE: Only updates "A" issues, those with documents, reviews etc.
 def update_issue(issue_num, parliament_num=None):
 
-    ah_key = '%d-%d' % (parliament_num, issue_num)
+    parliament = ensure_parliament(parliament_num)
+
+    ah_key = '%d-%d' % (parliament.parliament_num, issue_num)
     if already_haves['issues'].has_key(ah_key):
         return already_haves['issues'][ah_key]
-
-    parliament = ensure_parliament(parliament_num)
 
     issue_xml = minidom.parse(urllib.urlopen(ISSUE_URL % (parliament.parliament_num, issue_num)))
     docstubs_xml = issue_xml.getElementsByTagName(u'þingskjöl')[0].getElementsByTagName(u'þingskjal')
     reviews_xml = issue_xml.getElementsByTagName(u'erindaskrá')[0].getElementsByTagName(u'erindi')
 
+
+    if len(issue_xml.getElementsByTagName(u'mál')) == 0:
+        raise AlthingiException('Issue %d in parliament %d does not exist' % (issue_num, parliament_num))
 
     issue_type = issue_xml.getElementsByTagName(u'málstegund')[0].getAttribute(u'málstegund')
 
@@ -541,9 +547,14 @@ def update_sessions(parliament_num=None, date_limit=None):
 
 def update_session(session_num, parliament_num=None):
 
-    response = urllib.urlopen(SESSION_AGENDA_URL % (parliament_num, session_num))
+    parliament = ensure_parliament(parliament_num)
+
+    response = urllib.urlopen(SESSION_AGENDA_URL % (parliament.parliament_num, session_num))
     session_full_xml = minidom.parse(response)
-    session_xml = session_full_xml.getElementsByTagName(u'þingfundur')[0]
+    try:
+        session_xml = session_full_xml.getElementsByTagName(u'þingfundur')[0]
+    except IndexError:
+        raise AlthingiException('Session %d in parliament %d does not exist' % (session_num, parliament.parliament_num))
 
     _process_session_agenda_xml(session_xml)
 
@@ -588,7 +599,11 @@ def update_committee_agenda(committee_agenda_xml_id, parliament_num=None):
 
     parliament = ensure_parliament(parliament_num)
 
-    committee_agenda_full_xml = minidom.parse(urllib.urlopen(COMMITTEE_AGENDA_URL % committee_agenda_xml_id))
+    response = urllib.urlopen(COMMITTEE_AGENDA_URL % committee_agenda_xml_id)
+    try:
+        committee_agenda_full_xml = minidom.parse(response)
+    except ExpatError:
+        raise AlthingiException('Committee agenda with XML-ID %d not found' % committee_agenda_xml_id)
     committee_agenda_xml = committee_agenda_full_xml.getElementsByTagName(u'nefndarfundur')[0]
     _process_committee_agenda_xml(committee_agenda_xml)
 

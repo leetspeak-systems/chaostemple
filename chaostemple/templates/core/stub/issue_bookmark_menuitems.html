@@ -2,10 +2,11 @@
 
 {% for issue in bookmarked_issues reversed %}
     {% if issue.display_parliament %}
-        <li class="menu-header"><strong>{{ issue.parliament.parliament_num }}. {% trans 'parliament' %}</strong></li>
+        <li class="dropdown-header">{{ issue.parliament.parliament_num }}. {% trans 'parliament' %}</li>
     {% endif %}
     <li>
         <a href="{% url 'parliament_issue' issue.parliament.parliament_num issue.issue_num %}">
+            &nbsp;&nbsp;
             ({{ issue.issue_num}}) {{ issue.name|capfirst }}
             {% if issue.description %}
                 <small>({{ issue.description }})</small>

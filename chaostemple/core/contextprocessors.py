@@ -15,7 +15,9 @@ def globals(request):
     bookmarked_issues = None
     if request.user.is_authenticated():
         last_parliament_num = None
-        bookmarked_issues = Issue.objects.select_related('parliament').filter(issue_bookmarks__user_id=request.user.id)
+        bookmarked_issues = Issue.objects.select_related('parliament').filter(
+            issue_bookmarks__user_id=request.user.id
+        ).order_by('parliament__parliament_num', 'issue_num')
         for bookmarked_issue in reversed(bookmarked_issues):
             if bookmarked_issue.parliament.parliament_num != last_parliament_num:
                 bookmarked_issue.display_parliament = True

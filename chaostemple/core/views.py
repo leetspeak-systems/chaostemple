@@ -4,6 +4,7 @@ from django.db.models import Count
 from django.db.models import Prefetch
 from django.shortcuts import redirect
 from django.shortcuts import render
+from django.template import RequestContext
 
 from core.models import Dossier
 from core.models import DossierStatistic
@@ -169,6 +170,19 @@ def user_issues_bookmarked(request):
     }
     return render(request, 'core/user_issues_bookmarked.html', ctx)
 
+@login_required
+def user_issues_incoming(request):
+    ctx = RequestContext(request)
+
+    issues = [ds.issue for ds in ctx['dossier_statistics_incoming']]
+
+    IssueUtilities.populate_dossier_statistics(issues, request.user.id)
+
+    ctx = {
+        'issues': issues
+    }
+
+    return render(request, 'core/user_issues_incoming.html', ctx)
 
 def error500(request):
     response = render(request, '500.html')

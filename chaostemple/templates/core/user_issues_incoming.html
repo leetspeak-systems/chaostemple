@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block javascript %}
+    <script language="javascript" type="text/javascript" src="{% static 'core/js/issue_control.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+    {% for issue in issues %}
+        {% include 'core/stub/issue.html' %}
+    {% endfor %}
+
+{% endblock %}
+

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-03-07 21:06+0000\n"
+"POT-Creation-Date: 2015-03-08 18:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -171,14 +171,30 @@ msgid "Committee Meetings"
 msgstr "Nefndarfundir"
 
 #: templates/base.html:75
+msgid "New"
+msgstr "Nýtt"
+
+#: templates/base.html:77
+msgid "Issues with new data"
+msgstr "Mál með nýjum gögnum"
+
+#: templates/base.html:85
+msgid "new documents"
+msgstr "ný þingskjöl"
+
+#: templates/base.html:88
+msgid "new reviews"
+msgstr "nýjar umsagnir"
+
+#: templates/base.html:97
 msgid "Bookmarks"
 msgstr "Bókamerki"
 
-#: templates/base.html:85
+#: templates/base.html:107
 msgid "Logout"
 msgstr "Útskrá"
 
-#: templates/base.html:87 templates/registration/login.html:12
+#: templates/base.html:109 templates/registration/login.html:12
 msgid "Login"
 msgstr "Innskrá"
 

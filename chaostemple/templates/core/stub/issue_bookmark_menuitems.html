@@ -9,10 +9,7 @@
     <li>
         <a href="{% url 'parliament_issue' issue.parliament.parliament_num issue.issue_num %}">
             &nbsp;&nbsp;
-            ({{ issue.issue_num}}) {{ issue.name|capfirst }}
-            {% if issue.description %}
-                <small>({{ issue.description }})</small>
-            {% endif %}
+            {% include 'core/stub/issue_menuentry.html' %}
         </a>
     </li>
 {% endfor %}

@@ -1,0 +1,4 @@
+({{ issue.issue_num}}) {{ issue.name|capfirst }}
+{% if issue.description %}
+    <small>({{ issue.description }})</small>
+{% endif %}

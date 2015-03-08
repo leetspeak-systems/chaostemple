@@ -19,9 +19,9 @@
             </div>
         {% endif %}
     </div>
-    {% if document.mydossier %}
+    {% for dossier in document.dossiers.all %}
         <div class="panel-footer">
-            {% include 'core/stub/dossier.html' with dossier=document.mydossier %}
+            {% include 'core/stub/dossier.html' %}
         </div>
-    {% endif %}
+    {% endfor %}
 </div>

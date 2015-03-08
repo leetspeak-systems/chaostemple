@@ -10,10 +10,10 @@
             <a class="title" href="{{ review.pdf_link }}" target="_blank">{{ review.sender_name }}</a>
         </div>
     </div>
-    {% if review.mydossier %}
+    {% for dossier in review.dossiers.all %}
         <div class="panel-footer">
-            {% include 'core/stub/dossier.html' with dossier=review.mydossier %}
+            {% include 'core/stub/dossier.html' %}
         </div>
-    {% endif %}
+    {% endfor %}
 </div>
 

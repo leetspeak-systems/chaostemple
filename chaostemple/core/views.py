@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.db.models import Count
+from django.db.models import Prefetch
 from django.shortcuts import redirect
 from django.shortcuts import render
 
@@ -45,28 +46,44 @@ def parliament_issues(request, parliament_num):
 
 def parliament_issue(request, parliament_num, issue_num):
 
-    issue = Issue.objects.get(parliament__parliament_num=parliament_num, issue_group='A', issue_num=issue_num)
-    documents = Document.objects.prefetch_related(
-        'proposers__person',
-        'proposers__committee',
-        'dossiers__user'
-    ).filter(issue=issue)
-    reviews = Review.objects.filter(issue=issue)
+    # NOTE: The use of these get_prefetched_* functions is to be revised when Django 1.8 is released.
+    # Specifically, it is hoped that the .refresh_from_db() function introduced will be a good replacement.
 
+    def get_prefetched_documents():
+        return Document.objects.prefetch_related(
+            Prefetch('dossiers', queryset=Dossier.objects.filter(user_id=request.user.id)),
+            'dossiers__memos',
+            'proposers__person',
+            'proposers__committee',
+        ).filter(issue=issue)
+
+    def get_prefetched_reviews():
+        return Review.objects.prefetch_related(
+            Prefetch('dossiers', queryset=Dossier.objects.filter(user_id=request.user.id)),
+            'dossiers__memos',
+        ).filter(issue=issue)
+
+    issue = Issue.objects.get(parliament__parliament_num=parliament_num, issue_group='A', issue_num=issue_num)
+    documents = get_prefetched_documents()
+    reviews = get_prefetched_reviews()
+
+    reload_documents = False
+    reload_reviews = False
     if request.user.is_authenticated():
         for document in documents:
-            try:
-                document.mydossier = Dossier.objects.select_related('user', 'document').get(document=document, user=request.user)
-            except Dossier.DoesNotExist:
-                document.mydossier = Dossier(document=document, user=request.user)
-                document.mydossier.save(update_statistics=False)
+            if document.dossiers.count() == 0:
+                Dossier(document=document, user=request.user).save(update_statistics=False)
+                reload_documents = True
 
         for review in reviews:
-            try:
-                review.mydossier = Dossier.objects.select_related('user', 'document').get(review=review, user=request.user)
-            except Dossier.DoesNotExist:
-                review.mydossier = Dossier(review=review, user=request.user)
-                review.mydossier.save(update_statistics=False)
+            if review.dossiers.count() == 0:
+                Dossier(review=review, user=request.user).save(update_statistics=False)
+                reload_reviews = True
+
+    if reload_documents:
+        documents = get_prefetched_documents()
+    if reload_reviews:
+        reviews = get_prefetched_reviews()
 
     ctx = {
         'issue': issue,

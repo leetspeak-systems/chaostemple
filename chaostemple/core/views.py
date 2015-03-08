@@ -18,10 +18,9 @@ from althingi.models import Review
 from althingi.models import Session
 
 def home(request):
-    try:
-        parliament = Parliament.objects.order_by('-parliament_num')[0]
-        return redirect(reverse('parliament', args=(parliament.parliament_num,)))
-    except IndexError:
+    if request.extravars['newest_parliament_num'] is not None:
+        return redirect(reverse('parliament', args=(request.extravars['newest_parliament_num'],)))
+    else:
         return render(request, 'core/parliament_none.html', {})
 
 def parliament(request, parliament_num):

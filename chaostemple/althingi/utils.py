@@ -702,7 +702,7 @@ def _process_committee_agenda_xml(committee_agenda_xml):
             if item.name != name:
                 item.name = name
                 changed = True
-            if issue is not None and item.issue != issue:
+            if item.issue != issue:
                 item.issue = issue
                 changed = True
 

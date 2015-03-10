@@ -9,6 +9,8 @@ body { padding-top: 50px; }
 
 .memo-count { border-radius: 1em; }
 
+.parliament-link img { margin-top: 1px; }
+
 div[control="dossier"] { margin-top: 10px; }
 div[control="dossier"]:first-child { margin-top: 0px; }
 div[control="dossier"] label { font-weight: normal; width: 60px; margin-right: 8px; }

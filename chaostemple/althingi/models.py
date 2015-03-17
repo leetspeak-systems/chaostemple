@@ -19,12 +19,15 @@ class SessionManager(models.Manager):
         today = timezone.make_aware(timezone.datetime(now.year, now.month, now.day), now.tzinfo)
 
         try:
-            next_session = Session.objects.filter(timing_start_planned__gt=today).order_by('-session_num')[0:1].get()
+            next_session = Session.objects.select_related(
+                'parliament'
+            ).filter(timing_start_planned__gt=today).order_by('-session_num')[0:1].get()
             next_num = next_session.session_num
+            parliament_num = next_session.parliament.parliament_num
         except Session.DoesNotExist:
             return Session.objects.none()
 
-        next_sessions = self.filter(session_num__gte=next_num)
+        next_sessions = self.filter(session_num__gte=next_num, parliament__parliament_num=parliament_num)
 
         return next_sessions
 

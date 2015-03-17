@@ -554,7 +554,19 @@ def update_session(session_num, parliament_num=None):
     try:
         session_xml = session_full_xml.getElementsByTagName(u'þingfundur')[0]
     except IndexError:
-        raise AlthingiException('Session %d in parliament %d does not exist' % (session_num, parliament.parliament_num))
+        # Check if session exists in database, because if it does, it shouldn't.
+        try:
+            nonexistent_session = Session.objects.get(
+                session_num=session_num,
+                parliament__parliament_num=parliament.parliament_num
+            )
+            nonexistent_session.delete()
+
+            print 'Deleted non-existent session: %s' % nonexistent_session
+            return
+
+        except Session.DoesNotExist:
+            raise AlthingiException('Session %d in parliament %d does not exist' % (session_num, parliament.parliament_num))
 
     _process_session_agenda_xml(session_xml)
 

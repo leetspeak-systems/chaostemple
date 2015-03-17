@@ -5,6 +5,7 @@ import errno
 import os
 import pytz
 import urllib
+from datetime import date
 from datetime import datetime
 from sys import stdout
 from xml.dom import minidom
@@ -69,7 +70,9 @@ already_haves = {
 
 def sensible_datetime(value):
 
-    if type(value) is datetime:
+    if type(value) is date:
+        d = datetime(value.year, value.month, value.day, 0, 0, 0)
+    elif type(value) is datetime:
         d = value
     else:
         try:

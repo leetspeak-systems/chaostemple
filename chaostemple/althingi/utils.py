@@ -466,11 +466,32 @@ def update_issue(issue_num, parliament_num=None):
         if review_try.count() > 0:
             review = review_try[0]
 
+            changed = False
+            if review.sender_name != sender_name:
+                review.sender_name = sender_name
+                changed = True
+
+            if review.review_type != review_type:
+                review.review_type = review_type
+                changed = True
+
+            if sensible_datetime(review.date_arrived) != sensible_datetime(date_arrived):
+                review.date_arrive = date_arrived
+                changed = True
+
+            if sensible_datetime(review.date_sent) != sensible_datetime(date_sent):
+                review.date_sent = date_sent
+                changed = True
+
             if not review.pdf_filename:
                 review.pdf_filename = maybe_download_review(path_pdf, log_num, parliament_num, issue_num)
                 review.save()
 
-            print 'Already have review: %s' % review
+            if changed:
+                review.save()
+                print 'Updated review: %s' % review
+            else:
+                print 'Already have review: %s' % review
         else:
 
             pdf_filename = maybe_download_review(path_pdf, log_num, parliament_num, issue_num)

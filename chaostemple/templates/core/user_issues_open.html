@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block javascript %}
+    <script language="javascript" type="text/javascript" src="{% static 'core/js/issue_control.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+    <h3>{% trans 'Opened issues' %}</h3>
+
+    {% for issue in issues reversed %}
+        {% include 'core/stub/issue.html' with issue=issue %}
+    {% endfor %}
+
+{% endblock %}
+

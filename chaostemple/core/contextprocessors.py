@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.db.models import Count
 from django.db.models import F
 from django.db.models import Q
 
@@ -38,8 +39,13 @@ def globals(request):
         stat.new_documents = stat.issue.document_count - stat.document_count
         stat.new_reviews = stat.issue.review_count - stat.review_count
 
+    open_issues = Issue.objects.select_related('parliament').annotate(
+        dossier_count=Count('dossiers')
+    ).filter(dossier_count__gt=0).order_by('parliament__parliament_num', 'issue_num')
+
     len(next_sessions) # Forces a len() instead of a DB-call when count is checked
     len(next_committee_agendas) # Forces a len() instead of a DB-call when count is checked
+    len(open_issues) # Forces a len() instead of a DB-call when count is checked
 
     ctx = {
         'PROJECT_NAME': settings.PROJECT_NAME,
@@ -49,6 +55,7 @@ def globals(request):
         'next_committee_agendas': next_committee_agendas,
         'bookmarked_issues': bookmarked_issues,
         'dossier_statistics_incoming': dossier_statistics_incoming,
+        'open_issues': open_issues,
     }
 
     if hasattr(request, 'extravars'):

@@ -184,6 +184,20 @@ def user_issues_incoming(request):
 
     return render(request, 'core/user_issues_incoming.html', ctx)
 
+@login_required
+def user_issues_open(request):
+    ctx = RequestContext(request)
+
+    issues = [i for i in ctx['open_issues']]
+
+    IssueUtilities.populate_dossier_statistics(issues, request.user.id)
+
+    ctx = {
+        'issues': issues
+    }
+
+    return render(request, 'core/user_issues_open.html', ctx)
+
 def error500(request):
     response = render(request, '500.html')
     return response

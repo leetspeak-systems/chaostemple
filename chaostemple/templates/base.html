@@ -71,6 +71,27 @@
                             </li>
                         {% endif %}
 
+                        {% if open_issues.count %}
+                            <li class="dropdown" control="open-issue-menu">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans 'Opened Issues' %} <span class="caret"></span></a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="{% url 'user_issues_open' %}"><strong>{% trans 'Opened Issues' %}</strong></a></li>
+                                    <li class="divider"></li>
+                                    {% for issue in open_issues reversed %}
+                                        {% ifchanged issue.parliament.parliament_num %}
+                                            <li class="dropdown-header">{{ issue.parliament.parliament_num }}. {% trans 'parliament' %}</li>
+                                        {% endifchanged %}
+                                        <li>
+                                            <a href="{% url 'parliament_issue' issue.parliament.parliament_num issue.issue_num %}">
+                                                &nbsp;&nbsp;
+                                                {% include 'core/stub/issue_menuentry.html' %}
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                        {% endif %}
+
                         <li class="dropdown" control="incoming-menu" {% if not dossier_statistics_incoming %}style="display: none;" {% endif %}>
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans 'New' %} <span class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">

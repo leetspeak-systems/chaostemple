@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-03-08 18:16+0000\n"
+"POT-Creation-Date: 2015-03-22 21:39+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -23,6 +23,7 @@ msgid "Temple of Chaos"
 msgstr "Musteri Glundroðans"
 
 #: core/breadcrumbs.py:16 templates/base.html:35
+#: templates/core/parliament_issue.html:32
 #: templates/core/stub/issue_bookmark_menuitems.html:7
 #: templates/core/stub/parliament_selection.html:5
 #: templates/core/stub/parliament_selection.html:12
@@ -52,12 +53,12 @@ msgstr "þingfundur"
 msgid "Committees"
 msgstr "Nefndir"
 
-#: core/models.py:48 templates/core/parliament_issue.html:35
+#: core/models.py:48 templates/core/parliament_issue.html:41
 #: templates/core/stub/issue.html:17
 msgid "Parliamentary Documents"
 msgstr "Þingskjöl"
 
-#: core/models.py:49 templates/core/parliament_issue.html:43
+#: core/models.py:49 templates/core/parliament_issue.html:49
 #: templates/core/stub/issue.html:16
 msgid "Reviews"
 msgstr "Umsagnir"
@@ -170,31 +171,35 @@ msgstr "Á döfinni"
 msgid "Committee Meetings"
 msgstr "Nefndarfundir"
 
-#: templates/base.html:75
+#: templates/base.html:76 templates/base.html.py:78
+msgid "Opened Issues"
+msgstr "Opnuð mál"
+
+#: templates/base.html:92
 msgid "New"
 msgstr "Nýtt"
 
-#: templates/base.html:77
+#: templates/base.html:94
 msgid "Issues with new data"
 msgstr "Mál með nýjum gögnum"
 
-#: templates/base.html:85
+#: templates/base.html:102
 msgid "new documents"
 msgstr "ný þingskjöl"
 
-#: templates/base.html:88
+#: templates/base.html:105
 msgid "new reviews"
 msgstr "nýjar umsagnir"
 
-#: templates/base.html:97
+#: templates/base.html:114
 msgid "Bookmarks"
 msgstr "Bókamerki"
 
-#: templates/base.html:107
+#: templates/base.html:124
 msgid "Logout"
 msgstr "Útskrá"
 
-#: templates/base.html:109 templates/registration/login.html:12
+#: templates/base.html:126 templates/registration/login.html:12
 msgid "Login"
 msgstr "Innskrá"
 
@@ -253,6 +258,10 @@ msgstr "Fundur"
 msgid "Committee"
 msgstr "Nefnd"
 
+#: templates/core/parliament_issue.html:31 templates/core/stub/issue.html:15
+msgid "parliamentary issue"
+msgstr "þingmál"
+
 #: templates/core/parliament_none.html:6
 msgid "No parliaments have been configured yet."
 msgstr "Engin þing hafa enn verið sett inn."
@@ -277,21 +286,17 @@ msgstr "Lokatími"
 msgid "Following previous session"
 msgstr "Að loknum fyrri fundi"
 
-#: templates/core/stub/document.html:6
+#: templates/core/stub/document.html:7
 msgid "parliamentary document"
 msgstr "þingskjal"
 
-#: templates/core/stub/document.html:15
+#: templates/core/stub/document.html:22
 msgid "Proposers"
 msgstr "Flutningsmenn"
 
 #: templates/core/stub/dossier.html:89
 msgid "Mark as New"
 msgstr "Merkja sem nýtt"
-
-#: templates/core/stub/issue.html:15
-msgid "parliamentary issue"
-msgstr "þingmál"
 
 #: templates/core/stub/issue_bookmark.html:5
 msgid "Bookmark"
@@ -324,6 +329,10 @@ msgstr "ný"
 #: templates/core/stub/issue_dossier_statistic.html:29
 msgid "new"
 msgstr "nýtt"
+
+#: templates/core/user_issues_open.html:11
+msgid "Opened issues"
+msgstr ""
 
 #~ msgid "Parliament"
 #~ msgstr "Þing"

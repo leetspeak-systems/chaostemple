@@ -41,7 +41,7 @@ def globals(request):
 
     open_issues = Issue.objects.select_related('parliament').annotate(
         dossier_count=Count('dossiers')
-    ).filter(dossier_count__gt=0).order_by('parliament__parliament_num', 'issue_num')
+    ).filter(dossier_count__gt=0, dossiers__user_id=request.user.id).order_by('parliament__parliament_num', 'issue_num')
 
     len(next_sessions) # Forces a len() instead of a DB-call when count is checked
     len(next_committee_agendas) # Forces a len() instead of a DB-call when count is checked

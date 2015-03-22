@@ -96,7 +96,7 @@ class Review(models.Model):
     review_type = models.CharField(max_length=2, choices=REVIEW_TYPES)  #: Tegund erindis
     date_arrived = models.DateField(null=True)
     date_sent = models.DateField(null=True)
-    pdf_remote_path = models.CharField(max_length=500)
+    pdf_remote_path = models.CharField(max_length=500, null=True)
     pdf_filename = models.CharField(max_length=50)
 
     def pdf_link(self):
@@ -158,9 +158,9 @@ class Document(models.Model):
     time_published = models.DateTimeField()
     is_main = models.BooleanField(default=False)
 
-    html_remote_path = models.CharField(max_length=500)
+    html_remote_path = models.CharField(max_length=500, null=True)
     html_filename = models.CharField(max_length=50)
-    pdf_remote_path = models.CharField(max_length=500)
+    pdf_remote_path = models.CharField(max_length=500, null=True)
     pdf_filename = models.CharField(max_length=50)
 
     xhtml = models.TextField()
@@ -176,6 +176,12 @@ class Document(models.Model):
             return static(self.pdf_filename)
         else:
             return self.pdf_remote_path
+
+    def preferred_link(self):
+        preferred = self.html_link()
+        if not preferred:
+            preferred = self.pdf_link()
+        return preferred
 
     def save(self, *args, **kwargs):
         is_new = self.pk is None
@@ -299,7 +305,7 @@ class CommitteeAgenda(models.Model):
 class CommitteeAgendaItem(models.Model):
     committee_agenda = models.ForeignKey('CommitteeAgenda', related_name='committee_agenda_items')
     order = models.IntegerField()
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=300)
     issue = models.ForeignKey('Issue', null=True)
 
     def __unicode__(self):

@@ -30,6 +30,7 @@ from althingi import althingi_settings
 ISSUE_LIST_URL = 'http://www.althingi.is/altext/xml/thingmalalisti/?lthing=%d'
 ISSUE_URL = 'http://www.althingi.is/altext/xml/thingmalalisti/thingmal/?lthing=%d&malnr=%d'
 PERSON_URL = 'http://www.althingi.is/altext/xml/thingmenn/thingmadur/?nr=%d'
+COMMITTEE_FULL_LIST_URL = 'http://www.althingi.is/altext/xml/nefndir/'
 COMMITTEE_LIST_URL = 'http://www.althingi.is/altext/xml/nefndir/?lthing=%d'
 COMMITTEE_AGENDA_LIST_URL = 'http://www.althingi.is/altext/xml/nefndarfundir/?lthing=%d'
 COMMITTEE_AGENDA_URL = 'http://www.althingi.is/altext/xml/nefndarfundir/nefndarfundur/?dagskrarnumer=%d'
@@ -66,6 +67,8 @@ already_haves = {
     'persons': {},
     'committees': {},
     'issues': {},
+
+    'xml': {},
 }
 
 def sensible_datetime(value):
@@ -174,7 +177,7 @@ def ensure_person(person_xml_id):
 
     person_xml = minidom.parse(urllib.urlopen(PERSON_URL % person_xml_id))
 
-    name = person_xml.getElementsByTagName(u'nafn')[0].firstChild.nodeValue
+    name = person_xml.getElementsByTagName(u'nafn')[0].firstChild.nodeValue.strip()
     birthdate = person_xml.getElementsByTagName(u'fæðingardagur')[0].firstChild.nodeValue
 
     person_try = Person.objects.filter(person_xml_id=person_xml_id)
@@ -204,36 +207,56 @@ def ensure_committee(committee_xml_id, parliament_num=None):
 
     parliament = ensure_parliament(parliament_num)
 
-    committees_full_xml = minidom.parse(urllib.urlopen(COMMITTEE_LIST_URL % parliament.parliament_num))
-    committees_xml = committees_full_xml.getElementsByTagName(u'nefnd')
+    # This should be revisited when committees have their own, individual XML page
+    def parse_committee_xml(xml_url):
+        # Cache the XML document, so that we only need to retrieve it once per run
+        if already_haves['xml'].has_key(xml_url):
+            committees_full_xml = already_haves['xml'][xml_url]
+        else:
+            committees_full_xml = minidom.parse(urllib.urlopen(xml_url))
+            already_haves['xml'][xml_url] = committees_full_xml
 
-    for committee_xml in committees_xml:
-        if int(committee_xml.getAttribute(u'id')) == committee_xml_id:
-            abbreviations_xml = committee_xml.getElementsByTagName(u'skammstafanir')[0]
+        committees_xml = committees_full_xml.getElementsByTagName(u'nefnd')
 
-            name = committee_xml.getElementsByTagName(u'heiti')[0].firstChild.nodeValue
-            abbreviation_short = abbreviations_xml.getElementsByTagName(u'stuttskammstöfun')[0].firstChild.nodeValue
-            abbreviation_long = abbreviations_xml.getElementsByTagName(u'löngskammstöfun')[0].firstChild.nodeValue
+        committee = None
+        for committee_xml in committees_xml:
+            if int(committee_xml.getAttribute(u'id')) == committee_xml_id:
+                abbreviations_xml = committee_xml.getElementsByTagName(u'skammstafanir')[0]
 
-            committee_try = Committee.objects.filter(committee_xml_id=committee_xml_id, parliaments=parliament)
-            if committee_try.count() > 0:
-                committee = committee_try[0]
+                name = committee_xml.getElementsByTagName(u'heiti')[0].firstChild.nodeValue
+                abbreviation_short = abbreviations_xml.getElementsByTagName(u'stuttskammstöfun')[0].firstChild.nodeValue
+                abbreviation_long = abbreviations_xml.getElementsByTagName(u'löngskammstöfun')[0].firstChild.nodeValue
 
-                print 'Already have committee: %s' % committee
-            else:
-                committee = Committee()
-                committee.name = name
-                committee.abbreviation_short = abbreviation_short
-                committee.abbreviation_long = abbreviation_long
-                committee.parliament = parliament
-                committee.committee_xml_id = committee_xml_id
+                committee_try = Committee.objects.filter(committee_xml_id=committee_xml_id, parliaments=parliament)
+                if committee_try.count() > 0:
+                    committee = committee_try[0]
 
-                committee.save()
-                committee.parliaments.add(parliament)
+                    print 'Already have committee: %s' % committee
+                else:
+                    committee = Committee()
+                    committee.name = name
+                    committee.abbreviation_short = abbreviation_short
+                    committee.abbreviation_long = abbreviation_long
+                    committee.parliament = parliament
+                    committee.committee_xml_id = committee_xml_id
 
-                print 'Added committee: %s' % committee
+                    committee.save()
+                    committee.parliaments.add(parliament)
 
-            break # We have found what we were looking for.
+                    print 'Added committee: %s' % committee
+
+                break # We have found what we were looking for.
+
+        return committee
+
+    committee = parse_committee_xml(COMMITTEE_LIST_URL % parliament.parliament_num)
+    if committee is None:
+        # if the variable 'committee' is still None at this point, it means that the committee we requested
+        # does not exist in the appropriate parliament's XML. This is a mistake in the XML that the XML
+        # maintainers should be notified of, but we can still remedy this by downloading a different,
+        # much larger XML document which contains all committees regardless of parliament.
+        committee = parse_committee_xml(COMMITTEE_FULL_LIST_URL)
+        print 'Warning! Committee with ID %d is missing from committee listing in parliament %d! Tell the XML keeper!' %(committee_xml_id, parliament_num)
 
     already_haves['committees'][ah_key] = committee
 
@@ -276,10 +299,10 @@ def update_issue(issue_num, parliament_num=None):
 
     issue_type = issue_xml.getElementsByTagName(u'málstegund')[0].getAttribute(u'málstegund')
 
-    name = issue_xml.getElementsByTagName(u'málsheiti')[0].firstChild.nodeValue
+    name = issue_xml.getElementsByTagName(u'málsheiti')[0].firstChild.nodeValue.strip()
 
     description = issue_xml.getElementsByTagName(u'efnisgreining')[0].firstChild
-    description = description.nodeValue if description != None else ''
+    description = description.nodeValue.strip() if description != None else ''
 
     issue_try = Issue.objects.filter(issue_num=issue_num, issue_group='A', parliament=parliament)
     if issue_try.count() > 0:
@@ -317,12 +340,20 @@ def update_issue(issue_num, parliament_num=None):
         paths_xml = doc_xml.getElementsByTagName(u'slóð')
         html_paths_xml = paths_xml[0].getElementsByTagName(u'html') 
         pdf_paths_xml = paths_xml[0].getElementsByTagName(u'pdf')
-        if len(html_paths_xml) == 0:
+
+        if len(html_paths_xml) > 0:
+            path_html = html_paths_xml[0].firstChild.nodeValue
+        else:
+            path_html = None
+
+        if len(pdf_paths_xml) > 0:
+            path_pdf = pdf_paths_xml[0].firstChild.nodeValue
+        else:
+            path_pdf = None
+
+        if path_html is None and path_pdf is None:
             print 'Document not published: %d' % doc_num
             continue
-
-        path_html = html_paths_xml[0].firstChild.nodeValue
-        path_pdf = pdf_paths_xml[0].firstChild.nodeValue
 
         if lowest_doc_num == 0:
             lowest_doc_num = doc_num
@@ -457,6 +488,11 @@ def update_issue(issue_num, parliament_num=None):
         except AttributeError:
             date_sent = None
 
+        # sender_name can contain a lot of baggage if it's old data (around 116th parliament and earlir)
+        sender_name = sender_name.strip()
+        while sender_name.find('  ') >= 0:
+            sender_name = sender_name.replace('  ', ' ')
+
         paths_xml = review_xml.getElementsByTagName(u'slóð')
         pdf_paths_xml = paths_xml[0].getElementsByTagName(u'pdf')
 
@@ -516,6 +552,11 @@ def update_issue(issue_num, parliament_num=None):
 
 def update_docless_issue(issue_num, name, parliament_num=None):
     parliament = ensure_parliament(parliament_num)
+
+    # Docless issue names can carry a lot of baggage if it's old data (around 116th parliament and earlier)
+    name = name.strip()
+    while name.find('  ') >= 0:
+        name = name.replace('  ', ' ')
 
     issue_try = Issue.objects.filter(issue_num=issue_num, issue_group='B', parliament__parliament_num=parliament.parliament_num)
     if issue_try.count() > 0:

@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load static %}
 
 <div class="panel panel-default" control="document" data-id="{{ document.id }}">
     <div class="panel-body">
@@ -8,7 +9,13 @@
         </div>
         <div>
             <span class="glyphicon glyphicon-file"></span>
-            <a class="title" href="{{ document.pdf_link }}" target="_blank">{{ document.get_doc_type_display|capfirst }}</a>
+            <a class="title" href="{{ document.preferred_link }}" target="_blank">{{ document.get_doc_type_display|capfirst }}</a>
+            {% if document.html_link %}
+                &nbsp;<a target="_blank" href="{{ document.html_link }}"><img src="{% static 'core/img/icons/html.24x24.png' %}" /></a>
+            {% endif %}
+            {% if document.pdf_link %}
+                &nbsp;<a target="_blank" href="{{ document.pdf_link }}"><img src="{% static 'core/img/icons/pdf.24x24.png' %}" /></a>
+            {% endif %}
         </div>
         {% if document.proposers.all.count %}
             <div class="proposers">

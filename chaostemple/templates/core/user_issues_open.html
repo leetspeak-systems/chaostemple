@@ -8,7 +8,7 @@
 
 {% block content %}
 
-    <h3>{% trans 'Opened issues' %}</h3>
+    <h3>{% trans 'Opened Issues' %}</h3>
 
     {% for issue in issues reversed %}
         {% include 'core/stub/issue.html' with issue=issue %}

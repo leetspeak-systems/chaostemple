@@ -308,7 +308,24 @@ def update_issue(issue_num, parliament_num=None):
     if issue_try.count() > 0:
         issue = issue_try[0]
 
-        print 'Already have issue: %s' % issue
+        changed = False
+        if issue.issue_type != issue_type:
+            issue.issue_type = issue_type
+            changed = True
+
+        if issue.name != name:
+            issue.name = name
+            changed = True
+
+        if issue.description != description:
+            issue.description = description
+            changed = True
+
+        if changed:
+            issue.save()
+            print 'Updated issue: %s' % issue
+        else:
+            print 'Already have issue: %s' % issue
     else:
         issue = Issue()
         issue.issue_num = issue_num

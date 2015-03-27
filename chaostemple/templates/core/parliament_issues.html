@@ -7,9 +7,9 @@
 
 {% block content %}
 
-{% for issue in issues reversed %}
-    {% include 'core/stub/issue.html' with issue=issue %}
-{% endfor %}
+    {% for issue in issues reversed %}
+        {% include 'core/stub/issue.html' with issue=issue %}
+    {% endfor %}
 
 {% endblock %}
 

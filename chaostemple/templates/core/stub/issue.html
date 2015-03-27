@@ -1,14 +1,17 @@
 {% load i18n %}
 {% load dossier %}
 
+<div control="issue-container" data-id="{{ issue.id }}">
 <div class="panel panel-default" control="issue">
     {% if issue.issue_group == 'A' %}
         <div class="panel-heading">{{ issue.get_issue_type_display|capfirst }}</div>
         <div class="panel-body">
             <p>
-                <a href="{% url 'parliament_issue' issue.parliament.parliament_num issue.issue_num %}" target="_blank">{{ issue.name|capfirst }}</a>
+                <a href="{% url 'parliament_issue' issue.parliament.parliament_num issue.issue_num %}" target="_blank">
+                    <span control="issue-name" data-id="{{ issue.id }}">{{ issue.name|capfirst }}</span>
+                </a>
                 {% if issue.description %}
-                    <small>({{ issue.description }})</small>
+                    <small>(<span control="issue-description" data-id="{{ issue.id }}">{{ issue.description }}</span>)</small>
                 {% endif %}
             </p>
             <p>
@@ -23,9 +26,12 @@
         {% if user.is_authenticated %}
             <div class="panel-footer">
                 {% include 'core/stub/issue_bookmark.html' %}
+
+                <button control="delete-issue-dossiers" class="btn btn-xs btn-danger pull-right" data-id="{{ issue.id }}">{% trans 'Mark as Unopened' %}</button>
             </div>
         {% endif %}
     {% elif issue.issue_group == 'B' %}
         <div class="panel-body">{{ issue.name|capfirst }}</div>
     {% endif %}
+</div>
 </div>

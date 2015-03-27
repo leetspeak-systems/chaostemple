@@ -7,7 +7,10 @@ from django.template.loader import render_to_string
 
 from core.models import Document
 from core.models import Dossier
+from core.models import DossierStatistic
+from core.models import Issue
 from core.models import IssueBookmark
+from core.models import IssueUtilities
 from core.models import Memo
 
 from core.jsonizer import jsonize
@@ -47,6 +50,33 @@ def delete_dossier(request, dossier_id):
     ctx = {
         'document_id': document_id,
         'review_id': review_id,
+    }
+    return ctx
+
+@login_required
+@jsonize
+def delete_issue_dossiers(request, issue_id):
+    request_context = RequestContext(request)
+
+    Dossier.objects.filter(issue_id=issue_id, user_id=request.user.id).delete()
+    DossierStatistic.objects.filter(issue_id=issue_id, user_id=request.user.id).delete()
+
+    issue = Issue.objects.select_related('parliament').get(id=issue_id)
+    IssueUtilities.populate_dossier_statistics([issue], request.user.id)
+
+    bookmarked_issues = request_context['bookmarked_issues']
+
+    stub_ctx = {
+        'request': request,
+        'issue': issue,
+        'user': request.user,
+        'bookmarked_issues': bookmarked_issues,
+    }
+    html_content = render_to_string('core/stub/issue.html', stub_ctx)
+
+    ctx = {
+        'issue_id': issue_id,
+        'html_content': html_content,
     }
     return ctx
 

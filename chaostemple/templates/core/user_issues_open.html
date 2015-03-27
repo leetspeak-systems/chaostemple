@@ -8,6 +8,8 @@
 
 {% block content %}
 
+    {% include 'core/dialog/dialog_delete_issue_dossiers.html' %}
+
     <h3>{% trans 'Opened Issues' %}</h3>
 
     {% for issue in issues reversed %}

@@ -10,6 +10,8 @@
 
 {% block content %}
 
+    {% include 'core/dialog/dialog_delete_issue_dossiers.html' %}
+
     {% for issue in issues %}
         {% ifchanged issue.parliament.parliament_num %}
             <h3>{{ issue.parliament.parliament_num }}. {% trans 'parliament' %}</h3>

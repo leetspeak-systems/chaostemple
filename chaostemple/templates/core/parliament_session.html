@@ -7,12 +7,12 @@
 
 {% block content %}
 
-<h2>{{ session.name }}</h2>
+    <h2>{{ session.name }}</h2>
 
-<div id="parliament-session-agenda">
-    {% for issue in issues %}
-        {% include 'core/stub/issue.html' %}
-    {% endfor %}
-</div>
+    <div id="parliament-session-agenda">
+        {% for issue in issues %}
+            {% include 'core/stub/issue.html' %}
+        {% endfor %}
+    </div>
 
 {% endblock %}

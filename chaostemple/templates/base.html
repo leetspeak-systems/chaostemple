@@ -75,8 +75,25 @@
                             <li class="dropdown" control="open-issue-menu">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans 'Opened Issues' %} <span class="caret"></span></a>
                                 <ul class="dropdown-menu" role="menu">
-                                    <li><a href="{% url 'user_issues_open' %}"><strong>{% trans 'Opened Issues' %}</strong></a></li>
+                                    {% if dossier_statistics_incoming %}
+                                        <li><a href="{% url 'user_issues_incoming' %}"><strong>{% trans 'Issues with new data' %}</strong></a></li>
+                                        {% for stat in dossier_statistics_incoming %}
+                                            <li>
+                                                <a href="{% url 'parliament_issue' stat.issue.parliament.parliament_num stat.issue.issue_num %}">
+                                                    {% include 'core/stub/issue_menuentry.html' with issue=stat.issue %}
+                                                    &nbsp;
+                                                    {% if stat.new_documents %}
+                                                        <span class="label label-danger memo-count">{{ stat.new_documents }} {% trans 'new documents' %}</span>
+                                                    {% endif %}
+                                                    {% if stat.new_reviews %}
+                                                        <span class="label label-danger memo-count">{{ stat.new_reviews }} {% trans 'new reviews' %}</span>
+                                                    {% endif %}
+                                                </a>
+                                            </li>
+                                        {% endfor %}
+                                    {% endif %}
                                     <li class="divider"></li>
+                                    <li><a href="{% url 'user_issues_open' %}"><strong>{% trans 'Opened Issues' %}</strong></a></li>
                                     {% for issue in open_issues reversed %}
                                         {% ifchanged issue.parliament.parliament_num %}
                                             <li class="dropdown-header">{{ issue.parliament.parliament_num }}. {% trans 'parliament' %}</li>
@@ -91,28 +108,6 @@
                                 </ul>
                             </li>
                         {% endif %}
-
-                        <li class="dropdown" control="incoming-menu" {% if not dossier_statistics_incoming %}style="display: none;" {% endif %}>
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans 'New' %} <span class="caret"></span></a>
-                            <ul class="dropdown-menu" role="menu">
-                                <li><a href="{% url 'user_issues_incoming' %}"><strong>{% trans 'Issues with new data' %}</strong></a></li>
-                                <li class="divider"></li>
-                                {% for stat in dossier_statistics_incoming %}
-                                    <li>
-                                        <a href="{% url 'parliament_issue' stat.issue.parliament.parliament_num stat.issue.issue_num %}">
-                                            {% include 'core/stub/issue_menuentry.html' with issue=stat.issue %}
-                                            &nbsp;
-                                            {% if stat.new_documents %}
-                                                <span class="label label-danger memo-count">{{ stat.new_documents }} {% trans 'new documents' %}</span>
-                                            {% endif %}
-                                            {% if stat.new_reviews %}
-                                                <span class="label label-danger memo-count">{{ stat.new_reviews }} {% trans 'new reviews' %}</span>
-                                            {% endif %}
-                                        </a>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </li>
 
                         <li class="dropdown" control="bookmark-menu" {% if not bookmarked_issues %}style="display: none;" {% endif %}>
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans 'Bookmarks' %} <span class="caret"></span></a>

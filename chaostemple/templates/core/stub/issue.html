@@ -27,7 +27,9 @@
                 <div class="panel-footer">
                     {% include 'core/stub/issue_bookmark.html' %}
 
-                    <button control="delete-issue-dossiers" class="btn btn-xs btn-danger pull-right" data-id="{{ issue.id }}">{% trans 'Mark as Unopened' %}</button>
+                    {% if issue.dossier_statistics %}
+                        <button control="delete-issue-dossiers" class="btn btn-xs btn-danger pull-right" data-id="{{ issue.id }}">{% trans 'Mark as Unopened' %}</button>
+                    {% endif %}
                 </div>
             {% endif %}
         {% elif issue.issue_group == 'B' %}

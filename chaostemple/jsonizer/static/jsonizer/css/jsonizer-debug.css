@@ -1,0 +1,17 @@
+.jsonizer-container { position: fixed; right: 8px; bottom: 8px; display: none; }
+
+.jsonizer { border: 1px solid #909090; width: 200px; }
+.jsonizer-row { background: #f0f0f0; font-size: 11px; border-top: 1px solid #909090; padding: 0px; margin: 0px; }
+.jsonizer-row:first-child { border-top-width: 0px; }
+
+.jsonizer-row .jsonizer-light { float: left; border: 1px solid #909090; height: 8px; width: 8px; background: #336699; margin: 4px 0px 0px 4px; }
+.jsonizer-row .jsonizer-message { margin: 0px 4px 0px 16px; }
+
+.jsonizer-row .jsonizer-light-transit { background: #ffff00; }
+.jsonizer-row .jsonizer-light-success { background: #00ff00; }
+.jsonizer-row .jsonizer-light-failure { background: #ff0000; }
+
+.jsonizer-controls { background: #d0d0d0; border-style: solid; border-color: #909090; border-width: 0px 1px 1px 1px; text-align: center; }
+.jsonizer-controls button { font-size: 11px; margin: 2px 0px 2px 0px; }
+
+#jsonizer-row-prototype { display: none; }

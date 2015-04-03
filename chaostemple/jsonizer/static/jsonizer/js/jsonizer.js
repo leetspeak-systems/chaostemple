@@ -5,6 +5,14 @@ $(document).ready(function() {
         var $jsonizer = $container.find('div.jsonizer');
         var $row = null;
 
+        // Set the mouse cursor
+        if (status_code == 'transit') {
+            $('body').addClass('wait');
+        }
+        else {
+            $('body').removeClass('wait');
+        }
+
         if (row_number == null) {
             $row = $container.find('#jsonizer-row-prototype').clone().attr('id', null);
         }

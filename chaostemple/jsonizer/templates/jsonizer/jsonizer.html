@@ -1,0 +1,6 @@
+{% load static %}
+<script type="text/javascript" language="javascript" src="{% static 'jsonizer/js/jsonizer.js' %}"></script>
+{% if JSONIZER_DEBUG %}
+    <link href="{% static 'jsonizer/css/jsonizer.css' %}" rel="stylesheet" />
+    {% include 'jsonizer/eventlist.html' %}
+{% endif %}

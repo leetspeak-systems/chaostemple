@@ -4,6 +4,11 @@ jQuery.fn.extend({
         $menu = $(this);
 
         $.jsonize({
+            message: {
+                'transit': 'Reloading bookmarks...',
+                'success': 'Bookmarks reloaded.',
+                'failure': 'Reloading bookmarks failed!',
+            },
             url: '/json/bookmark/issue/menu/',
             done: function(data, textStatus) {
                 $menuitems = $menu.find('ul[class="dropdown-menu"]');
@@ -26,6 +31,11 @@ $(document).ready(function() {
         issue_id = $(this).data('issue-id');
 
         $.jsonize({
+            message: {
+                'transit': 'Toggling bookmark...',
+                'success': 'Bookmark toggled.',
+                'failure': 'Toggling bookmark failed!',
+            },
             url: '/json/bookmark/issue/toggle/' + issue_id + '/',
             done: function(data, textStatus) {
                 $icons = $('a[control="issue-bookmark"][data-issue-id=' + issue_id + '] span[control="issue-bookmark-icon"]');
@@ -61,6 +71,11 @@ $(document).ready(function() {
         var issue_id = $('input#delete-issue-dossiers-id').val()
 
         $.jsonize({
+            message: {
+                'transit': 'Deleting issue\'s dossiers...',
+                'success': 'Issue\'s dossiers deleted.',
+                'failure': 'Issue\'s dossier deletion failed!',
+            },
             url: '/json/issue/' + issue_id + '/dossiers/delete/',
             done: function(data, textStatus) {
                 $('div[control="issue-container"][data-id=' + data.issue_id + ']').html(data.html_content);

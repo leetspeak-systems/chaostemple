@@ -31,6 +31,7 @@ INSTALLED_APPS = (
 
     'core',
     'althingi',
+    'jsonizer',
 )
 
 # django_registration_redux settings

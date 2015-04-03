@@ -20,31 +20,6 @@ function csrfSafeMethod(method) {
     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 }
 
-// Generalized function for handling JSON on our site
-$.jsonize = function(args) {
-    if (args.type == null) {
-        args.type = 'GET';
-    }
-    result = $.ajax({
-        url: args.url,
-        type: args.type,
-        data: args.data,
-        dataType: 'json'
-    }).done(function(data, textStatus) {
-        var keys = Object.keys(data);
-        if (data.ok && args.done) {
-            args.done(data, textStatus);
-        }
-        else {
-            alert('Server error: ' + data.error);
-            if (args.error != null) {
-                args.error(data, textStatus);
-            }
-        }
-    });
-    return result;
-}
-
 $(document).ready(function() {
     // Set focus on first text field on page, if it exists
     $("form input[type='text']").focus();

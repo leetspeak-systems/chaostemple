@@ -29,6 +29,11 @@ $(document).ready(function() {
         fieldstate = $this.data('fieldstate');
 
         $.jsonize({
+            message: {
+                'transit': 'Setting fieldstate...',
+                'success': 'Fieldstate set.',
+                'failure': 'Failed to set fieldstate!',
+            },
             url: '/json/dossier/' + dossier_id + '/fieldstate/' + fieldname + '/',
             data: { 'fieldstate': fieldstate },
             done: function(data, textStatus) {
@@ -71,6 +76,11 @@ $(document).ready(function() {
         dossier_id = $('input#delete-dossier-id').val();
 
         $.jsonize({
+            message: {
+                'transit': 'Deleting dossier...',
+                'success': 'Dossier deleted.',
+                'failure': 'Dossier deletion failed!',
+            },
             url: '/json/dossier/' + dossier_id + '/delete/',
             done: function(data, textStatus) {
                 if (data.document_id) {
@@ -129,6 +139,11 @@ $(document).ready(function() {
 
             if (memo_id == 0) {
                 $.jsonize({
+                    message: {
+                        'transit': 'Added memo...',
+                        'success': 'Memo added.',
+                        'failure': 'Memo adding failed!',
+                    },
                     url: '/json/memo/' + dossier_id + '/add/',
                     type: 'POST',
                     data: {
@@ -144,6 +159,11 @@ $(document).ready(function() {
             }
             else {
                 $.jsonize({
+                    message: {
+                        'transit': 'Updating memo...',
+                        'success': 'Memo updated.',
+                        'failure': 'Memo updating failed!',
+                    },
                     url: '/json/memo/' + memo_id + '/edit/',
                     type: 'POST',
                     data: {
@@ -188,6 +208,11 @@ $(document).ready(function() {
         var memo_id = $('input#delete-memo-id').val();
 
         $.jsonize({
+            message: {
+                'transit': 'Deleting memo...',
+                'success': 'Memo deleted.',
+                'failure': 'Memo deletion failed!',
+            },
             url: '/json/memo/' + memo_id + '/delete/',
             done: function(data, textStatus) {
                 $('div[control="dossier-memos"][data-id=' + data.dossier_id + ']').html(data.html_content);
@@ -210,6 +235,11 @@ $(document).ready(function() {
         });
 
         $.jsonize({
+            message: {
+                'transit': 'Re-ordering memos...',
+                'success': 'Memos re-ordered.',
+                'failure': 'Memo re-ordering failed!',
+            },
             url: '/json/memo/sort/' + dossier_id + '/',
             type: 'POST',
             data: {

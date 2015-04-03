@@ -13,7 +13,7 @@ from core.models import IssueBookmark
 from core.models import IssueUtilities
 from core.models import Memo
 
-from core.jsonizer import jsonize
+from jsonizer.utils import jsonize
 
 @login_required
 @jsonize

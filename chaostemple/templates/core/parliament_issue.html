@@ -32,11 +32,43 @@
         <span class="label label-primary">{{ issue.parliament.parliament_num }}. {% trans 'parliament' %}</span>
     </div>
 
-    {% if user.is_authenticated %}
-        <div class="issue-view-controls">
-            {% include 'core/stub/issue_bookmark.html' %}
+    <div control="issue-view-controls" class="navbar navbar-default">
+        <div class="container-fluid">
+            <!--
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">{% trans 'Issue Portal' %}</a>
+            </div>
+            -->
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" area-expanded="false">{% trans 'Committee Meetings' %} <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            {% for committee_agenda in issue_committee_agendas reversed %}
+                                <li><a href="{% url 'parliament_committee_agenda' committee_agenda.parliament.parliament_num committee_agenda.committee.id committee_agenda.id %}">{{ committee_agenda.committee|capfirst }}: {{ committee_agenda.timing_start_planned }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" area-expanded="false">{% trans 'Parliamentary Sessions' %} <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            {% for session in issue_sessions reversed %}
+                                <li><a href="{% url 'parliament_session' session.parliament.parliament_num session.session_num %}">{{ session }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                </ul>
+
+                <div class="navbar-right">
+                    {% if user.is_authenticated %}
+                        {% include 'core/stub/issue_bookmark.html' with extraclasses='navbar-btn' %}
+                    {% endif %}
+                </div>
+            </div>
         </div>
-    {% endif %}
+    </div>
 
     <h3>{% trans 'Parliamentary Documents' %}</h3>
     <div class="documents">

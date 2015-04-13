@@ -42,5 +42,5 @@ div[control="issue"] .dossier-statistic-type { font-size: small; font-weight: bo
 div[control="issue"] .dossier-statistic-values label { font-weight: normal; margin: 0px 2px 0px 10px; font-size: small; }
 div[control="issue"] .dossier-statistic-values { padding-top: 3px; float: left; }
 
-.issue-view-controls { margin-top: 16px; }
+div[control="issue-view-controls"] { margin-top: 16px; }
 

@@ -1,6 +1,6 @@
 {% load i18n %}
 
-<a href="#" control="issue-bookmark" data-issue-id="{{ issue.id }}" class="btn btn-default btn-xs">
+<a href="#" control="issue-bookmark" data-issue-id="{{ issue.id }}" class="btn btn-default btn-xs {{ extraclasses }}">
     <span control="issue-bookmark-icon" class="glyphicon glyphicon-ok {% if not issue in bookmarked_issues %}grey{% endif %}"></span>
     {% trans 'Bookmark' %}
 </a>

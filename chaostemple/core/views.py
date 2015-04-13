@@ -68,6 +68,12 @@ def parliament_issue(request, parliament_num, issue_num):
     documents = get_prefetched_documents()
     reviews = get_prefetched_reviews()
 
+    issue_sessions = Session.objects.select_related('parliament').filter(agenda_items__issue_id=issue.id)
+    issue_committee_agendas = CommitteeAgenda.objects.select_related(
+        'parliament',
+        'committee'
+    ).filter(committee_agenda_items__issue_id=issue.id)
+
     reload_documents = False
     reload_reviews = False
     if request.user.is_authenticated():
@@ -88,6 +94,8 @@ def parliament_issue(request, parliament_num, issue_num):
 
     ctx = {
         'issue': issue,
+        'issue_sessions': issue_sessions,
+        'issue_committee_agendas': issue_committee_agendas,
         'documents': documents,
         'reviews': reviews,
         'attentionstates': Dossier.ATTENTION_STATES,

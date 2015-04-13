@@ -306,7 +306,7 @@ class CommitteeAgendaItem(models.Model):
     committee_agenda = models.ForeignKey('CommitteeAgenda', related_name='committee_agenda_items')
     order = models.IntegerField()
     name = models.CharField(max_length=300)
-    issue = models.ForeignKey('Issue', null=True)
+    issue = models.ForeignKey('Issue', null=True, related_name='committee_agenda_items')
 
     def __unicode__(self):
         if self.issue is not None:

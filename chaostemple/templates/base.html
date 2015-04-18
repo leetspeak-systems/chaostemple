@@ -44,7 +44,9 @@
                                         <li role="presentation"><a href="{% url 'parliament_sessions' newest_parliament_num %}"><strong>{% trans 'Parliamentary Sessions' %}</strong></a></li>
                                         {% for session in next_sessions %}
                                             {% ifchanged session.timing_start_planned|date %}
-                                                <li role="presentation" class="dropdown-header">&nbsp;&nbsp;&nbsp;&nbsp;{{ session.timing_start_planned|date }}</li>
+                                                {% if session.timing_start_planned %}
+                                                    <li role="presentation" class="dropdown-header">&nbsp;&nbsp;&nbsp;&nbsp;{{ session.timing_start_planned|date }}</li>
+                                                {% endif %}
                                             {% endifchanged %}
                                              <li role="presentation">
                                                 <a href="{% url 'parliament_session' session.parliament.parliament_num session.session_num %}">

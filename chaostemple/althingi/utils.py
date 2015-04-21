@@ -4,7 +4,7 @@ from __future__ import absolute_import
 import errno
 import os
 import pytz
-import urllib
+import urllib2
 from datetime import date
 from datetime import datetime
 from sys import stdout
@@ -71,6 +71,25 @@ already_haves = {
     'xml': {},
 }
 
+def get_response(web_url):
+
+    retry_count = 2
+
+    success = False
+    while not success and retry_count > -1:
+        try:
+            response = urllib2.urlopen(web_url, timeout=5)
+            success = True
+        except IOError:
+            print 'Retrieving remote content failed, retries left: %s...' % retry_count
+            retry_count = retry_count - 1
+
+    if success:
+        return response
+    else:
+        print 'Error: Failed retrieving URL: %s' % web_url
+        quit(1)
+
 def sensible_datetime(value):
 
     if value is None:
@@ -112,7 +131,7 @@ def maybe_download_document(remote_path, parliament_num, issue_num):
 
     local_filename = os.path.join('althingi', parliament_num.__str__(), issue_num.__str__(), basename)
 
-    content = urllib.urlopen(remote_path).read()
+    content = get_response(remote_path).read()
     localpath = os.path.join(althingi_settings.STATIC_DOCUMENT_DIR, local_filename)
     mkpath(os.path.dirname(localpath))
     outfile = open(localpath, 'w')
@@ -135,7 +154,7 @@ def maybe_download_review(remote_path, log_num, parliament_num, issue_num):
     stdout.write('Downloading review with log number %d...' % log_num)
     stdout.flush()
 
-    response = urllib.urlopen(remote_path)
+    response = get_response(remote_path)
 
     filename = os.path.basename(remote_path)
     local_filename = os.path.join('althingi', parliament_num.__str__(), issue_num.__str__(), filename)
@@ -178,7 +197,7 @@ def ensure_person(person_xml_id):
     if already_haves['persons'].has_key(person_xml_id):
         return already_haves['persons'][person_xml_id]
 
-    person_xml = minidom.parse(urllib.urlopen(PERSON_URL % person_xml_id))
+    person_xml = minidom.parse(get_response(PERSON_URL % person_xml_id))
 
     name = person_xml.getElementsByTagName(u'nafn')[0].firstChild.nodeValue.strip()
     birthdate = person_xml.getElementsByTagName(u'fæðingardagur')[0].firstChild.nodeValue
@@ -216,7 +235,7 @@ def ensure_committee(committee_xml_id, parliament_num=None):
         if already_haves['xml'].has_key(xml_url):
             committees_full_xml = already_haves['xml'][xml_url]
         else:
-            committees_full_xml = minidom.parse(urllib.urlopen(xml_url))
+            committees_full_xml = minidom.parse(get_response(xml_url))
             already_haves['xml'][xml_url] = committees_full_xml
 
         committees_xml = committees_full_xml.getElementsByTagName(u'nefnd')
@@ -273,7 +292,7 @@ def update_issues(parliament_num=None):
 
     parliament = ensure_parliament(parliament_num)
 
-    issue_list_xml = minidom.parse(urllib.urlopen(ISSUE_LIST_URL % parliament.parliament_num))
+    issue_list_xml = minidom.parse(get_response(ISSUE_LIST_URL % parliament.parliament_num))
     issues_xml = issue_list_xml.getElementsByTagName(u'mál')
 
     for issue_xml in issues_xml:
@@ -292,7 +311,7 @@ def update_issue(issue_num, parliament_num=None):
     if already_haves['issues'].has_key(ah_key):
         return already_haves['issues'][ah_key]
 
-    issue_xml = minidom.parse(urllib.urlopen(ISSUE_URL % (parliament.parliament_num, issue_num)))
+    issue_xml = minidom.parse(get_response(ISSUE_URL % (parliament.parliament_num, issue_num)))
     docstubs_xml = issue_xml.getElementsByTagName(u'þingskjöl')[0].getElementsByTagName(u'þingskjal')
     reviews_xml = issue_xml.getElementsByTagName(u'erindaskrá')[0].getElementsByTagName(u'erindi')
 
@@ -350,7 +369,7 @@ def update_issue(issue_num, parliament_num=None):
 
         doc_xml_url = docstub_xml.getElementsByTagName(u'slóð')[0].getElementsByTagName(u'xml')[0].firstChild.nodeValue
 
-        doc_full_xml = minidom.parse(urllib.urlopen(doc_xml_url))
+        doc_full_xml = minidom.parse(get_response(doc_xml_url))
         doc_xml = doc_full_xml.getElementsByTagName(u'þingskjal')[0].getElementsByTagName(u'þingskjal')[0]
 
         doc_num = int(doc_xml.getAttribute(u'skjalsnúmer'))
@@ -613,7 +632,7 @@ def update_sessions(parliament_num=None, date_limit=None):
     if date_limit is not None:
         date_limit = sensible_datetime(date_limit)
 
-    sessions_xml = minidom.parse(urllib.urlopen(SESSION_LIST_URL % parliament.parliament_num))
+    sessions_xml = minidom.parse(get_response(SESSION_LIST_URL % parliament.parliament_num))
     for session_xml in reversed(sessions_xml.getElementsByTagName(u'þingfundur')):
         session_num = int(session_xml.getAttribute(u'númer'))
 
@@ -634,7 +653,7 @@ def update_session(session_num, parliament_num=None):
 
     parliament = ensure_parliament(parliament_num)
 
-    response = urllib.urlopen(SESSION_AGENDA_URL % (parliament.parliament_num, session_num))
+    response = get_response(SESSION_AGENDA_URL % (parliament.parliament_num, session_num))
     session_full_xml = minidom.parse(response)
     try:
         session_xml = session_full_xml.getElementsByTagName(u'þingfundur')[0]
@@ -658,7 +677,7 @@ def update_session(session_num, parliament_num=None):
 
 def update_next_sessions():
 
-    response = urllib.urlopen(SESSION_NEXT_AGENDA_URL)
+    response = get_response(SESSION_NEXT_AGENDA_URL)
     session_full_xml = minidom.parse(response)
     sessions_xml = session_full_xml.getElementsByTagName(u'þingfundur')
     for session_xml in sessions_xml:
@@ -673,7 +692,7 @@ def update_committee_agendas(parliament_num=None, date_limit=None):
     if date_limit is not None:
         date_limit = sensible_datetime(date_limit)
 
-    committee_agenda_list_xml = minidom.parse(urllib.urlopen(COMMITTEE_AGENDA_LIST_URL % parliament.parliament_num))
+    committee_agenda_list_xml = minidom.parse(get_response(COMMITTEE_AGENDA_LIST_URL % parliament.parliament_num))
     committee_agenda_stubs_xml = committee_agenda_list_xml.getElementsByTagName(u'nefndarfundur')
     for committee_agenda_stub_xml in reversed(committee_agenda_stubs_xml):
 
@@ -696,7 +715,7 @@ def update_committee_agenda(committee_agenda_xml_id, parliament_num=None):
 
     parliament = ensure_parliament(parliament_num)
 
-    response = urllib.urlopen(COMMITTEE_AGENDA_URL % committee_agenda_xml_id)
+    response = get_response(COMMITTEE_AGENDA_URL % committee_agenda_xml_id)
     try:
         committee_agenda_full_xml = minidom.parse(response)
     except ExpatError:
@@ -878,7 +897,7 @@ def _process_session_agenda_xml(session_xml):
         print 'Added session: %s' % session
 
     # Prepare for agenda processing.
-    response = urllib.urlopen(SESSION_AGENDA_URL % (parliament.parliament_num, session_num))
+    response = get_response(SESSION_AGENDA_URL % (parliament.parliament_num, session_num))
     session_agenda_full_xml = minidom.parse(response)
     session_agenda_xml = session_agenda_full_xml.getElementsByTagName(u'dagskrá')[0]
 

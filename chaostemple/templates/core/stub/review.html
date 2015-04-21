@@ -8,6 +8,7 @@
         <div>
             <span class="glyphicon glyphicon-inbox"></span>
             <a class="title" href="{{ review.pdf_link }}" target="_blank">{{ review.sender_name }}</a>
+            <small>({{ review.get_review_type_display }})</small>
         </div>
     </div>
     {% for dossier in review.dossiers.all %}

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
+from __future__ import print_function
 
 import errno
 import os
@@ -7,6 +8,7 @@ import pytz
 import urllib2
 from datetime import date
 from datetime import datetime
+from sys import stderr
 from sys import stdout
 from xml.dom import minidom
 from xml.parsers.expat import ExpatError
@@ -81,13 +83,13 @@ def get_response(web_url):
             response = urllib2.urlopen(web_url, timeout=5)
             success = True
         except IOError:
-            print 'Retrieving remote content failed, retries left: %s...' % retry_count
+            print('Retrieving remote content failed, retries left: %s...' % retry_count)
             retry_count = retry_count - 1
 
     if success:
         return response
     else:
-        print 'Error: Failed retrieving URL: %s' % web_url
+        print('Error: Failed retrieving URL: %s' % web_url, file=stderr)
         quit(1)
 
 def sensible_datetime(value):
@@ -183,9 +185,9 @@ def ensure_parliament(parliament_num):
 
     parliament, created = Parliament.objects.get_or_create(parliament_num=parliament_num)
     if created:
-        print 'Added parliament: %s' % parliament_num
+        print('Added parliament: %s' % parliament_num)
     else:
-        print 'Already have parliament: %s' % parliament_num
+        print('Already have parliament: %s' % parliament_num)
 
     already_haves['parliaments'][parliament_num] = parliament
 
@@ -206,7 +208,7 @@ def ensure_person(person_xml_id):
     if person_try.count() > 0:
         person = person_try[0]
 
-        print 'Already have person: %s' % person
+        print('Already have person: %s' % person)
     else:
         person = Person()
         person.name = name
@@ -214,7 +216,7 @@ def ensure_person(person_xml_id):
         person.person_xml_id = person_xml_id
         person.save()
 
-        print 'Added person: %s' % person
+        print('Added person: %s' % person)
 
     already_haves['persons'][person_xml_id] = person
 
@@ -253,7 +255,7 @@ def ensure_committee(committee_xml_id, parliament_num=None):
                 if committee_try.count() > 0:
                     committee = committee_try[0]
 
-                    print 'Already have committee: %s' % committee
+                    print('Already have committee: %s' % committee)
                 else:
                     committee = Committee()
                     committee.name = name
@@ -265,7 +267,7 @@ def ensure_committee(committee_xml_id, parliament_num=None):
                     committee.save()
                     committee.parliaments.add(parliament)
 
-                    print 'Added committee: %s' % committee
+                    print('Added committee: %s' % committee)
 
                 break # We have found what we were looking for.
 
@@ -278,7 +280,7 @@ def ensure_committee(committee_xml_id, parliament_num=None):
         # maintainers should be notified of, but we can still remedy this by downloading a different,
         # much larger XML document which contains all committees regardless of parliament.
         committee = parse_committee_xml(COMMITTEE_FULL_LIST_URL)
-        print 'Warning! Committee with ID %d is missing from committee listing in parliament %d! Tell the XML keeper!' %(committee_xml_id, parliament_num)
+        print('Warning! Committee with ID %d is missing from committee listing in parliament %d! Tell the XML keeper!' %(committee_xml_id, parliament_num))
 
     already_haves['committees'][ah_key] = committee
 
@@ -345,9 +347,9 @@ def update_issue(issue_num, parliament_num=None):
 
         if changed:
             issue.save()
-            print 'Updated issue: %s' % issue
+            print('Updated issue: %s' % issue)
         else:
-            print 'Already have issue: %s' % issue
+            print('Already have issue: %s' % issue)
     else:
         issue = Issue()
         issue.issue_num = issue_num
@@ -358,7 +360,7 @@ def update_issue(issue_num, parliament_num=None):
         issue.parliament = parliament
         issue.save()
 
-        print 'Added issue: %s' % issue
+        print('Added issue: %s' % issue)
 
     # Process documents.
     lowest_doc_num = 0  # Lowest document number will always be the main document of the issue.
@@ -391,7 +393,7 @@ def update_issue(issue_num, parliament_num=None):
             path_pdf = None
 
         if path_html is None and path_pdf is None:
-            print 'Document not published: %d' % doc_num
+            print('Document not published: %d' % doc_num)
             continue
 
         if lowest_doc_num == 0:
@@ -410,7 +412,7 @@ def update_issue(issue_num, parliament_num=None):
                     doc.pdf_filename = maybe_download_document(path_pdf, parliament_num, issue_num)
                 doc.save()
 
-            print 'Already have document: %s' % doc
+            print('Already have document: %s' % doc)
         else:
 
             html_filename = maybe_download_document(path_html, parliament_num, issue_num)
@@ -427,7 +429,7 @@ def update_issue(issue_num, parliament_num=None):
             doc.issue = issue
             doc.save()
 
-            print 'Added document: %s' % doc
+            print('Added document: %s' % doc)
 
         # Process proposers.
         for proposer_xml in doc_xml.getElementsByTagName(u'flutningsmenn'):
@@ -448,7 +450,7 @@ def update_issue(issue_num, parliament_num=None):
                 if proposer_try.count() > 0:
                     proposer = proposer_try[0]
 
-                    print 'Already have proposer: %s on document %s' % (proposer, doc)
+                    print('Already have proposer: %s on document %s' % (proposer, doc))
                 else:
                     proposer = Proposer()
                     proposer.committee = committee
@@ -456,7 +458,7 @@ def update_issue(issue_num, parliament_num=None):
                     proposer.document = doc
                     proposer.save()
 
-                    print 'Added proposer: %s to document %s' % (proposer, doc)
+                    print('Added proposer: %s to document %s' % (proposer, doc))
 
                 persons_xml = committee_xml[0].getElementsByTagName(u'flutningsmaður')
                 for person_xml in persons_xml:
@@ -469,7 +471,7 @@ def update_issue(issue_num, parliament_num=None):
                     if subproposer_try.count() > 0:
                         subproposer = subproposer_try[0]
 
-                        print 'Already have sub-proposer: %s on committee %s' % (subproposer, committee)
+                        print('Already have sub-proposer: %s on committee %s' % (subproposer, committee))
                     else:
                         subproposer = Proposer()
                         subproposer.person = person
@@ -477,7 +479,7 @@ def update_issue(issue_num, parliament_num=None):
                         subproposer.parent = proposer
                         subproposer.save()
 
-                        print 'Added sub-proposer: %s to committee %s' % (subproposer, committee)
+                        print('Added sub-proposer: %s to committee %s' % (subproposer, committee))
 
 
             else:
@@ -493,7 +495,7 @@ def update_issue(issue_num, parliament_num=None):
                     if proposer_try.count() > 0:
                         proposer = proposer_try[0]
 
-                        print 'Already have proposer: %s on document %s' % (proposer, doc)
+                        print('Already have proposer: %s on document %s' % (proposer, doc))
                     else:
                         proposer = Proposer()
                         proposer.person = person
@@ -501,7 +503,7 @@ def update_issue(issue_num, parliament_num=None):
                         proposer.document = doc
                         proposer.save()
 
-                        print 'Added proposer: %s to document %s' % (proposer, doc)
+                        print('Added proposer: %s to document %s' % (proposer, doc))
 
 
     # Figure out what the main document is, if any.
@@ -509,9 +511,9 @@ def update_issue(issue_num, parliament_num=None):
         main_doc = Document.objects.get(issue=issue, doc_num=lowest_doc_num)
         main_doc.is_main = True
         main_doc.save()
-        print 'Main document determined to be: %s' % main_doc
+        print('Main document determined to be: %s' % main_doc)
     except Document.DoesNotExist:
-        print 'Main document undetermined, no documents yet'
+        print('Main document undetermined, no documents yet')
 
     # Process reviews.
     for review_xml in reviews_xml:
@@ -564,9 +566,9 @@ def update_issue(issue_num, parliament_num=None):
 
             if changed:
                 review.save()
-                print 'Updated review: %s' % review
+                print('Updated review: %s' % review)
             else:
-                print 'Already have review: %s' % review
+                print('Already have review: %s' % review)
         else:
 
             pdf_filename = maybe_download_review(path_pdf, log_num, parliament_num, issue_num)
@@ -582,7 +584,7 @@ def update_issue(issue_num, parliament_num=None):
             review.pdf_filename = pdf_filename
             review.save()
 
-            print 'Added review: %s' % review
+            print('Added review: %s' % review)
 
     already_haves['issues'][ah_key] = issue
 
@@ -608,9 +610,9 @@ def update_docless_issue(issue_num, name, parliament_num=None):
 
         if changed:
             issue.save()
-            print 'Updated docless issue: %s' % issue
+            print('Updated docless issue: %s' % issue)
         else:
-            print 'Already have docless issue: %s' % issue
+            print('Already have docless issue: %s' % issue)
     else:
         issue = Issue()
         issue.issue_num = issue_num
@@ -620,7 +622,7 @@ def update_docless_issue(issue_num, name, parliament_num=None):
         issue.parliament = parliament
         issue.save()
 
-        print 'Added docless issue: %s' % issue
+        print('Added docless issue: %s' % issue)
 
     return issue
 
@@ -666,7 +668,7 @@ def update_session(session_num, parliament_num=None):
             )
             nonexistent_session.delete()
 
-            print 'Deleted non-existent session: %s' % nonexistent_session
+            print('Deleted non-existent session: %s' % nonexistent_session)
             return
 
         except Session.DoesNotExist:
@@ -775,9 +777,9 @@ def _process_committee_agenda_xml(committee_agenda_xml):
 
         if changed:
             committee_agenda.save()
-            print 'Updated committee agenda: %s' % committee_agenda
+            print('Updated committee agenda: %s' % committee_agenda)
         else:
-            print 'Already have committee agenda: %s' % committee_agenda
+            print('Already have committee agenda: %s' % committee_agenda)
     else:
         committee_agenda = CommitteeAgenda()
         committee_agenda.parliament = parliament
@@ -788,7 +790,7 @@ def _process_committee_agenda_xml(committee_agenda_xml):
         committee_agenda.timing_end = timing_end
         committee_agenda.save()
 
-        print 'Added committee agenda: %s' % committee_agenda
+        print('Added committee agenda: %s' % committee_agenda)
 
     max_order = 0
     items_xml = committee_agenda_xml.getElementsByTagName(u'dagskrárliður')
@@ -824,9 +826,9 @@ def _process_committee_agenda_xml(committee_agenda_xml):
 
             if changed:
                 item.save()
-                print 'Update committee agenda item: %s' % item
+                print('Update committee agenda item: %s' % item)
             else:
-                print 'Already have committee agenda item: %s' % item
+                print('Already have committee agenda item: %s' % item)
         else:
             item = CommitteeAgendaItem()
             item.committee_agenda = committee_agenda
@@ -835,7 +837,7 @@ def _process_committee_agenda_xml(committee_agenda_xml):
             item.issue = issue
             item.save()
 
-            print 'Added committee agenda item: %s' % item
+            print('Added committee agenda item: %s' % item)
 
     # Delete items higher than the max_order since that means items has been dropped
     CommitteeAgendaItem.objects.filter(order__gt=max_order, committee_agenda=committee_agenda).delete()
@@ -882,9 +884,9 @@ def _process_session_agenda_xml(session_xml):
 
         if changed:
             session.save()
-            print 'Updated session: %s' % session
+            print('Updated session: %s' % session)
         else:
-            print 'Already have session: %s' % session
+            print('Already have session: %s' % session)
     else:
         session = Session()
         session.parliament = parliament
@@ -894,7 +896,7 @@ def _process_session_agenda_xml(session_xml):
         session.timing_start = timing_start
         session.timing_end = timing_end
         session.save()
-        print 'Added session: %s' % session
+        print('Added session: %s' % session)
 
     # Prepare for agenda processing.
     response = get_response(SESSION_AGENDA_URL % (parliament.parliament_num, session_num))
@@ -936,15 +938,15 @@ def _process_session_agenda_xml(session_xml):
             item.issue = issue
             item.save()
 
-            print 'Added session agenda item: %s' % item
+            print('Added session agenda item: %s' % item)
         elif c_item.issue.issue_num != issue.issue_num or c_item.issue.issue_group != issue.issue_group:
             item = c_item
             item.issue = issue
             item.save()
 
-            print 'Updated session agenda item %d to issue: %s' % (order, issue)
+            print('Updated session agenda item %d to issue: %s' % (order, issue))
 
     for item in SessionAgendaItem.objects.filter(session=session, order__gt=len(agenda_issues)):
         item.delete()
 
-        print 'Deleted session agenda item %s' % item
+        print('Deleted session agenda item %s' % item)

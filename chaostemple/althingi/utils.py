@@ -518,7 +518,13 @@ def update_issue(issue_num, parliament_num=None):
     # Process reviews.
     for review_xml in reviews_xml:
         log_num = int(review_xml.getAttribute(u'dagbókarnúmer'))
-        sender_name = review_xml.getElementsByTagName(u'sendandi')[0].firstChild.nodeValue
+
+        try:
+            sender_name = review_xml.getElementsByTagName(u'sendandi')[0].firstChild.nodeValue
+        except AttributeError:
+            # Review with log_num 1057 in Parliament 112 lacks a name. Others do not exist.
+            sender_name = ''
+
         review_type = review_xml.getElementsByTagName(u'tegunderindis')[0].getAttribute('tegund')
         try:
             date_arrived = review_xml.getElementsByTagName(u'komudagur')[0].firstChild.nodeValue

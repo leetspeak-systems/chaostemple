@@ -73,6 +73,9 @@ already_haves = {
 
 def sensible_datetime(value):
 
+    if value is None:
+        return None
+
     if type(value) is date:
         d = datetime(value.year, value.month, value.day, 0, 0, 0)
     elif type(value) is datetime:

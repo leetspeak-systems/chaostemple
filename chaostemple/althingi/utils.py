@@ -744,6 +744,7 @@ def _process_committee_agenda_xml(committee_agenda_xml):
 
     begins_xml = committee_agenda_xml.getElementsByTagName(u'hefst')[0]
     begins_datetime_xml = begins_xml.getElementsByTagName(u'dagurtími')
+    begins_text_xml = begins_xml.getElementsByTagName(u'texti')
     if len(begins_datetime_xml) == 0:
         # Sometimes only the date is known, not the datetime.
         begins_date_xml = begins_xml.getElementsByTagName(u'dagur')
@@ -753,6 +754,11 @@ def _process_committee_agenda_xml(committee_agenda_xml):
             timing_start_planned = sensible_datetime(begins_date_xml[0].firstChild.nodeValue)
     else:
         timing_start_planned = sensible_datetime(begins_datetime_xml[0].firstChild.nodeValue)
+
+    if len(begins_text_xml) > 0:
+        timing_text = begins_text_xml[0].firstChild.nodeValue
+    else:
+        timing_text = None
 
     try:
         timing_start = sensible_datetime(committee_agenda_xml.getElementsByTagName(u'fundursettur')[0].firstChild.nodeValue)
@@ -779,6 +785,9 @@ def _process_committee_agenda_xml(committee_agenda_xml):
             changed = True
         if committee_agenda.timing_end != timing_end:
             committee_agenda.timing_end = timing_end
+            changed = True
+        if committee_agenda.timing_text != timing_text:
+            committee_agenda.timing_text = timing_text
             changed = True
 
         if changed:

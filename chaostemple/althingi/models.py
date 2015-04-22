@@ -37,7 +37,7 @@ class CommitteeAgendaManager(models.Manager):
         now = timezone.now()
         today = timezone.make_aware(timezone.datetime(now.year, now.month, now.day), now.tzinfo)
 
-        return self.filter(timing_start_planned__gt=today)
+        return self.filter(timing_start_planned__gte=today)
 
 
 class Parliament(models.Model):

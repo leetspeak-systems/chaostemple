@@ -317,9 +317,8 @@ def update_issue(issue_num, parliament_num=None):
     docstubs_xml = issue_xml.getElementsByTagName(u'þingskjöl')[0].getElementsByTagName(u'þingskjal')
     reviews_xml = issue_xml.getElementsByTagName(u'erindaskrá')[0].getElementsByTagName(u'erindi')
 
-
     if len(issue_xml.getElementsByTagName(u'mál')) == 0:
-        raise AlthingiException('Issue %d in parliament %d does not exist' % (issue_num, parliament_num))
+        raise AlthingiException('Issue %d in parliament %d does not exist' % (issue_num, parliament.parliament_num))
 
     issue_type = issue_xml.getElementsByTagName(u'málstegund')[0].getAttribute(u'málstegund')
 
@@ -407,16 +406,16 @@ def update_issue(issue_num, parliament_num=None):
 
             if not doc.html_filename or not doc.pdf_filename:
                 if not doc.html_filename:
-                    doc.html_filename = maybe_download_document(path_html, parliament_num, issue_num)
+                    doc.html_filename = maybe_download_document(path_html, parliament.parliament_num, issue_num)
                 if not doc.pdf_filename:
-                    doc.pdf_filename = maybe_download_document(path_pdf, parliament_num, issue_num)
+                    doc.pdf_filename = maybe_download_document(path_pdf, parliament.parliament_num, issue_num)
                 doc.save()
 
             print('Already have document: %s' % doc)
         else:
 
-            html_filename = maybe_download_document(path_html, parliament_num, issue_num)
-            pdf_filename = maybe_download_document(path_pdf, parliament_num, issue_num)
+            html_filename = maybe_download_document(path_html, parliament.parliament_num, issue_num)
+            pdf_filename = maybe_download_document(path_pdf, parliament.parliament_num, issue_num)
 
             doc = Document()
             doc.doc_num = doc_num
@@ -439,7 +438,7 @@ def update_issue(issue_num, parliament_num=None):
             if len(committee_xml) > 0:
                 committee_xml_id = int(committee_xml[0].getAttribute('id'))
 
-                committee = ensure_committee(committee_xml_id, parliament_num)
+                committee = ensure_committee(committee_xml_id, parliament.parliament_num)
 
                 committee_partname_node = committee_xml[0].getElementsByTagName(u'hluti')[0].firstChild
 
@@ -567,7 +566,7 @@ def update_issue(issue_num, parliament_num=None):
                 changed = True
 
             if not review.pdf_filename:
-                review.pdf_filename = maybe_download_review(path_pdf, log_num, parliament_num, issue_num)
+                review.pdf_filename = maybe_download_review(path_pdf, log_num, parliament.parliament_num, issue_num)
                 review.save()
 
             if changed:
@@ -577,7 +576,7 @@ def update_issue(issue_num, parliament_num=None):
                 print('Already have review: %s' % review)
         else:
 
-            pdf_filename = maybe_download_review(path_pdf, log_num, parliament_num, issue_num)
+            pdf_filename = maybe_download_review(path_pdf, log_num, parliament.parliament_num, issue_num)
 
             review = Review()
             review.issue = issue

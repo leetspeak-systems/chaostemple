@@ -1,6 +1,8 @@
 $(document).ready(function() {
 
-    $.jsonizerStatus = function(args, status_code, default_message, row_number=null) {
+    $.jsonizerStatus = function(args, status_code, default_message, row_number) {
+        row_number = row_number || null;
+
         var $container = $('div.jsonizer-container');
         var $jsonizer = $container.find('div.jsonizer');
         var $row = null;

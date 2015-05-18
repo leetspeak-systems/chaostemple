@@ -140,7 +140,7 @@ $(document).ready(function() {
             if (memo_id == 0) {
                 $.jsonize({
                     message: {
-                        'transit': 'Added memo...',
+                        'transit': 'Adding memo...',
                         'success': 'Memo added.',
                         'failure': 'Memo adding failed!',
                     },

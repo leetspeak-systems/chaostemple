@@ -84,6 +84,19 @@ class Issue(models.Model):
         ordering = ['issue_num']
 
 
+class IssueSummary(models.Model):
+    issue = models.OneToOneField('Issue', related_name='summary')
+
+    purpose = models.TextField()
+    change_description = models.TextField()
+    changes_to_law = models.TextField()
+    cost_and_revenue = models.TextField()
+    other_info = models.TextField()
+    review_description = models.TextField()
+    fate = models.TextField()
+    media_coverage = models.TextField()
+
+
 class Review(models.Model):
     REVIEW_TYPES = (
         (u'aa', u'áætlun'),

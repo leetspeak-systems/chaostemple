@@ -74,6 +74,42 @@
         </div>
     </div>
 
+    {% if issue.summary %}
+        <div class="summary">
+
+            <div class="panel panel-info">
+                <div class="panel-heading">{% trans 'Summary' %}</div>
+                <div class="panel-body">
+                    {% if issue.summary.purpose %}
+                        <p><strong>{% trans 'Purpose' %}</strong>: {{ issue.summary.purpose|safe }}</p>
+                    {% endif %}
+                    {% if issue.summary.change_description %}
+                        <p><strong>{% trans 'Change Description' %}</strong>: {{ issue.summary.change_description|safe }}</p>
+                    {% endif %}
+                    {% if issue.summary.changes_to_law %}
+                        <p><strong>{% trans 'Changes to Law' %}</strong>: {{ issue.summary.changes_to_law|safe }}</p>
+                    {% endif %}
+                    {% if issue.summary.cost_and_revenue %}
+                        <p><strong>{% trans 'Cost and Revenue' %}</strong>: {{ issue.summary.cost_and_revenue|safe }}</p>
+                    {% endif %}
+                    {% if issue.summary.other_info %}
+                        <p><strong>{% trans 'Other Information' %}</strong>: {{ issue.summary.other_info|safe }}</p>
+                    {% endif %}
+                    {% if issue.summary.review_description %}
+                        <p><strong>{% trans 'Review Description' %}</strong>: {{ issue.summary.review_description|safe }}</p>
+                    {% endif %}
+                    {% if issue.summary.fate %}
+                        <p><strong>{% trans 'Fate' %}</strong>: {{ issue.summary.fate|safe }}</p>
+                    {% endif %}
+                    {% if issue.summary.media_coverage %}
+                        <p><strong>{% trans 'Media Coverage' %}</strong>: {{ issue.summary.media_coverage|safe }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    {% endif %}
+
     <h3>{% trans 'Parliamentary Documents' %}</h3>
     <div class="documents">
         {% for document in documents %}

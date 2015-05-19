@@ -18,6 +18,7 @@ from althingi.models import CommitteeAgenda
 from althingi.models import CommitteeAgendaItem
 from althingi.models import Document
 from althingi.models import Issue
+from althingi.models import IssueSummary
 from althingi.models import Parliament
 from althingi.models import Person
 from althingi.models import Proposer
@@ -31,6 +32,7 @@ from althingi import althingi_settings
 
 ISSUE_LIST_URL = 'http://www.althingi.is/altext/xml/thingmalalisti/?lthing=%d'
 ISSUE_URL = 'http://www.althingi.is/altext/xml/thingmalalisti/thingmal/?lthing=%d&malnr=%d'
+ISSUE_SUMMARY_URL = 'http://www.althingi.is/altext/xml/samantektir/samantekt/?lthing=%d&malnr=%d'
 PERSON_URL = 'http://www.althingi.is/altext/xml/thingmenn/thingmadur/?nr=%d'
 COMMITTEE_FULL_LIST_URL = 'http://www.althingi.is/altext/xml/nefndir/'
 COMMITTEE_LIST_URL = 'http://www.althingi.is/altext/xml/nefndir/?lthing=%d'
@@ -360,6 +362,101 @@ def update_issue(issue_num, parliament_num=None):
         issue.save()
 
         print('Added issue: %s' % issue)
+
+    # See if this issue has summary information
+    summary_xml_try = issue_xml.getElementsByTagName(u'mál')[0].getElementsByTagName(u'samantekt')
+    if len(summary_xml_try) > 0:
+        # Yes, it has summary information
+        summary_xml_url = ISSUE_SUMMARY_URL % (parliament.parliament_num, issue.issue_num)
+        summary_xml = minidom.parse(get_response(summary_xml_url))
+
+        purpose = summary_xml.getElementsByTagName(u'markmið')[0].firstChild.nodeValue
+        try:
+            change_description = summary_xml.getElementsByTagName(u'helstuBreytingar')[0].firstChild.nodeValue
+        except AttributeError:
+            change_description = ''
+        try:
+            changes_to_law = summary_xml.getElementsByTagName(u'breytingaráLögum')[0].firstChild.nodeValue
+        except AttributeError:
+            changes_to_law = ''
+        try:
+            cost_and_revenue = summary_xml.getElementsByTagName(u'kostnaðurOgTekjur')[0].firstChild.nodeValue
+        except AttributeError:
+            cost_and_revenue = ''
+        try:
+            other_info = summary_xml.getElementsByTagName(u'aðrarUpplýsingar')[0].firstChild.nodeValue
+        except AttributeError:
+            other_info = ''
+        try:
+            review_description = summary_xml.getElementsByTagName(u'umsagnir')[0].firstChild.nodeValue
+        except AttributeError:
+            review_description = ''
+        try:
+            fate = summary_xml.getElementsByTagName(u'afgreiðsla')[0].firstChild.nodeValue
+        except AttributeError:
+            fate = ''
+        try:
+            media_coverage = summary_xml.getElementsByTagName(u'fjölmiðlaumfjöllun')[0].firstChild.nodeValue
+        except AttributeError:
+            media_coverage = ''
+
+        issue_summary_try = IssueSummary.objects.filter(issue_id=issue.id)
+        if issue_summary_try.count() > 0:
+            issue_summary = issue_summary_try[0]
+
+            changed = False
+            if issue_summary.purpose != purpose:
+                issue_summary.purpose = purpose
+                changed = True
+
+            if issue_summary.change_description != change_description:
+                issue_summary.change_description = change_description
+                changed = True
+
+            if issue_summary.changes_to_law != changes_to_law:
+                issue_summary.changes_to_law = changes_to_law
+                changed = True
+
+            if issue_summary.cost_and_revenue != cost_and_revenue:
+                issue_summary.cost_and_revenue = cost_and_revenue
+                changed = True
+
+            if issue_summary.other_info != other_info:
+                issue_summary.other_info = other_info
+                changed = True
+
+            if issue_summary.review_description != review_description:
+                issue_summary.review_description = review_description
+                changed = True
+
+            if issue_summary.fate != fate:
+                issue_summary.fate = fate
+                changed = True
+
+            if issue_summary.media_coverage != media_coverage:
+                issue_summary.media_coverage = media_coverage
+                changed = True
+
+            if changed:
+                issue_summary.save()
+                print('Updated issue summary for issue: %s' % issue)
+            else:
+                print('Already have issue summary for issue: %s' % issue)
+
+        else:
+            issue_summary = IssueSummary()
+            issue_summary.issue_id = issue.id
+            issue_summary.purpose = purpose
+            issue_summary.change_description = change_description
+            issue_summary.changes_to_law = changes_to_law
+            issue_summary.cost_and_revenue = cost_and_revenue
+            issue_summary.other_info = other_info
+            issue_summary.review_description = review_description
+            issue_summary.fate = fate
+            issue_summary.media_coverage = media_coverage
+            issue_summary.save()
+
+            print('Added issue summary for issue: %s' % issue)
 
     # Process documents.
     lowest_doc_num = 0  # Lowest document number will always be the main document of the issue.

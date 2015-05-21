@@ -51,12 +51,12 @@
                                         {% for session in next_sessions %}
                                             {% ifchanged session.timing_start_planned|date %}
                                                 {% if session.timing_start_planned %}
-                                                    <li role="presentation" class="dropdown-header">&nbsp;&nbsp;&nbsp;&nbsp;{{ session.timing_start_planned|date }}</li>
+                                                    <li role="presentation" class="dropdown-header">{{ session.timing_start_planned|date }}</li>
                                                 {% endif %}
                                             {% endifchanged %}
                                             <li role="presentation">
                                                 <a href="{% url 'parliament_session' session.parliament.parliament_num session.session_num %}">
-                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ session.name }}
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;{{ session.name }}
                                                     <small><em>{{ session.timing_start_planned|time }}</em></small>
                                                 </a>
                                             </li>
@@ -66,11 +66,11 @@
                                         <li role="presentation"><a href="{% url 'parliament_committees' newest_parliament_num %}"><strong>{% trans 'Committee Meetings' %}</strong></a></li>
                                         {% for agenda in next_committee_agendas %}
                                             {% ifchanged agenda.timing_start_planned|date %}
-                                                <li role="presentation" class="dropdown-header">&nbsp;&nbsp;&nbsp;&nbsp;{{ agenda.timing_start_planned|date }}</li>
+                                                <li role="presentation" class="dropdown-header">{{ agenda.timing_start_planned|date }}</li>
                                             {% endifchanged %}
                                             <li role="presentation">
                                                 <a href="{% url 'parliament_committee_agenda' agenda.parliament.parliament_num agenda.committee_id agenda.id %}">
-                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ agenda.committee.name|capfirst }},
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;{{ agenda.committee.name|capfirst }},
                                                     {% if agenda.timing_start_planned|time == '00:00:00' %}
                                                         <small><em>({{ agenda.timing_text }})</em></small>
                                                     {% else %}
@@ -88,12 +88,14 @@
                             <li class="dropdown" control="open-issue-menu">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans 'Opened Issues' %} <span class="caret"></span></a>
                                 <ul class="dropdown-menu" role="menu">
+                                    <li><a href="{% url 'user_issues_open' %}"><strong>{% trans 'Opened Issues' %}</strong></a></li>
                                     {% if dossier_statistics_incoming %}
+                                        <li class="divider"></li>
                                         <li><a href="{% url 'user_issues_incoming' %}"><strong>{% trans 'Issues with new data' %}</strong></a></li>
                                         {% for stat in dossier_statistics_incoming %}
                                             <li>
                                                 <a href="{% url 'parliament_issue' stat.issue.parliament.parliament_num stat.issue.issue_num %}">
-                                                    {% include 'core/stub/issue_menuentry.html' with issue=stat.issue %}
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;{% include 'core/stub/issue_menuentry.html' with issue=stat.issue %}
                                                     &nbsp;
                                                     {% if stat.new_documents %}
                                                         <span class="label label-danger memo-count">{{ stat.new_documents }} {% trans 'new documents' %}</span>
@@ -104,20 +106,7 @@
                                                 </a>
                                             </li>
                                         {% endfor %}
-                                        <li class="divider"></li>
                                     {% endif %}
-                                    <li><a href="{% url 'user_issues_open' %}"><strong>{% trans 'Opened Issues' %}</strong></a></li>
-                                    {% for issue in open_issues reversed %}
-                                        {% ifchanged issue.parliament.parliament_num %}
-                                            <li class="dropdown-header">{{ issue.parliament.parliament_num }}. {% trans 'parliament' %}</li>
-                                        {% endifchanged %}
-                                        <li>
-                                            <a href="{% url 'parliament_issue' issue.parliament.parliament_num issue.issue_num %}">
-                                                &nbsp;&nbsp;
-                                                {% include 'core/stub/issue_menuentry.html' %}
-                                            </a>
-                                        </li>
-                                    {% endfor %}
                                 </ul>
                             </li>
                         {% endif %}

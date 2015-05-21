@@ -54,7 +54,7 @@
                                                     <li role="presentation" class="dropdown-header">&nbsp;&nbsp;&nbsp;&nbsp;{{ session.timing_start_planned|date }}</li>
                                                 {% endif %}
                                             {% endifchanged %}
-                                             <li role="presentation">
+                                            <li role="presentation">
                                                 <a href="{% url 'parliament_session' session.parliament.parliament_num session.session_num %}">
                                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ session.name }}
                                                     <small><em>{{ session.timing_start_planned|time }}</em></small>

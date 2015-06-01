@@ -1016,8 +1016,7 @@ def _process_session_agenda_xml(session_xml):
     session_agenda_full_xml = minidom.parse(response)
     session_agenda_xml = session_agenda_full_xml.getElementsByTagName(u'dagskrá')[0]
 
-    # Update issues in agenda, first.
-    agenda_issues = []
+    max_order = 0
     for session_agenda_item_xml in session_agenda_xml.getElementsByTagName(u'dagskrárliður'):
         issue_xml = session_agenda_item_xml.getElementsByTagName(u'mál')[0]
 
@@ -1027,24 +1026,28 @@ def _process_session_agenda_xml(session_xml):
         issue_name = issue_xml.getElementsByTagName(u'málsheiti')[0].firstChild.nodeValue
 
         if issue_group == 'A':
-            agenda_issues.append(update_issue(issue_num, parliament.parliament_num))
+            issue = update_issue(issue_num, parliament.parliament_num)
         elif issue_group == 'B':
-            agenda_issues.append(update_docless_issue(issue_num, issue_name, parliament.parliament_num))
+            issue = update_docless_issue(issue_num, issue_name, parliament.parliament_num)
 
-    # At this point, we have the list 'agenda_issues' as it is in XML before we update the database.
+        if order > max_order:
+            max_order = order
 
-    # Update the actual agenda in local database, taking into account that it may have changed.
-    c_items = iter(SessionAgendaItem.objects.select_related('issue').filter(session=session).order_by('order'))
-    order = 0
-    for issue in agenda_issues:
-        order = order + 1
+        item_try = SessionAgendaItem.objects.select_related('issue').filter(session_id=session.id, order=order)
+        if item_try.count() > 0:
+            item = item_try[0]
 
-        try:
-            c_item = c_items.next()
-        except StopIteration:
-            c_item = None
+            changed = False
+            if item.issue_id != issue.id:
+                item.issue = issue
+                changed = True
 
-        if c_item == None:
+            if changed:
+                item.save()
+                print('Updated session agenda item: %s' % item)
+            else:
+                print('Already have session agenda item: %s' % item)
+        else:
             item = SessionAgendaItem()
             item.session = session
             item.order = order
@@ -1052,14 +1055,9 @@ def _process_session_agenda_xml(session_xml):
             item.save()
 
             print('Added session agenda item: %s' % item)
-        elif c_item.issue.issue_num != issue.issue_num or c_item.issue.issue_group != issue.issue_group:
-            item = c_item
-            item.issue = issue
-            item.save()
 
-            print('Updated session agenda item %d to issue: %s' % (order, issue))
-
-    for item in SessionAgendaItem.objects.filter(session=session, order__gt=len(agenda_issues)):
+    for item in SessionAgendaItem.objects.filter(session_id=session.id, order__gt=max_order):
         item.delete()
 
         print('Deleted session agenda item %s' % item)
+

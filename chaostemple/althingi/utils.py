@@ -791,7 +791,6 @@ def update_next_sessions():
         _process_session_agenda_xml(session_xml)
 
 
-
 def update_committee_agendas(parliament_num=None, date_limit=None):
 
     parliament = ensure_parliament(parliament_num)

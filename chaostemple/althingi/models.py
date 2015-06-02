@@ -326,6 +326,7 @@ class Session(models.Model):
 class SessionAgendaItem(models.Model):
     session = models.ForeignKey('Session', related_name='agenda_items')
     order = models.IntegerField()
+    voting = models.CharField(max_length=1, null=True)
     issue = models.ForeignKey('Issue', null=True, related_name='agenda_items')
 
     def __unicode__(self):

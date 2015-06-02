@@ -1027,8 +1027,15 @@ def _process_session_agenda_xml(session_xml):
     max_order = 0
     for session_agenda_item_xml in session_agenda_xml.getElementsByTagName(u'dagskrárliður'):
         issue_xml = session_agenda_item_xml.getElementsByTagName(u'mál')[0]
+        voting_xml = session_agenda_item_xml.getElementsByTagName(u'atkvæðagreiðsla')
 
         order = int(session_agenda_item_xml.getAttribute(u'númer'))
+
+        if len(voting_xml) > 0:
+            voting = voting_xml[0].firstChild.nodeValue
+        else:
+            voting = None
+
         issue_num = int(issue_xml.getAttribute(u'málsnúmer'))
         issue_group = issue_xml.getAttribute(u'málsflokkur')
         issue_name = issue_xml.getElementsByTagName(u'málsheiti')[0].firstChild.nodeValue
@@ -1049,6 +1056,9 @@ def _process_session_agenda_xml(session_xml):
             if item.issue_id != issue.id:
                 item.issue = issue
                 changed = True
+            if item.voting != voting:
+                item.voting = voting
+                changed = True
 
             if changed:
                 item.save()
@@ -1059,6 +1069,7 @@ def _process_session_agenda_xml(session_xml):
             item = SessionAgendaItem()
             item.session = session
             item.order = order
+            item.voting = voting
             item.issue = issue
             item.save()
 

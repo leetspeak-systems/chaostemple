@@ -324,9 +324,22 @@ class Session(models.Model):
 
 
 class SessionAgendaItem(models.Model):
+    DISCUSSION_TYPES = (
+        ('*', u''),
+        ('0', u''),
+        ('1', u'fyrsta umræða'),
+        ('2', u'önnur umræða'),
+        ('3', u'þriðja umræða'),
+        ('E', u'ein umræða'),
+        ('F', u'fyrri umræða'),
+        ('S', u'seinni umræða'),
+    )
+
     session = models.ForeignKey('Session', related_name='agenda_items')
     order = models.IntegerField()
     voting = models.CharField(max_length=1, null=True)
+    discussion_type = models.CharField(max_length=1, choices=DISCUSSION_TYPES)
+    discussion_continued = models.BooleanField(default=False)
     issue = models.ForeignKey('Issue', null=True, related_name='agenda_items')
 
     def __unicode__(self):

@@ -282,7 +282,7 @@ def ensure_committee(committee_xml_id, parliament_num=None):
         # maintainers should be notified of, but we can still remedy this by downloading a different,
         # much larger XML document which contains all committees regardless of parliament.
         committee = parse_committee_xml(COMMITTEE_FULL_LIST_URL)
-        print('Warning! Committee with ID %d is missing from committee listing in parliament %d! Tell the XML keeper!' %(committee_xml_id, parliament_num))
+        print('Warning! Committee with ID %d is missing from committee listing in parliament %d! Tell the XML keeper!' % (committee_xml_id, parliament_num), file=stderr)
 
     already_haves['committees'][ah_key] = committee
 

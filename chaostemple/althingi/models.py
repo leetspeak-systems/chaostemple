@@ -327,9 +327,9 @@ class SessionAgendaItem(models.Model):
     DISCUSSION_TYPES = (
         ('*', u''),
         ('0', u''),
-        ('1', u'fyrsta umræða'),
-        ('2', u'önnur umræða'),
-        ('3', u'þriðja umræða'),
+        ('1', u'1. umræða'),
+        ('2', u'2. umræða'),
+        ('3', u'3. umræða'),
         ('E', u'ein umræða'),
         ('F', u'fyrri umræða'),
         ('S', u'seinni umræða'),

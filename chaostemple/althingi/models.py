@@ -332,7 +332,7 @@ class SessionAgendaItem(models.Model):
         ('3', u'3. umræða'),
         ('E', u'ein umræða'),
         ('F', u'fyrri umræða'),
-        ('S', u'seinni umræða'),
+        ('S', u'síðari umræða'),
     )
 
     session = models.ForeignKey('Session', related_name='agenda_items')

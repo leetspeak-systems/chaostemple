@@ -119,13 +119,13 @@ def parliament_sessions(request, parliament_num):
 def parliament_session(request, parliament_num, session_num):
 
     session = Session.objects.get(parliament__parliament_num=parliament_num, session_num=session_num)
-    issues = Issue.objects.select_related('parliament').filter(agenda_items__session=session).order_by('agenda_items__order')
+    agenda_items = session.agenda_items.select_related('issue__parliament').all()
 
-    IssueUtilities.populate_dossier_statistics(issues, request.user.id)
+    IssueUtilities.populate_dossier_statistics((i.issue for i in agenda_items), request.user.id)
 
     ctx = {
         'session': session,
-        'issues': issues,
+        'agenda_items': agenda_items,
     }
     return render(request, 'core/parliament_session.html', ctx)
 

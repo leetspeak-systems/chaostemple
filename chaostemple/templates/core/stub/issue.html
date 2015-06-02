@@ -5,6 +5,9 @@
     <div class="panel panel-default" control="issue">
         {% if issue.issue_group == 'A' %}
             <div class="panel-body">
+                {% if voting %}
+                    {% include 'core/stub/voting.html' %}
+                {% endif %}
                 <p class="pull-right">
                     <span class="label label-default">{{ issue.issue_num }}. {% trans 'parliamentary issue' %}</span>
                     <span class="label label-default">{{ issue.get_issue_type_display|capfirst }}</span>

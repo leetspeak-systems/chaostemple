@@ -1,3 +1,7 @@
+/* Extra Bootstrap classes */
+.alert-small { padding: 6px 12px 6px 12px; font-size: small; }
+
+/* ChaosTemple-specific classes */
 body { padding-top: 50px; }
 .btn-default .grey { color: #b0b0b0; }
 .btn-primary .grey { color: #d0d0d0; }
@@ -10,6 +14,8 @@ body { padding-top: 50px; }
 .memo-count { border-radius: 1em; }
 
 .parliament-link img { margin-top: 1px; }
+
+.voting { margin-bottom: 12px; }
 
 div[control="dossier"] { margin-top: 10px; }
 div[control="dossier"]:first-child { margin-top: 0px; }

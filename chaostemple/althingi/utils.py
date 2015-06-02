@@ -612,8 +612,11 @@ def update_issue(issue_num, parliament_num=None):
         print('Main document undetermined, no documents yet')
 
     # Process reviews.
+    log_nums = [] # Keep track of legit reviews. Sometimes reviews get deleted from the XML and so should be deleted locally.
     for review_xml in reviews_xml:
         log_num = int(review_xml.getAttribute(u'dagbókarnúmer'))
+
+        log_nums.append(log_num)
 
         try:
             sender_name = review_xml.getElementsByTagName(u'sendandi')[0].firstChild.nodeValue
@@ -687,6 +690,11 @@ def update_issue(issue_num, parliament_num=None):
             review.save()
 
             print('Added review: %s' % review)
+
+    # Delete local reviews that no longer exist online.
+    for review in Review.objects.filter(issue_id=issue.id).exclude(log_num__in=log_nums):
+        review.delete()
+        print('Deleted non-existent review: %s' % review)
 
     already_haves['issues'][ah_key] = issue
 

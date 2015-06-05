@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-02 18:10+0000\n"
+"POT-Creation-Date: 2015-06-02 20:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -396,7 +396,11 @@ msgstr "ný"
 msgid "new"
 msgstr "nýtt"
 
-#: templates/core/stub/voting.html:4
+#: templates/core/stub/session_agenda_item.html:3
+msgid "agenda item"
+msgstr "dagskrárliður"
+
+#: templates/core/stub/session_agenda_item.html:7
 msgid "Voting"
 msgstr "Atkvæðagreiðsla"
 

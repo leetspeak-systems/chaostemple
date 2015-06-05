@@ -1,0 +1,17 @@
+{% load i18n %}
+{% if agenda_item %}
+    <div class="alert alert-info alert-small" control="agenda-item" data-id="{{ agenda_item.id }}">
+        <span class="subitem">{{ agenda_item.order }}. {% trans 'agenda item' %}</span>
+        {% if agenda_item.get_discussion_type_display %}
+            <span class="subitem">
+                {{ agenda_item.get_discussion_type_display|capfirst }}
+            </span>
+        {% endif %}
+        {% if agenda_item.voting %}
+            <span class="subitem">
+                <span class="glyphicon glyphicon-exclamation-sign"></span>
+                <strong>({% trans 'Voting' %})</strong>
+            </span>
+        {% endif %}
+    </div>
+{% endif %}

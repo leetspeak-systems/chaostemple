@@ -15,8 +15,6 @@ body { padding-top: 50px; }
 
 .parliament-link img { margin-top: 1px; }
 
-.voting { margin-bottom: 12px; }
-
 div[control="dossier"] { margin-top: 10px; }
 div[control="dossier"]:first-child { margin-top: 0px; }
 div[control="dossier"] label { font-weight: normal; width: 60px; margin-right: 8px; }
@@ -49,4 +47,8 @@ div[control="issue"] .dossier-statistic-values label { font-weight: normal; marg
 div[control="issue"] .dossier-statistic-values { padding-top: 3px; float: left; }
 
 div[control="issue-view-controls"] { margin-top: 16px; }
+
+div[control="agenda-item"] { margin-bottom: 0px; border-top-width: 0px; border-left-width: 0px; border-right-width: 0px; }
+div[control="agenda-item"] span.subitem:first-child { border-left: 0px solid #000000; padding-left: 0px; margin-left: 0px; }
+div[control="agenda-item"] span.subitem { border-left: 1px solid #b8b8ff; padding-left: 6px; margin-left: 2px; }
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-02 20:00+0000\n"
+"POT-Creation-Date: 2015-06-16 01:13+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -55,12 +55,12 @@ msgid "Committees"
 msgstr "Nefndir"
 
 #: core/models.py:48 templates/core/parliament_issue.html:113
-#: templates/core/stub/issue.html:25
+#: templates/core/stub/issue.html:23
 msgid "Parliamentary Documents"
 msgstr "Þingskjöl"
 
 #: core/models.py:49 templates/core/parliament_issue.html:121
-#: templates/core/stub/issue.html:24
+#: templates/core/stub/issue.html:22
 msgid "Reviews"
 msgstr "Umsagnir"
 
@@ -279,7 +279,7 @@ msgstr "Fundur"
 msgid "Committee"
 msgstr "Nefnd"
 
-#: templates/core/parliament_issue.html:31 templates/core/stub/issue.html:12
+#: templates/core/parliament_issue.html:31 templates/core/stub/issue.html:10
 msgid "parliamentary issue"
 msgstr "þingmál"
 
@@ -360,7 +360,7 @@ msgstr "Flutningsmenn"
 msgid "Mark as New"
 msgstr "Merkja sem nýtt"
 
-#: templates/core/stub/issue.html:36
+#: templates/core/stub/issue.html:34
 msgid "Mark as Unopened"
 msgstr "Merkja sem óopnað"
 
@@ -396,11 +396,15 @@ msgstr "ný"
 msgid "new"
 msgstr "nýtt"
 
-#: templates/core/stub/session_agenda_item.html:3
+#: templates/core/stub/session_agenda_item.html:4
 msgid "agenda item"
 msgstr "dagskrárliður"
 
-#: templates/core/stub/session_agenda_item.html:7
+#: templates/core/stub/session_agenda_item.html:9
+msgid "continued"
+msgstr "framhaldið"
+
+#: templates/core/stub/session_agenda_item.html:16
 msgid "Voting"
 msgstr "Atkvæðagreiðsla"
 

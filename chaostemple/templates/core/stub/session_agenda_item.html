@@ -5,6 +5,9 @@
         {% if agenda_item.get_discussion_type_display %}
             <span class="subitem">
                 {{ agenda_item.get_discussion_type_display|capfirst }}
+                {% if agenda_item.discussion_continued %}
+                    ({% trans 'continued' %})
+                {% endif %}
             </span>
         {% endif %}
         {% if agenda_item.voting %}

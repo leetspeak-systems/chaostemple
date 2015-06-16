@@ -1028,17 +1028,23 @@ def _process_session_agenda_xml(session_xml):
     for session_agenda_item_xml in session_agenda_xml.getElementsByTagName(u'dagskrárliður'):
         issue_xml = session_agenda_item_xml.getElementsByTagName(u'mál')[0]
         discussion_xml = session_agenda_item_xml.getElementsByTagName(u'umræða')[0]
-        voting_xml = session_agenda_item_xml.getElementsByTagName(u'atkvæðagreiðsla')
+        comment_xml = session_agenda_item_xml.getElementsByTagName(u'athugasemd')
 
         order = int(session_agenda_item_xml.getAttribute(u'númer'))
 
         discussion_type = discussion_xml.getAttribute(u'tegund')
         discussion_continued = bool(discussion_xml.getAttribute(u'framhald'))
 
-        if len(voting_xml) > 0:
-            voting = voting_xml[0].firstChild.nodeValue
+        if len(comment_xml) > 0:
+            comment_entity_xml = comment_xml[0]
+
+            comment_type = comment_entity_xml.getAttribute(u'tegund')
+            comment_text = comment_entity_xml.getElementsByTagName(u'dagskrártexti')[0].firstChild.nodeValue
+            comment_description = comment_entity_xml.getElementsByTagName(u'skýring')[0].firstChild.nodeValue
         else:
-            voting = None
+            comment_type = None
+            comment_text = None
+            comment_description = None
 
         issue_num = int(issue_xml.getAttribute(u'málsnúmer'))
         issue_group = issue_xml.getAttribute(u'málsflokkur')
@@ -1066,8 +1072,14 @@ def _process_session_agenda_xml(session_xml):
             if item.discussion_continued != discussion_continued:
                 item.discussion_continued = discussion_continued
                 changed = True
-            if item.voting != voting:
-                item.voting = voting
+            if item.comment_type != comment_type:
+                item.comment_type = comment_type
+                changed = True
+            if item.comment_text != comment_text:
+                item.comment_text = comment_text
+                changed = True
+            if item.comment_description != comment_description:
+                item.comment_description = comment_description
                 changed = True
 
             if changed:
@@ -1081,7 +1093,9 @@ def _process_session_agenda_xml(session_xml):
             item.order = order
             item.discussion_type = discussion_type
             item.discussion_continued = discussion_continued
-            item.voting = voting
+            item.comment_type = comment_type
+            item.comment_text = comment_text
+            item.comment_description = comment_description
             item.issue = issue
             item.save()
 

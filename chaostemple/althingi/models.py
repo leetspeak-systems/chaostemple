@@ -337,9 +337,11 @@ class SessionAgendaItem(models.Model):
 
     session = models.ForeignKey('Session', related_name='agenda_items')
     order = models.IntegerField()
-    voting = models.CharField(max_length=1, null=True)
     discussion_type = models.CharField(max_length=1, choices=DISCUSSION_TYPES)
     discussion_continued = models.BooleanField(default=False)
+    comment_type = models.CharField(max_length=1, null=True)
+    comment_text = models.CharField(max_length=100, null=True)
+    comment_description = models.CharField(max_length=100, null=True)
     issue = models.ForeignKey('Issue', null=True, related_name='agenda_items')
 
     def __unicode__(self):

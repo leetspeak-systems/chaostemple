@@ -10,10 +10,10 @@
                 {% endif %}
             </span>
         {% endif %}
-        {% if agenda_item.voting %}
+        {% if agenda_item.comment_text %}
             <span class="subitem">
                 <span class="glyphicon glyphicon-exclamation-sign"></span>
-                <strong>({% trans 'Voting' %})</strong>
+                <strong>({{ agenda_item.comment_text }})</strong>
             </span>
         {% endif %}
     </div>

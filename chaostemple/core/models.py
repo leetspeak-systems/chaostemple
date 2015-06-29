@@ -16,7 +16,7 @@ class IssueUtilities():
 
     @staticmethod
     def populate_dossier_statistics(issues, user_id):
-        dossier_statistics = DossierStatistic.objects.filter(user_id=user_id)
+        dossier_statistics = DossierStatistic.objects.select_related('user').all()
         for issue in issues:
             if issue is None:
                 continue

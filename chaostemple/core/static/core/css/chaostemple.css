@@ -15,6 +15,8 @@ body { padding-top: 50px; }
 
 .parliament-link img { margin-top: 1px; }
 
+.user-link { font-weight: bold; }
+
 div[control="dossier"] { margin-top: 10px; }
 div[control="dossier"]:first-child { margin-top: 0px; }
 div[control="dossier"] label { font-weight: normal; width: 60px; margin-right: 8px; }
@@ -42,6 +44,7 @@ div[control="review"] a.title { font-size: large; font-weight: bold; margin-left
 
 div[control="issue"] .dossier-statistic { float: left; border-bottom: 1px solid #d9d9d9; padding: 0px 0px 6px 0px; line-height: 25px; width: 100%; }
 div[control="issue"] .dossier-statistic:first-of-type { border-top: 1px solid #d9d9d9; }
+div[control="issue"] .dossier-statistic-user { float: left; width: 100%; border-bottom: 1px solid #d9d9d9; padding: 4px 0px 4px 0px; }
 div[control="issue"] .dossier-statistic-type { font-size: small; font-weight: bold; padding-top: 3px; width: 90px; float: left; clear: left; }
 div[control="issue"] .dossier-statistic-values label { font-weight: normal; margin: 0px 2px 0px 10px; font-size: small; }
 div[control="issue"] .dossier-statistic-values { padding-top: 3px; float: left; }

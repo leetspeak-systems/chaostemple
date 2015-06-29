@@ -54,15 +54,26 @@ def display_dossier_statistics(context, issue):
     content = []
     if hasattr(issue, 'dossier_statistics'):
 
+        template_user = loader.get_template('core/stub/issue_dossier_statistic_user.html') # I was here. Just added this.
         template_statistic = loader.get_template('core/stub/issue_dossier_statistic.html')
         template_status_type = loader.get_template('core/stub/issue_dossier_statistic_status_type.html')
         template_fieldstate = loader.get_template('core/stub/issue_dossier_statistic_fieldstate.html')
 
         fieldstate_css_dict = fieldstate_css()
 
+        # Determine all the users we need to display dossiers for
+        user_count = len(set([d.user_id for d in issue.dossier_statistics]))
+
+        last_user_id = 0
         for stat in issue.dossier_statistics:
             for dossier_type, dossier_type_name in Dossier.DOSSIER_TYPES:
                 status_type_content = []
+
+                if (user_count > 1 or stat.user_id != request.user.id) and last_user_id != stat.user_id:
+                    content.append(template_user.render(Context({
+                        'statistic_user': stat.user
+                    })))
+                    last_user_id = stat.user_id
 
                 for status_type, status_type_name in Dossier.STATUS_TYPES:
                     fieldstate_content = []

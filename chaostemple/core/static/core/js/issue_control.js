@@ -57,18 +57,24 @@ $(document).ready(function() {
         var issue_description = $('span[control="issue-description"][data-id=' + issue_id + ']').text()
         var $dialog = $('div[control="delete-issue-dossiers-dialog"]');
 
+        // See if this is a session agenda item
+        var session_agenda_item_id = $(this).data('session-agenda-item-id');
+
         var display_name = issue_name;
         if (issue_description.length > 0) {
             display_name += ' (' + issue_description + ')';
         }
 
         $dialog.find('input#delete-issue-dossiers-id').val(issue_id);
+        $dialog.find('input#session-agenda-item-id').val(session_agenda_item_id);
         $dialog.find('span[control="delete-issue-dossiers-name"]').html(display_name);
         $dialog.modal();
     });
 
     $(document).on('click', 'button[control="delete-issue-dossiers-confirmed"]', function() {
-        var issue_id = $('input#delete-issue-dossiers-id').val()
+        var $dialog = $('div[control="delete-issue-dossiers-dialog"]');
+        var issue_id = $dialog.find('input#delete-issue-dossiers-id').val()
+        var session_agenda_item_id = $dialog.find('input#session-agenda-item-id').val();
 
         $.jsonize({
             message: {
@@ -77,6 +83,9 @@ $(document).ready(function() {
                 'failure': 'Issue\'s dossier deletion failed!',
             },
             url: '/json/issue/' + issue_id + '/dossiers/delete/',
+            data: {
+                'session_agenda_item_id': session_agenda_item_id,
+            },
             done: function(data, textStatus) {
                 $('div[control="issue-container"][data-id=' + data.issue_id + ']').html(data.html_content);
             }

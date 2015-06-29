@@ -5,6 +5,8 @@ from django.db.models import Max
 from django.template import RequestContext
 from django.template.loader import render_to_string
 
+from althingi.models import SessionAgendaItem
+
 from core.models import Document
 from core.models import Dossier
 from core.models import DossierStatistic
@@ -66,11 +68,19 @@ def delete_issue_dossiers(request, issue_id):
 
     bookmarked_issues = request_context['bookmarked_issues']
 
+    # Get session agenda item info to display with the issue HTML returned
+    session_agenda_item_id = int(request.GET.get('session_agenda_item_id', 0) or 0)
+    if session_agenda_item_id:
+        session_agenda_item = SessionAgendaItem.objects.get(id=session_agenda_item_id)
+    else:
+        session_agenda_item = None
+
     stub_ctx = {
         'request': request,
         'issue': issue,
         'user': request.user,
         'bookmarked_issues': bookmarked_issues,
+        'agenda_item': session_agenda_item,
     }
     html_content = render_to_string('core/stub/issue.html', stub_ctx)
 

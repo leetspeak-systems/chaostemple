@@ -31,7 +31,7 @@
                     {% include 'core/stub/issue_bookmark.html' %}
 
                     {% if issue.dossier_statistics %}
-                        <button control="delete-issue-dossiers" class="btn btn-default btn-xs pull-right" data-id="{{ issue.id }}">{% trans 'Mark as Unopened' %}</button>
+                        <button control="delete-issue-dossiers" class="btn btn-default btn-xs pull-right" data-session-agenda-item-id="{{ agenda_item.id }}" data-id="{{ issue.id }}">{% trans 'Mark as Unopened' %}</button>
                     {% endif %}
                 </div>
             {% endif %}

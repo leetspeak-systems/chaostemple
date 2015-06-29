@@ -34,7 +34,7 @@ def globals(request):
             document_count=F('issue__document_count'),
             review_count=F('issue__review_count')
         )
-    )
+    ).order_by('-issue__issue_num')
     for stat in dossier_statistics_incoming:
         stat.new_documents = stat.issue.document_count - stat.document_count
         stat.new_reviews = stat.issue.review_count - stat.review_count

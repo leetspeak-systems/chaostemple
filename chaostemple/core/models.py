@@ -33,6 +33,8 @@ class IssueUtilities():
 class UserProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='userprofile')
 
+    name = models.CharField(max_length=100)
+
 class IssueBookmark(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='issue_bookmarks')
     issue = models.ForeignKey(AlthingiIssue, related_name='issue_bookmarks')

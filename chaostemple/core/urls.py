@@ -12,6 +12,7 @@ urlpatterns = patterns('',
     url(r'^parliament/(?P<parliament_num>\d+)/committee/(?P<committee_id>\d+)/$', 'core.views.parliament_committee', name='parliament_committee'),
     url(r'^parliament/(?P<parliament_num>\d+)/committee/(?P<committee_id>\d+)/agenda/(?P<agenda_id>\d+)/$', 'core.views.parliament_committee_agenda', name='parliament_committee_agenda'),
 
+    url(r'^user/home/(?P<username>\w+)/$', 'core.views.user_home', name='user_home'),
     url(r'^user/issues/bookmarked/$', 'core.views.user_issues_bookmarked', name='user_issues_bookmarked'),
     url(r'^user/issues/incoming/$', 'core.views.user_issues_incoming', name='user_issues_incoming'),
     url(r'^user/issues/open/$', 'core.views.user_issues_open', name='user_issues_open'),

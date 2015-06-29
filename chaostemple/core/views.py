@@ -1,7 +1,9 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db.models import Count
 from django.db.models import Prefetch
+from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.template import RequestContext
@@ -165,6 +167,16 @@ def parliament_committee_agenda(request, parliament_num, committee_id, agenda_id
         'items': items,
     }
     return render(request, 'core/parliament_committee_agenda.html', ctx)
+
+@login_required
+def user_home(request, username):
+
+    home_user = get_object_or_404(User, username=username)
+
+    ctx = {
+        'home_user': home_user,
+    }
+    return render(request, 'core/user_home.html', ctx)
 
 @login_required
 def user_issues_bookmarked(request):

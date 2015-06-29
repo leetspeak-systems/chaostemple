@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-16 13:35+0000\n"
+"POT-Creation-Date: 2015-06-29 21:34+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -54,93 +54,93 @@ msgstr "þingfundur"
 msgid "Committees"
 msgstr "Nefndir"
 
-#: core/models.py:48 templates/core/parliament_issue.html:113
+#: core/models.py:50 templates/core/parliament_issue.html:113
 #: templates/core/stub/issue.html:23
 msgid "Parliamentary Documents"
 msgstr "Þingskjöl"
 
-#: core/models.py:49 templates/core/parliament_issue.html:121
+#: core/models.py:51 templates/core/parliament_issue.html:121
 #: templates/core/stub/issue.html:22
 msgid "Reviews"
 msgstr "Umsagnir"
 
-#: core/models.py:53 templates/core/stub/dossier.html:34
+#: core/models.py:55 templates/core/stub/dossier.html:34
 msgid "Attention"
 msgstr "Aðvörun"
 
-#: core/models.py:54 templates/core/stub/dossier.html:17
+#: core/models.py:56 templates/core/stub/dossier.html:17
 msgid "Knowledge"
 msgstr "Þekking"
 
-#: core/models.py:55 core/models.py:77 templates/core/stub/dossier.html:52
+#: core/models.py:57 core/models.py:79 templates/core/stub/dossier.html:52
 msgid "Support"
 msgstr "Stuðningur"
 
-#: core/models.py:56 templates/core/stub/dossier.html:71
+#: core/models.py:58 templates/core/stub/dossier.html:71
 msgid "Proposals"
 msgstr "Tillögur"
 
-#: core/models.py:60 core/models.py:83
+#: core/models.py:62 core/models.py:85
 msgid "None"
 msgstr "Engin"
 
-#: core/models.py:61
+#: core/models.py:63
 msgid "Question"
 msgstr "Spurning"
 
-#: core/models.py:62
+#: core/models.py:64
 msgid "Exclamation"
 msgstr "Upphrópun"
 
-#: core/models.py:66
+#: core/models.py:68
 msgid "Unread"
 msgstr "Ólesið"
 
-#: core/models.py:67
+#: core/models.py:69
 msgid "Briefly examined"
 msgstr "Lauslega skoðað"
 
-#: core/models.py:68
+#: core/models.py:70
 msgid "Examined"
 msgstr "Skoðað"
 
-#: core/models.py:69
+#: core/models.py:71
 msgid "Thoroughly examined"
 msgstr "Vel skoðað"
 
-#: core/models.py:73
+#: core/models.py:75
 msgid "Undefined"
 msgstr "Ótilgreint"
 
-#: core/models.py:74
+#: core/models.py:76
 msgid "Strong Opposition"
 msgstr "Eindregin andstaða"
 
-#: core/models.py:75
+#: core/models.py:77
 msgid "Oppose"
 msgstr "Andstaða"
 
-#: core/models.py:76
+#: core/models.py:78
 msgid "Neutral"
 msgstr "Hlutleysi"
 
-#: core/models.py:78
+#: core/models.py:80
 msgid "Strong Support"
 msgstr "Eindreginn stuðningur"
 
-#: core/models.py:79
+#: core/models.py:81
 msgid "Other"
 msgstr "Annað"
 
-#: core/models.py:84
+#: core/models.py:86
 msgid "Minor"
 msgstr "Minniháttar"
 
-#: core/models.py:85
+#: core/models.py:87
 msgid "Some"
 msgstr "Einhverjar"
 
-#: core/models.py:86
+#: core/models.py:88
 msgid "Major"
 msgstr "Meiriháttar"
 
@@ -197,11 +197,15 @@ msgstr "nýjar umsagnir"
 msgid "Bookmarks"
 msgstr "Bókamerki"
 
-#: templates/base.html:125
+#: templates/base.html:128 templates/core/user_home.html:6
+msgid "User Home"
+msgstr "Heimasvæði"
+
+#: templates/base.html:130
 msgid "Logout"
 msgstr "Útskrá"
 
-#: templates/base.html:127 templates/registration/login.html:12
+#: templates/base.html:134 templates/registration/login.html:12
 msgid "Login"
 msgstr "Innskrá"
 
@@ -220,24 +224,24 @@ msgstr ""
 "Skráin þín inniheldur upplýsingar eins og glósur, þekkingarstöðu o.s.frv."
 
 #: templates/core/dialog/dialog_delete_dossier.html:10
-#: templates/core/dialog/dialog_delete_issue_dossiers.html:11
+#: templates/core/dialog/dialog_delete_issue_dossiers.html:12
 #: templates/core/dialog/dialog_delete_memo.html:10
 msgid "This action cannot be undone."
 msgstr "Þessa aðgerð er ekki hægt að taka til baka."
 
 #: templates/core/dialog/dialog_delete_dossier.html:13
-#: templates/core/dialog/dialog_delete_issue_dossiers.html:14
+#: templates/core/dialog/dialog_delete_issue_dossiers.html:15
 #: templates/core/dialog/dialog_delete_memo.html:13
 msgid "Cancel"
 msgstr "Hætta við"
 
 #: templates/core/dialog/dialog_delete_dossier.html:14
-#: templates/core/dialog/dialog_delete_issue_dossiers.html:15
+#: templates/core/dialog/dialog_delete_issue_dossiers.html:16
 #: templates/core/dialog/dialog_delete_memo.html:14
 msgid "Delete"
 msgstr "Eyða"
 
-#: templates/core/dialog/dialog_delete_issue_dossiers.html:8
+#: templates/core/dialog/dialog_delete_issue_dossiers.html:9
 msgid ""
 "Are you sure you want to mark this entire issue as un-opened and delete all "
 "dossiers on it?"
@@ -245,7 +249,7 @@ msgstr ""
 "Ertu viss um að þú viljir merkja þetta mál sem óopnað og eyða öllum skrám um "
 "það?"
 
-#: templates/core/dialog/dialog_delete_issue_dossiers.html:9
+#: templates/core/dialog/dialog_delete_issue_dossiers.html:10
 msgid ""
 "Marking an issue as un-opened entails permanently deleting the issue&apos;s "
 "dossiers which include information such as glossaries, knowledge statust etc."
@@ -403,6 +407,18 @@ msgstr "dagskrárliður"
 #: templates/core/stub/session_agenda_item.html:9
 msgid "continued"
 msgstr "framhaldið"
+
+#: templates/core/user_home.html:12
+msgid "Username"
+msgstr "Notandanafn"
+
+#: templates/core/user_home.html:16
+msgid "Email address"
+msgstr "Netfang"
+
+#: templates/core/user_home.html:20
+msgid "Name"
+msgstr "Nafn"
 
 #~ msgid "New"
 #~ msgstr "Nýtt"

@@ -459,6 +459,7 @@ def update_issue(issue_num, parliament_num=None):
             print('Added issue summary for issue: %s' % issue)
 
     # Process documents.
+    doc_nums = [] # Keep track of legit documents. Sometimes docs get deleted from the XML and so should be deleted locally.
     lowest_doc_num = 0  # Lowest document number will always be the main document of the issue.
     for docstub_xml in docstubs_xml:
         # Make sure that this is indeed the correct issue.
@@ -471,6 +472,9 @@ def update_issue(issue_num, parliament_num=None):
         doc_xml = doc_full_xml.getElementsByTagName(u'þingskjal')[0].getElementsByTagName(u'þingskjal')[0]
 
         doc_num = int(doc_xml.getAttribute(u'skjalsnúmer'))
+
+        doc_nums.append(doc_num)
+
         doc_type = doc_xml.getElementsByTagName(u'skjalategund')[0].firstChild.nodeValue
         time_published = doc_xml.getElementsByTagName(u'útbýting')[0].firstChild.nodeValue + "+00:00"
 
@@ -601,6 +605,10 @@ def update_issue(issue_num, parliament_num=None):
 
                         print('Added proposer: %s to document %s' % (proposer, doc))
 
+    # Delete local documents that no longer exist online.
+    for document in Document.objects.filter(issue_id=issue.id).exclude(doc_num__in=doc_nums):
+        document.delete()
+        print('Deleted non-existent document: %s' % document)
 
     # Figure out what the main document is, if any.
     try:

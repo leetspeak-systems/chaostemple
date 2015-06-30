@@ -254,7 +254,7 @@ class Document(models.Model):
         return u'%d (%s)' % (self.doc_num, self.doc_type)
 
     class Meta:
-        ordering = ['time_published']
+        ordering = ['doc_num']
 
 
 class Proposer(models.Model):

@@ -268,6 +268,65 @@ class DossierStatistic(models.Model):
     review_count = models.IntegerField(default=0)
     review_memo_count = models.IntegerField(default=0)
 
+    def update_stats_quite_inefficiently_please(self):
+        '''
+        WARNING: This function is intended only for diagnostic and data-fixing purposes.
+        Do not use it for general production purposes. That would be silly.
+        It should not alter data if everything is working as expected.
+
+        Preferably, it should only function as a code-guide to how stats are expected to work.
+        '''
+        # For both 'document' and 'review'
+        for dossier_type, dossier_type_name in Dossier.DOSSIER_TYPES:
+            for status_type, status_type_name in Dossier.STATUS_TYPES:
+
+                # Figure out which doc-types to exclude, if we're dealing with a document
+                exclude_kwargs = {} # Will be empty and without effect if nothing is excluded
+                excluded_doc_types = []
+                if dossier_type == 'document':
+                    for doc_type in Dossier.DOC_TYPE_EXCLUSIONS:
+                        if status_type in Dossier.DOC_TYPE_EXCLUSIONS[doc_type]:
+                            excluded_doc_types += [doc_type]
+                if len(excluded_doc_types):
+                    exclude_kwargs.update({'document__doc_type__in': excluded_doc_types})
+
+                fieldstates = '%s_STATES' % status_type.upper()
+                for fieldstate, fieldstate_name in getattr(Dossier, fieldstates):
+                    stat_field_name = '%s_%s_%s' % (dossier_type, status_type, fieldstate)
+                    if hasattr(self, stat_field_name):
+                        kwargs = {
+                            'issue_id': self.issue_id,
+                            'user_id': self.user_id,
+                            'dossier_type': dossier_type,
+                            status_type: fieldstate
+                        }
+                        count = Dossier.objects.filter(**kwargs).exclude(**exclude_kwargs).count()
+                        if getattr(self, stat_field_name) != count:
+                            print "(%s, %s) %s: %d" % (self.user, self.issue, stat_field_name, count)
+                        setattr(self, stat_field_name, count)
+
+            count_fieldname = '%s_count' % dossier_type
+            count = Dossier.objects.filter(
+                issue_id=self.issue_id,
+                user_id=self.user_id,
+                dossier_type=dossier_type
+            ).count()
+            if getattr(self, count_fieldname) != count:
+                print '(%s, %s) %s: %d' % (self.user, self.issue, count_fieldname, count)
+            setattr(self, count_fieldname, count)
+
+            memo_count_fieldname = '%s_memo_count' % dossier_type
+            memo_count = Memo.objects.filter(
+                user_id=self.user_id,
+                dossier__issue_id=self.issue_id,
+                dossier__dossier_type=dossier_type
+            ).count()
+            if getattr(self, memo_count_fieldname) != memo_count:
+                print '(%s, %s) %s: %d' % (self.user, self.issue, memo_count_fieldname, memo_count)
+            setattr(self, memo_count_fieldname, memo_count)
+
+        self.save()
+
 
 class Memo(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='memos')

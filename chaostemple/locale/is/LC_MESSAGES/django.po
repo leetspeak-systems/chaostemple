@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-29 21:34+0000\n"
+"POT-Creation-Date: 2015-09-14 14:40+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -24,6 +24,8 @@ msgstr "Musteri Glundroðans"
 
 #: core/breadcrumbs.py:16 templates/base.html:42
 #: templates/core/parliament_issue.html:32
+#: templates/core/parliament_issue.html:75
+#: templates/core/parliament_issue.html:90
 #: templates/core/stub/issue_bookmark_menuitems.html:6
 #: templates/core/stub/parliament_selection.html:5
 #: templates/core/stub/parliament_selection.html:12
@@ -54,12 +56,12 @@ msgstr "þingfundur"
 msgid "Committees"
 msgstr "Nefndir"
 
-#: core/models.py:50 templates/core/parliament_issue.html:113
+#: core/models.py:50 templates/core/parliament_issue.html:143
 #: templates/core/stub/issue.html:23
 msgid "Parliamentary Documents"
 msgstr "Þingskjöl"
 
-#: core/models.py:51 templates/core/parliament_issue.html:121
+#: core/models.py:51 templates/core/parliament_issue.html:151
 #: templates/core/stub/issue.html:22
 msgid "Reviews"
 msgstr "Umsagnir"
@@ -291,39 +293,47 @@ msgstr "þingmál"
 msgid "Issue Portal"
 msgstr "Málsgátt"
 
-#: templates/core/parliament_issue.html:81
+#: templates/core/parliament_issue.html:71
+msgid "Previously published"
+msgstr "Áður lagt fram"
+
+#: templates/core/parliament_issue.html:86
+msgid "Later published"
+msgstr "Endurflutt seinna"
+
+#: templates/core/parliament_issue.html:111
 msgid "Summary"
 msgstr "Samantekt"
 
-#: templates/core/parliament_issue.html:84
+#: templates/core/parliament_issue.html:114
 msgid "Purpose"
 msgstr "Markmið"
 
-#: templates/core/parliament_issue.html:87
+#: templates/core/parliament_issue.html:117
 msgid "Change Description"
 msgstr "Helstu breytingar og nýjungar"
 
-#: templates/core/parliament_issue.html:90
+#: templates/core/parliament_issue.html:120
 msgid "Changes to Law"
 msgstr "Breytingar á lögum og tengd mál"
 
-#: templates/core/parliament_issue.html:93
+#: templates/core/parliament_issue.html:123
 msgid "Cost and Revenue"
 msgstr "Kostnaður og tekjur"
 
-#: templates/core/parliament_issue.html:96
+#: templates/core/parliament_issue.html:126
 msgid "Other Information"
 msgstr "Aðrar upplýsingar"
 
-#: templates/core/parliament_issue.html:99
+#: templates/core/parliament_issue.html:129
 msgid "Review Description"
 msgstr "Umsagnir (helstu atriði)"
 
-#: templates/core/parliament_issue.html:102
+#: templates/core/parliament_issue.html:132
 msgid "Fate"
 msgstr "Afgreiðsla"
 
-#: templates/core/parliament_issue.html:105
+#: templates/core/parliament_issue.html:135
 msgid "Media Coverage"
 msgstr "Fjölmiðlaumfjöllun"
 

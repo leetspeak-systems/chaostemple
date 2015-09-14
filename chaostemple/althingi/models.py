@@ -71,6 +71,8 @@ class Issue(models.Model):
     description = models.TextField()
     final_vote_complete = models.BooleanField(default=False)
 
+    previous_issues = models.ManyToManyField('Issue', related_name='future_issues')
+
     document_count = models.IntegerField(default=0) # Auto-populated by Issue.save()
     review_count = models.IntegerField(default=0) # Auto-populated by Review.save()
 

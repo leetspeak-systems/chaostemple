@@ -315,6 +315,10 @@ def update_issue(issue_num, parliament_num=None):
     if already_haves['issues'].has_key(ah_key):
         return already_haves['issues'][ah_key]
 
+    # If issue has been published in an earlier parliament, we'll record it in this variable and deal with it afterwards
+    # Contains a list of structs, for exmaple: {'parliament_num': 144, 'issue_num': 524 }
+    previously_published_as = []
+
     issue_xml = minidom.parse(get_response(ISSUE_URL % (parliament.parliament_num, issue_num)))
     docstubs_xml = issue_xml.getElementsByTagName(u'þingskjöl')[0].getElementsByTagName(u'þingskjal')
     reviews_xml = issue_xml.getElementsByTagName(u'erindaskrá')[0].getElementsByTagName(u'erindi')
@@ -369,6 +373,20 @@ def update_issue(issue_num, parliament_num=None):
         # Yes, it has summary information
         summary_xml_url = ISSUE_SUMMARY_URL % (parliament.parliament_num, issue.issue_num)
         summary_xml = minidom.parse(get_response(summary_xml_url))
+
+        # Check if issue was previously published
+        linked_issues_xml = summary_xml.getElementsByTagName(u'tengdMál')
+        if len(linked_issues_xml) > 0:
+            previously_published_xml = linked_issues_xml[0].getElementsByTagName(u'endurflutt')
+            if len(previously_published_xml) > 0:
+                for previous_issue_xml in previously_published_xml[0].getElementsByTagName(u'mál'):
+                    previous_parliament_num = int(previous_issue_xml.getAttribute(u'þingnúmer'))
+                    previous_issue_num = int(previous_issue_xml.getAttribute(u'málsnúmer'))
+
+                    previously_published_as.append({
+                        'parliament_num': previous_parliament_num,
+                        'issue_num': previous_issue_num,
+                    })
 
         purpose = summary_xml.getElementsByTagName(u'markmið')[0].firstChild.nodeValue
         try:
@@ -705,6 +723,13 @@ def update_issue(issue_num, parliament_num=None):
         print('Deleted non-existent review: %s' % review)
 
     already_haves['issues'][ah_key] = issue
+
+    # Process previous publications of issue, if any
+    for previous_issue_info in previously_published_as:
+        previous_issue = update_issue(previous_issue_info['issue_num'], previous_issue_info['parliament_num'])
+        issue.previous_issues.add(previous_issue)
+        for more_previous_issue in previous_issue.previous_issues.all():
+            issue.previous_issues.add(more_previous_issue)
 
     return issue
 

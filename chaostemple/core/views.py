@@ -14,6 +14,7 @@ from core.models import Issue
 from core.models import IssueBookmark
 from core.models import IssueUtilities
 
+from althingi.althingi_settings import CURRENT_PARLIAMENT_NUM
 from althingi.models import Committee
 from althingi.models import CommitteeAgenda
 from althingi.models import Document
@@ -208,7 +209,11 @@ def user_issues_incoming(request):
 def user_issues_open(request):
     ctx = RequestContext(request)
 
-    issues = [i for i in ctx['open_issues']]
+    issues = Issue.objects.select_related('parliament').annotate(dossier_count=Count('dossiers')).filter(
+        dossier_count__gt=0,
+        dossiers__user_id=request.user.id,
+        parliament__parliament_num=CURRENT_PARLIAMENT_NUM
+    ).order_by('issue_num')
 
     IssueUtilities.populate_dossier_statistics(issues, request.user.id)
 

@@ -4,6 +4,7 @@ from django.utils.translation import ugettext as _
 
 from core.breadcrumbs import make_breadcrumbs
 
+from althingi.althingi_settings import CURRENT_PARLIAMENT_NUM
 from althingi.models import Parliament
 
 class ExtraVarsMiddleware():
@@ -25,6 +26,9 @@ class ExtraVarsMiddleware():
             committee_id = int(committee_id)
         if agenda_id:
             agenda_id = int(agenda_id)
+
+        if not parliament_num:
+            parliament_num = CURRENT_PARLIAMENT_NUM
 
         try:
             newest_parliament_num = Parliament.objects.order_by('-parliament_num')[0].parliament_num

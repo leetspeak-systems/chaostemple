@@ -38,9 +38,8 @@
                 </div>
                 <div id="navbar" class="collapse navbar-collapse">
                     <ul class="nav navbar-nav">
-                        {% if parliament_num %}
-                            <li {% if urlname == 'parliament' %}class="active"{% endif %}><a href="{% url 'parliament' parliament_num %}">{{ parliament_num }}. {% trans 'parliament' %}</a></li>
-                        {% endif %}
+
+                        <li {% if urlname == 'parliament' %}class="active"{% endif %}><a href="{% url 'parliament' parliament_num %}">{{ parliament_num }}. {% trans 'parliament' %}</a></li>
 
                         {% if next_sessions.count or next_committee_agendas.count %}
                             <li class="dropdown">

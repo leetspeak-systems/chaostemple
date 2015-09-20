@@ -15,7 +15,7 @@ urlpatterns = patterns('',
     url(r'^user/home/(?P<username>\w+)/$', 'core.views.user_home', name='user_home'),
     url(r'^user/issues/bookmarked/$', 'core.views.user_issues_bookmarked', name='user_issues_bookmarked'),
     url(r'^user/issues/incoming/$', 'core.views.user_issues_incoming', name='user_issues_incoming'),
-    url(r'^user/issues/open/$', 'core.views.user_issues_open', name='user_issues_open'),
+    url(r'^parliament/(?P<parliament_num>\d+)/user/issues/open/$', 'core.views.user_issues_open', name='user_issues_open'),
 
     url(r'^json/dossier/(?P<dossier_id>\d+)/fieldstate/(?P<fieldname>.+)/$', 'core.json_views.dossier_fieldstate', name='json_dossier_fieldstate'),
     url(r'^json/dossier/(?P<dossier_id>\d+)/delete/$', 'core.json_views.delete_dossier', name='json_delete_dossier'),

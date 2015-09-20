@@ -13,6 +13,8 @@ from core.models import Issue
 
 def globals(request):
 
+    ctx = request.extravars # See chaostemple.middleware.ExtraVarsMiddleware
+
     parliaments = Parliament.objects.order_by('-parliament_num')
     next_sessions = Session.objects.upcoming().select_related('parliament')
     next_committee_agendas = CommitteeAgenda.objects.upcoming().select_related('parliament', 'committee')
@@ -30,7 +32,7 @@ def globals(request):
             last_parliament_num = bookmarked_issue.parliament.parliament_num
 
     dossier_statistics_incoming = DossierStatistic.objects.select_related('issue__parliament').filter(
-        Q(user_id=request.user.id, issue__parliament__parliament_num=CURRENT_PARLIAMENT_NUM),
+        Q(user_id=request.user.id, issue__parliament__parliament_num=ctx['parliament_num']),
         ~Q(
             document_count=F('issue__document_count'),
             review_count=F('issue__review_count')
@@ -43,7 +45,7 @@ def globals(request):
     len(next_sessions) # Forces a len() instead of a DB-call when count is checked
     len(next_committee_agendas) # Forces a len() instead of a DB-call when count is checked
 
-    ctx = {
+    ctx.update({
         'PROJECT_NAME': settings.PROJECT_NAME,
         'PROJECT_VERSION': settings.PROJECT_VERSION,
         'parliaments': parliaments,
@@ -51,9 +53,6 @@ def globals(request):
         'next_committee_agendas': next_committee_agendas,
         'bookmarked_issues': bookmarked_issues,
         'dossier_statistics_incoming': dossier_statistics_incoming,
-    }
-
-    if hasattr(request, 'extravars'):
-        ctx.update(request.extravars) # See chaostemple.middleware.ExtraVarsMiddleware
+    })
 
     return ctx

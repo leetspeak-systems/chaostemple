@@ -206,13 +206,13 @@ def user_issues_incoming(request):
     return render(request, 'core/user_issues_incoming.html', ctx)
 
 @login_required
-def user_issues_open(request):
+def user_issues_open(request, parliament_num):
     ctx = RequestContext(request)
 
     issues = Issue.objects.select_related('parliament').annotate(dossier_count=Count('dossiers')).filter(
         dossier_count__gt=0,
         dossiers__user_id=request.user.id,
-        parliament__parliament_num=CURRENT_PARLIAMENT_NUM
+        parliament__parliament_num=parliament_num
     ).order_by('issue_num')
 
     IssueUtilities.populate_dossier_statistics(issues, request.user.id)

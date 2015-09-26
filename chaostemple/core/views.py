@@ -182,7 +182,10 @@ def user_home(request, username):
 @login_required
 def user_issues_bookmarked(request):
 
-    issues = Issue.objects.select_related('parliament').filter(issue_bookmarks__user_id=request.user.id)
+    issues = Issue.objects.select_related('parliament').filter(issue_bookmarks__user_id=request.user.id).order_by(
+        '-parliament',
+        '-issue_num'
+    )
 
     IssueUtilities.populate_dossier_statistics(issues, request.user.id)
 
@@ -193,9 +196,9 @@ def user_issues_bookmarked(request):
 
 @login_required
 def user_issues_incoming(request):
-    ctx = RequestContext(request)
+    request_context = RequestContext(request)
 
-    issues = [ds.issue for ds in ctx['dossier_statistics_incoming']]
+    issues = [ds.issue for ds in request_context['dossier_statistics_incoming']]
 
     IssueUtilities.populate_dossier_statistics(issues, request.user.id)
 
@@ -207,7 +210,6 @@ def user_issues_incoming(request):
 
 @login_required
 def user_issues_open(request, parliament_num):
-    ctx = RequestContext(request)
 
     issues = Issue.objects.select_related('parliament').annotate(dossier_count=Count('dossiers')).filter(
         dossier_count__gt=0,

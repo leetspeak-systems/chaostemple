@@ -2,9 +2,9 @@
 
 <li><a href="{% url 'user_issues_bookmarked' %}"><strong>{% trans 'Bookmarked Issues' %}</strong></a></li>
 {% for issue in bookmarked_issues reversed %}
-    {% if issue.display_parliament %}
+    {% ifchanged issue.parliament.parliament_num %}
         <li class="dropdown-header">{{ issue.parliament.parliament_num }}. {% trans 'parliament' %}</li>
-    {% endif %}
+    {% endifchanged %}
     <li>
         <a href="{% url 'parliament_issue' issue.parliament.parliament_num issue.issue_num %}">
             &nbsp;&nbsp;

@@ -22,8 +22,9 @@ def globals(request):
     bookmarked_issues = None
     if request.user.is_authenticated():
         bookmarked_issues = Issue.objects.select_related('parliament').filter(
-            issue_bookmarks__user_id=request.user.id
-        ).order_by('parliament__parliament_num', 'issue_num')
+            issue_bookmarks__user_id=request.user.id,
+            parliament__parliament_num=ctx['parliament_num']
+        ).order_by('issue_num')
 
     dossier_statistics_incoming = DossierStatistic.objects.select_related('issue__parliament').filter(
         Q(user_id=request.user.id, issue__parliament__parliament_num=ctx['parliament_num']),

@@ -180,12 +180,12 @@ def user_home(request, username):
     return render(request, 'core/user_home.html', ctx)
 
 @login_required
-def user_issues_bookmarked(request):
+def user_issues_bookmarked(request, parliament_num):
 
-    issues = Issue.objects.select_related('parliament').filter(issue_bookmarks__user_id=request.user.id).order_by(
-        '-parliament',
-        '-issue_num'
-    )
+    issues = Issue.objects.select_related('parliament').filter(
+        issue_bookmarks__user_id=request.user.id,
+        parliament__parliament_num=parliament_num
+    ).order_by('-issue_num')
 
     IssueUtilities.populate_dossier_statistics(issues, request.user.id)
 

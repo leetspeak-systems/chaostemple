@@ -367,26 +367,26 @@ def update_issue(issue_num, parliament_num=None):
 
         print('Added issue: %s' % issue)
 
+    # Check if issue was previously published
+    linked_issues_xml = issue_xml.getElementsByTagName(u'tengdMál')
+    if len(linked_issues_xml) > 0:
+        previously_published_xml = linked_issues_xml[0].getElementsByTagName(u'lagtFramÁðurSem')
+        if len(previously_published_xml) > 0:
+            for previous_issue_xml in previously_published_xml[0].getElementsByTagName(u'mál'):
+                previous_parliament_num = int(previous_issue_xml.getAttribute(u'þingnúmer'))
+                previous_issue_num = int(previous_issue_xml.getAttribute(u'málsnúmer'))
+
+                previously_published_as.append({
+                    'parliament_num': previous_parliament_num,
+                    'issue_num': previous_issue_num,
+                })
+
     # See if this issue has summary information
     summary_xml_try = issue_xml.getElementsByTagName(u'mál')[0].getElementsByTagName(u'samantekt')
     if len(summary_xml_try) > 0:
         # Yes, it has summary information
         summary_xml_url = ISSUE_SUMMARY_URL % (parliament.parliament_num, issue.issue_num)
         summary_xml = minidom.parse(get_response(summary_xml_url))
-
-        # Check if issue was previously published
-        linked_issues_xml = summary_xml.getElementsByTagName(u'tengdMál')
-        if len(linked_issues_xml) > 0:
-            previously_published_xml = linked_issues_xml[0].getElementsByTagName(u'endurflutt')
-            if len(previously_published_xml) > 0:
-                for previous_issue_xml in previously_published_xml[0].getElementsByTagName(u'mál'):
-                    previous_parliament_num = int(previous_issue_xml.getAttribute(u'þingnúmer'))
-                    previous_issue_num = int(previous_issue_xml.getAttribute(u'málsnúmer'))
-
-                    previously_published_as.append({
-                        'parliament_num': previous_parliament_num,
-                        'issue_num': previous_issue_num,
-                    })
 
         purpose = summary_xml.getElementsByTagName(u'markmið')[0].firstChild.nodeValue
         try:

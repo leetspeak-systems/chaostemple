@@ -76,6 +76,16 @@ class Issue(models.Model):
     document_count = models.IntegerField(default=0) # Auto-populated by Issue.save()
     review_count = models.IntegerField(default=0) # Auto-populated by Review.save()
 
+    # Django does not appear to support a default order for ManyToMany fields. Thus this fucking shit.
+    # (No, I'm not implementing a fucking through-model just to get ordering on ManyToMany fields.)
+    def previous_issues_ordered(self):
+        return self.previous_issues.order_by('-parliament__parliament_num')
+
+    # Django does not appear to support a default order for ManyToMany fields. Thus this fucking shit.
+    # (No, I'm not implementing a fucking through-model just to get ordering on ManyToMany fields.)
+    def future_issues_ordered(self):
+        return self.future_issues.order_by('parliament__parliament_num')
+
     def __unicode__(self):
         if self.issue_group == 'B':
             return u'%s (%s)' % (self.name, self.issue_group)

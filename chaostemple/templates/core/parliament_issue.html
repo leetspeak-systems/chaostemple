@@ -70,7 +70,7 @@
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" area-expanded="false">{% trans 'Previously published' %} <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu">
-                            {% for previous_issue in issue.previous_issues.all %}
+                            {% for previous_issue in issue.previous_issues_ordered %}
                                 <li><a href="{% url 'parliament_issue' previous_issue.parliament.parliament_num previous_issue.issue_num %}">
                                     {{ previous_issue.parliament.parliament_num }}. {% trans 'parliament' %}: {{ previous_issue }}</a>
                                 </li>
@@ -85,7 +85,7 @@
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" area-expanded="false">{% trans 'Later published' %} <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu">
-                            {% for future_issue in issue.future_issues.all %}
+                            {% for future_issue in issue.future_issues_ordered %}
                                 <li><a href="{% url 'parliament_issue' future_issue.parliament.parliament_num future_issue.issue_num %}">
                                     {{ future_issue.parliament.parliament_num }}. {% trans 'parliament' %}: {{ future_issue }}</a>
                                 </li>

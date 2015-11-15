@@ -54,7 +54,7 @@ def display_dossier_statistics(context, issue):
     content = []
     if hasattr(issue, 'dossier_statistics'):
 
-        template_user = loader.get_template('core/stub/issue_dossier_statistic_user.html') # I was here. Just added this.
+        template_user = loader.get_template('core/stub/issue_dossier_statistic_user.html')
         template_statistic = loader.get_template('core/stub/issue_dossier_statistic.html')
         template_status_type = loader.get_template('core/stub/issue_dossier_statistic_status_type.html')
 

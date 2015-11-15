@@ -1,4 +1,7 @@
 <div class="dossier-statistic-values">
     <label>{{ status_type_name }}</label>
-    {{ fieldstate_content }}
+
+    {% for some_content in fieldstate_content %}
+        <span class="label label-{{ some_content.css_class }}">{{ some_content.fieldstate_name }}: {{ some_content.count }}</span>
+    {% endfor %}
 </div>

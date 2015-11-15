@@ -57,7 +57,6 @@ def display_dossier_statistics(context, issue):
         template_user = loader.get_template('core/stub/issue_dossier_statistic_user.html') # I was here. Just added this.
         template_statistic = loader.get_template('core/stub/issue_dossier_statistic.html')
         template_status_type = loader.get_template('core/stub/issue_dossier_statistic_status_type.html')
-        template_fieldstate = loader.get_template('core/stub/issue_dossier_statistic_fieldstate.html')
 
         fieldstate_css_dict = fieldstate_css()
 
@@ -77,6 +76,7 @@ def display_dossier_statistics(context, issue):
 
                 for status_type, status_type_name in Dossier.STATUS_TYPES:
                     fieldstate_content = []
+                    total_fieldstate_count = 0
 
                     fieldstates = '%s_STATES' % status_type.upper()
                     for fieldstate, fieldstate_name in getattr(Dossier, fieldstates):
@@ -84,16 +84,20 @@ def display_dossier_statistics(context, issue):
                         if hasattr(stat, stat_field_name):
                             count = getattr(stat, stat_field_name)
                             if count:
-                                fieldstate_content.append(template_fieldstate.render(Context({
+                                fieldstate_content.append({
                                     'css_class': fieldstate_css_dict[status_type][fieldstate],
                                     'fieldstate_name': fieldstate_name,
                                     'count': count
-                                })))
+                                })
+
+                                total_fieldstate_count += count
 
                     if fieldstate_content:
                         status_type_content.append(template_status_type.render(Context({
+                            'status_type': status_type,
                             'status_type_name': status_type_name,
-                            'fieldstate_content': mark_safe(''.join(fieldstate_content))
+                            'fieldstate_content': fieldstate_content,
+                            'total_fieldstate_count': total_fieldstate_count,
                         })))
 
                 # Determine icon

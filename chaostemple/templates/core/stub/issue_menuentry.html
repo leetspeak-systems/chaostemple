@@ -1,4 +1,13 @@
+{% load i18n %}
+
 ({{ issue.issue_num}}) {{ issue.name|capfirst }}
 {% if issue.description %}
     <small>({{ issue.description }})</small>
+    &nbsp;
+    {% if issue.new_documents %}
+        <span class="label label-danger memo-count">{{ issue.new_documents }} {% trans 'new documents' %}</span>
+    {% endif %}
+    {% if issue.new_reviews %}
+        <span class="label label-danger memo-count">{{ issue.new_reviews }} {% trans 'new reviews' %}</span>
+    {% endif %}
 {% endif %}

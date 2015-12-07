@@ -26,6 +26,11 @@ class IssueUtilities():
                     if not hasattr(issue, 'dossier_statistics'):
                         issue.dossier_statistics = []
                     issue.dossier_statistics.append(dossier_statistic)
+
+                    # Add current user's new_documents and new_reviews
+                    if dossier_statistic.user_id == user_id:
+                        issue.new_documents = issue.document_count - dossier_statistic.document_count
+                        issue.new_reviews = issue.review_count - dossier_statistic.review_count
         return issues
 
 ### Models

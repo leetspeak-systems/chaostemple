@@ -10,6 +10,7 @@ from althingi.models import Session
 
 from core.models import DossierStatistic
 from core.models import Issue
+from core.models import IssueUtilities
 
 def globals(request):
 
@@ -25,6 +26,8 @@ def globals(request):
             issue_bookmarks__user_id=request.user.id,
             parliament__parliament_num=ctx['parliament_num']
         ).order_by('issue_num')
+
+    IssueUtilities.populate_dossier_statistics(bookmarked_issues, request.user.id)
 
     dossier_statistics_incoming = DossierStatistic.objects.select_related('issue__parliament').filter(
         Q(user_id=request.user.id, issue__parliament__parliament_num=ctx['parliament_num']),

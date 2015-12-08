@@ -27,7 +27,7 @@ def globals(request):
             parliament__parliament_num=ctx['parliament_num']
         ).order_by('issue_num')
 
-    IssueUtilities.populate_dossier_statistics(bookmarked_issues, request.user.id)
+        IssueUtilities.populate_dossier_statistics(bookmarked_issues, request.user.id)
 
     dossier_statistics_incoming = DossierStatistic.objects.select_related('issue__parliament').filter(
         Q(user_id=request.user.id, issue__parliament__parliament_num=ctx['parliament_num']),

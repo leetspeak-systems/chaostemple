@@ -56,10 +56,13 @@ class Command(BaseCommand):
 
         return processed_args
 
-    def handle(self, *input_args, **options):
+    def add_arguments(self, parser):
+        parser.add_argument('arguments', nargs='+')
+
+    def handle(self, *args, **options):
         try:
-            args = self.process_args(input_args)
-            self.update_data(args)
+            processed_args = self.process_args(options['arguments'])
+            self.update_data(processed_args)
         except KeyboardInterrupt:
             quit(1)
 

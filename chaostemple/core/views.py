@@ -3,10 +3,11 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db.models import Count
 from django.db.models import Prefetch
+from django.db.models import F
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
-from django.template import RequestContext
 
 from core.models import Dossier
 from core.models import DossierStatistic
@@ -196,9 +197,14 @@ def user_issues_bookmarked(request, parliament_num):
 
 @login_required
 def user_issues_incoming(request):
-    request_context = RequestContext(request)
 
-    issues = [ds.issue for ds in request_context['dossier_statistics_incoming']]
+    issues = Issue.objects.select_related('parliament').filter(
+        Q(dossierstatistic__user_id=request.user.id, parliament__parliament_num=request.extravars['parliament_num']),
+        ~Q(
+            document_count=F('dossierstatistic__document_count'),
+            review_count=F('dossierstatistic__review_count')
+        )
+    ).order_by('-issue_num')
 
     IssueUtilities.populate_dossier_statistics(issues, request.user.id)
 

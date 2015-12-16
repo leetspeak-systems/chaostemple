@@ -5,6 +5,7 @@ from althingi.utils import ensure_parliament
 
 from althingi.utils import update_committee_agenda
 from althingi.utils import update_committee_agendas
+from althingi.utils import update_constituencies
 from althingi.utils import update_issues
 from althingi.utils import update_issue
 from althingi.utils import update_next_sessions
@@ -33,6 +34,7 @@ class Command(BaseCommand):
         print '  parties                           Updates parties in default or specified parliament'
         print '  committee_agendas                 Updates committee agendas in default or specified parliament'
         print '  committee_agenda=<agenda_xml_id>  Updates committee agenda by XML ID (see Althingi\'s XML)'
+        print '  constituencies                    Updates constituencies in default or specified parliament'
         print '  all                               Updates issues, sessions and committee agendas in default or specified parliament'
         print
         print 'Options:'
@@ -120,6 +122,10 @@ class Command(BaseCommand):
                     self.error('Invalid committee XML-ID')
                 update_committee_agenda(agenda_xml_id, parliament_num)
 
+            if 'constituencies' in args:
+                has_run = True
+                update_constituencies(parliament_num)
+
             if 'parties' in args:
                 has_run = True
                 update_parties(parliament_num)
@@ -129,6 +135,7 @@ class Command(BaseCommand):
                 update_issues(parliament_num)
                 update_sessions(parliament_num)
                 update_parties(parliament_num)
+                update_constituencies(parliament_num)
                 update_committee_agendas(parliament_num)
         except AlthingiException as e:
             self.error(e)

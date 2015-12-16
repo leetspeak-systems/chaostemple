@@ -16,6 +16,7 @@ from xml.parsers.expat import ExpatError
 from althingi.models import Committee
 from althingi.models import CommitteeAgenda
 from althingi.models import CommitteeAgendaItem
+from althingi.models import Constituency
 from althingi.models import Document
 from althingi.models import Issue
 from althingi.models import IssueSummary
@@ -40,6 +41,7 @@ COMMITTEE_FULL_LIST_URL = 'http://www.althingi.is/altext/xml/nefndir/'
 COMMITTEE_LIST_URL = 'http://www.althingi.is/altext/xml/nefndir/?lthing=%d'
 COMMITTEE_AGENDA_LIST_URL = 'http://www.althingi.is/altext/xml/nefndarfundir/?lthing=%d'
 COMMITTEE_AGENDA_URL = 'http://www.althingi.is/altext/xml/nefndarfundir/nefndarfundur/?dagskrarnumer=%d'
+CONSTITUENCIES_URL = 'http://www.althingi.is/altext/xml/kjordaemi/?lthing=%d'
 SESSION_LIST_URL = 'http://www.althingi.is/altext/xml/thingfundir/?lthing=%d'
 SESSION_AGENDA_URL = 'http://www.althingi.is/altext/xml/dagskra/thingfundur/?lthing=%d&fundur=%d'
 SESSION_NEXT_AGENDA_URL = 'http://www.althingi.is/altext/xml/dagskra/thingfundur/'
@@ -73,6 +75,7 @@ already_haves = {
     'parties': {},
     'persons': {},
     'committees': {},
+    'constituencies': {},
     'issues': {},
 
     'xml': {},
@@ -833,6 +836,97 @@ def update_next_sessions():
     sessions_xml = session_full_xml.getElementsByTagName(u'þingfundur')
     for session_xml in sessions_xml:
         _process_session_agenda_xml(session_xml)
+
+
+def update_constituencies(parliament_num=None):
+
+    parliament = ensure_parliament(parliament_num)
+
+    ah_key = parliament.parliament_num
+    if already_haves['constituencies'].has_key(ah_key):
+        return already_haves['constituencies'][ah_key]
+
+    response = get_response(CONSTITUENCIES_URL % parliament.parliament_num)
+
+    constituencies_xml = minidom.parse(response)
+
+    constituencies = []
+    for constituency_xml in constituencies_xml.getElementsByTagName(u'kjördæmin')[0].getElementsByTagName(u'kjördæmið'):
+        abbreviations_xml = constituency_xml.getElementsByTagName(u'skammstafanir')[0]
+        period_xml = constituency_xml.getElementsByTagName(u'tímabil')[0]
+
+        constituency_xml_id = int(constituency_xml.getAttribute(u'id'))
+
+        if constituency_xml_id == 1: # Only there for ministers not in Parliament and is to be ignored.
+            continue
+
+        name = constituency_xml.getElementsByTagName(u'heiti')[0].childNodes[1].nodeValue
+        description = constituency_xml.getElementsByTagName(u'lýsing')[0].childNodes[1].nodeValue
+        abbreviation_short = abbreviations_xml.getElementsByTagName(u'stuttskammstöfun')[0].firstChild.nodeValue
+        try:
+            abbreviation_long = abbreviations_xml.getElementsByTagName(u'löngskammstöfun')[0].firstChild.nodeValue
+        except (AttributeError, IndexError):
+            abbreviation_long = None
+
+        parliament_num_first = int(period_xml.getElementsByTagName(u'fyrstaþing')[0].firstChild.nodeValue)
+        try:
+            parliament_num_last = int(period_xml.getElementsByTagName(u'síðastaþing')[0].firstChild.nodeValue)
+        except (AttributeError, IndexError):
+            parliament_num_last = None
+
+        constituency_try = Constituency.objects.filter(constituency_xml_id=constituency_xml_id)
+        if constituency_try.count() > 0:
+            constituency = constituency_try[0]
+
+            changed = False
+            if constituency.name != name:
+                constituency.name = name
+                changed = True
+            if constituency.description != description:
+                constituency.description = description
+                changed = True
+            if constituency.abbreviation_short != abbreviation_short:
+                constituency.abbreviation_short = abbreviation_short
+                changed = True
+            if constituency.abbreviation_long != abbreviation_long:
+                constituency.abbreviation_long = abbreviation_long
+                changed = True
+            if constituency.parliament_num_first != parliament_num_first:
+                constituency.parliament_num_first = parliament_num_first
+                changed = True
+            if constituency.parliament_num_last != parliament_num_last:
+                constituency.parliament_num_last = parliament_num_last
+                changed = True
+
+            if parliament not in constituency.parliaments.all():
+                constituency.parliaments.add(parliament)
+                changed = True
+
+            if changed:
+                constituency.save()
+                print('Updated constituency: %s' % constituency)
+            else:
+                print('Already have constituency: %s' % constituency)
+        else:
+            constituency = Constituency()
+
+            constituency.name = name
+            constituency.description = description
+            constituency.abbreviation_short = abbreviation_short
+            constituency.abbreviation_long = abbreviation_long
+            constituency.parliament_num_first = parliament_num_first
+            constituency.parliament_num_last = parliament_num_last
+            constituency.constituency_xml_id = constituency_xml_id
+            constituency.save()
+            constituency.parliaments.add(parliament)
+
+            print('Added constituency: %s' % constituency)
+
+        constituencies.append(constituency)
+
+    already_haves['constituencies'][parliament.parliament_num] = constituencies
+
+    return constituencies
 
 
 def update_parties(parliament_num=None):

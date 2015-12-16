@@ -425,3 +425,22 @@ class Party(models.Model):
     class Meta:
         ordering = ['parliament_num_first']
 
+
+class Constituency(models.Model):
+    name = models.CharField(max_length=50)
+    description = models.TextField()
+    abbreviation_short = models.CharField(max_length=20)
+    abbreviation_long = models.CharField(max_length=30, null=True)
+
+    parliament_num_first = models.IntegerField()
+    parliament_num_last = models.IntegerField(null=True)
+    parliaments = models.ManyToManyField('Parliament', related_name='constituencies')
+
+    constituency_xml_id = models.IntegerField()
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name']
+

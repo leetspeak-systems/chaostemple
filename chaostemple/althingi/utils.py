@@ -20,6 +20,7 @@ from althingi.models import Document
 from althingi.models import Issue
 from althingi.models import IssueSummary
 from althingi.models import Parliament
+from althingi.models import Party
 from althingi.models import Person
 from althingi.models import Proposer
 from althingi.models import Review
@@ -33,6 +34,7 @@ from althingi import althingi_settings
 ISSUE_LIST_URL = 'http://www.althingi.is/altext/xml/thingmalalisti/?lthing=%d'
 ISSUE_URL = 'http://www.althingi.is/altext/xml/thingmalalisti/thingmal/?lthing=%d&malnr=%d'
 ISSUE_SUMMARY_URL = 'http://www.althingi.is/altext/xml/samantektir/samantekt/?lthing=%d&malnr=%d'
+PARTIES_URL = 'http://www.althingi.is/altext/xml/thingflokkar/?lthing=%d'
 PERSON_URL = 'http://www.althingi.is/altext/xml/thingmenn/thingmadur/?nr=%d'
 COMMITTEE_FULL_LIST_URL = 'http://www.althingi.is/altext/xml/nefndir/'
 COMMITTEE_LIST_URL = 'http://www.althingi.is/altext/xml/nefndir/?lthing=%d'
@@ -68,6 +70,7 @@ the time it takes to run the import.
 '''
 already_haves = {
     'parliaments': {},
+    'parties': {},
     'persons': {},
     'committees': {},
     'issues': {},
@@ -831,6 +834,84 @@ def update_next_sessions():
     for session_xml in sessions_xml:
         _process_session_agenda_xml(session_xml)
 
+
+def update_parties(parliament_num=None):
+
+    parliament = ensure_parliament(parliament_num)
+
+    ah_key = parliament.parliament_num
+    if already_haves['parties'].has_key(ah_key):
+        return already_haves['parties'][ah_key]
+
+    response = get_response(PARTIES_URL % parliament.parliament_num)
+
+    parties_xml = minidom.parse(response)
+
+    parties = []
+    for party_xml in parties_xml.getElementsByTagName(u'þingflokkar')[0].getElementsByTagName(u'þingflokkur'):
+        abbreviations_xml = party_xml.getElementsByTagName(u'skammstafanir')[0]
+        period_xml = party_xml.getElementsByTagName(u'tímabil')[0]
+
+        party_xml_id = party_xml.getAttribute(u'id')
+        name = party_xml.getElementsByTagName(u'heiti')[0].firstChild.nodeValue.strip()
+        abbreviation_short = abbreviations_xml.getElementsByTagName(u'stuttskammstöfun')[0].firstChild.nodeValue
+        abbreviation_long = abbreviations_xml.getElementsByTagName(u'löngskammstöfun')[0].firstChild.nodeValue
+
+        parliament_num_first = int(period_xml.getElementsByTagName(u'fyrstaþing')[0].firstChild.nodeValue)
+        try:
+            parliament_num_last = int(period_xml.getElementsByTagName(u'síðastaþing')[0].firstChild.nodeValue)
+        except (AttributeError, IndexError):
+            parliament_num_last = None
+
+        party_try = Party.objects.filter(party_xml_id=party_xml_id)
+        if party_try.count() > 0:
+            party = party_try[0]
+
+            changed = False
+            if party.name != name:
+                party.name = name
+                changed = True
+            if party.abbreviation_short != abbreviation_short:
+                party.abbreviation_short = abbreviation_short
+                changed = True
+            if party.abbreviation_long != abbreviation_long:
+                party.abbreviation_long = abbreviation_long
+                changed = True
+            if party.parliament_num_first != parliament_num_first:
+                party.parliament_num_first = parliament_num_first
+                changed = True
+            if party.parliament_num_last != parliament_num_last:
+                party.parliament_num_last = parliament_num_last
+                changed = True
+
+            if parliament not in party.parliaments.all():
+                party.parliaments.add(parliament)
+                changed = True
+
+            if changed:
+                party.save()
+                print('Updated party: %s' % party)
+            else:
+                print('Already have party: %s' % party)
+        else:
+            party = Party()
+
+            party.name = name
+            party.abbreviation_short = abbreviation_short
+            party.abbreviation_long = abbreviation_long
+            party.parliament_num_first = parliament_num_first
+            party.parliament_num_last = parliament_num_last
+            party.party_xml_id = party_xml_id
+            party.save()
+            party.parliaments.add(parliament)
+
+            print('Added party: %s' % party)
+
+        parties.append(party)
+
+    already_haves['parties'][parliament.parliament_num] = parties
+
+    return parties
 
 def update_committee_agendas(parliament_num=None, date_limit=None):
 

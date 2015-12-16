@@ -408,3 +408,20 @@ class Parliamentarian(Person):
     constituency = models.CharField(max_length=250, default="")
 
 
+class Party(models.Model):
+    name = models.CharField(max_length=50)
+    abbreviation_short = models.CharField(max_length=20)
+    abbreviation_long = models.CharField(max_length=30)
+
+    parliament_num_first = models.IntegerField()
+    parliament_num_last = models.IntegerField(null=True)
+    parliaments = models.ManyToManyField('Parliament', related_name='parties')
+
+    party_xml_id = models.IntegerField()
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['parliament_num_first']
+

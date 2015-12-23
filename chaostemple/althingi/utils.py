@@ -185,7 +185,7 @@ def get_last_parliament_num():
     return althingi_settings.CURRENT_PARLIAMENT_NUM  # Temporary, while we figure out a wholesome way to auto-detect
 
 
-def ensure_parliament(parliament_num):
+def update_parliament(parliament_num):
     parliament_num = parliament_num if parliament_num else get_last_parliament_num()
 
     if already_haves['parliaments'].has_key(parliament_num):
@@ -202,7 +202,7 @@ def ensure_parliament(parliament_num):
     return parliament
 
 
-def ensure_person(person_xml_id):
+def update_person(person_xml_id):
 
     if already_haves['persons'].has_key(person_xml_id):
         return already_haves['persons'][person_xml_id]
@@ -231,13 +231,13 @@ def ensure_person(person_xml_id):
     return person
 
 
-def ensure_committee(committee_xml_id, parliament_num=None):
+def update_committee(committee_xml_id, parliament_num=None):
 
     ah_key = '%d-%d' % (parliament_num, committee_xml_id)
     if already_haves['committees'].has_key(ah_key):
         return already_haves['committees'][ah_key]
 
-    parliament = ensure_parliament(parliament_num)
+    parliament = update_parliament(parliament_num)
 
     # This should be revisited when committees have their own, individual XML page
     def parse_committee_xml(xml_url):
@@ -300,7 +300,7 @@ def update_issues(parliament_num=None):
     Fetch a list of "recent" issues on Althingi and update our database accordingly.
     """
 
-    parliament = ensure_parliament(parliament_num)
+    parliament = update_parliament(parliament_num)
 
     issue_list_xml = minidom.parse(get_response(ISSUE_LIST_URL % parliament.parliament_num))
     issues_xml = issue_list_xml.getElementsByTagName(u'mál')
@@ -315,7 +315,7 @@ def update_issues(parliament_num=None):
 # NOTE: Only updates "A" issues, those with documents, reviews etc.
 def update_issue(issue_num, parliament_num=None):
 
-    parliament = ensure_parliament(parliament_num)
+    parliament = update_parliament(parliament_num)
 
     ah_key = '%d-%d' % (parliament.parliament_num, issue_num)
     if already_haves['issues'].has_key(ah_key):
@@ -563,7 +563,7 @@ def update_issue(issue_num, parliament_num=None):
             if len(committee_xml) > 0:
                 committee_xml_id = int(committee_xml[0].getAttribute('id'))
 
-                committee = ensure_committee(committee_xml_id, parliament.parliament_num)
+                committee = update_committee(committee_xml_id, parliament.parliament_num)
 
                 committee_partname_node = committee_xml[0].getElementsByTagName(u'hluti')[0].firstChild
 
@@ -589,7 +589,7 @@ def update_issue(issue_num, parliament_num=None):
                     person_xml_id = int(person_xml.getAttribute(u'id'))
                     order = int(person_xml.getAttribute(u'röð'))
 
-                    person = ensure_person(person_xml_id)
+                    person = update_person(person_xml_id)
 
                     subproposer_try = Proposer.objects.filter(parent=proposer, person=person)
                     if subproposer_try.count() > 0:
@@ -613,7 +613,7 @@ def update_issue(issue_num, parliament_num=None):
 
                     order = int(person_xml.getAttribute(u'röð'))
 
-                    person = ensure_person(person_xml_id)
+                    person = update_person(person_xml_id)
 
                     proposer_try = Proposer.objects.filter(document=doc, person=person)
                     if proposer_try.count() > 0:
@@ -741,7 +741,7 @@ def update_issue(issue_num, parliament_num=None):
 
 
 def update_docless_issue(issue_num, name, parliament_num=None):
-    parliament = ensure_parliament(parliament_num)
+    parliament = update_parliament(parliament_num)
 
     # Docless issue names can carry a lot of baggage if it's old data (around 116th parliament and earlier)
     name = name.strip()
@@ -778,7 +778,7 @@ def update_docless_issue(issue_num, name, parliament_num=None):
 
 def update_sessions(parliament_num=None, date_limit=None):
 
-    parliament = ensure_parliament(parliament_num)
+    parliament = update_parliament(parliament_num)
 
     if date_limit is not None:
         date_limit = sensible_datetime(date_limit)
@@ -805,7 +805,7 @@ def update_sessions(parliament_num=None, date_limit=None):
 
 def update_session(session_num, parliament_num=None):
 
-    parliament = ensure_parliament(parliament_num)
+    parliament = update_parliament(parliament_num)
 
     response = get_response(SESSION_AGENDA_URL % (parliament.parliament_num, session_num))
     session_full_xml = minidom.parse(response)
@@ -840,7 +840,7 @@ def update_next_sessions():
 
 def update_constituencies(parliament_num=None):
 
-    parliament = ensure_parliament(parliament_num)
+    parliament = update_parliament(parliament_num)
 
     ah_key = parliament.parliament_num
     if already_haves['constituencies'].has_key(ah_key):
@@ -931,7 +931,7 @@ def update_constituencies(parliament_num=None):
 
 def update_parties(parliament_num=None):
 
-    parliament = ensure_parliament(parliament_num)
+    parliament = update_parliament(parliament_num)
 
     ah_key = parliament.parliament_num
     if already_haves['parties'].has_key(ah_key):
@@ -1009,7 +1009,7 @@ def update_parties(parliament_num=None):
 
 def update_committee_agendas(parliament_num=None, date_limit=None):
 
-    parliament = ensure_parliament(parliament_num)
+    parliament = update_parliament(parliament_num)
 
     if date_limit is not None:
         date_limit = sensible_datetime(date_limit)
@@ -1035,7 +1035,7 @@ def update_next_committee_agendas(parliament_num=None):
 
 def update_committee_agenda(committee_agenda_xml_id, parliament_num=None):
 
-    parliament = ensure_parliament(parliament_num)
+    parliament = update_parliament(parliament_num)
 
     response = get_response(COMMITTEE_AGENDA_URL % committee_agenda_xml_id)
     try:
@@ -1053,8 +1053,8 @@ def _process_committee_agenda_xml(committee_agenda_xml):
     committee_agenda_xml_id = int(committee_agenda_xml.getAttribute(u'númer'))
     committee_xml_id = int(committee_agenda_xml.getElementsByTagName(u'nefnd')[0].getAttribute('id'))
 
-    parliament = ensure_parliament(parliament_num)
-    committee = ensure_committee(committee_xml_id, parliament_num)
+    parliament = update_parliament(parliament_num)
+    committee = update_committee(committee_xml_id, parliament_num)
 
     begins_xml = committee_agenda_xml.getElementsByTagName(u'hefst')[0]
     begins_datetime_xml = begins_xml.getElementsByTagName(u'dagurtími')
@@ -1177,7 +1177,7 @@ def _process_session_agenda_xml(session_xml):
     parliament_num = int(session_xml.getAttribute(u'þingnúmer'))
     session_num = int(session_xml.getAttribute(u'númer'))
 
-    parliament = ensure_parliament(parliament_num)
+    parliament = update_parliament(parliament_num)
 
     name = session_xml.getElementsByTagName(u'fundarheiti')[0].firstChild.nodeValue
 

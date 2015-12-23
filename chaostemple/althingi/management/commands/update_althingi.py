@@ -1,8 +1,6 @@
 
 from django.core.management.base import BaseCommand
 
-from althingi.utils import ensure_parliament
-
 from althingi.utils import update_committee_agenda
 from althingi.utils import update_committee_agendas
 from althingi.utils import update_constituencies
@@ -10,6 +8,7 @@ from althingi.utils import update_issues
 from althingi.utils import update_issue
 from althingi.utils import update_next_sessions
 from althingi.utils import update_next_committee_agendas
+from althingi.utils import update_parliament
 from althingi.utils import update_parties
 from althingi.utils import update_sessions
 from althingi.utils import update_session

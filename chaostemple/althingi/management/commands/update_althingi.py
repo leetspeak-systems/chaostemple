@@ -34,7 +34,7 @@ class Command(BaseCommand):
         print '  committee_agendas                 Updates committee agendas in default or specified parliament'
         print '  committee_agenda=<agenda_xml_id>  Updates committee agenda by XML ID (see Althingi\'s XML)'
         print '  constituencies                    Updates constituencies in default or specified parliament'
-        print '  all                               Updates issues, sessions and committee agendas in default or specified parliament'
+        print '  all                               Updates issues, sessions, parties, constituencies and committee agendas in default or specified parliament'
         print
         print 'Options:'
         print '  parliament=<parliament_num>       Specify parliament number (defaults to current)'

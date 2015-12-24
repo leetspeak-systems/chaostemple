@@ -137,11 +137,11 @@ class Command(BaseCommand):
 
             if 'all' in args:
                 has_run = True
-                update_issues(parliament_num)
-                update_sessions(parliament_num)
-                update_persons(parliament_num)
                 update_parties(parliament_num)
                 update_constituencies(parliament_num)
+                update_persons(parliament_num)
+                update_issues(parliament_num)
+                update_sessions(parliament_num)
                 update_committee_agendas(parliament_num)
         except AlthingiException as e:
             self.error(e)

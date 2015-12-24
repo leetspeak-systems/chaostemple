@@ -82,10 +82,17 @@ class Command(BaseCommand):
 
         try:
             has_run = False
-            if 'upcoming' in args:
+            if 'parties' in args:
                 has_run = True
-                update_next_sessions()
-                update_next_committee_agendas()
+                update_parties(parliament_num)
+
+            if 'constituencies' in args:
+                has_run = True
+                update_constituencies(parliament_num)
+
+            if 'persons' in args:
+                has_run = True
+                update_persons(parliament_num)
 
             if 'issues' in args:
                 has_run = True
@@ -123,17 +130,10 @@ class Command(BaseCommand):
                     self.error('Invalid committee XML-ID')
                 update_committee_agenda(agenda_xml_id, parliament_num)
 
-            if 'constituencies' in args:
+            if 'upcoming' in args:
                 has_run = True
-                update_constituencies(parliament_num)
-
-            if 'persons' in args:
-                has_run = True
-                update_persons(parliament_num)
-
-            if 'parties' in args:
-                has_run = True
-                update_parties(parliament_num)
+                update_next_sessions()
+                update_next_committee_agendas()
 
             if 'all' in args:
                 has_run = True

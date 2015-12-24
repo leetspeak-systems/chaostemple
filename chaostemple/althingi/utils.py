@@ -958,7 +958,10 @@ def update_constituencies(parliament_num=None):
             continue
 
         name = constituency_xml.getElementsByTagName(u'heiti')[0].childNodes[1].nodeValue
-        description = constituency_xml.getElementsByTagName(u'lýsing')[0].childNodes[1].nodeValue
+        try:
+            description = constituency_xml.getElementsByTagName(u'lýsing')[0].childNodes[1].nodeValue
+        except (AttributeError, IndexError):
+            description = ''
         abbreviation_short = abbreviations_xml.getElementsByTagName(u'stuttskammstöfun')[0].firstChild.nodeValue
         try:
             abbreviation_long = abbreviations_xml.getElementsByTagName(u'löngskammstöfun')[0].firstChild.nodeValue

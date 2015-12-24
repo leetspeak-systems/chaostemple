@@ -275,7 +275,10 @@ def update_seats(person_xml_id, parliament_num=None):
             seat_type = seat_xml.getElementsByTagName(u'tegund')[0].firstChild.nodeValue
 
             name_abbreviation = seat_xml.getElementsByTagName(u'skammstöfun')[0].firstChild.nodeValue
-            physical_seat_number = int(seat_xml.getElementsByTagName(u'þingsalssæti')[0].firstChild.nodeValue)
+            try:
+                physical_seat_number = int(seat_xml.getElementsByTagName(u'þingsalssæti')[0].firstChild.nodeValue)
+            except AttributeError:
+                physical_seat_number = None
 
             timing_in = sensible_datetime(seat_xml.getElementsByTagName(u'inn')[0].firstChild.nodeValue)
             try:

@@ -447,7 +447,7 @@ class Seat(models.Model):
     seat_type = models.CharField(max_length=20, choices=SEAT_TYPES)
 
     name_abbreviation = models.CharField(max_length=15, default="") # abbreviations may change by term
-    physical_seat_number = models.IntegerField(default=0) # This is where the MP physically sits, not his electoral seat
+    physical_seat_number = models.IntegerField(default=0, null=True) # This is where MP physically sits, not electoral seat
 
     timing_in = models.DateTimeField()
     timing_out = models.DateTimeField(null=True)

@@ -458,4 +458,7 @@ class Seat(models.Model):
     party = models.ForeignKey('Party', related_name='seats')
 
     def __unicode__(self):
-        return u'%s (%s)' % (self.person, self.timing_in)
+        if self.timing_out is None:
+            return u'%s (%s : ...)' % (self.person, self.timing_in.strftime('%Y-%m-%d'))
+        else:
+            return u'%s (%s : %s)' % (self.person, self.timing_in.strftime('%Y-%m-%d'), self.timing_out.strftime('%Y-%m-%d'))

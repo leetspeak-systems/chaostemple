@@ -204,6 +204,20 @@ def update_parliament(parliament_num):
     return parliament
 
 
+def update_persons(parliament_num=None):
+
+    parliament = update_parliament(parliament_num)
+
+    response = get_response(PERSONS_URL % parliament.parliament_num)
+    persons_full_xml = minidom.parse(response)
+
+    persons_xml = persons_full_xml.getElementsByTagName(u'þingmaður')
+
+    for person_xml in persons_xml:
+        person_xml_id = int(person_xml.getAttribute(u'id'))
+
+        update_person(person_xml_id, parliament.parliament_num)
+
 def update_person(person_xml_id, parliament_num=None):
 
     parliament = update_parliament(parliament_num)

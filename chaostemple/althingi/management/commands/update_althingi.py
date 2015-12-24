@@ -10,6 +10,7 @@ from althingi.utils import update_next_sessions
 from althingi.utils import update_next_committee_agendas
 from althingi.utils import update_parliament
 from althingi.utils import update_parties
+from althingi.utils import update_persons
 from althingi.utils import update_sessions
 from althingi.utils import update_session
 
@@ -30,11 +31,12 @@ class Command(BaseCommand):
         print '  issue=<issue_num>                 Updates an issue by issue number'
         print '  sessions                          Updates sessions in default or specified parliament'
         print '  session=<session_num>             Updates a particular session by session number'
+        print '  persons                           Updates persons (MPs) in default or specified parliament'
         print '  parties                           Updates parties in default or specified parliament'
         print '  committee_agendas                 Updates committee agendas in default or specified parliament'
         print '  committee_agenda=<agenda_xml_id>  Updates committee agenda by XML ID (see Althingi\'s XML)'
         print '  constituencies                    Updates constituencies in default or specified parliament'
-        print '  all                               Updates issues, sessions, parties, constituencies and committee agendas in default or specified parliament'
+        print '  all                               Updates issues, sessions, persons, parties, constituencies and committee agendas in default or specified parliament'
         print
         print 'Options:'
         print '  parliament=<parliament_num>       Specify parliament number (defaults to current)'
@@ -125,6 +127,10 @@ class Command(BaseCommand):
                 has_run = True
                 update_constituencies(parliament_num)
 
+            if 'persons' in args:
+                has_run = True
+                update_persons(parliament_num)
+
             if 'parties' in args:
                 has_run = True
                 update_parties(parliament_num)
@@ -133,6 +139,7 @@ class Command(BaseCommand):
                 has_run = True
                 update_issues(parliament_num)
                 update_sessions(parliament_num)
+                update_persons(parliament_num)
                 update_parties(parliament_num)
                 update_constituencies(parliament_num)
                 update_committee_agendas(parliament_num)

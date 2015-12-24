@@ -25,6 +25,7 @@ from althingi.models import Party
 from althingi.models import Person
 from althingi.models import Proposer
 from althingi.models import Review
+from althingi.models import Seat
 from althingi.models import Session
 from althingi.models import SessionAgendaItem
 
@@ -45,9 +46,9 @@ CONSTITUENCIES_URL = 'http://www.althingi.is/altext/xml/kjordaemi/?lthing=%d'
 SESSION_LIST_URL = 'http://www.althingi.is/altext/xml/thingfundir/?lthing=%d'
 SESSION_AGENDA_URL = 'http://www.althingi.is/altext/xml/dagskra/thingfundur/?lthing=%d&fundur=%d'
 SESSION_NEXT_AGENDA_URL = 'http://www.althingi.is/altext/xml/dagskra/thingfundur/'
-
 PERSONS_URL = 'http://www.althingi.is/altext/xml/thingmenn/?lthing=%d'
 PARLIAMENTARIAN_DETAILS_URL = 'http://www.althingi.is/altext/xml/thingmenn/thingmadur/thingseta/?nr=%d'
+SEATS_URL = 'http://www.althingi.is/altext/xml/thingmenn/thingmadur/thingseta/?nr=%d'
 
 '''
 already_haves
@@ -74,6 +75,7 @@ already_haves = {
     'parliaments': {},
     'parties': {},
     'persons': {},
+    'seats': {},
     'committees': {},
     'constituencies': {},
     'issues': {},
@@ -202,7 +204,9 @@ def update_parliament(parliament_num):
     return parliament
 
 
-def update_person(person_xml_id):
+def update_person(person_xml_id, parliament_num=None):
+
+    parliament = update_parliament(parliament_num)
 
     if already_haves['persons'].has_key(person_xml_id):
         return already_haves['persons'][person_xml_id]
@@ -228,7 +232,86 @@ def update_person(person_xml_id):
 
     already_haves['persons'][person_xml_id] = person
 
+    update_seats(person_xml_id, parliament.parliament_num)
+
     return person
+
+
+def update_seats(person_xml_id, parliament_num=None):
+
+    parliament = update_parliament(parliament_num)
+
+    ah_key = '%d-%d' % (parliament.parliament_num, person_xml_id)
+    if already_haves['seats'].has_key(ah_key):
+        return already_haves['seats'][ah_key]
+
+    update_constituencies(parliament.parliament_num)
+    update_parties(parliament.parliament_num)
+
+    response = get_response(SEATS_URL % person_xml_id)
+    seats_full_xml = minidom.parse(response)
+    seats_xml = seats_full_xml.getElementsByTagName(u'þingsetur')[0].getElementsByTagName(u'þingseta')
+
+    seats = []
+    for seat_xml in seats_xml:
+        seat_parliament_num = int(seat_xml.getElementsByTagName(u'þing')[0].firstChild.nodeValue)
+
+        if seat_parliament_num == parliament.parliament_num:
+            seat_type = seat_xml.getElementsByTagName(u'tegund')[0].firstChild.nodeValue
+
+            name_abbreviation = seat_xml.getElementsByTagName(u'skammstöfun')[0].firstChild.nodeValue
+            physical_seat_number = int(seat_xml.getElementsByTagName(u'þingsalssæti')[0].firstChild.nodeValue)
+
+            timing_in = sensible_datetime(seat_xml.getElementsByTagName(u'inn')[0].firstChild.nodeValue)
+            try:
+                timing_out = sensible_datetime(seat_xml.getElementsByTagName(u'út')[0].firstChild.nodeValue)
+            except AttributeError:
+                timing_out = None
+
+            constituency_xml_id = int(seat_xml.getElementsByTagName(u'kjördæmi')[0].getAttribute(u'id'))
+            constituency_mp_num = int(seat_xml.getElementsByTagName(u'kjördæmanúmer')[0].firstChild.nodeValue)
+
+            party_xml_id = int(seat_xml.getElementsByTagName(u'þingflokkur')[0].getAttribute(u'id'))
+
+            seat_try = Seat.objects.filter(
+                person__person_xml_id=person_xml_id,
+                parliament__parliament_num=parliament.parliament_num,
+                timing_in=timing_in
+            )
+            if seat_try.count() > 0:
+                seat = seat_try[0]
+
+                changed = False
+                if seat.timing_out != timing_out:
+                    seat.timing_out = timing_out
+                    changed = True
+
+                if changed:
+                    seat.save()
+                    print('Updated seat: %s' % seat)
+                else:
+                    print('Already have seat: %s' % seat)
+            else:
+                seat = Seat()
+                seat.person = Person.objects.get(person_xml_id=person_xml_id)
+                seat.parliament = parliament
+                seat.seat_type = seat_type
+                seat.name_abbreviation = name_abbreviation
+                seat.physical_seat_number = physical_seat_number
+                seat.timing_in = timing_in
+                seat.timing_out = timing_out
+                seat.constituency = Constituency.objects.get(constituency_xml_id=constituency_xml_id)
+                seat.constituency_mp_num = constituency_mp_num
+                seat.party = Party.objects.get(party_xml_id=party_xml_id)
+
+                seat.save()
+                print('Added seat: %s' % seat)
+
+            seats.append(seat)
+
+    already_haves['seats'][ah_key] = seats
+
+    return seats
 
 
 def update_committee(committee_xml_id, parliament_num=None):

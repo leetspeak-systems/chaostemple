@@ -398,16 +398,6 @@ class CommitteeAgendaItem(models.Model):
         ordering = ['order']
 
 
-class Parliamentarian(Person):
-    parliament_num = models.ForeignKey('Parliament')
-    seat_number = models.IntegerField(default=0)
-
-    # abbreviation is stored in a different place in the xml, and therefore could change by term
-    name_abbreviation = models.CharField(max_length=15, default="")
-    party = models.CharField(max_length=200, default="")
-    constituency = models.CharField(max_length=250, default="")
-
-
 class Party(models.Model):
     name = models.CharField(max_length=50)
     abbreviation_short = models.CharField(max_length=20)
@@ -444,3 +434,28 @@ class Constituency(models.Model):
     class Meta:
         ordering = ['name']
 
+
+class Seat(models.Model):
+    SEAT_TYPES = (
+        (u'þingmaður', u'þingmaður'),
+        (u'varamaður', u'varamaður'),
+        (u'með varamann', u'með varamann'),
+    )
+
+    person = models.ForeignKey('Person', related_name='seats')
+    parliament = models.ForeignKey('Parliament', related_name='seats')
+    seat_type = models.CharField(max_length=20, choices=SEAT_TYPES)
+
+    name_abbreviation = models.CharField(max_length=15, default="") # abbreviations may change by term
+    physical_seat_number = models.IntegerField(default=0) # This is where the MP physically sits, not his electoral seat
+
+    timing_in = models.DateTimeField()
+    timing_out = models.DateTimeField(null=True)
+
+    constituency = models.ForeignKey('Constituency', related_name='seats')
+    constituency_mp_num = models.PositiveSmallIntegerField()
+
+    party = models.ForeignKey('Party', related_name='seats')
+
+    def __unicode__(self):
+        return u'%s (%s)' % (self.person, self.timing_in)

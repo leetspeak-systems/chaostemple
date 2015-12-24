@@ -8,6 +8,7 @@ import pytz
 import urllib2
 from datetime import date
 from datetime import datetime
+from django.db.models import Q
 from sys import stderr
 from sys import stdout
 from xml.dom import minidom
@@ -291,7 +292,7 @@ def update_seats(person_xml_id, parliament_num=None):
                 person__person_xml_id=person_xml_id,
                 parliament__parliament_num=parliament.parliament_num,
                 timing_in=timing_in
-            )
+            ).filter(Q(timing_out=timing_out) | Q(timing_out=None))
             if seat_try.count() > 0:
                 seat = seat_try[0]
 

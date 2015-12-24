@@ -1045,6 +1045,10 @@ def update_parties(parliament_num=None):
 
         party_xml_id = party_xml.getAttribute(u'id')
         name = party_xml.getElementsByTagName(u'heiti')[0].firstChild.nodeValue.strip()
+
+        if name == '':
+            continue
+
         abbreviation_short = abbreviations_xml.getElementsByTagName(u'stuttskammstöfun')[0].firstChild.nodeValue
         abbreviation_long = abbreviations_xml.getElementsByTagName(u'löngskammstöfun')[0].firstChild.nodeValue
 

@@ -4,9 +4,7 @@ from __future__ import print_function
 
 import errno
 import os
-import pytz
 import urllib2
-from datetime import date
 from datetime import datetime
 from django.db.models import Q
 from sys import stderr
@@ -31,6 +29,7 @@ from althingi.models import Session
 from althingi.models import SessionAgendaItem
 
 from althingi.exceptions import AlthingiException
+from althingi.datetimeutils import sensible_datetime
 
 from althingi import althingi_settings
 
@@ -103,25 +102,6 @@ def get_response(web_url):
         print('Error: Failed retrieving URL: %s' % web_url, file=stderr)
         quit(1)
 
-def sensible_datetime(value):
-
-    if value is None:
-        return None
-
-    if type(value) is date:
-        d = datetime(value.year, value.month, value.day, 0, 0, 0)
-    elif type(value) is datetime:
-        d = value
-    else:
-        try:
-            d = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S')
-        except ValueError:
-            try:
-                d = datetime.strptime(value, '%Y-%m-%d')
-            except ValueError:
-                d = datetime.strptime(value, '%d.%m.%Y')
-
-    return pytz.timezone('UTC').localize(d)
 
 def mkpath(path):
     try:

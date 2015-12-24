@@ -6,6 +6,7 @@ from django.utils import timezone
 from BeautifulSoup import BeautifulSoup
 import urllib
 
+from althingi.datetimeutils import format_date
 
 class SessionManager(models.Manager):
     def upcoming(self):
@@ -461,7 +462,7 @@ class Seat(models.Model):
         if self.timing_out is None:
             return u'%s (%s : ...)' % (self.person, self.timing_in.strftime('%Y-%m-%d'))
         else:
-            return u'%s (%s : %s)' % (self.person, self.timing_in.strftime('%Y-%m-%d'), self.timing_out.strftime('%Y-%m-%d'))
+            return u'%s (%s : %s)' % (self.person, format_date(self.timing_in), format_date(self.timing_out))
 
     class Meta:
         ordering = ['timing_in', 'timing_out']

@@ -462,3 +462,6 @@ class Seat(models.Model):
             return u'%s (%s : ...)' % (self.person, self.timing_in.strftime('%Y-%m-%d'))
         else:
             return u'%s (%s : %s)' % (self.person, self.timing_in.strftime('%Y-%m-%d'), self.timing_out.strftime('%Y-%m-%d'))
+
+    class Meta:
+        ordering = ['timing_in', 'timing_out']

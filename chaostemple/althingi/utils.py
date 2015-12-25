@@ -320,7 +320,7 @@ def update_committee(committee_xml_id, parliament_num=None):
 
     parliament = update_parliament(parliament_num)
 
-    # This should be revisited when committees have their own, individual XML page
+    # NOTE: This should be revisited when committees have their own, individual XML page
     def parse_committee_xml(xml_url):
         # Cache the XML document, so that we only need to retrieve it once per run
         if already_haves['xml'].has_key(xml_url):
@@ -340,11 +340,19 @@ def update_committee(committee_xml_id, parliament_num=None):
                 abbreviation_short = abbreviations_xml.getElementsByTagName(u'stuttskammstöfun')[0].firstChild.nodeValue
                 abbreviation_long = abbreviations_xml.getElementsByTagName(u'löngskammstöfun')[0].firstChild.nodeValue
 
-                committee_try = Committee.objects.filter(committee_xml_id=committee_xml_id, parliaments=parliament)
+                committee_try = Committee.objects.filter(committee_xml_id=committee_xml_id)
                 if committee_try.count() > 0:
                     committee = committee_try[0]
 
-                    print('Already have committee: %s' % committee)
+                    changed = False
+                    if parliament not in committee.parliaments.all():
+                        committee.parliaments.add(parliament)
+                        changed = True
+
+                    if changed:
+                        print('Updated committee: %s' % committee)
+                    else:
+                        print('Already have committee: %s' % committee)
                 else:
                     committee = Committee()
                     committee.name = name

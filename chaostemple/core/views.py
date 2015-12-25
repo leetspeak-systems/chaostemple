@@ -135,9 +135,10 @@ def parliament_session(request, parliament_num, session_num):
 
 def parliament_committees(request, parliament_num):
 
-    committees = Committee.objects.filter(parliaments__parliament_num=parliament_num).annotate(
-        agenda_count=Count('committee_agendas')
-    )
+    committees = Committee.objects.filter(parliaments__parliament_num=parliament_num)
+
+    for committee in committees:
+        committee.agenda_count = committee.committee_agendas.filter(parliament__parliament_num=parliament_num).count()
 
     ctx = {
         'committees': committees

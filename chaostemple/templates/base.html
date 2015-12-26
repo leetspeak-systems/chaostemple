@@ -129,6 +129,14 @@
                     </ul>
 
                     <ul class="nav navbar-nav pull-right">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans 'Lists' %} <span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="{% url 'parliament_issues' parliament_num %}">{% trans 'Issues' %}</a></li>
+                                <li><a href="{% url 'parliament_sessions' parliament_num %}">{% trans 'Parliamentary Sessions' %}</a></li>
+                                <li><a href="{% url 'parliament_committees' parliament_num %}">{% trans 'Committees' %}</a></li>
+                            </ul>
+                        </li>
                         {% if user.is_authenticated %}
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ user }} <span class="caret"></span></a>

@@ -211,12 +211,12 @@ def update_person(person_xml_id, parliament_num=None):
     name = person_xml.getElementsByTagName(u'nafn')[0].firstChild.nodeValue.strip()
     birthdate = person_xml.getElementsByTagName(u'fæðingardagur')[0].firstChild.nodeValue
 
-    person_try = Person.objects.filter(person_xml_id=person_xml_id)
-    if person_try.count() > 0:
-        person = person_try[0]
+    try:
+        person = Person.objects.get(person_xml_id=person_xml_id)
 
         print('Already have person: %s' % person)
-    else:
+
+    except Person.DoesNotExist:
         person = Person()
         person.name = name
         person.birthdate = birthdate
@@ -271,13 +271,12 @@ def update_seats(person_xml_id, parliament_num=None):
 
             party_xml_id = int(seat_xml.getElementsByTagName(u'þingflokkur')[0].getAttribute(u'id'))
 
-            seat_try = Seat.objects.filter(
-                person__person_xml_id=person_xml_id,
-                parliament__parliament_num=parliament.parliament_num,
-                timing_in=timing_in
-            ).filter(Q(timing_out=timing_out) | Q(timing_out=None))
-            if seat_try.count() > 0:
-                seat = seat_try[0]
+            try:
+                seat = Seat.objects.filter(
+                    person__person_xml_id=person_xml_id,
+                    parliament__parliament_num=parliament.parliament_num,
+                    timing_in=timing_in
+                ).get(Q(timing_out=timing_out) | Q(timing_out=None))
 
                 changed = False
                 if seat.timing_out != timing_out:
@@ -289,7 +288,8 @@ def update_seats(person_xml_id, parliament_num=None):
                     print('Updated seat: %s' % seat)
                 else:
                     print('Already have seat: %s' % seat)
-            else:
+
+            except Seat.DoesNotExist:
                 seat = Seat()
                 seat.person = Person.objects.get(person_xml_id=person_xml_id)
                 seat.parliament = parliament
@@ -340,9 +340,8 @@ def update_committee(committee_xml_id, parliament_num=None):
                 abbreviation_short = abbreviations_xml.getElementsByTagName(u'stuttskammstöfun')[0].firstChild.nodeValue
                 abbreviation_long = abbreviations_xml.getElementsByTagName(u'löngskammstöfun')[0].firstChild.nodeValue
 
-                committee_try = Committee.objects.filter(committee_xml_id=committee_xml_id)
-                if committee_try.count() > 0:
-                    committee = committee_try[0]
+                try:
+                    committee = Committee.objects.get(committee_xml_id=committee_xml_id)
 
                     changed = False
                     if parliament not in committee.parliaments.all():
@@ -353,7 +352,8 @@ def update_committee(committee_xml_id, parliament_num=None):
                         print('Updated committee: %s' % committee)
                     else:
                         print('Already have committee: %s' % committee)
-                else:
+
+                except Committee.DoesNotExist:
                     committee = Committee()
                     committee.name = name
                     committee.abbreviation_short = abbreviation_short
@@ -428,9 +428,8 @@ def update_issue(issue_num, parliament_num=None):
     description = issue_xml.getElementsByTagName(u'efnisgreining')[0].firstChild
     description = description.nodeValue.strip() if description != None else ''
 
-    issue_try = Issue.objects.filter(issue_num=issue_num, issue_group='A', parliament=parliament)
-    if issue_try.count() > 0:
-        issue = issue_try[0]
+    try:
+        issue = Issue.objects.get(issue_num=issue_num, issue_group='A', parliament=parliament)
 
         changed = False
         if issue.issue_type != issue_type:
@@ -450,7 +449,8 @@ def update_issue(issue_num, parliament_num=None):
             print('Updated issue: %s' % issue)
         else:
             print('Already have issue: %s' % issue)
-    else:
+
+    except Issue.DoesNotExist:
         issue = Issue()
         issue.issue_num = issue_num
         issue.issue_type = issue_type
@@ -513,9 +513,8 @@ def update_issue(issue_num, parliament_num=None):
         except AttributeError:
             media_coverage = ''
 
-        issue_summary_try = IssueSummary.objects.filter(issue_id=issue.id)
-        if issue_summary_try.count() > 0:
-            issue_summary = issue_summary_try[0]
+        try:
+            issue_summary = IssueSummary.objects.get(issue_id=issue.id)
 
             changed = False
             if issue_summary.purpose != purpose:
@@ -556,7 +555,7 @@ def update_issue(issue_num, parliament_num=None):
             else:
                 print('Already have issue summary for issue: %s' % issue)
 
-        else:
+        except IssueSummary.DoesNotExist:
             issue_summary = IssueSummary()
             issue_summary.issue_id = issue.id
             issue_summary.purpose = purpose
@@ -614,9 +613,8 @@ def update_issue(issue_num, parliament_num=None):
         elif lowest_doc_num > doc_num:
             lowest_doc_num = doc_num
 
-        doc_try = Document.objects.filter(doc_num=doc_num, issue=issue)
-        if doc_try.count() > 0:
-            doc = doc_try[0]
+        try:
+            doc = Document.objects.get(doc_num=doc_num, issue=issue)
 
             if not doc.html_filename or not doc.pdf_filename:
                 if not doc.html_filename:
@@ -626,7 +624,8 @@ def update_issue(issue_num, parliament_num=None):
                 doc.save()
 
             print('Already have document: %s' % doc)
-        else:
+
+        except Document.DoesNotExist:
 
             html_filename = maybe_download_document(path_html, parliament.parliament_num, issue_num)
             pdf_filename = maybe_download_document(path_pdf, parliament.parliament_num, issue_num)
@@ -663,12 +662,12 @@ def update_issue(issue_num, parliament_num=None):
 
                 committee_partname = committee_partname_node.nodeValue if committee_partname_node else ''
 
-                proposer_try = Proposer.objects.filter(document=doc, committee=committee, committee_partname=committee_partname)
-                if proposer_try.count() > 0:
-                    proposer = proposer_try[0]
+                try:
+                    proposer = Proposer.objects.get(document=doc, committee=committee, committee_partname=committee_partname)
 
                     print('Already have proposer: %s on document %s' % (proposer, doc))
-                else:
+
+                except Proposer.DoesNotExist:
                     proposer = Proposer()
                     proposer.committee = committee
                     proposer.committee_partname = committee_partname
@@ -684,12 +683,12 @@ def update_issue(issue_num, parliament_num=None):
 
                     person = update_person(person_xml_id)
 
-                    subproposer_try = Proposer.objects.filter(parent=proposer, person=person)
-                    if subproposer_try.count() > 0:
-                        subproposer = subproposer_try[0]
+                    try:
+                        subproposer = Proposer.objects.get(parent=proposer, person=person)
 
                         print('Already have sub-proposer: %s on committee %s' % (subproposer, committee))
-                    else:
+
+                    except Proposer.DoesNotExist:
                         subproposer = Proposer()
                         subproposer.person = person
                         subproposer.order = order
@@ -708,12 +707,12 @@ def update_issue(issue_num, parliament_num=None):
 
                     person = update_person(person_xml_id)
 
-                    proposer_try = Proposer.objects.filter(document=doc, person=person)
-                    if proposer_try.count() > 0:
-                        proposer = proposer_try[0]
+                    try:
+                        proposer = Proposer.objects.get(document=doc, person=person)
 
                         print('Already have proposer: %s on document %s' % (proposer, doc))
-                    else:
+
+                    except Proposer.DoesNotExist:
                         proposer = Proposer()
                         proposer.person = person
                         proposer.order = order
@@ -769,9 +768,8 @@ def update_issue(issue_num, parliament_num=None):
 
         path_pdf = pdf_paths_xml[0].firstChild.nodeValue
 
-        review_try = Review.objects.filter(log_num=log_num, issue=issue)
-        if review_try.count() > 0:
-            review = review_try[0]
+        try:
+            review = Review.objects.get(log_num=log_num, issue=issue)
 
             changed = False
             if review.sender_name != sender_name:
@@ -799,7 +797,8 @@ def update_issue(issue_num, parliament_num=None):
                 print('Updated review: %s' % review)
             else:
                 print('Already have review: %s' % review)
-        else:
+
+        except Review.DoesNotExist:
 
             pdf_filename = maybe_download_review(path_pdf, log_num, parliament.parliament_num, issue_num)
 
@@ -841,9 +840,8 @@ def update_docless_issue(issue_num, name, parliament_num=None):
     while name.find('  ') >= 0:
         name = name.replace('  ', ' ')
 
-    issue_try = Issue.objects.filter(issue_num=issue_num, issue_group='B', parliament__parliament_num=parliament.parliament_num)
-    if issue_try.count() > 0:
-        issue = issue_try[0]
+    try:
+        issue = Issue.objects.get(issue_num=issue_num, issue_group='B', parliament__parliament_num=parliament.parliament_num)
 
         changed = False
         if issue.name != name:
@@ -855,7 +853,8 @@ def update_docless_issue(issue_num, name, parliament_num=None):
             print('Updated docless issue: %s' % issue)
         else:
             print('Already have docless issue: %s' % issue)
-    else:
+
+    except Issue.DoesNotExist:
         issue = Issue()
         issue.issue_num = issue_num
         issue.issue_group = 'B'
@@ -970,9 +969,8 @@ def update_constituencies(parliament_num=None):
         except (AttributeError, IndexError):
             parliament_num_last = None
 
-        constituency_try = Constituency.objects.filter(constituency_xml_id=constituency_xml_id)
-        if constituency_try.count() > 0:
-            constituency = constituency_try[0]
+        try:
+            constituency = Constituency.objects.get(constituency_xml_id=constituency_xml_id)
 
             changed = False
             if constituency.name != name:
@@ -1003,9 +1001,9 @@ def update_constituencies(parliament_num=None):
                 print('Updated constituency: %s' % constituency)
             else:
                 print('Already have constituency: %s' % constituency)
-        else:
-            constituency = Constituency()
 
+        except Constituency.DoesNotExist:
+            constituency = Constituency()
             constituency.name = name
             constituency.description = description
             constituency.abbreviation_short = abbreviation_short
@@ -1057,9 +1055,8 @@ def update_parties(parliament_num=None):
         except (AttributeError, IndexError):
             parliament_num_last = None
 
-        party_try = Party.objects.filter(party_xml_id=party_xml_id)
-        if party_try.count() > 0:
-            party = party_try[0]
+        try:
+            party = Party.objects.get(party_xml_id=party_xml_id)
 
             changed = False
             if party.name != name:
@@ -1087,7 +1084,8 @@ def update_parties(parliament_num=None):
                 print('Updated party: %s' % party)
             else:
                 print('Already have party: %s' % party)
-        else:
+
+        except Party.DoesNotExist:
             party = Party()
 
             party.name = name
@@ -1183,12 +1181,8 @@ def _process_committee_agenda_xml(committee_agenda_xml):
     except (AttributeError, IndexError):
         timing_end = None
 
-    committee_agenda_try = CommitteeAgenda.objects.filter(
-        committee_agenda_xml_id=committee_agenda_xml_id,
-        parliament=parliament
-    )
-    if committee_agenda_try.count() > 0:
-        committee_agenda = committee_agenda_try[0]
+    try:
+        committee_agenda = CommitteeAgenda.objects.get(committee_agenda_xml_id=committee_agenda_xml_id, parliament=parliament)
 
         changed = False
         if committee_agenda.timing_start_planned != timing_start_planned:
@@ -1209,7 +1203,8 @@ def _process_committee_agenda_xml(committee_agenda_xml):
             print('Updated committee agenda: %s' % committee_agenda)
         else:
             print('Already have committee agenda: %s' % committee_agenda)
-    else:
+
+    except CommitteeAgenda.DoesNotExist:
         committee_agenda = CommitteeAgenda()
         committee_agenda.parliament = parliament
         committee_agenda.committee = committee
@@ -1241,9 +1236,8 @@ def _process_committee_agenda_xml(committee_agenda_xml):
             # It is assumed that issue_group will be 'A' (i.e. not 'B', which means an issue without documents)
             issue = update_issue(issue_num, issue_parliament_num)
 
-        item_try = CommitteeAgendaItem.objects.filter(order=order, committee_agenda=committee_agenda)
-        if item_try.count() > 0:
-            item = item_try[0]
+        try:
+            item = CommitteeAgendaItem.objects.get(order=order, committee_agenda=committee_agenda)
 
             changed = False
             if item.name != name:
@@ -1258,7 +1252,8 @@ def _process_committee_agenda_xml(committee_agenda_xml):
                 print('Update committee agenda item: %s' % item)
             else:
                 print('Already have committee agenda item: %s' % item)
-        else:
+
+        except CommitteeAgendaItem.DoesNotExist:
             item = CommitteeAgendaItem()
             item.committee_agenda = committee_agenda
             item.order = order
@@ -1296,9 +1291,8 @@ def _process_session_agenda_xml(session_xml):
     except AttributeError:
         timing_end = None
 
-    session_try = Session.objects.filter(session_num=session_num, parliament=parliament)
-    if session_try.count() > 0:
-        session = session_try[0]
+    try:
+        session = Session.objects.get(session_num=session_num, parliament=parliament)
 
         changed = False
         if session.timing_start_planned != timing_start_planned:
@@ -1316,7 +1310,8 @@ def _process_session_agenda_xml(session_xml):
             print('Updated session: %s' % session)
         else:
             print('Already have session: %s' % session)
-    else:
+
+    except Session.DoesNotExist:
         session = Session()
         session.parliament = parliament
         session.session_num = session_num
@@ -1366,9 +1361,8 @@ def _process_session_agenda_xml(session_xml):
         if order > max_order:
             max_order = order
 
-        item_try = SessionAgendaItem.objects.select_related('issue').filter(session_id=session.id, order=order)
-        if item_try.count() > 0:
-            item = item_try[0]
+        try:
+            item = SessionAgendaItem.objects.select_related('issue').get(session_id=session.id, order=order)
 
             changed = False
             if item.issue_id != issue.id:
@@ -1395,7 +1389,8 @@ def _process_session_agenda_xml(session_xml):
                 print('Updated session agenda item: %s' % item)
             else:
                 print('Already have session agenda item: %s' % item)
-        else:
+
+        except SessionAgendaItem.DoesNotExist:
             item = SessionAgendaItem()
             item.session = session
             item.order = order

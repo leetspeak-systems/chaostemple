@@ -6,7 +6,7 @@ from django.utils import timezone
 from BeautifulSoup import BeautifulSoup
 import urllib
 
-from althingi.datetimeutils import format_date
+from althingi.utils import format_date
 
 class SessionManager(models.Manager):
     def upcoming(self):

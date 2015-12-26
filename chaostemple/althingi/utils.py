@@ -650,14 +650,18 @@ def update_issue(issue_num, parliament_num=None):
 
             committee_xml = proposer_xml.getElementsByTagName(u'nefnd')
             if len(committee_xml) > 0:
-                committee_xml_id = int(committee_xml[0].getAttribute('id'))
+                # NOTE: This try/except should be removed once the XML is fixed and committees are displayer properly.
+                try:
+                    committee_xml_id = int(committee_xml[0].getAttribute('id'))
+                except ValueError:
+                    print('Warning! Document is missing committee ID in Parliament %d, issue %d, document %d! Assumed "sérnefnd". Tell the XML keeper!' % (parliament.parliament_num, issue.issue_num, doc.doc_num), file=stderr)
+                    committee_xml_id = Committee.objects.get(abbreviation_short='sn').committee_xml_id
 
                 committee = update_committee(committee_xml_id, parliament.parliament_num)
 
                 committee_partname_node = committee_xml[0].getElementsByTagName(u'hluti')[0].firstChild
 
                 committee_partname = committee_partname_node.nodeValue if committee_partname_node else ''
-                committee_name = committee_xml[0].getElementsByTagName(u'heiti')[0].firstChild.nodeValue
 
                 proposer_try = Proposer.objects.filter(document=doc, committee=committee, committee_partname=committee_partname)
                 if proposer_try.count() > 0:

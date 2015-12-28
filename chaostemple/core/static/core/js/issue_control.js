@@ -88,6 +88,7 @@ $(document).ready(function() {
             },
             done: function(data, textStatus) {
                 $('div[control="issue-container"][data-id=' + data.issue_id + ']').html(data.html_content);
+                $('li[control="bookmark-menu"]').loadBookmarks();
             }
         });
     });

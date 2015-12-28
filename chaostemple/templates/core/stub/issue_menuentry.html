@@ -3,6 +3,8 @@
 ({{ issue.issue_num}}) {{ issue.name|capfirst }}
 {% if issue.description %}
     <small>({{ issue.description }})</small>
+{% endif %}
+{% if issue.new_documents or issue.new_reviews %}
     &nbsp;
     {% if issue.new_documents %}
         <span class="label label-danger memo-count">{{ issue.new_documents }} {% trans 'new documents' %}</span>

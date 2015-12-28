@@ -135,6 +135,7 @@
                                 <li><a href="{% url 'parliament_issues' parliament_num %}">{% trans 'Issues' %}</a></li>
                                 <li><a href="{% url 'parliament_sessions' parliament_num %}">{% trans 'Parliamentary Sessions' %}</a></li>
                                 <li><a href="{% url 'parliament_committees' parliament_num %}">{% trans 'Committees' %}</a></li>
+                                <li><a href="{% url 'parliament_persons' parliament_num %}">{% trans 'Parliamentarians' %}</a></li>
                             </ul>
                         </li>
                         {% if user.is_authenticated %}

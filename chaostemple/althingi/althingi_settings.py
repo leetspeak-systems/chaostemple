@@ -9,4 +9,5 @@ DOWNLOAD_DOCUMENTS = False
 DOWNLOAD_REVIEWS = False
 
 ALTHINGI_ISSUE_URL = 'http://www.althingi.is/dba-bin/ferill.pl?ltg=%d&mnr=%d' # % (parliament_num, issue_num)
+ALTHINGI_PERSON_URL = 'http://www.althingi.is/altext/cv/is/?nfaerslunr=%d' # % person_xml_id
 

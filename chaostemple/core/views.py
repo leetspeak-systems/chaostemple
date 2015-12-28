@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
@@ -5,6 +6,7 @@ from django.db.models import Count
 from django.db.models import Prefetch
 from django.db.models import F
 from django.db.models import Q
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
@@ -20,6 +22,7 @@ from althingi.models import Committee
 from althingi.models import CommitteeAgenda
 from althingi.models import Document
 from althingi.models import Parliament
+from althingi.models import Person
 from althingi.models import Review
 from althingi.models import Session
 
@@ -172,6 +175,48 @@ def parliament_committee_agenda(request, parliament_num, committee_id, agenda_id
         'items': items,
     }
     return render(request, 'core/parliament_committee_agenda.html', ctx)
+
+def parliament_persons(request, parliament_num):
+
+    persons = Person.objects.filter(seats__parliament__parliament_num=parliament_num, seats__seat_type=u'þingmaður').distinct()
+    deputies = Person.objects.filter(seats__parliament__parliament_num=parliament_num, seats__seat_type=u'varamaður').distinct()
+
+    ctx = {
+        'persons': persons,
+        'deputies': deputies,
+    }
+    return render(request, 'core/parliament_persons.html', ctx)
+
+def person(request, slug, subslug=None):
+    # If no subslug is provided, we try to figure out who the person is and if we can't, we ask the user
+    if subslug is None:
+        persons = Person.objects.filter(slug=slug).order_by('-birthdate')
+        if persons.count() > 1:
+            return render(request, 'core/person_select_from_multiple.html', { 'persons': persons })
+        elif persons.count() == 1:
+            return redirect(reverse('person', args=(slug, persons[0].subslug)))
+        else:
+            raise Http404
+
+    # Both 'slug' and 'subslug' exist at this point
+    person = Person.objects.get(slug=slug, subslug=subslug)
+
+    seats = person.seats.select_related('parliament', 'party').all()
+
+    issues = Issue.objects.select_related('parliament').filter(
+        documents__proposers__person_id=person.id,
+        documents__proposers__order=1,
+        documents__is_main=True
+    ).order_by('-parliament__parliament_num')
+
+    IssueUtilities.populate_dossier_statistics(issues, request.user.id)
+
+    ctx = {
+        'person': person,
+        'seats': seats,
+        'issues': issues,
+    }
+    return render(request, 'core/person.html', ctx)
 
 @login_required
 def user_home(request, username):

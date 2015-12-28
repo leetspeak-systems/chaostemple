@@ -4,3 +4,4 @@ beautifulsoup
 django-registration-redux
 pytz
 django-model-utils
+unidecode

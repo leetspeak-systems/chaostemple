@@ -21,7 +21,11 @@
             <div class="proposers">
                 <strong>{% trans "Proposers" %}:</strong>
                 {% for proposer in document.proposers.all %}
-                    <a href="#">{{ proposer }}</a>{% if not forloop.last %}, {% endif %}
+                    {% if proposer.person %}
+                        <a href="{% url 'person' proposer.person.slug proposer.person.subslug %}">{{ proposer }}</a>{% if not forloop.last %}, {% endif %}
+                    {% else %}
+                        <a href="#">{{ proposer }}</a>{% if not forloop.last %}, {% endif %}
+                    {% endif %}
                 {% endfor %}
             </div>
         {% endif %}

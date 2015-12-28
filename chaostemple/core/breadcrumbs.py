@@ -67,5 +67,12 @@ def make_breadcrumbs(func_name, parliament_num, issue_num, session_num, committe
             committee_agenda.timing_start_planned
         )
 
+    if func_name == 'parliament_persons':
+        breadcrumbs = leave_breadcrumb(
+            breadcrumbs,
+            ('parliament_persons', parliament_num),
+            _('Parliamentarians')
+        )
+
     return breadcrumbs
 

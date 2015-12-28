@@ -11,6 +11,10 @@ urlpatterns = patterns('',
     url(r'^parliament/(?P<parliament_num>\d+)/committees/$', 'core.views.parliament_committees', name='parliament_committees'),
     url(r'^parliament/(?P<parliament_num>\d+)/committee/(?P<committee_id>\d+)/$', 'core.views.parliament_committee', name='parliament_committee'),
     url(r'^parliament/(?P<parliament_num>\d+)/committee/(?P<committee_id>\d+)/agenda/(?P<agenda_id>\d+)/$', 'core.views.parliament_committee_agenda', name='parliament_committee_agenda'),
+    url(r'^parliament/(?P<parliament_num>\d+)/persons/$', 'core.views.parliament_persons', name='parliament_persons'),
+
+    url(r'^person/(?P<slug>[A-Za-z\-]+)/$', 'core.views.person', name='person'),
+    url(r'^person/(?P<slug>[A-Za-z\-]+)/(?P<subslug>[A-Za-z0-9\-]+)/$', 'core.views.person', name='person'),
 
     url(r'^user/home/(?P<username>\w+)/$', 'core.views.user_home', name='user_home'),
     url(r'^parliament/(?P<parliament_num>\d+)/user/issues/bookmarked/$', 'core.views.user_issues_bookmarked', name='user_issues_bookmarked'),

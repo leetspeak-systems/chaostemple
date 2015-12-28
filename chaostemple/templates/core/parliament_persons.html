@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+
+    <h2>{% trans 'Parliamentarians' %}</h2>
+    <h3>{{ parliament_num }}. {% trans 'parliament' %}</h3>
+
+    <div class="row">
+        <div class="col-md-6">
+            <table class="table">
+                <tr>
+                    <th>{% trans 'Parliamentarians' %}</th>
+                </tr>
+                {% for person in persons %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'person' person.slug person.subslug %}">{{ person }}</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="col-md-6">
+            <table class="table">
+                <tr>
+                    <th>{% trans 'Deputies' %}</th>
+                </tr>
+                {% for person in deputies %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'person' person.slug person.subslug %}">{{ person }}</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+{% endblock %}

@@ -4,8 +4,10 @@ from __future__ import print_function
 
 from datetime import datetime
 from django.db.models import Q
+from django.template.defaultfilters import slugify
 from sys import stderr
 from sys import stdout
+from unidecode import unidecode
 from xml.dom import minidom
 from xml.parsers.expat import ExpatError
 
@@ -124,18 +126,90 @@ def update_person(person_xml_id, parliament_num=None):
 
     person_xml = minidom.parse(get_response(PERSON_URL % person_xml_id))
 
+    try:
+        facebook_url = person_xml.getElementsByTagName(u'facebook')[0].firstChild.nodeValue.strip()
+    except (AttributeError, IndexError):
+        facebook_url = None
+    try:
+        twitter_url = person_xml.getElementsByTagName(u'twitter')[0].firstChild.nodeValue.strip()
+    except (AttributeError, IndexError):
+        twitter_url = None
+    try:
+        youtube_url = person_xml.getElementsByTagName(u'youtube')[0].firstChild.nodeValue.strip()
+    except (AttributeError, IndexError):
+        youtube_url = None
+    try:
+        blog_url = person_xml.getElementsByTagName(u'blogg')[0].firstChild.nodeValue.strip()
+    except (AttributeError, IndexError):
+        blog_url = None
+    try:
+        website_url = person_xml.getElementsByTagName(u'vefur')[0].firstChild.nodeValue.strip()
+    except (AttributeError, IndexError):
+        website_url = None
+
     name = person_xml.getElementsByTagName(u'nafn')[0].firstChild.nodeValue.strip()
-    birthdate = person_xml.getElementsByTagName(u'fæðingardagur')[0].firstChild.nodeValue
+    birthdate = sensible_datetime(person_xml.getElementsByTagName(u'fæðingardagur')[0].firstChild.nodeValue)
+
+    slug = slugify(unidecode(name))
+    subslug = 'f-%d' % birthdate.year
 
     try:
         person = Person.objects.get(person_xml_id=person_xml_id)
 
-        print('Already have person: %s' % person)
+        changed = False
+        if person.name != name:
+            person.name = name
+            changed = True
+
+        if sensible_datetime(person.birthdate) != birthdate:
+            person.birthdate = person.birthdate
+            changed = True
+
+        if person.facebook_url != facebook_url:
+            person.facebook_url = facebook_url
+            changed = True
+
+        if person.twitter_url != twitter_url:
+            person.twitter_url = twitter_url
+            changed = True
+
+        if person.youtube_url != youtube_url:
+            person.youtube_url = youtube_url
+            changed = True
+
+        if person.blog_url != blog_url:
+            person.blog_url = blog_url
+            changed = True
+
+        if person.website_url != website_url:
+            person.website_url = website_url
+            changed = True
+
+        if person.slug != slug:
+            person.slug = slug
+            changed = True
+
+        if person.subslug != subslug:
+            person.subslug = subslug
+            changed = True
+
+        if changed:
+            person.save()
+            print('Updated person: %s' % person)
+        else:
+            print('Already have person: %s' % person)
 
     except Person.DoesNotExist:
         person = Person()
         person.name = name
         person.birthdate = birthdate
+        person.facebook_url = facebook_url
+        person.twitter_url = twitter_url
+        person.youtube_url = youtube_url
+        person.blog_url = blog_url
+        person.website_url = website_url
+        person.slug = slug
+        person.subslug = subslug
         person.person_xml_id = person_xml_id
         person.save()
 

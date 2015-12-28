@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block javascript %}
+    <script language="javascript" type="text/javascript" src="{% static 'core/js/issue_control.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+    {% include 'core/dialog/dialog_delete_issue_dossiers.html' %}
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h4>
+                        {% include 'core/stub/link_althingi_person.html' with person_xml_id=person.person_xml_id %}
+                        <strong>{{ person }}</strong><br />
+                        <small>({% trans 'b.' %} {{ person.birthdate }})</small>
+                    </h4>
+                    {% if person.facebook_url %}
+                        <p>Facebook:<br />{{ person.facebook_url|urlize }}</p>
+                    {% endif %}
+                    {% if person.youtube_url %}
+                        <p>YouTube:<br />{{ person.youtube_url|urlize }}</p>
+                    {% endif %}
+                    {% if person.twitter_url %}
+                        <p>Twitter:<br />{{ person.twitter_url|urlize }}</p>
+                    {% endif %}
+                    {% if person.blog_url %}
+                        <p>Blogg:<br />{{ person.blog_url|urlize }}</p>
+                    {% endif %}
+                    {% if person.website_url %}
+                        <p>Vefur:<br />{{ person.website_url|urlize }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <h3>{% trans 'Seats' %}</h3>
+            <table class="table">
+                <tr>
+                    <th>{% trans 'Parliament' %}</th>
+                    <th>{% trans 'Time period' %}</th>
+                    <th>{% trans 'Party' %}</th>
+                    <th>{% trans 'Seat type' %}</th>
+                </tr>
+                {% for seat in seats reversed %}
+                    <tr>
+                        <td>{{ seat.parliament.parliament_num }}</td>
+                        <td>{{ seat.timing_in|date }} - {% if seat.timing_out %}{{ seat.timing_out|date }}{% else %}...{% endif %}</td>
+                        <td>{{ seat.party }}</td>
+                        <td>{{ seat.seat_type }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+    <h3>{% trans 'Issues' %}</h3>
+    {% for issue in issues %}
+        {% ifchanged issue.parliament.parliament_num %}
+            <h4>{{ issue.parliament.parliament_num }}. {% trans 'parliament' %}</h4>
+        {% endifchanged %}
+        {% include 'core/stub/issue.html' %}
+    {% empty %}
+        {% trans 'No issues found' %}
+    {% endfor %}
+
+{% endblock %}

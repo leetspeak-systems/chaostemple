@@ -313,10 +313,23 @@ class Person(models.Model):
     ssn = models.CharField(max_length=10)
     birthdate = models.DateField()
 
+    email = models.EmailField() # Absent in XML at the moment, so currently un-used
+    facebook_url = models.URLField(null=True)
+    twitter_url = models.URLField(null=True)
+    youtube_url = models.URLField(null=True)
+    blog_url = models.URLField(null=True)
+    website_url = models.URLField(null=True)
+
+    slug = models.CharField(max_length=100)
+    subslug = models.CharField(max_length=10, null=True)
+
     person_xml_id = models.IntegerField()
 
     def __unicode__(self):
         return u'%s' % self.name
+
+    class Meta:
+        ordering = ['name']
 
 
 class Session(models.Model):

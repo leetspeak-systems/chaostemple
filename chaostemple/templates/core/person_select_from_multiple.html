@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+
+    <h3>{% trans 'Which person do you mean?' %}</h3>
+
+    <ul class="nav nav-pills">
+        {% for person in persons %}
+            <li role="presentation"><a href="{% url 'person' person.slug person.subslug %}">{{ person }}, {% trans 'b.' %} {{ person.birthdate.year }}</a></li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}

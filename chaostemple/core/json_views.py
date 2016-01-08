@@ -2,7 +2,6 @@ import json
 
 from django.contrib.auth.decorators import login_required
 from django.db.models import Max
-from django.template import RequestContext
 from django.template.loader import render_to_string
 
 from althingi.models import SessionAgendaItem
@@ -58,7 +57,6 @@ def delete_dossier(request, dossier_id):
 @login_required
 @jsonize
 def delete_issue_dossiers(request, issue_id):
-    request_context = RequestContext(request)
 
     Dossier.objects.filter(issue_id=issue_id, user_id=request.user.id).delete()
     DossierStatistic.objects.filter(issue_id=issue_id, user_id=request.user.id).delete()
@@ -66,7 +64,7 @@ def delete_issue_dossiers(request, issue_id):
     issue = Issue.objects.select_related('parliament').get(id=issue_id)
     IssueUtilities.populate_dossier_statistics([issue], request.user.id)
 
-    bookmarked_issues = request_context['bookmarked_issues']
+    bookmarked_issues = request.extravars['bookmarked_issues']
 
     # Get session agenda item info to display with the issue HTML returned
     session_agenda_item_id = int(request.GET.get('session_agenda_item_id', 0) or 0)
@@ -112,11 +110,14 @@ def issue_bookmark_toggle(request, issue_id):
 @login_required
 @jsonize
 def issue_bookmark_menu(request):
-    request_context = RequestContext(request)
 
-    bookmarked_issues = request_context['bookmarked_issues']
+    bookmarked_issues = request.extravars['bookmarked_issues']
+    parliament_num = request.extravars['parliament_num']
 
-    html_content = render_to_string('core/stub/issue_bookmark_menuitems.html', {}, request_context)
+    html_content = render_to_string('core/stub/issue_bookmark_menuitems.html', {
+        'bookmarked_issues': bookmarked_issues,
+        'parliament_num': parliament_num
+    })
     bookmarked_issue_count = len(bookmarked_issues)
 
     ctx = {

@@ -84,6 +84,8 @@ class ExtraVarsMiddleware():
             'issue_num': issue_num,
             'breadcrumbs': make_breadcrumbs(view_func.func_name, parliament_num, issue_num, session_num, committee_id, agenda_id),
             'parliaments': parliaments,
+            'next_sessions': next_sessions,
+            'next_committee_agendas': next_committee_agendas,
             'bookmarked_issues': bookmarked_issues,
             'dossier_statistics_incoming': dossier_statistics_incoming,
             'urlname': view_func.func_name,

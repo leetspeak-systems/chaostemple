@@ -20,22 +20,40 @@
                         <small>({% trans 'b.' %} {{ person.birthdate }})</small>
                     </h4>
                     {% if person.email %}
-                        <p>{% trans 'Email address' %}:<br /><a href="mailto:{{ person.email }}">{{ person.email }}</a></p>
+                        <p>
+                            {% trans 'Email address' %}:<br />
+                            <a href="mailto:{{ person.email }}">{{ person.email }}</a>
+                        </p>
                     {% endif %}
                     {% if person.facebook_url %}
-                        <p>Facebook:<br />{{ person.facebook_url|urlize }}</p>
+                        <p>
+                            {% trans 'Facebook page' %}:<br />
+                            <a href="{{ person.facebook_url }}" target="_blank">{{ person.facebook_url }}</a>
+                        </p>
                     {% endif %}
                     {% if person.youtube_url %}
-                        <p>YouTube:<br />{{ person.youtube_url|urlize }}</p>
+                        <p>
+                            {% trans 'YouTube channel' %}:<br />
+                            <a href="{{ person.youtube_url }}" target="_blank">{{ person.youtube_url }}</a>
+                        </p>
                     {% endif %}
                     {% if person.twitter_url %}
-                        <p>Twitter:<br />{{ person.twitter_url|urlize }}</p>
+                        <p>
+                            {% trans 'Twitter page' %}:<br />
+                            <a href="{{ person.twitter_url }}" target="_blank">{{ person.twitter_url }}</a>
+                        </p>
                     {% endif %}
                     {% if person.blog_url %}
-                        <p>Blogg:<br />{{ person.blog_url|urlize }}</p>
+                        <p>
+                            {% trans 'Blog site' %}:<br />
+                            <a href="{{ person.blog_url }}" target="_blank">{{ person.blog_url }}</a>
+                        </p>
                     {% endif %}
                     {% if person.website_url %}
-                        <p>Vefur:<br />{{ person.website_url|urlize }}</p>
+                        <p>
+                            {% trans 'Website' %}:<br />
+                            <a href="{{ person.website_url }}" target="_blank">{{ person.website_url }}</a>
+                        </p>
                     {% endif %}
                 </div>
             </div>

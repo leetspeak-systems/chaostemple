@@ -127,6 +127,14 @@ def update_person(person_xml_id, parliament_num=None):
     person_xml = minidom.parse(get_response(PERSON_URL % person_xml_id))
 
     try:
+        # For some unknown reason, an email address is given in two separate tags
+        email_xml = person_xml.getElementsByTagName(u'netfang')[0]
+        email_name = email_xml.getElementsByTagName(u'nafn')[0].firstChild.nodeValue.strip()
+        email_domain = email_xml.getElementsByTagName(u'lén')[0].firstChild.nodeValue.strip()
+        email = '%s@%s' % (email_name, email_domain)
+    except (AttributeError, IndexError):
+        email = None
+    try:
         facebook_url = person_xml.getElementsByTagName(u'facebook')[0].firstChild.nodeValue.strip()
     except (AttributeError, IndexError):
         facebook_url = None
@@ -163,6 +171,10 @@ def update_person(person_xml_id, parliament_num=None):
 
         if sensible_datetime(person.birthdate) != birthdate:
             person.birthdate = person.birthdate
+            changed = True
+
+        if person.email != email:
+            person.email = email
             changed = True
 
         if person.facebook_url != facebook_url:
@@ -203,6 +215,7 @@ def update_person(person_xml_id, parliament_num=None):
         person = Person()
         person.name = name
         person.birthdate = birthdate
+        person.email = email
         person.facebook_url = facebook_url
         person.twitter_url = twitter_url
         person.youtube_url = youtube_url

@@ -19,6 +19,9 @@
                         <strong>{{ person }}</strong><br />
                         <small>({% trans 'b.' %} {{ person.birthdate }})</small>
                     </h4>
+                    {% if person.email %}
+                        <p>{% trans 'Email address' %}:<br /><a href="mailto:{{ person.email }}">{{ person.email }}</a></p>
+                    {% endif %}
                     {% if person.facebook_url %}
                         <p>Facebook:<br />{{ person.facebook_url|urlize }}</p>
                     {% endif %}

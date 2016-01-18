@@ -313,7 +313,7 @@ class Person(models.Model):
     ssn = models.CharField(max_length=10)
     birthdate = models.DateField()
 
-    email = models.EmailField() # Absent in XML at the moment, so currently un-used
+    email = models.EmailField(null=True)
     facebook_url = models.URLField(null=True)
     twitter_url = models.URLField(null=True)
     youtube_url = models.URLField(null=True)

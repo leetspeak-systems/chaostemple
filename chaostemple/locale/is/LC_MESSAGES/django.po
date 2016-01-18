@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-28 19:26+0000\n"
+"POT-Creation-Date: 2016-01-18 20:52+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -26,14 +26,14 @@ msgstr "Musteri Glundroðans"
 #: templates/core/parliament_issue.html:32
 #: templates/core/parliament_issue.html:75
 #: templates/core/parliament_issue.html:90
-#: templates/core/parliament_persons.html:7 templates/core/person.html:57
+#: templates/core/parliament_persons.html:7 templates/core/person.html:85
 #: templates/core/stub/parliament_selection.html:5
 #: templates/core/stub/parliament_selection.html:12
 msgid "parliament"
 msgstr "þing"
 
 #: core/breadcrumbs.py:23 templates/base.html:135
-#: templates/core/parliament.html:8 templates/core/person.html:54
+#: templates/core/parliament.html:8 templates/core/person.html:82
 msgid "Issues"
 msgstr "Þingmál"
 
@@ -194,11 +194,11 @@ msgstr "Opnuð mál"
 msgid "Issues with new data"
 msgstr "Mál með nýjum gögnum"
 
-#: templates/base.html:108 templates/core/stub/issue_menuentry.html:8
+#: templates/base.html:108 templates/core/stub/issue_menuentry.html:10
 msgid "new documents"
 msgstr "ný þingskjöl"
 
-#: templates/base.html:111 templates/core/stub/issue_menuentry.html:11
+#: templates/base.html:111 templates/core/stub/issue_menuentry.html:13
 msgid "new reviews"
 msgstr "nýjar umsagnir"
 
@@ -381,32 +381,56 @@ msgstr "Upphafstími"
 msgid "End Timing"
 msgstr "Lokatími"
 
-#: templates/core/person.html:13
+#: templates/core/person.html:20
 #: templates/core/person_select_from_multiple.html:10
 msgid "b."
 msgstr "f."
 
-#: templates/core/person.html:34
+#: templates/core/person.html:24 templates/core/user_home.html:16
+msgid "Email address"
+msgstr "Netfang"
+
+#: templates/core/person.html:30
+msgid "Facebook page"
+msgstr "Facebook síða"
+
+#: templates/core/person.html:36
+msgid "YouTube channel"
+msgstr "YouTube rás"
+
+#: templates/core/person.html:42
+msgid "Twitter page"
+msgstr "Twitter síða"
+
+#: templates/core/person.html:48
+msgid "Blog site"
+msgstr "Blogg"
+
+#: templates/core/person.html:54
+msgid "Website"
+msgstr "Vefsíða"
+
+#: templates/core/person.html:62
 msgid "Seats"
 msgstr "Þingseta"
 
-#: templates/core/person.html:37
+#: templates/core/person.html:65
 msgid "Parliament"
 msgstr "Þing"
 
-#: templates/core/person.html:38
+#: templates/core/person.html:66
 msgid "Time period"
 msgstr "Tímabil"
 
-#: templates/core/person.html:39
+#: templates/core/person.html:67
 msgid "Party"
 msgstr "Flokkur"
 
-#: templates/core/person.html:40
+#: templates/core/person.html:68
 msgid "Seat type"
 msgstr "Tegund"
 
-#: templates/core/person.html:61
+#: templates/core/person.html:89
 msgid "No issues found"
 msgstr "Engin þingmál fundust"
 
@@ -474,10 +498,6 @@ msgstr "framhaldið"
 #: templates/core/user_home.html:12
 msgid "Username"
 msgstr "Notandanafn"
-
-#: templates/core/user_home.html:16
-msgid "Email address"
-msgstr "Netfang"
 
 #: templates/core/user_home.html:20
 msgid "Name"

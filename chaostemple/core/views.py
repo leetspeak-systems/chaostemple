@@ -71,7 +71,11 @@ def parliament_issue(request, parliament_num, issue_num):
             'dossiers__memos',
         ).filter(issue=issue)
 
-    issue = Issue.objects.get(parliament__parliament_num=parliament_num, issue_group='A', issue_num=issue_num)
+    issue = Issue.objects.select_related('parliament').get(
+        parliament__parliament_num=parliament_num,
+        issue_group='A',
+        issue_num=issue_num
+    )
     documents = get_prefetched_documents()
     reviews = get_prefetched_reviews()
 

@@ -2,10 +2,12 @@
 
 <div class="panel panel-default" control="review" data-id="{{ review.id }}">
     <div class="panel-body">
-        <div style="float: right;">
-            <a class="label label-default" href="{% url 'parliament_committee' review.issue.parliament.parliament_num review.committee.id %}">{{ review.committee|capfirst }}</a>
-            <span class="label label-default">{{ review.date_arrived|date }}</span>
-        </div>
+        {% if review.committee %}
+            <div style="float: right;">
+                <a class="label label-default" href="{% url 'parliament_committee' review.issue.parliament.parliament_num review.committee.id %}">{{ review.committee|capfirst }}</a>
+                <span class="label label-default">{{ review.date_arrived|date }}</span>
+            </div>
+        {% endif %}
         <div>
             <span class="glyphicon glyphicon-inbox"></span>
             <a class="title" href="{{ review.pdf_link }}" target="_blank">{{ review.sender_name }}</a>

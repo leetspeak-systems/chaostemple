@@ -761,9 +761,12 @@ def update_issue(issue_num, parliament_num=None):
         except AttributeError:
             date_sent = None
 
-        committee_xml_id = int(review_xml.getElementsByTagName(u'nefnd')[0].getAttribute(u'id'))
-        committee = update_committee(committee_xml_id, parliament.parliament_num)
-        committee_id = committee.id
+        try:
+            committee_xml_id = int(review_xml.getElementsByTagName(u'nefnd')[0].getAttribute(u'id'))
+            committee = update_committee(committee_xml_id, parliament.parliament_num)
+            committee_id = committee.id
+        except IndexError:
+            committee_id = None
 
         # sender_name can contain a lot of baggage if it's old data (around 116th parliament and earlir)
         sender_name = sender_name.strip()

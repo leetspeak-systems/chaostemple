@@ -69,7 +69,8 @@ def parliament_issue(request, parliament_num, issue_num):
         return Review.objects.prefetch_related(
             Prefetch('dossiers', queryset=Dossier.objects.filter(user_id=request.user.id)),
             'dossiers__memos',
-        ).select_related('committee', 'issue__parliament').filter(issue=issue)
+            'committee'
+        ).select_related('issue__parliament').filter(issue=issue)
 
     issue = Issue.objects.select_related('parliament').get(
         parliament__parliament_num=parliament_num,

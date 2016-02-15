@@ -6,7 +6,7 @@
     <h2>{% trans 'User Home' %}</h2>
 
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-4">
             <table class="table">
                 <tr>
                     <th>{% trans 'Username' %}</th>
@@ -14,11 +14,19 @@
                 </tr>
                 <tr>
                     <th>{% trans 'Email address' %}</th>
-                    <td>{{ home_user.email }}</td>
+                    <td><a href="mailto:{{ home_user.email }}">{{ home_user.email }}</a></td>
                 </tr>
                 <tr>
                     <th>{% trans 'Name' %}</th>
-                    <td>{{ home_user.name }}</td>
+                    <td>
+                        {% if home_user.userprofile.person %}
+                            {% with home_user.userprofile.person as person %}
+                                <a href="{% url 'person' person.slug person.subslug %}">{{ home_user.userprofile.name }}</a>
+                            {% endwith %}
+                        {% else %}
+                            {{ home_user.userprofile.name }}
+                        {% endif %}
+                    </td>
                 </tr>
             </table>
         </div>

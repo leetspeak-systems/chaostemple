@@ -39,6 +39,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='userprofile')
 
     name = models.CharField(max_length=100)
+    person = models.ForeignKey(Person, null=True, related_name='userprofile')
 
 class IssueBookmark(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='issue_bookmarks')

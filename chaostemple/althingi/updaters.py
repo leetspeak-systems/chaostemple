@@ -317,11 +317,11 @@ def update_seats(person_xml_id, parliament_num=None):
 
 def update_committee(committee_xml_id, parliament_num=None):
 
-    ah_key = '%d-%d' % (parliament_num, committee_xml_id)
+    parliament = update_parliament(parliament_num)
+
+    ah_key = '%d-%d' % (parliament.parliament_num, committee_xml_id)
     if already_haves['committees'].has_key(ah_key):
         return already_haves['committees'][ah_key]
-
-    parliament = update_parliament(parliament_num)
 
     # NOTE: This should be revisited when committees have their own, individual XML page
     def parse_committee_xml(xml_url):

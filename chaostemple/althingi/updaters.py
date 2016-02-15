@@ -761,6 +761,10 @@ def update_issue(issue_num, parliament_num=None):
         except AttributeError:
             date_sent = None
 
+        committee_xml_id = int(review_xml.getElementsByTagName(u'nefnd')[0].getAttribute(u'id'))
+        committee = update_committee(committee_xml_id, parliament.parliament_num)
+        committee_id = committee.id
+
         # sender_name can contain a lot of baggage if it's old data (around 116th parliament and earlir)
         sender_name = sender_name.strip()
         while sender_name.find('  ') >= 0:
@@ -777,6 +781,11 @@ def update_issue(issue_num, parliament_num=None):
             changed = False
             if review.sender_name != sender_name:
                 review.sender_name = sender_name
+                changed = True
+
+            changed = False
+            if review.committee_id != committee_id:
+                review.committee_id = committee_id
                 changed = True
 
             if review.review_type != review_type:
@@ -809,6 +818,7 @@ def update_issue(issue_num, parliament_num=None):
             review.issue = issue
             review.log_num = log_num
             review.sender_name = sender_name
+            review.committee_id = committee_id
             review.review_type = review_type
             review.date_arrived = date_arrived
             review.date_sent = date_sent

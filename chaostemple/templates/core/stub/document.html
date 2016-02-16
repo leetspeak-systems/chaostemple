@@ -31,7 +31,7 @@
         {% endif %}
     </div>
     {% for dossier in document.dossiers.all %}
-        <div class="panel-footer">
+        <div class="panel-footer" data-dossier-id="{{ dossier.id }}">
             {% include 'core/stub/dossier.html' %}
         </div>
     {% endfor %}

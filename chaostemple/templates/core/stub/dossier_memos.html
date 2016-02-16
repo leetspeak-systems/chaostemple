@@ -1,5 +1,5 @@
 
-<ul control="memo-list" data-dossier-id="{{ dossier_id }}" class="sortable" style="{% if memos.count == 0 %}display: none;{% endif %}">
+<ul control="memo-list" data-dossier-id="{{ dossier_id }}" {% if dossier.user == request.user %}class="sortable"{% endif %} style="{% if memos.count == 0 %}display: none;{% endif %}">
     {% for memo in memos %}
         <li control="memo-line" data-id="{{ memo.id }}">
             {% comment %}
@@ -11,12 +11,14 @@
             <table>
                 <tr>
                     <td>
-                        <div control="edit-memo-controls" data-id="{{ memo.id }}">
-                            <button control="delete-memo" data-id="{{ memo.id }}" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-remove"></span></button>
-                            <button control="edit-memo-button" data-id="{{ memo.id }}" data-dossier-id="{{ dossier_id }}" class="btn btn-xs btn-default">
-                                <span class="glyphicon glyphicon-edit"></span>
-                            </button>
-                        </div>
+                        {% if dossier.user == request.user %}
+                            <div control="edit-memo-controls" data-id="{{ memo.id }}">
+                                <button control="delete-memo" data-id="{{ memo.id }}" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-remove"></span></button>
+                                <button control="edit-memo-button" data-id="{{ memo.id }}" data-dossier-id="{{ dossier_id }}" class="btn btn-xs btn-default">
+                                    <span class="glyphicon glyphicon-edit"></span>
+                                </button>
+                            </div>
+                        {% endif %}
                     </td>
                     <td>
                         <span control="memo-content-container" data-id="{{ memo.id }}">&bullet; <span control="memo-content" data-id="{{ memo.id }}">{{ memo.content }}</span></span>

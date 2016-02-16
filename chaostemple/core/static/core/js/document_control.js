@@ -84,10 +84,10 @@ $(document).ready(function() {
             url: '/json/dossier/' + dossier_id + '/delete/',
             done: function(data, textStatus) {
                 if (data.document_id) {
-                    $('div[control="document"][data-id=' + data.document_id + '] .panel-footer').remove();
+                    $('div[control="document"][data-id=' + data.document_id + '] .panel-footer[data-dossier-id=' + dossier_id + ']').remove();
                 }
                 else if (data.review_id) {
-                    $('div[control="review"][data-id=' + data.review_id + '] .panel-footer').remove();
+                    $('div[control="review"][data-id=' + data.review_id + '] .panel-footer[data-dossier-id=' + dossier_id + ']').remove();
                 }
             }
         });

@@ -59,16 +59,20 @@ def parliament_issue(request, parliament_num, issue_num):
 
     def get_prefetched_documents():
         return Document.objects.prefetch_related(
-            Prefetch('dossiers', queryset=Dossier.objects.filter(user_id=request.user.id)),
+            #Prefetch('dossiers', queryset=Dossier.objects.filter(user_id=request.user.id)),
+            Prefetch('dossiers', queryset=Dossier.objects.all()),
             'dossiers__memos',
+            'dossiers__user',
             'proposers__person',
             'proposers__committee',
         ).filter(issue=issue)
 
     def get_prefetched_reviews():
         return Review.objects.prefetch_related(
-            Prefetch('dossiers', queryset=Dossier.objects.filter(user_id=request.user.id)),
+            #Prefetch('dossiers', queryset=Dossier.objects.filter(user_id=request.user.id)),
+            Prefetch('dossiers', queryset=Dossier.objects.all()),
             'dossiers__memos',
+            'dossiers__user',
             'committee'
         ).select_related('issue__parliament').filter(issue=issue)
 
@@ -90,12 +94,12 @@ def parliament_issue(request, parliament_num, issue_num):
     reload_reviews = False
     if request.user.is_authenticated():
         for document in documents:
-            if document.dossiers.count() == 0:
+            if document.dossiers.filter(user=request.user).count() == 0:
                 Dossier(document=document, user=request.user).save(update_statistics=False)
                 reload_documents = True
 
         for review in reviews:
-            if review.dossiers.count() == 0:
+            if review.dossiers.filter(user=request.user).count() == 0:
                 Dossier(review=review, user=request.user).save(update_statistics=False)
                 reload_reviews = True
 

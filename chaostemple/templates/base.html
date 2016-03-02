@@ -19,6 +19,7 @@
 
         <!-- Bootstrap core CSS -->
         <link href="{% static 'core/js/bootstrap-3.3.0/css/bootstrap.min.css' %}" rel="stylesheet" />
+        <link href="{% static 'core/js/bootstrap-switch-3.3.2/css/bootstrap3/bootstrap-switch.min.css' %}" rel="stylesheet" />
 
         <!-- Custom styles for this template -->
         <link href="{% static 'core/css/chaostemple.css' %}" rel="stylesheet" />
@@ -176,15 +177,21 @@
 
         </div><!-- /.container -->
 
-        <script type="text/javascript" language="javascript">
-            // Constants required from server-side by JavaScript
-            USER_ID = {% if user.is_authenticated %}{{ user.id }}{% else %}0{% endif %};
-        </script>
-
         <script type="text/javascript" language="javascript" src="{% static 'core/js/jquery/jquery-2.1.1.min.js' %}"></script>
         <script type="text/javascript" language="javascript" src="{% static 'core/js/jquery-ui-1.11.2/jquery-ui.min.js' %}"></script>
         <script type="text/javascript" language="javascript" src="{% static 'core/js/bootstrap-3.3.0/js/bootstrap.min.js' %}"></script>
+        <script type="text/javascript" language="javascript" src="{% static 'core/js/bootstrap-switch-3.3.2/js/bootstrap-switch.min.js' %}"></script>
         <script type="text/javascript" language="javascript" src="{% static 'core/js/chaostemple.js' %}"></script>
+
+        <script type="text/javascript" language="javascript">
+            // Constants required from server-side by JavaScript
+            USER_ID = {% if user.is_authenticated %}{{ user.id }}{% else %}0{% endif %};
+
+            $.fn.bootstrapSwitch.defaults.onText = '{% trans "Yes" %}';
+            $.fn.bootstrapSwitch.defaults.offText = '{% trans "No" %}';
+            $.fn.bootstrapSwitch.defaults.size = 'mini';
+        </script>
+
         {% block javascript %}{% endblock %}
 
         {% include_jsonizer %}

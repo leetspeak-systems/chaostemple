@@ -1,6 +1,7 @@
 # -*- coding: utf-8
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
 from model_utils import FieldTracker
@@ -16,7 +17,10 @@ class IssueUtilities():
 
     @staticmethod
     def populate_dossier_statistics(issues, user_id):
-        dossier_statistics = DossierStatistic.objects.select_related('user').all()
+        visible_user_ids = [a.user_id for a in Access.objects.filter(friend_id=user_id, full_access=True)]
+        dossier_statistics = DossierStatistic.objects.select_related('user').filter(
+            Q(user_id__in=visible_user_ids) | Q(user_id=user_id)
+        )
         for issue in issues:
             if issue is None:
                 continue
@@ -359,4 +363,12 @@ class Memo(models.Model):
 
     class Meta:
         ordering = ['order']
+
+
+class Access(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='access')
+    friend = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='friend_access')
+
+    full_access = models.BooleanField(default=False)
+    issues = models.ManyToManyField('Issue')
 

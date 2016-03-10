@@ -11,6 +11,7 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
 
+from core.models import Access
 from core.models import Dossier
 from core.models import DossierStatistic
 from core.models import Issue
@@ -57,10 +58,13 @@ def parliament_issue(request, parliament_num, issue_num):
     # NOTE: The use of these get_prefetched_* functions is to be revised when Django 1.8 is released.
     # Specifically, it is hoped that the .refresh_from_db() function introduced will be a good replacement.
 
+    visible_user_ids = [a.user_id for a in Access.objects.filter(friend_id=request.user.id, full_access=True)]
+
     def get_prefetched_documents():
         return Document.objects.prefetch_related(
-            #Prefetch('dossiers', queryset=Dossier.objects.filter(user_id=request.user.id)),
-            Prefetch('dossiers', queryset=Dossier.objects.all()),
+            Prefetch('dossiers', queryset=Dossier.objects.filter(
+                Q(user_id__in=visible_user_ids) | Q(user_id=request.user.id))
+            ),
             'dossiers__memos',
             'dossiers__user',
             'proposers__person',
@@ -69,8 +73,10 @@ def parliament_issue(request, parliament_num, issue_num):
 
     def get_prefetched_reviews():
         return Review.objects.prefetch_related(
-            #Prefetch('dossiers', queryset=Dossier.objects.filter(user_id=request.user.id)),
-            Prefetch('dossiers', queryset=Dossier.objects.all()),
+            Prefetch('dossiers', queryset=Dossier.objects.filter(
+                Q(user_id__in=visible_user_ids) | Q(user_id=request.user.id))
+            ),
+            #Prefetch('dossiers', queryset=Dossier.objects.all()),
             'dossiers__memos',
             'dossiers__user',
             'committee'
@@ -236,6 +242,18 @@ def user_home(request, username):
         'home_user': home_user,
     }
     return render(request, 'core/user_home.html', ctx)
+
+@login_required
+def user_access(request):
+
+    lookup_users = User.objects.exclude(id=request.user.id)
+    access_list = Access.objects.filter(user_id=request.user.id)
+
+    ctx = {
+        'lookup_users': lookup_users,
+        'access_list': access_list,
+    }
+    return render(request, 'core/user_access.html', ctx)
 
 @login_required
 def user_issues_bookmarked(request, parliament_num):

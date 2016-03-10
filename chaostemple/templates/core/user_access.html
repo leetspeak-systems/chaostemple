@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block javascript %}
+    <script language="javascript" type="text/javascript" src="{% static 'core/js/user_lookup.js' %}"></script>
+    <script language="javascript" type="text/javascript" src="{% static 'core/js/user_access.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+    {% include 'core/dialog/dialog_revoke_access_user.html' %}
+
+    <h2>{% trans 'Access' %}</h2>
+
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {% trans 'Add user' %}:
+                {% include 'core/stub/user_lookup.html' %}
+            </div>
+            <div class="panel-body" control="access-list">
+                {% include 'core/stub/user_access_list.html' %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+

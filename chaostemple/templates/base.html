@@ -144,6 +144,7 @@
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ user }} <span class="caret"></span></a>
                                 <ul class="dropdown-menu" role="menu">
                                     <li><a href="{% url 'user_home' user.username %}">{% trans 'User Home' %}</a></li>
+                                    <li><a href="{% url 'user_access' %}">{% trans 'Access' %}</a></li>
                                     <li class="divider"></li>
                                     <li><a href="{% url 'auth_logout' %}">{% trans "Logout" %}</a></li>
                                 </ul>

@@ -17,6 +17,7 @@ urlpatterns = patterns('',
     url(r'^person/(?P<slug>[A-Za-z\-]+)/(?P<subslug>[A-Za-z0-9\-]+)/$', 'core.views.person', name='person'),
 
     url(r'^user/home/(?P<username>\w+)/$', 'core.views.user_home', name='user_home'),
+    url(r'^user/access/$', 'core.views.user_access', name='user_access'),
     url(r'^parliament/(?P<parliament_num>\d+)/user/issues/bookmarked/$', 'core.views.user_issues_bookmarked', name='user_issues_bookmarked'),
     url(r'^user/issues/incoming/$', 'core.views.user_issues_incoming', name='user_issues_incoming'),
     url(r'^parliament/(?P<parliament_num>\d+)/user/issues/open/$', 'core.views.user_issues_open', name='user_issues_open'),
@@ -32,6 +33,9 @@ urlpatterns = patterns('',
 
     url(r'^json/bookmark/issue/toggle/(?P<issue_id>\d+)/$', 'core.json_views.issue_bookmark_toggle', name='json_issue_bookmark_toggle'),
     url(r'^json/bookmark/issue/menu/$', 'core.json_views.issue_bookmark_menu', name='json_issue_bookmark_menu'),
+
+    url(r'^json/user/access/grant/(?P<friend_id>\d+)/$', 'core.json_views.user_access_grant'),
+    url(r'^json/user/access/revoke/(?P<friend_id>\d+)/$', 'core.json_views.user_access_revoke'),
 )
 
 handler500 = 'core.views.error500'

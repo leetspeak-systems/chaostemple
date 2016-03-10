@@ -6,6 +6,7 @@ from django.template.loader import render_to_string
 
 from althingi.models import SessionAgendaItem
 
+from core.models import Access
 from core.models import Document
 from core.models import Dossier
 from core.models import DossierStatistic
@@ -209,6 +210,47 @@ def sort_memos(request, dossier_id):
     ctx = {
         'html_content': html_content,
         'dossier_id': memo.dossier_id,
+    }
+    return ctx
+
+@login_required
+@jsonize
+def user_access_grant(request, friend_id):
+
+    try:
+        access = Access.objects.get(user_id=request.user.id, friend_id=friend_id)
+    except Access.DoesNotExist:
+        access = Access(user_id=request.user.id, friend_id=friend_id)
+
+    if request.GET.has_key('full_access'):
+        access.full_access = request.GET.get('full_access', False) == 'true'
+
+    access.save()
+
+    access_list = Access.objects.filter(user_id=request.user.id)
+
+    html_content = render_to_string('core/stub/user_access_list.html', { 'access_list': access_list })
+
+    ctx = {
+        'full_access': access.full_access,
+        'html_content': html_content,
+    }
+    return ctx
+
+@login_required
+@jsonize
+def user_access_revoke(request, friend_id):
+
+    access = Access.objects.get(user_id=request.user.id, friend_id=friend_id)
+
+    access.delete()
+
+    access_list = Access.objects.filter(user_id=request.user.id)
+
+    html_content = render_to_string('core/stub/user_access_list.html', { 'access_list': access_list })
+
+    ctx = {
+        'html_content': html_content,
     }
     return ctx
 

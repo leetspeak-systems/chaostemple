@@ -1,0 +1,20 @@
+{% load i18n %}
+
+<table class="table">
+    <tr>
+        <th>&nbsp;</th>
+        <th>{% trans 'User' %}</th>
+        <th style="text-align: right;">{% trans 'Full Access' %}</th>
+    </tr>
+    {% for access in access_list %}
+        <tr>
+            <td style="width: 1px;">
+                <button control="revoke-access-user" data-friend-id="{{ access.friend_id }}" data-friend-name="{{ access.friend }}" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-remove"></span></button>
+            </td>
+            <td>{{ access.friend }}</td>
+            <td style="text-align: right;">
+                <input type="checkbox" control="toggle-full-access" data-friend-id="{{ access.friend_id }}" {% if access.full_access %}checked="checked"{% endif %} />
+            </td>
+        </tr>
+    {% endfor %}
+</table>

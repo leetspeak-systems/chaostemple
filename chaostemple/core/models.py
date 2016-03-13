@@ -19,7 +19,7 @@ class IssueUtilities():
     def populate_dossier_statistics(issues, user_id):
         visible_user_ids = [a.user_id for a in Access.objects.filter(friend_id=user_id, full_access=True)]
         dossier_statistics = DossierStatistic.objects.select_related('user').filter(
-            Q(user_id__in=visible_user_ids) | Q(user_id=user_id)
+            Q(user_id__in=visible_user_ids) | Q(user_id=user_id), issue__in=issues
         )
         for issue in issues:
             if issue is None:

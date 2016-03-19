@@ -9,11 +9,16 @@
     {% for access in access_list %}
         <tr>
             <td style="width: 1px;">
-                <button control="revoke-access-user" data-friend-id="{{ access.friend_id }}" data-friend-name="{{ access.friend }}" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-remove"></span></button>
+                <button control="revoke-access-user" class="btn btn-xs btn-danger"
+                        data-friend-id="{{ access.friend_id }}"
+                        data-friend-name="{{ access.friend }}">
+                    <span class="glyphicon glyphicon-remove"></span>
+                </button>
             </td>
             <td>{{ access.friend }}</td>
             <td style="text-align: right;">
-                <input type="checkbox" control="toggle-full-access" data-friend-id="{{ access.friend_id }}" {% if access.full_access %}checked="checked"{% endif %} />
+                <input type="checkbox" control="toggle-full-access" {% if access.full_access %}checked="checked"{% endif %}
+                        data-friend-id="{{ access.friend_id }}"  />
             </td>
         </tr>
     {% endfor %}

@@ -247,7 +247,7 @@ def user_home(request, username):
 def user_access(request):
 
     lookup_users = User.objects.exclude(id=request.user.id)
-    access_list = Access.objects.filter(user_id=request.user.id)
+    access_list = Access.objects.select_related('friend').filter(user_id=request.user.id)
 
     ctx = {
         'lookup_users': lookup_users,

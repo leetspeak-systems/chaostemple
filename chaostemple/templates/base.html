@@ -198,7 +198,11 @@
 
             $(document).ready(function() {
                 // Make <select> items filterable with Select2 by default
-                $('select').select2();
+                $('select').select2({
+                    'language': {
+                        'noResults': function() { return "{% trans 'No results found' %}"; }
+                    }
+                });
             });
         </script>
 

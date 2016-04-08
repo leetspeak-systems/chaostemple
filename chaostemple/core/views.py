@@ -246,12 +246,17 @@ def user_home(request, username):
 @login_required
 def user_access(request):
 
-    lookup_users = User.objects.exclude(id=request.user.id)
-    access_list = Access.objects.select_related('friend').filter(user_id=request.user.id)
+    access_list = Access.objects.prefetch_related('issues__parliament').select_related('friend').filter(user_id=request.user.id)
+
+    parliaments = Parliament.objects.all()
+    issues = Issue.objects.filter(parliament__parliament_num=CURRENT_PARLIAMENT_NUM, issue_group='A')
+    users = User.objects.exclude(id=request.user.id)
 
     ctx = {
-        'lookup_users': lookup_users,
         'access_list': access_list,
+        'parliaments': parliaments,
+        'users': users,
+        'issues': issues,
     }
     return render(request, 'core/user_access.html', ctx)
 

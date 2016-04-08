@@ -2,8 +2,13 @@
 
 <table class="table">
     <tr>
-        <th>&nbsp;</th>
+        <th>
+            <button control="grant-access-issue" class="btn btn-xs btn-default">
+                <span class="glyphicon glyphicon-plus"></span>
+            </button>
+        </th>
         <th>{% trans 'User' %}</th>
+        <th>{% trans 'Issues' %}</th>
         <th style="text-align: right;">{% trans 'Full Access' %}</th>
     </tr>
     {% for access in access_list %}
@@ -15,11 +20,38 @@
                     <span class="glyphicon glyphicon-remove"></span>
                 </button>
             </td>
-            <td>{{ access.friend }}</td>
+            <td><strong>{{ access.friend }}</strong></td>
+            <td>
+                <button control="grant-access-issue" class="btn btn-xs btn-default"
+                        data-friend-id="{{ access.friend_id }}"
+                        data-friend-name="{{ access.friend }}">
+                    <span class="glyphicon glyphicon-plus"></span>
+                </button>
+
+                {{ access.issues.count }}
+                <!-- TODO: This should be aggregated in the database call -->
+            </td>
             <td style="text-align: right;">
                 <input type="checkbox" control="toggle-full-access" {% if access.full_access %}checked="checked"{% endif %}
                         data-friend-id="{{ access.friend_id }}"  />
             </td>
         </tr>
+        {% for issue in access.issues.all %}
+            <tr>
+                <td style="width: 1px;">
+                    <button control="revoke-access-issue" class="btn btn-xs btn-danger"
+                            data-friend-id="{{ access.friend_id }}"
+                            data-friend-name="{{ access.friend }}"
+                            data-issue-id="{{ issue.id }}"
+                            data-issue-name="{{ issue.name|capfirst }}{% if issue.description %} ({{ issue.description }}){% endif %}">
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </button>
+                </td>
+                <td colspan="3">
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    {% include 'core/stub/issue_small_micro.html' %}
+                </td>
+            </tr>
+        {% endfor %}
     {% endfor %}
 </table>

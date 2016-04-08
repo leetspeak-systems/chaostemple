@@ -1,0 +1,20 @@
+{% load i18n %}
+
+<div class="modal fade" control="revoke-access-issue-dialog" role="dialog">
+    <input type="hidden" id="revoke-access-issue-friend-id" value="0" />
+    <input type="hidden" id="revoke-access-issue-id" value="0" />
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p>{% blocktrans %}Are you sure you want to revoke this user's access to the corresponding issue?{% endblocktrans %}</p>
+                <p>{% trans 'User' %}: <em><span control="revoke-access-issue-friend-name">[friend]</span></em></p>
+                <p>{% trans 'Issue' %}: <em><span control="revoke-access-issue-name">[issue]</span></em></p>
+                <p><strong>{% trans 'This action cannot be undone.' %}</strong></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Cancel' %}</button>
+                <button type="button" class="btn btn-danger" control="revoke-access-issue-confirmed" data-id="0" data-dismiss="modal">{% trans 'Delete' %}</button>
+            </div>
+        </div>
+    </div>
+</div>

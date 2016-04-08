@@ -203,6 +203,9 @@
                         'noResults': function() { return "{% trans 'No results found' %}"; }
                     }
                 });
+
+                // Make checkboxes cool by default
+                $('input[type="checkbox"]').bootstrapSwitch();
             });
         </script>
 

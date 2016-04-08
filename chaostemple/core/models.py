@@ -1,4 +1,6 @@
 # -*- coding: utf-8
+import operator
+
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
@@ -17,14 +19,25 @@ class IssueUtilities():
 
     @staticmethod
     def populate_dossier_statistics(issues, user_id):
+
+        # Get dossier statistics from partial access given by other users
+        partial_conditions = []
+        dossier_statistics = DossierStatistic.objects.none()
+        for partial_access in Access.objects.filter(friend_id=user_id, full_access=False):
+            for issue in partial_access.issues.all():
+                partial_conditions.append(Q(user_id=partial_access.user_id) & Q(issue_id=issue.id))
+        if len(partial_conditions) > 0:
+            dossier_statistics = DossierStatistic.objects.select_related('user').filter(issue__in=issues).filter(
+                reduce(operator.or_, partial_conditions)
+            )
+
+        # Get dossier statistics from full access given by other users
         visible_user_ids = [a.user_id for a in Access.objects.filter(friend_id=user_id, full_access=True)]
-        dossier_statistics = DossierStatistic.objects.select_related('user').filter(
+        dossier_statistics = dossier_statistics | DossierStatistic.objects.select_related('user').filter(
             Q(user_id__in=visible_user_ids) | Q(user_id=user_id), issue__in=issues
         )
-        for issue in issues:
-            if issue is None:
-                continue
 
+        for issue in issues:
             for dossier_statistic in dossier_statistics:
                 if dossier_statistic.issue_id == issue.id:
                     if not hasattr(issue, 'dossier_statistics'):
@@ -372,3 +385,5 @@ class Access(models.Model):
     full_access = models.BooleanField(default=False)
     issues = models.ManyToManyField('Issue')
 
+    class Meta:
+        ordering = ['friend__username']

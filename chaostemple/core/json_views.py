@@ -2,6 +2,7 @@ import json
 
 from django.contrib.auth.decorators import login_required
 from django.db.models import Max
+from django.db.utils import IntegrityError
 from django.template.loader import render_to_string
 
 from althingi.models import SessionAgendaItem
@@ -52,6 +53,21 @@ def delete_dossier(request, dossier_id):
     ctx = {
         'document_id': document_id,
         'review_id': review_id,
+    }
+    return ctx
+
+@jsonize
+def list_issues(request, parliament_id):
+
+    issues = Issue.objects.filter(parliament_id=parliament_id, issue_group='A')
+
+    issue_list_json = []
+    for issue in issues:
+        issue_list_json.append({'id': issue.id, 'name': issue.__str__().capitalize() })
+
+    ctx = {
+        'parliament_id': parliament_id,
+        'issue_list': issue_list_json,
     }
     return ctx
 
@@ -215,7 +231,7 @@ def sort_memos(request, dossier_id):
 
 @login_required
 @jsonize
-def user_access_grant(request, friend_id):
+def user_access_grant(request, friend_id, issue_id=None):
 
     try:
         access = Access.objects.get(user_id=request.user.id, friend_id=friend_id)
@@ -227,7 +243,13 @@ def user_access_grant(request, friend_id):
 
     access.save()
 
-    access_list = Access.objects.filter(user_id=request.user.id)
+    try:
+        if issue_id is not None and not access.full_access:
+            access.issues.add(issue_id)
+    except IntegrityError:
+        pass
+
+    access_list = Access.objects.prefetch_related('issues__parliament').select_related('friend').filter(user_id=request.user.id)
 
     html_content = render_to_string('core/stub/user_access_list.html', { 'access_list': access_list })
 
@@ -239,13 +261,17 @@ def user_access_grant(request, friend_id):
 
 @login_required
 @jsonize
-def user_access_revoke(request, friend_id):
+def user_access_revoke(request, friend_id, issue_id=None):
 
     access = Access.objects.get(user_id=request.user.id, friend_id=friend_id)
 
-    access.delete()
+    if issue_id is None:
+        access.delete()
+    else:
+        issue_id = int(issue_id) # This should work or we should fail
+        access.issues.remove(issue_id)
 
-    access_list = Access.objects.filter(user_id=request.user.id)
+    access_list = Access.objects.prefetch_related('issues__parliament').select_related('friend').filter(user_id=request.user.id)
 
     html_content = render_to_string('core/stub/user_access_list.html', { 'access_list': access_list })
 

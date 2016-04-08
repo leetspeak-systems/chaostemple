@@ -1,0 +1,1 @@
+<small>({{ issue.issue_num }}/{{ issue.parliament.parliament_num }}): <a href="{% url 'parliament_issue' issue.parliament.parliament_num issue.issue_num %}">{{ issue.name|capfirst }}</a>{% if issue.description %} ({{ issue.description }}){% endif %}</small>

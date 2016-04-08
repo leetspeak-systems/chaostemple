@@ -24,6 +24,7 @@ urlpatterns = patterns('',
 
     url(r'^json/dossier/(?P<dossier_id>\d+)/fieldstate/(?P<fieldname>.+)/$', 'core.json_views.dossier_fieldstate', name='json_dossier_fieldstate'),
     url(r'^json/dossier/(?P<dossier_id>\d+)/delete/$', 'core.json_views.delete_dossier', name='json_delete_dossier'),
+    url(r'^json/issue/list/(?P<parliament_id>\d+)/$', 'core.json_views.list_issues', name='json_list_issues'),
     url(r'^json/issue/(?P<issue_id>\d+)/dossiers/delete/$', 'core.json_views.delete_issue_dossiers', name='json_delete_issue_dossiers'),
 
     url(r'^json/memo/(?P<dossier_id>\d+)/add/$', 'core.json_views.add_memo', name='json_add_memo'),
@@ -35,7 +36,9 @@ urlpatterns = patterns('',
     url(r'^json/bookmark/issue/menu/$', 'core.json_views.issue_bookmark_menu', name='json_issue_bookmark_menu'),
 
     url(r'^json/user/access/grant/(?P<friend_id>\d+)/$', 'core.json_views.user_access_grant'),
+    url(r'^json/user/access/grant/(?P<friend_id>\d+)/issue/(?P<issue_id>\d+)$', 'core.json_views.user_access_grant'),
     url(r'^json/user/access/revoke/(?P<friend_id>\d+)/$', 'core.json_views.user_access_revoke'),
+    url(r'^json/user/access/revoke/(?P<friend_id>\d+)/issue/(?P<issue_id>\d+)/$', 'core.json_views.user_access_revoke'),
 )
 
 handler500 = 'core.views.error500'

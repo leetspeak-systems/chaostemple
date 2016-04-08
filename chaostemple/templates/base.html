@@ -21,6 +21,9 @@
         <link href="{% static 'core/js/bootstrap-3.3.0/css/bootstrap.min.css' %}" rel="stylesheet" />
         <link href="{% static 'core/js/bootstrap-switch-3.3.2/css/bootstrap3/bootstrap-switch.min.css' %}" rel="stylesheet" />
 
+        <!-- Select2 CSS -->
+        <link href="{% static 'core/js/select2-4.0.2/dist/css/select2.min.css' %}" rel="stylesheet" />
+
         <!-- Custom styles for this template -->
         <link href="{% static 'core/css/chaostemple.css' %}" rel="stylesheet" />
 
@@ -182,6 +185,7 @@
         <script type="text/javascript" language="javascript" src="{% static 'core/js/jquery-ui-1.11.2/jquery-ui.min.js' %}"></script>
         <script type="text/javascript" language="javascript" src="{% static 'core/js/bootstrap-3.3.0/js/bootstrap.min.js' %}"></script>
         <script type="text/javascript" language="javascript" src="{% static 'core/js/bootstrap-switch-3.3.2/js/bootstrap-switch.min.js' %}"></script>
+        <script type="text/javascript" language="javascript" src="{% static 'core/js/select2-4.0.2/dist/js/select2.min.js' %}"></script>
         <script type="text/javascript" language="javascript" src="{% static 'core/js/chaostemple.js' %}"></script>
 
         <script type="text/javascript" language="javascript">
@@ -191,6 +195,11 @@
             $.fn.bootstrapSwitch.defaults.onText = '{% trans "Yes" %}';
             $.fn.bootstrapSwitch.defaults.offText = '{% trans "No" %}';
             $.fn.bootstrapSwitch.defaults.size = 'mini';
+
+            $(document).ready(function() {
+                // Make <select> items filterable with Select2 by default
+                $('select').select2();
+            });
         </script>
 
         {% block javascript %}{% endblock %}

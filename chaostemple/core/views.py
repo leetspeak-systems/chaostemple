@@ -182,7 +182,7 @@ def parliament_committee_agenda(request, parliament_num, committee_id, agenda_id
     agenda = committee.committee_agendas.get(id=agenda_id)
     items = agenda.committee_agenda_items.select_related('issue__parliament').all()
 
-    IssueUtilities.populate_dossier_statistics([i.issue for i in items], request.user.id)
+    IssueUtilities.populate_dossier_statistics(filter(None, [i.issue for i in items]), request.user.id)
 
     ctx = {
         'committee': committee,

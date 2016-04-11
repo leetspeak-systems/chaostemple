@@ -143,7 +143,7 @@ def parliament_session(request, parliament_num, session_num):
     session = Session.objects.get(parliament__parliament_num=parliament_num, session_num=session_num)
     agenda_items = session.agenda_items.select_related('issue__parliament').all()
 
-    IssueUtilities.populate_dossier_statistics((i.issue for i in agenda_items), request.user.id)
+    IssueUtilities.populate_dossier_statistics([i.issue for i in agenda_items], request.user.id)
 
     ctx = {
         'session': session,

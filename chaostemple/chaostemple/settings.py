@@ -40,6 +40,7 @@ INSTALLED_APPS = (
 # django_registration_redux settings
 ACCOUNT_ACTIVATION_DAYS = 1
 REGISTRATION_AUTO_LOGIN = True
+REGISTRATION_OPEN = False
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',

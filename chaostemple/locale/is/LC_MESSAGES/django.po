@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-08 20:09+0000\n"
+"POT-Creation-Date: 2016-04-17 12:59+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -216,6 +216,7 @@ msgid "Lists"
 msgstr "Listar"
 
 #: templates/base.html:149 templates/core/user_home.html:6
+#: templates/registration/password_change_done.html:11
 msgid "User Home"
 msgstr "Heimasvæði"
 
@@ -271,6 +272,7 @@ msgstr "Þessa aðgerð er ekki hægt að taka til baka."
 #: templates/core/dialog/dialog_grant_access_issue.html:48
 #: templates/core/dialog/dialog_revoke_access_issue.html:15
 #: templates/core/dialog/dialog_revoke_access_user.html:13
+#: templates/registration/password_change_form.html:12
 msgid "Cancel"
 msgstr "Hætta við"
 
@@ -559,6 +561,18 @@ msgstr "Notandanafn"
 #: templates/core/user_home.html:20
 msgid "Name"
 msgstr "Nafn"
+
+#: templates/core/user_home.html:34
+msgid "Change Password"
+msgstr "Breyta lykilorði"
+
+#: templates/registration/password_change_done.html:10
+msgid "Your password was successfully changed."
+msgstr "Lykilorði þínu var breytt."
+
+#: templates/registration/password_change_form.html:13
+msgid "OK"
+msgstr "Í lagi"
 
 #~ msgid "Proposal"
 #~ msgstr "Tillaga"

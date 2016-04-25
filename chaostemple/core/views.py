@@ -90,7 +90,7 @@ def parliament_issue(request, parliament_num, issue_num):
     documents = get_prefetched_documents()
     reviews = get_prefetched_reviews()
 
-    issue_sessions = Session.objects.select_related('parliament').filter(agenda_items__issue_id=issue.id)
+    issue_sessions = Session.objects.select_related('parliament').filter(session_agenda_items__issue_id=issue.id)
     issue_committee_agendas = CommitteeAgenda.objects.select_related(
         'parliament',
         'committee'
@@ -130,7 +130,7 @@ def parliament_issue(request, parliament_num, issue_num):
 def parliament_sessions(request, parliament_num):
 
     sessions = Session.objects.filter(parliament__parliament_num=parliament_num).annotate(
-        agenda_item_count=Count('agenda_items')
+        session_agenda_item_count=Count('session_agenda_items')
     )
 
     ctx = {
@@ -141,13 +141,13 @@ def parliament_sessions(request, parliament_num):
 def parliament_session(request, parliament_num, session_num):
 
     session = Session.objects.get(parliament__parliament_num=parliament_num, session_num=session_num)
-    agenda_items = session.agenda_items.select_related('issue__parliament').all()
+    session_agenda_items = session.session_agenda_items.select_related('issue__parliament').all()
 
-    IssueUtilities.populate_dossier_statistics([i.issue for i in agenda_items], request.user.id)
+    IssueUtilities.populate_dossier_statistics([i.issue for i in session_agenda_items], request.user.id)
 
     ctx = {
         'session': session,
-        'agenda_items': agenda_items,
+        'session_agenda_items': session_agenda_items,
     }
     return render(request, 'core/parliament_session.html', ctx)
 

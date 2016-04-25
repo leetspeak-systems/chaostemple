@@ -361,14 +361,14 @@ class SessionAgendaItem(models.Model):
         ('S', u'síðari umræða'),
     )
 
-    session = models.ForeignKey('Session', related_name='agenda_items')
+    session = models.ForeignKey('Session', related_name='session_agenda_items')
     order = models.IntegerField()
     discussion_type = models.CharField(max_length=1, choices=DISCUSSION_TYPES)
     discussion_continued = models.BooleanField(default=False)
     comment_type = models.CharField(max_length=1, null=True)
     comment_text = models.CharField(max_length=100, null=True)
     comment_description = models.CharField(max_length=100, null=True)
-    issue = models.ForeignKey('Issue', null=True, related_name='agenda_items')
+    issue = models.ForeignKey('Issue', null=True, related_name='session_agenda_items')
 
     def __unicode__(self):
         return u'%d. %s' % (self.order, self.issue)

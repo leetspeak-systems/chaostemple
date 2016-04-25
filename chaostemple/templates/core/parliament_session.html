@@ -22,8 +22,8 @@
     </h2>
 
     <div id="parliament-session-agenda">
-        {% for agenda_item in agenda_items %}
-            {% include 'core/stub/issue.html' with issue=agenda_item.issue agenda_item=agenda_item%}
+        {% for session_agenda_item in session_agenda_items %}
+            {% include 'core/stub/issue.html' with issue=session_agenda_item.issue session_agenda_item=session_agenda_item %}
         {% endfor %}
     </div>
 

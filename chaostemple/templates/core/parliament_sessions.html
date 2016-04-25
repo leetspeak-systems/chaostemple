@@ -25,7 +25,7 @@
                             {% endif %}
                         </td>
                         <td><a href="{% url 'parliament_session' parliament_num session.session_num %}">{{ session }}</a></td>
-                        <td class="text-right">{{ session.agenda_item_count }}</td>
+                        <td class="text-right">{{ session.session_agenda_item_count }}</td>
                         <td>
                             {% if session.timing_start %}
                                 {{ session.timing_start }}

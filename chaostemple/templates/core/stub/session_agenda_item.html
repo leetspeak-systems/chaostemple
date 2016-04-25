@@ -1,19 +1,19 @@
 {% load i18n %}
-{% if agenda_item %}
-    <div class="alert alert-info alert-small" control="agenda-item" data-id="{{ agenda_item.id }}">
-        <span class="subitem">{{ agenda_item.order }}. {% trans 'agenda item' %}</span>
-        {% if agenda_item.get_discussion_type_display %}
+{% if session_agenda_item %}
+    <div class="alert alert-info alert-small" control="agenda-item" data-id="{{ session_agenda_item.id }}">
+        <span class="subitem">{{ session_agenda_item.order }}. {% trans 'agenda item' %}</span>
+        {% if session_agenda_item.get_discussion_type_display %}
             <span class="subitem">
-                {{ agenda_item.get_discussion_type_display|capfirst }}
-                {% if agenda_item.discussion_continued %}
+                {{ session_agenda_item.get_discussion_type_display|capfirst }}
+                {% if session_agenda_item.discussion_continued %}
                     ({% trans 'continued' %})
                 {% endif %}
             </span>
         {% endif %}
-        {% if agenda_item.comment_text %}
+        {% if session_agenda_item.comment_text %}
             <span class="subitem">
                 <span class="glyphicon glyphicon-exclamation-sign"></span>
-                <strong>({{ agenda_item.comment_text }})</strong>
+                <strong>({{ session_agenda_item.comment_text }})</strong>
             </span>
         {% endif %}
     </div>

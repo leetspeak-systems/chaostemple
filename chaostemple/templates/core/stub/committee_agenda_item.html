@@ -1,9 +1,9 @@
-{% if item.issue_id %}
-    {% include 'core/stub/issue.html' with issue=item.issue %}
+{% if committee_agenda_item.issue_id %}
+    {% include 'core/stub/issue.html' with issue=committee_agenda_item.issue %}
 {% else %}
     <div class="panel panel-default">
         <div class="panel-body">
-            <strong>{{ item.name }}</strong>
+            <strong>{{ committee_agenda_item.name }}</strong>
         </div>
     </div>
 {% endif %}

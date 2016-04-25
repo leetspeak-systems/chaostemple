@@ -179,15 +179,15 @@ def parliament_committee(request, parliament_num, committee_id):
 def parliament_committee_agenda(request, parliament_num, committee_id, agenda_id):
 
     committee = Committee.objects.get(id=committee_id)
-    agenda = committee.committee_agendas.get(id=agenda_id)
-    items = agenda.committee_agenda_items.select_related('issue__parliament').all()
+    committee_agenda = committee.committee_agendas.get(id=agenda_id)
+    committee_agenda_items = committee_agenda.committee_agenda_items.select_related('issue__parliament').all()
 
-    IssueUtilities.populate_dossier_statistics(filter(None, [i.issue for i in items]), request.user.id)
+    IssueUtilities.populate_dossier_statistics(filter(None, [i.issue for i in committee_agenda_items]), request.user.id)
 
     ctx = {
         'committee': committee,
-        'agenda': agenda,
-        'items': items,
+        'committee_agenda': committee_agenda,
+        'committee_agenda_items': committee_agenda_items,
     }
     return render(request, 'core/parliament_committee_agenda.html', ctx)
 

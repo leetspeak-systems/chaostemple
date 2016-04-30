@@ -3,7 +3,11 @@
 
 <div control="issue-container" data-id="{{ issue.id }}">
     <div class="panel panel-default" control="issue">
-        {% include 'core/stub/session_agenda_item.html' %}
+        {% if session_agenda_item %}
+            {% include 'core/stub/session_agenda_item_header.html' %}
+        {% elif committee_agenda_item %}
+            {% include 'core/stub/committee_agenda_item_header.html' %}
+        {% endif %}
         {% if issue.issue_group == 'A' %}
             <div class="panel-body">
                 <p class="pull-right">

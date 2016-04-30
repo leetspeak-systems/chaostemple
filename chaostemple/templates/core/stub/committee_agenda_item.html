@@ -2,6 +2,7 @@
     {% include 'core/stub/issue.html' with issue=committee_agenda_item.issue %}
 {% else %}
     <div class="panel panel-default">
+        {% include 'core/stub/committee_agenda_item_header.html' %}
         <div class="panel-body">
             <strong>{{ committee_agenda_item.name }}</strong>
         </div>

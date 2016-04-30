@@ -211,6 +211,7 @@ class Document(models.Model):
         (u'stjórnartillaga', u'stjórnartillaga'),
         (u'svar', u'svar'),
         (u'þál. (samhlj.)', u'þingsályktunartillaga (samhljóða)'),
+        (u'þáltill. n.', u'þingsályktunartillaga nefndar'),
         (u'þál. í heild', u'þingsályktunartillaga í heild'),
         (u'þáltill.', u'þingsályktunartillaga'),
     )

@@ -65,14 +65,15 @@ def display_dossier_statistics(context, issue):
 
         last_user_id = 0
         for stat in issue.dossier_statistics:
+
+            if (user_count > 1 or stat.user_id != request.user.id) and last_user_id != stat.user_id:
+                content.append(template_user.render(Context({
+                    'statistic_user': stat.user
+                })))
+                last_user_id = stat.user_id
+
             for dossier_type, dossier_type_name in Dossier.DOSSIER_TYPES:
                 status_type_content = []
-
-                if (user_count > 1 or stat.user_id != request.user.id) and last_user_id != stat.user_id:
-                    content.append(template_user.render(Context({
-                        'statistic_user': stat.user
-                    })))
-                    last_user_id = stat.user_id
 
                 for status_type, status_type_name in Dossier.STATUS_TYPES:
                     fieldstate_content = []

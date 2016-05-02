@@ -131,6 +131,7 @@ class Dossier(models.Model):
         u'þál. (samhlj.)': ['support', 'proposal'],
         u'þál. í heild': ['support', 'proposal'],
         u'þáltill.': ['support', 'proposal'],
+        u'þáltill. n.': ['support', 'proposal'],
     }
 
     issue = models.ForeignKey(AlthingiIssue, related_name='dossiers')

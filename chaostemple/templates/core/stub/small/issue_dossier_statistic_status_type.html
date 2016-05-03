@@ -1,0 +1,8 @@
+<span style="white-space: nowrap;">
+{{ status_type_name }}
+{% for some_content in fieldstate_content %}
+    <span class="label label-{{ some_content.css_class }}"
+            data-toggle="tooltip"
+            title="{{ some_content.fieldstate_name }}: {{ some_content.count }}">{{ some_content.count }}</span>
+{% endfor %}
+</span>

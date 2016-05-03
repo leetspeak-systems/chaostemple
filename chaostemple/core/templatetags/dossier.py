@@ -44,7 +44,7 @@ def fieldstate_css(status_type=None, value=None):
         return fieldstate_css_dict
 
 @register.simple_tag(takes_context=True)
-def display_dossier_statistics(context, issue):
+def display_dossier_statistics(context, issue, size='normal'):
 
     request = context['request']
 
@@ -54,9 +54,15 @@ def display_dossier_statistics(context, issue):
     content = []
     if hasattr(issue, 'dossier_statistics'):
 
-        template_user = loader.get_template('core/stub/issue_dossier_statistic_user.html')
-        template_statistic = loader.get_template('core/stub/issue_dossier_statistic.html')
-        template_status_type = loader.get_template('core/stub/issue_dossier_statistic_status_type.html')
+        if size == 'small':
+            #template_user = loader.get_template('core/stub/small/issue_dossier_statistic_user.html')
+            template_user = None
+            template_statistic = loader.get_template('core/stub/small/issue_dossier_statistic.html')
+            template_status_type = loader.get_template('core/stub/small/issue_dossier_statistic_status_type.html')
+        elif size == 'normal':
+            template_user = loader.get_template('core/stub/issue_dossier_statistic_user.html')
+            template_statistic = loader.get_template('core/stub/issue_dossier_statistic.html')
+            template_status_type = loader.get_template('core/stub/issue_dossier_statistic_status_type.html')
 
         fieldstate_css_dict = fieldstate_css()
 
@@ -66,7 +72,7 @@ def display_dossier_statistics(context, issue):
         last_user_id = 0
         for stat in issue.dossier_statistics:
 
-            if (user_count > 1 or stat.user_id != request.user.id) and last_user_id != stat.user_id:
+            if (user_count > 1 or stat.user_id != request.user.id) and last_user_id != stat.user_id and template_user:
                 content.append(template_user.render(Context({
                     'statistic_user': stat.user
                 })))
@@ -119,6 +125,8 @@ def display_dossier_statistics(context, issue):
 
                 if status_type_content or new_count:
                     content.append(template_statistic.render(Context({
+                        'user_id': stat.user_id,
+                        'issue_id': issue.id,
                         'icon': icon,
                         'memo_count': memo_count,
                         'new_count': new_count,

@@ -27,6 +27,27 @@ jQuery.fn.extend({
 
 $(document).ready(function() {
 
+    $(document).on('click', 'a[control="toggle-user-dossier-statistics"]', function() {
+        var $this = $(this);
+        var user_id = $this.attr('data-user-id');
+        var issue_id = $this.attr('data-issue-id');
+
+        var $stats = $('div[control="issue-dossier-statistic"][data-issue-id=' + issue_id + ']');
+        var $buttons = $('a[control="toggle-user-dossier-statistics"][data-issue-id=' + issue_id + ']');
+
+        if ($this.hasClass('active')) {
+            $stats.filter('[data-user-id=' + user_id + ']').hide();
+            $buttons.filter('[data-user-id=' + user_id + ']').removeClass('active');
+        }
+        else {
+            $stats.filter('[data-user-id=' + user_id + ']').show();
+            $stats.filter('[data-user-id!=' + user_id + ']').hide();
+
+            $buttons.filter('[data-user-id=' + user_id + ']').addClass('active');
+            $buttons.filter('[data-user-id!=' + user_id + ']').removeClass('active');
+        }
+    });
+
     $(document).on('click', 'a[control="issue-bookmark"]', function() {
         issue_id = $(this).data('issue-id');
 

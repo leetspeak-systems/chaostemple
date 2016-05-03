@@ -1,0 +1,14 @@
+{% load i18n %}
+<div control="issue-dossier-statistic" class="small-issues"
+        data-user-id="{{ user_id }}"
+        data-issue-id="{{ issue_id }}">
+    <span class="glyphicon glyphicon-{{ icon }}"></span>:
+    {% if new_count %}
+        <span class="label label-danger memo-count">{{ new_count }}</span>
+    {% endif %}
+    {% if memo_count > 0 %}
+            <label><span class="glyphicon glyphicon-comment"></span></label>
+            <span class="label label-primary memo-count">{{ memo_count }}</span>
+    {% endif %}
+    {{ status_type_content }}
+</div>

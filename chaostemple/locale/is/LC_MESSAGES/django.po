@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-17 12:59+0000\n"
+"POT-Creation-Date: 2016-05-19 19:12+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -26,14 +26,14 @@ msgstr "Musteri Glundroðans"
 #: templates/core/parliament_issue.html:32
 #: templates/core/parliament_issue.html:75
 #: templates/core/parliament_issue.html:90
-#: templates/core/parliament_persons.html:7 templates/core/person.html:85
+#: templates/core/parliament_persons.html:7 templates/core/person.html:105
 #: templates/core/stub/parliament_selection.html:5
 #: templates/core/stub/parliament_selection.html:12
 msgid "parliament"
 msgstr "þing"
 
 #: core/breadcrumbs.py:23 templates/base.html:139
-#: templates/core/parliament.html:8 templates/core/person.html:82
+#: templates/core/parliament.html:8 templates/core/person.html:101
 #: templates/core/stub/user_access_list.html:11
 msgid "Issues"
 msgstr "Þingmál"
@@ -65,12 +65,12 @@ msgid "Parliamentarians"
 msgstr "Þingmenn"
 
 #: core/models.py:73 templates/core/parliament_issue.html:143
-#: templates/core/stub/issue.html:23
+#: templates/core/stub/issue.html:27
 msgid "Parliamentary Documents"
 msgstr "Þingskjöl"
 
 #: core/models.py:74 templates/core/parliament_issue.html:151
-#: templates/core/stub/issue.html:22
+#: templates/core/stub/issue.html:26
 msgid "Reviews"
 msgstr "Umsagnir"
 
@@ -321,7 +321,7 @@ msgid "Full Access"
 msgstr "Fullur aðgangur"
 
 #: templates/core/dialog/dialog_grant_access_issue.html:24
-#: templates/core/person.html:65
+#: templates/core/person.html:64 templates/core/person.html.py:82
 msgid "Parliament"
 msgstr "Þing"
 
@@ -359,11 +359,11 @@ msgstr "Liðir"
 msgid "Meeting"
 msgstr "Fundur"
 
-#: templates/core/parliament_committees.html:12
+#: templates/core/parliament_committees.html:12 templates/core/person.html:83
 msgid "Committee"
 msgstr "Nefnd"
 
-#: templates/core/parliament_issue.html:31 templates/core/stub/issue.html:10
+#: templates/core/parliament_issue.html:31 templates/core/stub/issue.html:14
 msgid "parliamentary issue"
 msgstr "þingmál"
 
@@ -473,29 +473,38 @@ msgstr "Blogg"
 msgid "Website"
 msgstr "Vefsíða"
 
-#: templates/core/person.html:62
+#: templates/core/person.html:61
 msgid "Seats"
 msgstr "Þingseta"
 
-#: templates/core/person.html:66
+#: templates/core/person.html:65 templates/core/person.html.py:84
 msgid "Time period"
 msgstr "Tímabil"
 
-#: templates/core/person.html:67
+#: templates/core/person.html:66
 msgid "Party"
 msgstr "Flokkur"
 
-#: templates/core/person.html:68
+#: templates/core/person.html:67 templates/core/person.html.py:85
 msgid "Seat type"
 msgstr "Tegund"
 
-#: templates/core/person.html:89
+#: templates/core/person.html:79
+msgid "Committee Seats"
+msgstr "Nefndasetur"
+
+#: templates/core/person.html:109
 msgid "No issues found"
 msgstr "Engin þingmál fundust"
 
 #: templates/core/person_select_from_multiple.html:6
 msgid "Which person do you mean?"
 msgstr "Hvaða einstakling áttu við?"
+
+#: templates/core/stub/committee_agenda_item_header.html:3
+#: templates/core/stub/session_agenda_item_header.html:3
+msgid "agenda item"
+msgstr "dagskrárliður"
 
 #: templates/core/stub/document.html:7
 msgid "parliamentary document"
@@ -509,7 +518,7 @@ msgstr "Flutningsmenn"
 msgid "Mark as New"
 msgstr "Merkja sem nýtt"
 
-#: templates/core/stub/issue.html:34
+#: templates/core/stub/issue.html:38
 msgid "Mark as Unopened"
 msgstr "Merkja sem óopnað"
 
@@ -546,11 +555,7 @@ msgstr "ný"
 msgid "new"
 msgstr "nýtt"
 
-#: templates/core/stub/session_agenda_item.html:4
-msgid "agenda item"
-msgstr "dagskrárliður"
-
-#: templates/core/stub/session_agenda_item.html:9
+#: templates/core/stub/session_agenda_item_header.html:8
 msgid "continued"
 msgstr "framhaldið"
 

@@ -76,6 +76,24 @@
                 {% endfor %}
             </table>
 
+            <h3>{% trans 'Committee Seats' %}</h3>
+            <table class="table">
+                <tr>
+                    <th>{% trans 'Parliament' %}</th>
+                    <th>{% trans 'Committee' %}</th>
+                    <th>{% trans 'Time period' %}</th>
+                    <th>{% trans 'Seat type' %}</th>
+                </tr>
+                {% for committee_seat in committee_seats reversed %}
+                    <tr>
+                        <td>{{ committee_seat.parliament.parliament_num }}</td>
+                        <td><a href="{% url 'parliament_committee' committee_seat.parliament.parliament_num committee_seat.committee_id %}">{{ committee_seat.committee|capfirst }}</a></td>
+                        <td>{{ committee_seat.timing_in|date }} - {% if committee_seat.timing_out %}{{ committee_seat.timing_out|date }}{% else %}...{% endif %}</td>
+                        <td>{{ committee_seat.committee_seat_type }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+
         </div>
         <div class="col-md-6">
 

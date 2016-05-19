@@ -217,6 +217,7 @@ def person(request, slug, subslug=None):
     person = Person.objects.get(slug=slug, subslug=subslug)
 
     seats = person.seats.select_related('parliament', 'party').all()
+    committee_seats = person.committee_seats.select_related('parliament', 'committee').all()
 
     issues = Issue.objects.select_related('parliament').filter(
         documents__proposers__person_id=person.id,
@@ -229,6 +230,7 @@ def person(request, slug, subslug=None):
     ctx = {
         'person': person,
         'seats': seats,
+        'committee_seats': committee_seats,
         'issues': issues,
     }
     return render(request, 'core/person.html', ctx)

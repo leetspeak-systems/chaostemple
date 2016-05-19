@@ -102,7 +102,7 @@ class Command(BaseCommand):
                     person_xml_id = int(args['person'])
                 except (TypeError, ValueError):
                     self.error('Invalid person XML-ID')
-                update_person(person_xml_id)
+                update_person(person_xml_id, parliament_num)
 
             if 'issues' in args:
                 has_run = True

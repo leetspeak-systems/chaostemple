@@ -594,7 +594,7 @@ def update_issue(issue_num, parliament_num=None):
         time_published = doc_xml.getElementsByTagName(u'útbýting')[0].firstChild.nodeValue + "+00:00"
 
         paths_xml = doc_xml.getElementsByTagName(u'slóð')
-        html_paths_xml = paths_xml[0].getElementsByTagName(u'html') 
+        html_paths_xml = paths_xml[0].getElementsByTagName(u'html')
         pdf_paths_xml = paths_xml[0].getElementsByTagName(u'pdf')
 
         if len(html_paths_xml) > 0:

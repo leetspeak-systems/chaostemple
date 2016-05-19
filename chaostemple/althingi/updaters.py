@@ -647,6 +647,7 @@ def update_issue(issue_num, parliament_num=None):
             print('Added document: %s' % doc)
 
         # Process proposers.
+        proposer_ids = []
         for proposer_xml in doc_xml.getElementsByTagName(u'flutningsmenn'):
             committeepart = None # Reset from possible previous iteration
 
@@ -679,7 +680,10 @@ def update_issue(issue_num, parliament_num=None):
 
                     print('Added proposer: %s to document %s' % (proposer, doc))
 
+                proposer_ids.append(proposer.id)
+
                 persons_xml = committee_xml[0].getElementsByTagName(u'flutningsmaður')
+                subproposer_ids = []
                 for person_xml in persons_xml:
                     person_xml_id = int(person_xml.getAttribute(u'id'))
                     order = int(person_xml.getAttribute(u'röð'))
@@ -700,6 +704,12 @@ def update_issue(issue_num, parliament_num=None):
 
                         print('Added sub-proposer: %s to committee %s' % (subproposer, committee))
 
+                    subproposer_ids.append(subproposer.id)
+
+                # Delete sub-proposers that no longer exist online.
+                for subproposer in Proposer.objects.filter(parent=proposer).exclude(id__in=subproposer_ids):
+                    subproposer.delete()
+                    print('Deleted non-existent sub-proposer: %s' % subproposer)
 
             else:
                 persons_xml = proposer_xml.getElementsByTagName(u'flutningsmaður')
@@ -723,6 +733,13 @@ def update_issue(issue_num, parliament_num=None):
                         proposer.save()
 
                         print('Added proposer: %s to document %s' % (proposer, doc))
+
+                    proposer_ids.append(proposer.id)
+
+        # Delete proposers that no longer exist online.
+        for proposer in Proposer.objects.filter(document=doc).exclude(id__in=proposer_ids):
+            proposer.delete()
+            print('Deleted non-existent proposer: %s' % proposer)
 
     # Delete local documents that no longer exist online.
     for document in Document.objects.filter(issue_id=issue.id).exclude(doc_num__in=doc_nums):
@@ -1424,4 +1441,3 @@ def _process_session_agenda_xml(session_xml):
         item.delete()
 
         print('Deleted session agenda item %s' % item)
-

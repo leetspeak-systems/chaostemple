@@ -480,3 +480,33 @@ class Seat(models.Model):
 
     class Meta:
         ordering = ['timing_in', 'timing_out']
+
+
+class CommitteeSeat(models.Model):
+    COMMITTEE_SEAT_TYPES = (
+        (u'nefndarmaður', u'nefndarmaður'),
+        (u'varamaður', u'varamaður'),
+        (u'kjörinn varamaður', u'kjörinn varamaður'),
+        (u'formaður', u'formaður'),
+        (u'1. varaformaður', u'1. varaformaður'),
+        (u'2. varaformaður', u'2. varaformaður'),
+        (u'áheyrnarfulltrúi', u'áheyrnarfulltrúi'),
+    )
+
+    person = models.ForeignKey('Person', related_name='committee_seats')
+    committee = models.ForeignKey('Committee', related_name='committee_seats')
+    parliament = models.ForeignKey('Parliament', related_name='committee_seats')
+    committee_seat_type = models.CharField(max_length=20, choices=COMMITTEE_SEAT_TYPES)
+    order = models.IntegerField()
+
+    timing_in = models.DateTimeField()
+    timing_out = models.DateTimeField(null=True)
+
+    def __unicode__(self):
+        if self.timing_out is None:
+            return u'%s (%s, %s : ...)' % (self.person, self.committee, format_date(self.timing_in))
+        else:
+            return u'%s (%s, %s : %s)' % (self.person, self.committee, format_date(self.timing_in), format_date(self.timing_out))
+
+    class Meta:
+        ordering = ['timing_in', 'timing_out']

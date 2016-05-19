@@ -39,7 +39,7 @@ class IssueUtilities():
 
         for issue in issues:
             for dossier_statistic in dossier_statistics:
-                if dossier_statistic.issue_id == issue.id:
+                if dossier_statistic.issue_id == issue.id and dossier_statistic.has_useful_info:
                     if not hasattr(issue, 'dossier_statistics'):
                         issue.dossier_statistics = []
                     issue.dossier_statistics.append(dossier_statistic)
@@ -251,6 +251,7 @@ class Dossier(models.Model):
 class DossierStatistic(models.Model):
     issue = models.ForeignKey(AlthingiIssue)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='dossier_statistics')
+    has_useful_info = models.BooleanField(default=False)
 
     document_attention_exclamation = models.IntegerField(default=0)
     document_attention_question = models.IntegerField(default=0)
@@ -291,6 +292,33 @@ class DossierStatistic(models.Model):
 
     review_count = models.IntegerField(default=0)
     review_memo_count = models.IntegerField(default=0)
+
+    def save(self, *args, **kwargs):
+        self.update_has_useful_info()
+        super(DossierStatistic, self).save(*args, **kwargs)
+
+    def update_has_useful_info(self):
+
+        if self.document_memo_count > 0 or self.review_memo_count > 0:
+            self.has_useful_info = True
+            return
+
+        if not self.has_useful_info:
+            for dossier_type, dossier_type_name in Dossier.DOSSIER_TYPES:
+                for status_type, status_type_name in Dossier.STATUS_TYPES:
+                    fieldstates = '%s_STATES' % status_type.upper()
+
+                    fieldstate_iterator = 0
+                    for fieldstate, fieldstate_name in getattr(Dossier, fieldstates):
+                        stat_field_name = '%s_%s_%s' % (dossier_type, status_type, fieldstate)
+                        if fieldstate_iterator > 0 and getattr(self, stat_field_name) > 0:
+                            self.has_useful_info = True
+                            return
+
+                        fieldstate_iterator = fieldstate_iterator + 1
+
+        self.has_useful_info = False
+        return
 
     def update_stats_quite_inefficiently_please(self):
         '''

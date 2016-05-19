@@ -60,7 +60,7 @@ class ExtraVarsMiddleware():
 
             # Get incoming things that the user has not yet seen
             dossier_statistics_incoming = DossierStatistic.objects.select_related('issue__parliament').filter(
-                Q(user_id=request.user.id, issue__parliament__parliament_num=parliament_num),
+                Q(user_id=request.user.id, has_useful_info=True, issue__parliament__parliament_num=parliament_num),
                 ~Q(
                     document_count=F('issue__document_count'),
                     review_count=F('issue__review_count')

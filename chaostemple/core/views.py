@@ -279,7 +279,11 @@ def user_issues_bookmarked(request, parliament_num):
 def user_issues_incoming(request):
 
     issues = Issue.objects.select_related('parliament').filter(
-        Q(dossierstatistic__user_id=request.user.id, parliament__parliament_num=request.extravars['parliament_num']),
+        Q(
+            dossierstatistic__user_id=request.user.id,
+            dossierstatistic__has_useful_info=True,
+            parliament__parliament_num=request.extravars['parliament_num']
+        ),
         ~Q(
             document_count=F('dossierstatistic__document_count'),
             review_count=F('dossierstatistic__review_count')
@@ -297,9 +301,9 @@ def user_issues_incoming(request):
 @login_required
 def user_issues_open(request, parliament_num):
 
-    issues = Issue.objects.select_related('parliament').annotate(dossier_count=Count('dossiers')).filter(
-        dossier_count__gt=0,
-        dossiers__user_id=request.user.id,
+    issues = Issue.objects.select_related('parliament').filter(
+        dossierstatistic__user_id=request.user.id,
+        dossierstatistic__has_useful_info=True,
         parliament__parliament_num=parliament_num
     ).order_by('issue_num')
 

@@ -140,7 +140,7 @@ def parliament_sessions(request, parliament_num):
 
 def parliament_session(request, parliament_num, session_num):
 
-    session = Session.objects.get(parliament__parliament_num=parliament_num, session_num=session_num)
+    session = get_object_or_404(Session, parliament__parliament_num=parliament_num, session_num=session_num)
     session_agenda_items = session.session_agenda_items.select_related('issue__parliament').all()
 
     IssueUtilities.populate_dossier_statistics([i.issue for i in session_agenda_items], request.user.id)

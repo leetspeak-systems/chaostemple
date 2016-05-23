@@ -121,6 +121,8 @@ def parliament_issue(request, parliament_num, issue_num):
             request.user.id,
             parliament_num
         )
+        # Also reload bookmarks menu (where incoming stuff is also displayed)
+        IssueUtilities.populate_dossier_statistics(request.extravars['bookmarked_issues'], request.user.id)
 
     ctx = {
         'issue': issue,

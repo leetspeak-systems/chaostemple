@@ -14,6 +14,7 @@ from django.shortcuts import render
 from core.models import Access
 from core.models import Dossier
 from core.models import DossierStatistic
+from core.models import DossierUtilities
 from core.models import Issue
 from core.models import IssueBookmark
 from core.models import IssueUtilities
@@ -109,10 +110,17 @@ def parliament_issue(request, parliament_num, issue_num):
                 Dossier(review=review, user=request.user).save(update_statistics=False)
                 reload_reviews = True
 
-    if reload_documents:
-        documents = get_prefetched_documents()
-    if reload_reviews:
-        reviews = get_prefetched_reviews()
+    if reload_documents or reload_reviews:
+        if reload_documents:
+            documents = get_prefetched_documents()
+        if reload_reviews:
+            reviews = get_prefetched_reviews()
+
+        # Reload incoming menu
+        request.extravars['dossier_statistics_incoming'] = DossierUtilities.get_incoming_dossier_statistics(
+            request.user.id,
+            parliament_num
+        )
 
     ctx = {
         'issue': issue,

@@ -12,6 +12,7 @@ from althingi.models import Parliament
 from althingi.models import Session
 
 from core.models import DossierStatistic
+from core.models import DossierUtilities
 from core.models import Issue
 from core.models import IssueUtilities
 
@@ -59,16 +60,7 @@ class ExtraVarsMiddleware():
             IssueUtilities.populate_dossier_statistics(bookmarked_issues, request.user.id)
 
             # Get incoming things that the user has not yet seen
-            dossier_statistics_incoming = DossierStatistic.objects.select_related('issue__parliament').filter(
-                Q(user_id=request.user.id, has_useful_info=True, issue__parliament__parliament_num=parliament_num),
-                ~Q(
-                    document_count=F('issue__document_count'),
-                    review_count=F('issue__review_count')
-                )
-            ).order_by('-issue__issue_num')
-            for stat in dossier_statistics_incoming:
-                stat.new_documents = stat.issue.document_count - stat.document_count
-                stat.new_reviews = stat.issue.review_count - stat.review_count
+            dossier_statistics_incoming = DossierUtilities.get_incoming_dossier_statistics(request.user.id, parliament_num)
 
         # Get parliaments, next sessions and next committees (we use this virtually always)
         parliaments = Parliament.objects.order_by('-parliament_num')

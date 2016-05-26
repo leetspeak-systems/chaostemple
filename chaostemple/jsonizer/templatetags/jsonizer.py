@@ -1,5 +1,6 @@
 from django import template
 from django.conf import settings
+from django.utils.safestring import mark_safe
 
 register = template.Library()
 
@@ -10,8 +11,8 @@ def include_jsonizer():
 
     content = template.loader.get_template('jsonizer/jsonizer.html')
 
-    ctx = template.Context({
+    ctx = {
         'JSONIZER_DEBUG': settings.JSONIZER_DEBUG,
-    })
+    }
 
-    return content.render(ctx)
+    return mark_safe(content.render(ctx))

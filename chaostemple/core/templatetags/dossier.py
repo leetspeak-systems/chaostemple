@@ -100,12 +100,12 @@ def display_dossier_statistics(context, issue, size='normal'):
                                 total_fieldstate_count += count
 
                     if fieldstate_content:
-                        status_type_content.append(template_status_type.render(Context({
+                        status_type_content.append(template_status_type.render({
                             'status_type': status_type,
                             'status_type_name': status_type_name,
                             'fieldstate_content': fieldstate_content,
                             'total_fieldstate_count': total_fieldstate_count,
-                        })))
+                        }))
 
                 # Determine icon
                 if dossier_type == 'document':
@@ -124,7 +124,7 @@ def display_dossier_statistics(context, issue, size='normal'):
                     new_count = issue_type_count - stat_type_count
 
                 if status_type_content or new_count:
-                    content.append(template_statistic.render(Context({
+                    content.append(template_statistic.render({
                         'user_id': stat.user_id,
                         'issue_id': issue.id,
                         'icon': icon,
@@ -133,9 +133,9 @@ def display_dossier_statistics(context, issue, size='normal'):
                         'dossier_type': dossier_type,
                         'dossier_type_name': dossier_type_name,
                         'status_type_content': mark_safe(''.join(status_type_content))
-                    })))
+                    }))
 
-    return ''.join(content)
+    return mark_safe(''.join(content))
 
 @register.filter
 def fieldstate_applicable(doc_type, fieldstate):

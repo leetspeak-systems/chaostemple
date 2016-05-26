@@ -318,24 +318,25 @@ class DossierStatistic(models.Model):
 
     def update_has_useful_info(self):
 
+        # Check this first and return, to not unnecessarily iterate through the fieldstates.
         if self.document_memo_count > 0 or self.review_memo_count > 0:
             self.has_useful_info = True
             return
 
-        if not self.has_useful_info:
-            for dossier_type, dossier_type_name in Dossier.DOSSIER_TYPES:
-                for status_type, status_type_name in Dossier.STATUS_TYPES:
-                    fieldstates = '%s_STATES' % status_type.upper()
+        for dossier_type, dossier_type_name in Dossier.DOSSIER_TYPES:
+            for status_type, status_type_name in Dossier.STATUS_TYPES:
+                fieldstates = '%s_STATES' % status_type.upper()
 
-                    fieldstate_iterator = 0
-                    for fieldstate, fieldstate_name in getattr(Dossier, fieldstates):
-                        stat_field_name = '%s_%s_%s' % (dossier_type, status_type, fieldstate)
-                        if fieldstate_iterator > 0 and getattr(self, stat_field_name) > 0:
-                            self.has_useful_info = True
-                            return
+                fieldstate_iterator = 0
+                for fieldstate, fieldstate_name in getattr(Dossier, fieldstates):
+                    stat_field_name = '%s_%s_%s' % (dossier_type, status_type, fieldstate)
+                    if fieldstate_iterator > 0 and getattr(self, stat_field_name) > 0:
+                        self.has_useful_info = True
+                        return
 
-                        fieldstate_iterator = fieldstate_iterator + 1
+                    fieldstate_iterator = fieldstate_iterator + 1
 
+        # If function hasn't already returned at this point, then nothing useful was found.
         self.has_useful_info = False
         return
 

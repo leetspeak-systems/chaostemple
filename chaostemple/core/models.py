@@ -46,19 +46,22 @@ class IssueUtilities():
             for issue in partial_access.issues.all():
                 partial_conditions.append(Q(user_id=partial_access.user_id) & Q(issue_id=issue.id))
         if len(partial_conditions) > 0:
-            dossier_statistics = DossierStatistic.objects.select_related('user').filter(issue__in=issues).filter(
-                reduce(operator.or_, partial_conditions)
-            )
+            dossier_statistics = DossierStatistic.objects.select_related('user').filter(
+                issue__in=issues,
+                has_useful_info=True
+            ).filter(reduce(operator.or_, partial_conditions))
 
         # Get dossier statistics from full access given by other users
         visible_user_ids = [a.user_id for a in Access.objects.filter(friend_id=user_id, full_access=True)]
         dossier_statistics = dossier_statistics | DossierStatistic.objects.select_related('user').filter(
-            Q(user_id__in=visible_user_ids) | Q(user_id=user_id), issue__in=issues
+            Q(user_id__in=visible_user_ids) | Q(user_id=user_id),
+            issue__in=issues,
+            has_useful_info=True
         )
 
         for issue in issues:
             for dossier_statistic in dossier_statistics:
-                if dossier_statistic.issue_id == issue.id and dossier_statistic.has_useful_info:
+                if dossier_statistic.issue_id == issue.id:
                     if not hasattr(issue, 'dossier_statistics'):
                         issue.dossier_statistics = []
                     issue.dossier_statistics.append(dossier_statistic)

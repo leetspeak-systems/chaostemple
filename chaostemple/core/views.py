@@ -100,21 +100,24 @@ def parliament_issue(request, parliament_num, issue_num):
     reload_documents = False
     reload_reviews = False
     if request.user.is_authenticated():
-        for document in documents:
-            if document.dossiers.filter(user=request.user).count() == 0:
-                Dossier(document=document, user=request.user).save(update_statistics=False)
-                reload_documents = True
+        statistic, c = DossierStatistic.objects.get_or_create(issue_id=issue.id, user_id=request.user.id)
 
-        for review in reviews:
-            if review.dossiers.filter(user=request.user).count() == 0:
-                Dossier(review=review, user=request.user).save(update_statistics=False)
-                reload_reviews = True
+        for document in Document.objects.filter(issue_id=issue.id).exclude(dossiers__user_id=request.user.id):
+            Dossier(document=document, user_id=request.user.id).save(input_statistic=statistic)
+            reload_documents = True
+
+        for review in Review.objects.filter(issue_id=issue.id).exclude(dossiers__user_id=request.user.id):
+            Dossier(review=review, user_id=request.user.id).save(input_statistic=statistic)
+            reload_reviews = True
 
     if reload_documents or reload_reviews:
         if reload_documents:
             documents = get_prefetched_documents()
         if reload_reviews:
             reviews = get_prefetched_reviews()
+
+        # Save previously collectec dossier statistics
+        statistic.save()
 
         # Reload incoming menu
         request.extravars['dossier_statistics_incoming'] = DossierUtilities.get_incoming_dossier_statistics(

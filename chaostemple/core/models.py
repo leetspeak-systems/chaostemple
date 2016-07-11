@@ -218,7 +218,7 @@ class Dossier(models.Model):
         setattr(statistic, fieldname, count)
 
 
-    def save(self, update_statistics=True, *args, **kwargs):
+    def save(self, input_statistic=None, *args, **kwargs):
         new = self.pk is None
 
         if self.document_id:
@@ -230,14 +230,18 @@ class Dossier(models.Model):
 
         super(Dossier, self).save(*args, **kwargs)
 
-        statistic, c = DossierStatistic.objects.get_or_create(issue_id=self.issue_id, user_id=self.user_id)
-        if update_statistics or True:
-            for field, old_value in self.tracker.changed().items():
-                self.update_statistic(statistic, field, old_value, getattr(self, field))
+        if input_statistic is None:
+            statistic, c = DossierStatistic.objects.get_or_create(issue_id=self.issue_id, user_id=self.user_id)
+        else:
+            statistic = input_statistic
 
-            if new:
-                self.update_counts(statistic, self.dossier_type)
+        for field, old_value in self.tracker.changed().items():
+            self.update_statistic(statistic, field, old_value, getattr(self, field))
 
+        if new:
+            self.update_counts(statistic, self.dossier_type)
+
+        if input_statistic is None:
             statistic.save()
 
 

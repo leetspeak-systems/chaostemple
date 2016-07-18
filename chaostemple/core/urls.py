@@ -26,7 +26,7 @@ urlpatterns = [
 
     url(r'^json/dossier/(?P<dossier_id>\d+)/fieldstate/(?P<fieldname>.+)/$', json_views.dossier_fieldstate, name='json_dossier_fieldstate'),
     url(r'^json/dossier/(?P<dossier_id>\d+)/delete/$', json_views.delete_dossier, name='json_delete_dossier'),
-    url(r'^json/issue/list/(?P<parliament_id>\d+)/$', json_views.list_issues, name='json_list_issues'),
+    url(r'^json/issue/list/(?P<parliament_num>\d+)/$', json_views.list_issues, name='json_list_issues'),
     url(r'^json/issue/(?P<issue_id>\d+)/dossiers/delete/$', json_views.delete_issue_dossiers, name='json_delete_issue_dossiers'),
 
     url(r'^json/memo/(?P<dossier_id>\d+)/add/$', json_views.add_memo, name='json_add_memo'),

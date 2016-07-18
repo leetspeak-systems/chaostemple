@@ -57,16 +57,16 @@ def delete_dossier(request, dossier_id):
     return ctx
 
 @jsonize
-def list_issues(request, parliament_id):
+def list_issues(request, parliament_num):
 
-    issues = Issue.objects.filter(parliament_id=parliament_id, issue_group='A')
+    issues = Issue.objects.filter(parliament__parliament_num=parliament_num, issue_group='A')
 
     issue_list_json = []
     for issue in issues:
         issue_list_json.append({'id': issue.id, 'name': issue.__str__().capitalize() })
 
     ctx = {
-        'parliament_id': parliament_id,
+        'parliament_num': parliament_num,
         'issue_list': issue_list_json,
     }
     return ctx

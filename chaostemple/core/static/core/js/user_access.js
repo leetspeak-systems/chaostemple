@@ -117,9 +117,9 @@ $(document).ready(function() {
         $issue_id.prop('disabled', state);
     });
 
-    $(document).on('change', 'select[control="grant-access-parliament-id"]', function() {
+    $(document).on('change', 'select[control="grant-access-parliament-num"]', function() {
         var $this = $(this);
-        var parliament_id = $this.val();
+        var parliament_num = $this.val();
         var $grant_access_issue = $('select[control="grant-access-issue-id"]');
 
         $grant_access_issue.select2('val', '');
@@ -130,7 +130,7 @@ $(document).ready(function() {
                 'success': 'Issue list fetched.',
                 'failure': 'Failed to fetch issue list!'
             },
-            url: '/json/issue/list/' + parliament_id + '/',
+            url: '/json/issue/list/' + parliament_num + '/',
             done: function(data, textStatus) {
                 var issue_list = data.issue_list;
 

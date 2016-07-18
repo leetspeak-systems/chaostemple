@@ -26,9 +26,9 @@
                         </tr>
                         <tr>
                             <td style="width: 1px;">
-                                <select control="grant-access-parliament-id">
+                                <select control="grant-access-parliament-num">
                                     {% for parliament in parliaments reversed %}
-                                        <option value="{{ parliament.id }}">{{ parliament.parliament_num }}</option>
+                                        <option value="{{ parliament.parliament_num }}">{{ parliament.parliament_num }}</option>
                                     {% endfor %}
                                 </select>
                             </td>

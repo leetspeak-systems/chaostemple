@@ -887,7 +887,7 @@ def update_issue(issue_num, parliament_num=None):
                 changed = True
 
             if sensible_datetime(review.date_arrived) != sensible_datetime(date_arrived):
-                review.date_arrive = date_arrived
+                review.date_arrived = date_arrived
                 changed = True
 
             if sensible_datetime(review.date_sent) != sensible_datetime(date_sent):

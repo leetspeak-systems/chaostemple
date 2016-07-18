@@ -7,21 +7,13 @@
             {% if user.is_authenticated %}
                 {% include 'core/stub/small/issue_bookmark.html' %}
             {% endif %}
-            | <small>{{ issue.get_issue_type_display|capfirst }}</small>
         </span>
 
         {{ issue.issue_num }}
-        | <a href="{% url 'parliament_issue' issue.parliament.parliament_num issue.issue_num %}" target="_blank">
-            <strong><span control="issue-name"
-                    {% if not show_description %}
-                    {% comment %}If description is not shown below, then it should be shown in a tooltip.{% endcomment %}
-                    data-toggle="tooltip"
-                    data-placement="bottom"
-                    title="{{ issue.description|capfirst }}"
-                    {% endif %}
-                    data-id="{{ issue.id }}">{{ issue.name|capfirst }}</span></strong>
-        </a>
-        {% if show_description and issue.description %}
+        | <a href="{% url 'parliament_issue' issue.parliament.parliament_num issue.issue_num %}" target="_blank"><strong><span
+                    control="issue-name"
+                    data-id="{{ issue.id }}">{{ issue.name|capfirst }}</span></strong></a>
+        {% if issue.description %}
             <small style="white-space: nowrap;">(<span control="issue-description" data-id="{{ issue.id }}">{{ issue.description }}</span>)</small>
         {% endif %}
 
@@ -36,7 +28,13 @@
 
         <br />
 
-        <small>{% display_dossier_statistics issue 'small' %}</small>
+        <small>{{ issue.get_issue_type_display|capfirst }}</small>
+
+        <br />
+
+        <div control="statistic-container" class="small-issues" style="display: none;">
+            <small>{% display_dossier_statistics issue 'small' %}</small>
+        </div>
 
         {% comment %}
         {% if issue.dossier_statistics %}

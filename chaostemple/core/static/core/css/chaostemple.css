@@ -61,3 +61,5 @@ div[control="committee-agenda-item"] span.subitem { border-left: 1px solid #b8b8
 
 div[control="issue-dossier-statistic"].small-issues { white-space: nowrap; display: none; padding: 3px 0px 3px 0px; }
 
+div[control="statistic-container"].small-issues { border-top: 1px dotted #b8b8b8; padding: 6px 0px 0px 0px; margin: 8px 0px 0px 0px; }
+

@@ -32,14 +32,18 @@ $(document).ready(function() {
         var user_id = $this.attr('data-user-id');
         var issue_id = $this.attr('data-issue-id');
 
+        var $container = $('[control="issue-container"][data-id=' + issue_id + '] div[control="statistic-container"]');
         var $stats = $('div[control="issue-dossier-statistic"][data-issue-id=' + issue_id + ']');
         var $buttons = $('a[control="toggle-user-dossier-statistics"][data-issue-id=' + issue_id + ']');
 
         if ($this.hasClass('active')) {
+            $container.hide();
             $stats.filter('[data-user-id=' + user_id + ']').hide();
             $buttons.filter('[data-user-id=' + user_id + ']').removeClass('active');
         }
         else {
+            $container.show();
+
             $stats.filter('[data-user-id=' + user_id + ']').show();
             $stats.filter('[data-user-id!=' + user_id + ']').hide();
 

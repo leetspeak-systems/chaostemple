@@ -22,9 +22,21 @@
                         <small>(<span control="issue-description" data-id="{{ issue.id }}">{{ issue.description }}</span>)</small>
                     {% endif %}
                 </p>
-                <p>
+                <p class="pull-right">
                     <span class="label label-default">{% trans 'Reviews' %}: {{ issue.review_count }}</span>
                     <span class="label label-default">{% trans "Parliamentary Documents" %}: {{ issue.document_count }}</span>
+                </p>
+                <p>
+                    <small>
+                    <strong>{% trans "Proposers" %}:</strong>
+                        {% for proposer in issue.proposers.all %}
+                            {% if proposer.person %}
+                                <a href="{% url 'person' proposer.person.slug proposer.person.subslug %}">{{ proposer }}</a>{% if not forloop.last %}, {% endif %}
+                            {% else %}
+                                <a href="#">{{ proposer }}</a>{% if not forloop.last %}, {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    </small>
                 </p>
                 <p>
                     {% display_dossier_statistics issue %}

@@ -42,7 +42,7 @@ def parliament(request, parliament_num):
 
 def parliament_issues(request, parliament_num):
 
-    issues = Issue.objects.select_related('parliament').filter(
+    issues = Issue.objects.select_related('parliament').prefetch_related('proposers__person', 'proposers__committee').filter(
         parliament__parliament_num=parliament_num,
         document_count__gt=0
     )
@@ -154,7 +154,9 @@ def parliament_sessions(request, parliament_num):
 def parliament_session(request, parliament_num, session_num):
 
     session = get_object_or_404(Session, parliament__parliament_num=parliament_num, session_num=session_num)
-    session_agenda_items = session.session_agenda_items.select_related('issue__parliament').all()
+    session_agenda_items = session.session_agenda_items.select_related('issue__parliament').prefetch_related(
+        'issue__proposers__person', 'issue__proposers__committee'
+    ).all()
 
     IssueUtilities.populate_dossier_statistics([i.issue for i in session_agenda_items], request.user.id)
 
@@ -193,7 +195,9 @@ def parliament_committee_agenda(request, parliament_num, committee_id, agenda_id
 
     committee = Committee.objects.get(id=committee_id)
     committee_agenda = committee.committee_agendas.get(id=agenda_id)
-    committee_agenda_items = committee_agenda.committee_agenda_items.select_related('issue__parliament').all()
+    committee_agenda_items = committee_agenda.committee_agenda_items.select_related('issue__parliament').prefetch_related(
+        'issue__proposers__person', 'issue__proposers__committee'
+    ).all()
 
     IssueUtilities.populate_dossier_statistics(filter(None, [i.issue for i in committee_agenda_items]), request.user.id)
 
@@ -232,7 +236,7 @@ def person(request, slug, subslug=None):
     seats = person.seats.select_related('parliament', 'party').all()
     committee_seats = person.committee_seats.select_related('parliament', 'committee').all()
 
-    issues = Issue.objects.select_related('parliament').filter(
+    issues = Issue.objects.select_related('parliament').prefetch_related('proposers__person', 'proposers__committee').filter(
         documents__proposers__person_id=person.id,
         documents__proposers__order=1,
         documents__is_main=True
@@ -278,7 +282,7 @@ def user_access(request):
 @login_required
 def user_issues_bookmarked(request, parliament_num):
 
-    issues = Issue.objects.select_related('parliament').filter(
+    issues = Issue.objects.select_related('parliament').prefetch_related('proposers__person', 'proposers__committee').filter(
         issue_bookmarks__user_id=request.user.id,
         parliament__parliament_num=parliament_num
     ).order_by('-issue_num')
@@ -293,7 +297,7 @@ def user_issues_bookmarked(request, parliament_num):
 @login_required
 def user_issues_incoming(request):
 
-    issues = Issue.objects.select_related('parliament').filter(
+    issues = Issue.objects.select_related('parliament').prefetch_related('proposers__person', 'proposers__committee').filter(
         Q(
             dossierstatistic__user_id=request.user.id,
             dossierstatistic__has_useful_info=True,
@@ -316,7 +320,7 @@ def user_issues_incoming(request):
 @login_required
 def user_issues_open(request, parliament_num):
 
-    issues = Issue.objects.select_related('parliament').filter(
+    issues = Issue.objects.select_related('parliament').prefetch_related('proposers__person', 'proposers__committee').filter(
         dossierstatistic__user_id=request.user.id,
         dossierstatistic__has_useful_info=True,
         parliament__parliament_num=parliament_num

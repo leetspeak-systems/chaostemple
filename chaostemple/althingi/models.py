@@ -272,12 +272,21 @@ class Document(models.Model):
 
 
 class Proposer(models.Model):
+    issue = models.ForeignKey('Issue', null=True, related_name='proposers')
     document = models.ForeignKey('Document', null=True, related_name='proposers')
     order = models.IntegerField(null=True)
     person = models.ForeignKey('Person', null=True)
     committee = models.ForeignKey('Committee', null=True)
     committee_partname = models.CharField(max_length=50, null=True) # Only non-None if committee is non-None
     parent = models.ForeignKey('Proposer', null=True, related_name='subproposers')
+
+    def save(self, *args, **kwargs):
+        if self.document_id and self.document.is_main:
+            self.issue_id = self.document.issue_id
+        else:
+            self.issue_id = None
+
+        super(Proposer, self).save(*args, **kwargs)
 
     def __unicode__(self):
         if self.person is not None:

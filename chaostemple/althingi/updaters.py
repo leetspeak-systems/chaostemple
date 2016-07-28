@@ -650,10 +650,15 @@ def update_issue(issue_num, parliament_num=None):
     # Process documents.
     doc_nums = [] # Keep track of legit documents. Sometimes docs get deleted from the XML and so should be deleted locally.
     lowest_doc_num = 0  # Lowest document number will always be the main document of the issue.
-    for docstub_xml in docstubs_xml:
+    for i, docstub_xml in enumerate(docstubs_xml):
         # Make sure that this is indeed the correct issue.
         if int(docstub_xml.getAttribute(u'málsnúmer')) != issue.issue_num or int(docstub_xml.getAttribute(u'þingnúmer')) != parliament.parliament_num:
             continue
+
+        is_main = False
+        if i == 0:
+            # If this is the zero-eth iterator, this is the main document.
+            is_main = True
 
         doc_xml_url = docstub_xml.getElementsByTagName(u'slóð')[0].getElementsByTagName(u'xml')[0].firstChild.nodeValue
 
@@ -711,6 +716,7 @@ def update_issue(issue_num, parliament_num=None):
             doc.doc_num = doc_num
             doc.doc_type = doc_type
             doc.time_published = time_published
+            doc.is_main = is_main
             doc.html_remote_path = path_html
             doc.html_filename = html_filename
             doc.pdf_remote_path = path_pdf
@@ -819,15 +825,6 @@ def update_issue(issue_num, parliament_num=None):
     for document in Document.objects.filter(issue_id=issue.id).exclude(doc_num__in=doc_nums):
         document.delete()
         print('Deleted non-existent document: %s' % document)
-
-    # Figure out what the main document is, if any.
-    try:
-        main_doc = Document.objects.get(issue=issue, doc_num=lowest_doc_num)
-        main_doc.is_main = True
-        main_doc.save()
-        print('Main document determined to be: %s' % main_doc)
-    except Document.DoesNotExist:
-        print('Main document undetermined, no documents yet')
 
     # Process reviews.
     log_nums = [] # Keep track of legit reviews. Sometimes reviews get deleted from the XML and so should be deleted locally.

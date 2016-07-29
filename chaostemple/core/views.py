@@ -2,10 +2,12 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.db.models import Case
 from django.db.models import Count
 from django.db.models import Prefetch
 from django.db.models import F
 from django.db.models import Q
+from django.db.models import When
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
@@ -168,10 +170,13 @@ def parliament_session(request, parliament_num, session_num):
 
 def parliament_committees(request, parliament_num):
 
-    committees = Committee.objects.filter(parliaments__parliament_num=parliament_num)
-
-    for committee in committees:
-        committee.agenda_count = committee.committee_agendas.filter(parliament__parliament_num=parliament_num).count()
+    committees = Committee.objects.filter(
+        parliaments__parliament_num=parliament_num
+    ).annotate(agenda_count=Count(
+        Case(
+            When(committee_agendas__parliament__parliament_num=parliament_num, then=1)
+        )
+    ))
 
     ctx = {
         'committees': committees

@@ -1,15 +1,26 @@
 {% extends "base.html" %}
 {% load static %}
+{% load i18n %}
 
 {% block javascript %}
     <script language="javascript" type="text/javascript" src="{% static 'core/js/issue_control.js' %}"></script>
+    <script language="javascript" type="text/javascript" src="{% static 'core/js/table_filter.js' %}"></script>
+
+    <script language="javascript">
+        $(document).ready(function() {
+            $('input[control="issue-search"]').tableFilter('table[control="issue-list"]');
+        });
+    </script>
+
 {% endblock %}
 
 {% block content %}
 
     {% include 'core/dialog/dialog_delete_issue_dossiers.html' %}
 
-    <table class="table">
+    <input type="text" control="issue-search" class="form-control" placeholder="{% trans 'Name, number, description, type or first proposer of issue' %}" />
+
+    <table class="table" control="issue-list">
         {% for issue in issues reversed %}
             {% include 'core/stub/small/issue.html' %}
         {% endfor %}

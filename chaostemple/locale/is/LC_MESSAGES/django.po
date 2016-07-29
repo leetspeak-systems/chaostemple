@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-28 21:29+0000\n"
+"POT-Creation-Date: 2016-07-29 22:46+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -414,6 +414,10 @@ msgstr "Afgreiðsla"
 #: templates/core/parliament_issue.html:135
 msgid "Media Coverage"
 msgstr "Fjölmiðlaumfjöllun"
+
+#: templates/core/parliament_issues.html:21
+msgid "Name, number, description, type or first proposer of issue"
+msgstr "Nafn, númer, lýsing, tegund eða fyrsti flutningsmaður máls"
 
 #: templates/core/parliament_none.html:6
 msgid "No parliaments have been configured yet."

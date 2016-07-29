@@ -1,5 +1,4 @@
 from django import template
-from django.template import Context
 from django.template import loader
 from django.utils.safestring import mark_safe
 
@@ -73,9 +72,9 @@ def display_dossier_statistics(context, issue, size='normal'):
         for stat in issue.dossier_statistics:
 
             if (user_count > 1 or stat.user_id != request.user.id) and last_user_id != stat.user_id and template_user:
-                content.append(template_user.render(Context({
+                content.append(template_user.render({
                     'statistic_user': stat.user
-                })))
+                }))
                 last_user_id = stat.user_id
 
             for dossier_type, dossier_type_name in Dossier.DOSSIER_TYPES:

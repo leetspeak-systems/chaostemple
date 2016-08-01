@@ -72,6 +72,7 @@ class IssueUtilities():
                         issue.new_reviews = issue.review_count - dossier_statistic.review_count
         return issues
 
+
 ### Models
 
 class UserProfile(models.Model):
@@ -80,13 +81,16 @@ class UserProfile(models.Model):
     name = models.CharField(max_length=100)
     person = models.ForeignKey(Person, null=True, related_name='userprofile')
 
+
 class IssueBookmark(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='issue_bookmarks')
     issue = models.ForeignKey(AlthingiIssue, related_name='issue_bookmarks')
 
+
 class Issue(AlthingiIssue):
     class Meta:
         proxy = True
+
 
 class Dossier(models.Model):
     tracker = FieldTracker(fields=['attention', 'knowledge', 'support', 'proposal'])

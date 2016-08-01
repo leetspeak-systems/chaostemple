@@ -30,17 +30,20 @@ from althingi.models import Person
 from althingi.models import Review
 from althingi.models import Session
 
+
 def home(request):
     if request.extravars['newest_parliament_num'] is not None:
         return redirect(reverse('parliament', args=(request.extravars['newest_parliament_num'],)))
     else:
         return render(request, 'core/parliament_none.html', {})
 
+
 def parliament(request, parliament_num):
 
     ctx = {
     }
     return render(request, 'core/parliament.html', ctx)
+
 
 def parliament_issues(request, parliament_num):
 
@@ -55,6 +58,7 @@ def parliament_issues(request, parliament_num):
         'issues': issues,
     }
     return render(request, 'core/parliament_issues.html', ctx)
+
 
 def parliament_issue(request, parliament_num, issue_num):
 
@@ -142,6 +146,7 @@ def parliament_issue(request, parliament_num, issue_num):
     }
     return render(request, 'core/parliament_issue.html', ctx)
 
+
 def parliament_sessions(request, parliament_num):
 
     sessions = Session.objects.filter(parliament__parliament_num=parliament_num).annotate(
@@ -152,6 +157,7 @@ def parliament_sessions(request, parliament_num):
         'sessions': sessions
     }
     return render(request, 'core/parliament_sessions.html', ctx)
+
 
 def parliament_session(request, parliament_num, session_num):
 
@@ -168,6 +174,7 @@ def parliament_session(request, parliament_num, session_num):
     }
     return render(request, 'core/parliament_session.html', ctx)
 
+
 def parliament_committees(request, parliament_num):
 
     committees = Committee.objects.filter(
@@ -183,6 +190,7 @@ def parliament_committees(request, parliament_num):
     }
     return render(request, 'core/parliament_committees.html', ctx)
 
+
 def parliament_committee(request, parliament_num, committee_id):
 
     committee = Committee.objects.get(id=committee_id)
@@ -195,6 +203,7 @@ def parliament_committee(request, parliament_num, committee_id):
         'agendas': agendas,
     }
     return render(request, 'core/parliament_committee.html', ctx)
+
 
 def parliament_committee_agenda(request, parliament_num, committee_id, agenda_id):
 
@@ -213,6 +222,7 @@ def parliament_committee_agenda(request, parliament_num, committee_id, agenda_id
     }
     return render(request, 'core/parliament_committee_agenda.html', ctx)
 
+
 def parliament_persons(request, parliament_num):
 
     persons = Person.objects.filter(seats__parliament__parliament_num=parliament_num, seats__seat_type=u'þingmaður').distinct()
@@ -223,6 +233,7 @@ def parliament_persons(request, parliament_num):
         'deputies': deputies,
     }
     return render(request, 'core/parliament_persons.html', ctx)
+
 
 def person(request, slug, subslug=None):
     # If no subslug is provided, we try to figure out who the person is and if we can't, we ask the user
@@ -257,6 +268,7 @@ def person(request, slug, subslug=None):
     }
     return render(request, 'core/person.html', ctx)
 
+
 @login_required
 def user_home(request, username):
 
@@ -266,6 +278,7 @@ def user_home(request, username):
         'home_user': home_user,
     }
     return render(request, 'core/user_home.html', ctx)
+
 
 @login_required
 def user_access(request):
@@ -284,6 +297,7 @@ def user_access(request):
     }
     return render(request, 'core/user_access.html', ctx)
 
+
 @login_required
 def user_issues_bookmarked(request, parliament_num):
 
@@ -298,6 +312,7 @@ def user_issues_bookmarked(request, parliament_num):
         'issues': issues
     }
     return render(request, 'core/user_issues_bookmarked.html', ctx)
+
 
 @login_required
 def user_issues_incoming(request):
@@ -322,6 +337,7 @@ def user_issues_incoming(request):
 
     return render(request, 'core/user_issues_incoming.html', ctx)
 
+
 @login_required
 def user_issues_open(request, parliament_num):
 
@@ -338,6 +354,7 @@ def user_issues_open(request, parliament_num):
     }
 
     return render(request, 'core/user_issues_open.html', ctx)
+
 
 def error500(request):
     response = render(request, '500.html')

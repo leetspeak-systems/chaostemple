@@ -59,6 +59,10 @@ div[control="committee-agenda-item"] { margin-bottom: 0px; border-top-width: 0px
 div[control="committee-agenda-item"] span.subitem:first-child { border-left: 0px solid #000000; padding-left: 0px; margin-left: 0px; }
 div[control="committee-agenda-item"] span.subitem { border-left: 1px solid #b8b8ff; padding-left: 6px; margin-left: 2px; }
 
+div[control="issue-upcoming"] { margin-bottom: 0px; border-top-width: 0px; border-left-width: 0px; border-right-width: 0px; }
+div[control="issue-upcoming"] span.subitem:first-child { border-left: 0px solid #000000; padding-left: 0px; margin-left: 0px; }
+div[control="issue-upcoming"] span.subitem { border-left: 1px solid #b8b8ff; padding-left: 6px; margin-left: 2px; }
+
 div[control="issue-dossier-statistic"].small-issues { white-space: nowrap; display: none; padding: 3px 0px 3px 0px; }
 
 div[control="statistic-container"].small-issues { border-top: 1px dotted #b8b8b8; padding: 6px 0px 0px 0px; margin: 8px 0px 0px 0px; }

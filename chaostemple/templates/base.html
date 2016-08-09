@@ -58,6 +58,8 @@
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans 'Current and Upcoming' %} <span class="caret"></span></a>
                                 <ul class="dropdown-menu" role="menu">
+                                    <li><a href="{% url 'upcoming' %}"><strong>{% trans 'Current and Upcoming' %}</strong></a></li>
+                                    <li class="divider"></li>
                                     {% if next_sessions.count %}
                                         <li role="presentation"><a href="{% url 'parliament_sessions' newest_parliament_num %}"><strong>{% trans 'Parliamentary Sessions' %}</strong></a></li>
                                         {% for session in next_sessions %}

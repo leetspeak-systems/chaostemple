@@ -12,6 +12,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
+from django.utils import timezone
 
 from core.models import Access
 from core.models import Dossier
@@ -32,10 +33,53 @@ from althingi.models import Session
 
 
 def home(request):
-    if request.extravars['newest_parliament_num'] is not None:
-        return redirect(reverse('parliament', args=(request.extravars['newest_parliament_num'],)))
-    else:
-        return render(request, 'core/parliament_none.html', {})
+    return redirect(reverse('upcoming'))
+
+
+def upcoming(request):
+
+    next_sessions = request.extravars['next_sessions']
+    next_committee_agendas = request.extravars['next_committee_agendas']
+
+    # Get issues that are upcoming in sessions
+    session_issues = Issue.objects.select_related('parliament').prefetch_related(
+        'proposers__person',
+        'session_agenda_items__session'
+    ).filter(
+        issue_group = 'A',
+        session_agenda_items__session__in=next_sessions
+    ).order_by('session_agenda_items__order').distinct()
+
+    # Get issues that are upcoming in committee agendas
+    committee_issues = Issue.objects.select_related('parliament').prefetch_related(
+        'proposers__person',
+        'committee_agenda_items__committee_agenda',
+    ).filter(committee_agenda_items__committee_agenda__in=next_committee_agendas).distinct()
+
+    # Get the relevant dossier statistics
+    IssueUtilities.populate_dossier_statistics(list(session_issues) + list(committee_issues), request.user.id)
+
+    # Get upcoming sessions for each issue (can this be optimized?)
+    for issue in session_issues:
+        issue.upcoming_sessions = Session.objects.select_related('parliament').filter(
+            session_agenda_items__issue_id=issue.id,
+            timing_start_planned__gt=timezone.now()
+        )
+
+    # Get upcoming committee agendas for each issue (can this be optimized?)
+    for issue in committee_issues:
+        issue.upcoming_committee_agendas = CommitteeAgenda.objects.select_related('parliament', 'committee').filter(
+            committee_agenda_items__issue_id=issue.id,
+            timing_start_planned__gt=timezone.now()
+        )
+
+    ctx = {
+        'session_issues': session_issues,
+        'committee_issues': committee_issues,
+    }
+    return render(request, 'core/upcoming.html', ctx)
+
+
 
 
 def parliament(request, parliament_num):

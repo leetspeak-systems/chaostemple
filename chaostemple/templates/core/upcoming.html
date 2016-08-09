@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block javascript %}
+
+    <script language="javascript" type="text/javascript" src="{% static 'core/js/issue_control.js' %}"></script>
+
+{% endblock %}
+
+{% block content %}
+    {% include 'core/dialog/dialog_delete_issue_dossiers.html' %}
+
+    <h1>{% trans 'Current and Upcoming' %}</h1>
+
+    <hr />
+    <h2>{% trans 'In Upcoming Sessions' %}</h2>
+
+    {% for issue in session_issues %}
+        {% include 'core/stub/issue.html' %}
+    {% endfor %}
+
+    <hr />
+    <h2>{% trans 'In Upcoming Committees' %}</h2>
+
+    {% for issue in committee_issues %}
+        {% include 'core/stub/issue.html' %}
+    {% endfor %}
+
+{% endblock %}

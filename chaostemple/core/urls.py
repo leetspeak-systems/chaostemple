@@ -5,6 +5,7 @@ from core import json_views
 
 urlpatterns = [
     url(r'^$', views.home, name='home'),
+    url(r'^upcoming/$', views.upcoming, name='upcoming'),
     url(r'^parliament/(?P<parliament_num>\d+)/$', views.parliament, name='parliament'),
     url(r'^parliament/(?P<parliament_num>\d+)/issues/$', views.parliament_issues, name='parliament_issues'),
     url(r'^parliament/(?P<parliament_num>\d+)/issue/(?P<issue_num>\d+)/$', views.parliament_issue, name='parliament_issue'),

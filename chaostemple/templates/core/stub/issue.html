@@ -7,6 +7,10 @@
             {% include 'core/stub/session_agenda_item_header.html' %}
         {% elif committee_agenda_item %}
             {% include 'core/stub/committee_agenda_item_header.html' %}
+        {% elif issue.upcoming_sessions %}
+            {% include 'core/stub/issue_upcoming_sessions_header.html' %}
+        {% elif issue.upcoming_committee_agendas %}
+            {% include 'core/stub/issue_upcoming_committee_agendas_header.html' %}
         {% endif %}
         {% if issue.issue_group == 'A' %}
             <div class="panel-body">

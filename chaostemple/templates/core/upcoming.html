@@ -13,18 +13,22 @@
 
     <h1>{% trans 'Current and Upcoming' %}</h1>
 
-    <hr />
-    <h2>{% trans 'In Upcoming Sessions' %}</h2>
+    {% if session_issues %}
+        <hr />
+        <h2>{% trans 'In Upcoming Sessions' %}</h2>
 
-    {% for issue in session_issues %}
-        {% include 'core/stub/issue.html' %}
-    {% endfor %}
+        {% for issue in session_issues %}
+            {% include 'core/stub/issue.html' %}
+        {% endfor %}
+    {% endif %}
 
-    <hr />
-    <h2>{% trans 'In Upcoming Committees' %}</h2>
+    {% if committee_issues %}
+        <hr />
+        <h2>{% trans 'In Upcoming Committees' %}</h2>
 
-    {% for issue in committee_issues %}
-        {% include 'core/stub/issue.html' %}
-    {% endfor %}
+        {% for issue in committee_issues %}
+            {% include 'core/stub/issue.html' %}
+        {% endfor %}
+    {% endif %}
 
 {% endblock %}

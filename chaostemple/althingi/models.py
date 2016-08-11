@@ -487,7 +487,7 @@ class Seat(models.Model):
 
     def __unicode__(self):
         if self.timing_out is None:
-            return u'%s (%s : ...)' % (self.person, self.timing_in.strftime('%Y-%m-%d'))
+            return u'%s (%s : ...)' % (self.person, format_date(self.timing_in))
         else:
             return u'%s (%s : %s)' % (self.person, format_date(self.timing_in), format_date(self.timing_out))
 

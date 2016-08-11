@@ -1,5 +1,10 @@
+{% load datetime %}
+
 <div class="alert alert-info alert-small" control="issue-upcoming">
     {% for agenda in issue.upcoming_committee_agendas %}
-        <span class="subitem"><a href="{% url 'parliament_committee_agenda' agenda.parliament.parliament_num agenda.committee_id agenda.id %}">{{ agenda }}</a></span>
+        <span class="subitem">
+            <a href="{% url 'parliament_committee' agenda.parliament.parliament_num agenda.committee_id %}">{{ agenda.committee }}</a>
+            - <a href="{% url 'parliament_committee_agenda' agenda.parliament.parliament_num agenda.committee_id agenda.id %}">{{ agenda.timing_start_planned|datetime }}</a>
+        </span>
     {% endfor %}
 </div>

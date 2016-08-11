@@ -59,18 +59,21 @@ def upcoming(request):
     # Get the relevant dossier statistics
     IssueUtilities.populate_dossier_statistics(list(session_issues) + list(committee_issues), request.user.id)
 
+    now = timezone.now()
+    today = timezone.make_aware(timezone.datetime(now.year, now.month, now.day), now.tzinfo)
+
     # Get upcoming sessions for each issue (can this be optimized?)
     for issue in session_issues:
         issue.upcoming_sessions = Session.objects.select_related('parliament').filter(
             session_agenda_items__issue_id=issue.id,
-            timing_start_planned__gt=timezone.now()
+            timing_start_planned__gt=today
         )
 
     # Get upcoming committee agendas for each issue (can this be optimized?)
     for issue in committee_issues:
         issue.upcoming_committee_agendas = CommitteeAgenda.objects.select_related('parliament', 'committee').filter(
             committee_agenda_items__issue_id=issue.id,
-            timing_start_planned__gt=timezone.now()
+            timing_start_planned__gt=today
         )
 
     ctx = {

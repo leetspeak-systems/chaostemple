@@ -1,0 +1,3 @@
+1.0.1:
+    * Bugfix: Issue headers on "Upcoming" page were not showing committee agendas and sessions that occurred today but still in the past.
+

@@ -523,9 +523,9 @@ def update_issue(issue_num, parliament_num=None):
 
         if changed:
             issue.save()
-            print('Updated issue: %s' % issue)
+            print('Updated issue: %s' % issue.detailed())
         else:
-            print('Already have issue: %s' % issue)
+            print('Already have issue: %s' % issue.detailed())
 
     except Issue.DoesNotExist:
         issue = Issue()
@@ -537,7 +537,7 @@ def update_issue(issue_num, parliament_num=None):
         issue.parliament = parliament
         issue.save()
 
-        print('Added issue: %s' % issue)
+        print('Added issue: %s' % issue.detailed())
 
     # Check if issue was previously published
     linked_issues_xml = issue_xml.getElementsByTagName(u'tengdMál')
@@ -628,9 +628,9 @@ def update_issue(issue_num, parliament_num=None):
 
             if changed:
                 issue_summary.save()
-                print('Updated issue summary for issue: %s' % issue)
+                print('Updated issue summary for issue: %s' % issue.detailed())
             else:
-                print('Already have issue summary for issue: %s' % issue)
+                print('Already have issue summary for issue: %s' % issue.detailed())
 
         except IssueSummary.DoesNotExist:
             issue_summary = IssueSummary()
@@ -645,7 +645,7 @@ def update_issue(issue_num, parliament_num=None):
             issue_summary.media_coverage = media_coverage
             issue_summary.save()
 
-            print('Added issue summary for issue: %s' % issue)
+            print('Added issue summary for issue: %s' % issue.detailed())
 
     # Process documents.
     doc_nums = [] # Keep track of legit documents. Sometimes docs get deleted from the XML and so should be deleted locally.
@@ -954,9 +954,9 @@ def update_docless_issue(issue_num, name, parliament_num=None):
 
         if changed:
             issue.save()
-            print('Updated docless issue: %s' % issue)
+            print('Updated docless issue: %s' % issue.detailed())
         else:
-            print('Already have docless issue: %s' % issue)
+            print('Already have docless issue: %s' % issue.detailed())
 
     except Issue.DoesNotExist:
         issue = Issue()
@@ -967,7 +967,7 @@ def update_docless_issue(issue_num, name, parliament_num=None):
         issue.parliament = parliament
         issue.save()
 
-        print('Added docless issue: %s' % issue)
+        print('Added docless issue: %s' % issue.detailed())
 
     return issue
 

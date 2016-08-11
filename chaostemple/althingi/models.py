@@ -7,6 +7,7 @@ from BeautifulSoup import BeautifulSoup
 import urllib
 
 from althingi.utils import format_date
+from althingi.utils import capfirst
 
 class SessionManager(models.Manager):
     def upcoming(self):
@@ -87,11 +88,14 @@ class Issue(models.Model):
     def future_issues_ordered(self):
         return self.future_issues.order_by('parliament__parliament_num')
 
-    def __unicode__(self):
-        if self.issue_group == 'B':
-            return u'%s (%s)' % (self.name, self.issue_group)
+    def detailed(self):
+        if self.issue_group != 'A':
+            return u'%s (%d, %s)' % (self, self.issue_num, issue_group)
         else:
-            return u'%s (%d)' % (self.name, self.issue_num)
+            return u'%s (%d)' % (self, self.issue_num)
+
+    def __unicode__(self):
+        return u'%s' % capfirst(self.name)
 
     class Meta:
         ordering = ['issue_num']
@@ -312,7 +316,7 @@ class Committee(models.Model):
     committee_xml_id = models.IntegerField()
 
     def __unicode__(self):
-        return self.name
+        return capfirst(self.name)
 
     class Meta:
         ordering = ['name']
@@ -381,7 +385,7 @@ class SessionAgendaItem(models.Model):
     issue = models.ForeignKey('Issue', null=True, related_name='session_agenda_items')
 
     def __unicode__(self):
-        return u'%d. %s' % (self.order, self.issue)
+        return u'%d. %s' % (self.order, self.issue.detailed())
 
     class Meta:
         ordering = ['order']
@@ -414,7 +418,7 @@ class CommitteeAgendaItem(models.Model):
 
     def __unicode__(self):
         if self.issue is not None:
-            return u'%d. %s (%d)' % (self.order, self.name, self.issue.issue_num)
+            return u'%d. %s' % (self.order, self.issue.detailed())
         else:
             return u'%d. %s' % (self.order, self.name)
 

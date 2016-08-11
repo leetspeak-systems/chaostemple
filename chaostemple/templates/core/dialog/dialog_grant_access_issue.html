@@ -36,7 +36,7 @@
                                 <select control="grant-access-issue-id" class="form-control" style="width: 100%;">
                                     <option value=""></option>
                                     {% for issue in issues %}
-                                        <option value="{{ issue.id }}">{{ issue|capfirst }}</option>
+                                        <option value="{{ issue.id }}">{{ issue.detailed }}</option>
                                     {% endfor %}
                                 </select>
                             </td>

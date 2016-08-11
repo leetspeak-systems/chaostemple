@@ -56,7 +56,7 @@ def make_breadcrumbs(func_name, parliament_num, issue_num, session_num, committe
         breadcrumbs = leave_breadcrumb(
             breadcrumbs,
             ('parliament_committee', parliament_num, committee_id),
-            committee.__str__().capitalize()
+            committee
         )
 
     if func_name == 'parliament_committee_agenda':

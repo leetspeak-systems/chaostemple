@@ -63,7 +63,7 @@ def list_issues(request, parliament_num):
 
     issue_list_json = []
     for issue in issues:
-        issue_list_json.append({'id': issue.id, 'name': issue.__str__().capitalize() })
+        issue_list_json.append({'id': issue.id, 'name': issue.detailed() })
 
     ctx = {
         'parliament_num': parliament_num,

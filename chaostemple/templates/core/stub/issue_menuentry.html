@@ -1,6 +1,6 @@
 {% load i18n %}
 
-({{ issue.issue_num}}) {{ issue.name|capfirst }}
+({{ issue.issue_num}}) {{ issue }}
 {% if issue.description %}
     <small>({{ issue.description }})</small>
 {% endif %}

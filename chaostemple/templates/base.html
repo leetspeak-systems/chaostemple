@@ -84,7 +84,7 @@
                                             {% endifchanged %}
                                             <li role="presentation">
                                                 <a href="{% url 'parliament_committee_agenda' agenda.parliament.parliament_num agenda.committee_id agenda.id %}">
-                                                    &nbsp;&nbsp;&nbsp;&nbsp;{{ agenda.committee.name|capfirst }},
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;{{ agenda.committee }},
                                                     {% if agenda.timing_start_planned|time == '00:00:00' %}
                                                         <small><em>({{ agenda.timing_text }})</em></small>
                                                     {% else %}

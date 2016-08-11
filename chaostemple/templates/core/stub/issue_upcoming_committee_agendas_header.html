@@ -1,5 +1,5 @@
 <div class="alert alert-info alert-small" control="issue-upcoming">
     {% for agenda in issue.upcoming_committee_agendas %}
-        <span class="subitem"><a href="{% url 'parliament_committee_agenda' agenda.parliament.parliament_num agenda.committee_id agenda.id %}">{{ agenda|capfirst }}</a></span>
+        <span class="subitem"><a href="{% url 'parliament_committee_agenda' agenda.parliament.parliament_num agenda.committee_id agenda.id %}">{{ agenda }}</a></span>
     {% endfor %}
 </div>

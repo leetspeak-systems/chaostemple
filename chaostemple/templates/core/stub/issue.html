@@ -20,7 +20,7 @@
                 </p>
                 <p>
                     <a href="{% url 'parliament_issue' issue.parliament.parliament_num issue.issue_num %}" target="_blank">
-                        <strong><span control="issue-name" data-id="{{ issue.id }}">{{ issue.name|capfirst }}</span></strong>
+                        <strong><span control="issue-name" data-id="{{ issue.id }}">{{ issue }}</span></strong>
                     </a>
                     {% if issue.description %}
                         <small>(<span control="issue-description" data-id="{{ issue.id }}">{{ issue.description }}</span>)</small>
@@ -56,7 +56,7 @@
                 </div>
             {% endif %}
         {% elif issue.issue_group == 'B' %}
-            <div class="panel-body"><strong>{{ issue.name|capfirst }}</strong></div>
+            <div class="panel-body"><strong>{{ issue }}</strong></div>
         {% endif %}
     </div>
 </div>

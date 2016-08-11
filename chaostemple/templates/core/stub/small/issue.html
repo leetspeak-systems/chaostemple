@@ -12,7 +12,7 @@
         {{ issue.issue_num }}
         | <a href="{% url 'parliament_issue' issue.parliament.parliament_num issue.issue_num %}" target="_blank"><strong><span
                     control="issue-name"
-                    data-id="{{ issue.id }}">{{ issue.name|capfirst }}</span></strong></a>
+                    data-id="{{ issue.id }}">{{ issue }}</span></strong></a>
         {% if issue.description %}
             <small style="white-space: nowrap;">(<span control="issue-description" data-id="{{ issue.id }}">{{ issue.description }}</span>)</small>
         {% endif %}

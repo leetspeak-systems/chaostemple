@@ -90,7 +90,7 @@ class Issue(models.Model):
 
     def detailed(self):
         if self.issue_group != 'A':
-            return u'%s (%d, %s)' % (self, self.issue_num, issue_group)
+            return u'%s (%d, %s)' % (self, self.issue_num, self.issue_group)
         else:
             return u'%s (%d)' % (self, self.issue_num)
 

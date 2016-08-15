@@ -1245,6 +1245,14 @@ def update_committee_agenda(committee_agenda_xml_id, parliament_num=None):
     except ExpatError:
         raise AlthingiException('Committee agenda with XML-ID %d not found' % committee_agenda_xml_id)
     committee_agenda_xml = committee_agenda_full_xml.getElementsByTagName(u'nefndarfundur')[0]
+
+    if not committee_agenda_xml.getAttribute(u'númer'):
+        # Committee has been deleted in XML, meaning cancelled.
+        CommitteeAgenda.objects.get(committee_agenda_xml_id=committee_agenda_xml_id).delete()
+
+        print('Deleted non-existent committee agenda: %d' % committee_agenda_xml_id)
+        return
+
     _process_committee_agenda_xml(committee_agenda_xml)
 
 

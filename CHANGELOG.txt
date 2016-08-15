@@ -4,3 +4,6 @@
 1.0.2:
     * Code clean-up: Unnecessary usage of the Django template engine's "|capfirst" and ".capitalize()" functions replaced with more generic way to display names of issues, committees and agendas.
     * Slightly better handling and displaying of datetime.
+
+1.0.3:
+    * Committee agendas deleted if non-existent. Still does not automatically delete when performing "upcoming".

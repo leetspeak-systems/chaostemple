@@ -7,3 +7,6 @@
 
 1.0.3:
     * Committee agendas deleted if non-existent. Still does not automatically delete when performing "upcoming".
+
+1.0.4:
+    * Bugfix: Partial access dossier view wasn't working. Now is.

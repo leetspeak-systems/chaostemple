@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import operator
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
@@ -114,11 +116,24 @@ def parliament_issue(request, parliament_num, issue_num):
 
     visible_user_ids = [a.user_id for a in Access.objects.filter(friend_id=request.user.id, full_access=True)]
 
+    partial_conditions = []
+    for partial_access in Access.objects.filter(friend_id=request.user.id, full_access=False):
+        for issue in partial_access.issues.all():
+            partial_conditions.append(Q(user_id=partial_access.user_id) & Q(issue_id=issue.id))
+
+    # Create a prefetch query for accessing dossiers allowed by partial access
+    if len(partial_conditions) > 0:
+        prefetch_queryset = Dossier.objects.filter(
+            Q(user_id__in=visible_user_ids) | Q(user_id=request.user.id) | Q(reduce(operator.or_, partial_conditions))
+        )
+    else:
+        prefetch_queryset = Dossier.objects.filter(
+            Q(user_id__in=visible_user_ids) | Q(user_id=request.user.id)
+        )
+
     def get_prefetched_documents():
         return Document.objects.prefetch_related(
-            Prefetch('dossiers', queryset=Dossier.objects.filter(
-                Q(user_id__in=visible_user_ids) | Q(user_id=request.user.id))
-            ),
+            Prefetch('dossiers', queryset=prefetch_queryset),
             'dossiers__memos',
             'dossiers__user',
             'proposers__person',
@@ -127,10 +142,7 @@ def parliament_issue(request, parliament_num, issue_num):
 
     def get_prefetched_reviews():
         return Review.objects.prefetch_related(
-            Prefetch('dossiers', queryset=Dossier.objects.filter(
-                Q(user_id__in=visible_user_ids) | Q(user_id=request.user.id))
-            ),
-            #Prefetch('dossiers', queryset=Dossier.objects.all()),
+            Prefetch('dossiers', queryset=prefetch_queryset),
             'dossiers__memos',
             'dossiers__user',
             'committee'

@@ -1,3 +1,6 @@
 1.0.1:
     * Bugfix: Issue headers on "Upcoming" page were not showing committee agendas and sessions that occurred today but still in the past.
 
+1.0.2:
+    * Code clean-up: Unnecessary usage of the Django template engine's "|capfirst" and ".capitalize()" functions replaced with more generic way to display names of issues, committees and agendas.
+    * Slightly better handling and displaying of datetime.

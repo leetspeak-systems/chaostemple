@@ -128,9 +128,15 @@ def sensible_datetime(value):
             try:
                 d = datetime.strptime(value, '%Y-%m-%d')
             except ValueError:
-                d = datetime.strptime(value, '%d.%m.%Y')
+                try:
+                    d = datetime.strptime(value, '%d.%m.%Y')
+                except ValueError:
+                    d = datetime.strptime(value, '%Y-%m-%d %H:%M+00:00')
 
-    return pytz.timezone('UTC').localize(d)
+    if d.tzinfo:
+        return d
+    else:
+        return pytz.timezone('UTC').localize(d)
 
 
 # Substitute for .capitalize() because it also de-capitalizes the rest of the string

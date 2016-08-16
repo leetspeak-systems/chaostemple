@@ -699,7 +699,28 @@ def update_issue(issue_num, parliament_num=None):
                     doc.pdf_filename = maybe_download_document(path_pdf, parliament.parliament_num, issue_num)
                 doc.save()
 
-            print('Already have document: %s' % doc)
+            changed = False
+            if doc.doc_type != doc_type:
+                doc.doc_type = doc_type
+                changed = True
+
+            if sensible_datetime(doc.time_published) != sensible_datetime(time_published):
+                doc.time_published = time_published
+                changed = True
+
+            if doc.html_remote_path != path_html:
+                doc.html_remote_path = path_html
+                changed = True
+
+            if doc.pdf_remote_path != path_pdf:
+                doc.pdf_remote_path = path_pdf
+                changed = True
+
+            if changed:
+                doc.save()
+                print('Updated document: %s' % doc)
+            else:
+                print('Already have document: %s' % doc)
 
         except Document.DoesNotExist:
 

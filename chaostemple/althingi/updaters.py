@@ -649,7 +649,6 @@ def update_issue(issue_num, parliament_num=None):
 
     # Process documents.
     doc_nums = [] # Keep track of legit documents. Sometimes docs get deleted from the XML and so should be deleted locally.
-    lowest_doc_num = 0  # Lowest document number will always be the main document of the issue.
     for i, docstub_xml in enumerate(docstubs_xml):
         # Make sure that this is indeed the correct issue.
         if int(docstub_xml.getAttribute(u'málsnúmer')) != issue.issue_num or int(docstub_xml.getAttribute(u'þingnúmer')) != parliament.parliament_num:
@@ -689,11 +688,6 @@ def update_issue(issue_num, parliament_num=None):
         if path_html is None and path_pdf is None:
             print('Document not published: %d' % doc_num)
             continue
-
-        if lowest_doc_num == 0:
-            lowest_doc_num = doc_num
-        elif lowest_doc_num > doc_num:
-            lowest_doc_num = doc_num
 
         try:
             doc = Document.objects.get(doc_num=doc_num, issue=issue)

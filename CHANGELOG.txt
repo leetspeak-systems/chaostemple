@@ -10,3 +10,7 @@
 
 1.0.4:
     * Bugfix: Partial access dossier view wasn't working. Now is.
+
+1.0.5:
+    * Some code cleanup and under-the-hood work.
+    * Documents are updated when information in XML and database differ.

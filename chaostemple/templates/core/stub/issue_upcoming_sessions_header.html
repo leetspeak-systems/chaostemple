@@ -1,5 +1,7 @@
-<div class="alert alert-info alert-small" control="issue-upcoming">
-    {% for session in issue.upcoming_sessions %}
+<div class="alert alert-info alert-small" control="issue-header"
+        data-id="{{ issue.id }}"
+        data-upcoming-session-ids="{% for session in upcoming_sessions %}{{ session.id }}{% if not forloop.last %},{% endif %}{% endfor %}">
+    {% for session in upcoming_sessions %}
         <span class="subitem"><a href="{% url 'parliament_session' session.parliament.parliament_num session.session_num %}">{{ session }}</a></span>
     {% endfor %}
 </div>

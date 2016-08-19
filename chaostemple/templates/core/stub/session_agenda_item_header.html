@@ -1,5 +1,7 @@
 {% load i18n %}
-<div class="alert alert-info alert-small" control="session-agenda-item" data-id="{{ session_agenda_item.id }}">
+<div class="alert alert-info alert-small" control="issue-header"
+        data-id="{{ issue.id }}"
+        data-session-agenda-item-id="{{ session_agenda_item.id }}">
     <span class="subitem">{{ session_agenda_item.order }}. {% trans 'agenda item' %}</span>
     {% if session_agenda_item.get_discussion_type_display %}
         <span class="subitem">

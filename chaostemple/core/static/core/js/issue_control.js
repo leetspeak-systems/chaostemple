@@ -80,10 +80,15 @@ $(document).ready(function() {
         var issue_id = $(this).data('id');
         var issue_name = $('span[control="issue-name"][data-id=' + issue_id + ']').text()
         var issue_description = $('span[control="issue-description"][data-id=' + issue_id + ']').text()
+        var $header = $('div[control="issue-header"][data-id=' +  issue_id + ']');
         var $dialog = $('div[control="delete-issue-dossiers-dialog"]');
 
-        // See if this is a session agenda item
-        var session_agenda_item_id = $(this).data('session-agenda-item-id');
+        // Copy header attributes to dialog
+        $.each($header[0].attributes, function(i, attr) {
+            if (attr.name.substring(0, 5) == 'data-') {
+                $dialog.attr(attr.name, attr.value);
+            }
+        });
 
         var display_name = issue_name;
         if (issue_description.length > 0) {
@@ -91,7 +96,6 @@ $(document).ready(function() {
         }
 
         $dialog.find('input#delete-issue-dossiers-id').val(issue_id);
-        $dialog.find('input#session-agenda-item-id').val(session_agenda_item_id);
         $dialog.find('span[control="delete-issue-dossiers-name"]').html(display_name);
         $dialog.modal();
     });
@@ -99,7 +103,6 @@ $(document).ready(function() {
     $(document).on('click', 'button[control="delete-issue-dossiers-confirmed"]', function() {
         var $dialog = $('div[control="delete-issue-dossiers-dialog"]');
         var issue_id = $dialog.find('input#delete-issue-dossiers-id').val()
-        var session_agenda_item_id = $dialog.find('input#session-agenda-item-id').val();
 
         $.jsonize({
             message: {
@@ -109,7 +112,10 @@ $(document).ready(function() {
             },
             url: '/json/issue/' + issue_id + '/dossiers/delete/',
             data: {
-                'session_agenda_item_id': session_agenda_item_id,
+                'session_agenda_item_id': $dialog.attr('data-session-agenda-item-id'),
+                'committee_agenda_item_id': $dialog.attr('data-committee-agenda-item-id'),
+                'upcoming_session_ids': $dialog.attr('data-upcoming-session-ids'),
+                'upcoming_committee_agenda_ids': $dialog.attr('data-upcoming-committee-agenda-ids'),
             },
             done: function(data, textStatus) {
                 $('div[control="issue-container"][data-id=' + data.issue_id + ']').html(data.html_content);

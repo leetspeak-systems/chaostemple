@@ -1,4 +1,6 @@
 {% load i18n %}
-<div class="alert alert-info alert-small" control="committee-agenda-item" data-id="{{ committee_agenda_item.id }}">
+<div class="alert alert-info alert-small" control="issue-header"
+        data-id="{{ issue.id }}"
+        data-committee-agenda-item-id="{{ committee_agenda_item.id }}">
     <span class="subitem">{{ committee_agenda_item.order }}. {% trans 'agenda item' %}</span>
 </div>

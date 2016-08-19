@@ -18,7 +18,7 @@
         <h2>{% trans 'In Upcoming Sessions' %}</h2>
 
         {% for issue in session_issues %}
-            {% include 'core/stub/issue.html' %}
+            {% include 'core/stub/issue.html' with upcoming_sessions=issue.upcoming_sessions %}
         {% endfor %}
     {% endif %}
 
@@ -27,7 +27,7 @@
         <h2>{% trans 'In Upcoming Committees' %}</h2>
 
         {% for issue in committee_issues %}
-            {% include 'core/stub/issue.html' %}
+            {% include 'core/stub/issue.html' with upcoming_committee_agendas=issue.upcoming_committee_agendas %}
         {% endfor %}
     {% endif %}
 

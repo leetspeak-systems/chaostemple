@@ -5,6 +5,9 @@ from django.db.models import Max
 from django.db.utils import IntegrityError
 from django.template.loader import render_to_string
 
+from althingi.models import CommitteeAgenda
+from althingi.models import CommitteeAgendaItem
+from althingi.models import Session
 from althingi.models import SessionAgendaItem
 
 from core.models import Access
@@ -75,6 +78,8 @@ def list_issues(request, parliament_num):
 @jsonize
 def delete_issue_dossiers(request, issue_id):
 
+    stub_ctx = {}
+
     Dossier.objects.filter(issue_id=issue_id, user_id=request.user.id).delete()
     DossierStatistic.objects.filter(issue_id=issue_id, user_id=request.user.id).delete()
 
@@ -83,20 +88,34 @@ def delete_issue_dossiers(request, issue_id):
 
     bookmarked_issues = request.extravars['bookmarked_issues']
 
-    # Get session agenda item info to display with the issue HTML returned
+    # Get session agenda header information if needed
     session_agenda_item_id = int(request.GET.get('session_agenda_item_id', 0) or 0)
     if session_agenda_item_id:
-        session_agenda_item = SessionAgendaItem.objects.get(id=session_agenda_item_id)
-    else:
-        session_agenda_item = None
+        stub_ctx['session_agenda_item'] = SessionAgendaItem.objects.get(id=session_agenda_item_id)
 
-    stub_ctx = {
+    # Get committee agenda header information if needed
+    committee_agenda_item_id = int(request.GET.get('committee_agenda_item_id', 0) or 0)
+    if committee_agenda_item_id:
+        stub_ctx['committee_agenda_item'] = CommitteeAgendaItem.objects.get(id=committee_agenda_item_id)
+
+    # Get upcoming session infomation if needed
+    upcoming_session_ids = request.GET.get('upcoming_session_ids', '')
+    if len(upcoming_session_ids):
+        stub_ctx['upcoming_sessions'] = Session.objects.filter(id__in=[int(val) for val in upcoming_session_ids.split(',')])
+
+    # Get upcoming committee agenda information if needed
+    upcoming_committee_agenda_ids = request.GET.get('upcoming_committee_agenda_ids', '')
+    if len(upcoming_committee_agenda_ids):
+        stub_ctx['upcoming_committee_agendas'] = CommitteeAgenda.objects.filter(
+            id__in=[int(val) for val in upcoming_committee_agenda_ids.split(',')]
+        )
+
+    stub_ctx.update({
         'request': request,
         'issue': issue,
         'user': request.user,
         'bookmarked_issues': bookmarked_issues,
-        'agenda_item': session_agenda_item,
-    }
+    })
     html_content = render_to_string('core/stub/issue.html', stub_ctx)
 
     ctx = {

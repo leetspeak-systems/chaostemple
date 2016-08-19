@@ -121,15 +121,16 @@ def parliament_issue(request, parliament_num, issue_num):
         for issue in partial_access.issues.all():
             partial_conditions.append(Q(user_id=partial_access.user_id) & Q(issue_id=issue.id))
 
-    # Create a prefetch query for accessing dossiers allowed by partial access
+    # Add dossiers from users who have given full access
+    prefetch_query = Q(user_id__in=visible_user_ids) | Q(user_id=request.user.id)
+    # Add dossiers from users who have given access to this particular issue
     if len(partial_conditions) > 0:
-        prefetch_queryset = Dossier.objects.filter(
-            Q(user_id__in=visible_user_ids) | Q(user_id=request.user.id) | Q(reduce(operator.or_, partial_conditions))
-        )
-    else:
-        prefetch_queryset = Dossier.objects.filter(
-            Q(user_id__in=visible_user_ids) | Q(user_id=request.user.id)
-        )
+        prefetch_query.add(Q(reduce(operator.or_, partial_conditions)), Q.OR)
+
+    # Add prefetch query but leave out useless information from other users
+    prefetch_queryset = Dossier.objects.filter(prefetch_query).exclude(
+        ~Q(user_id=request.user.id), attention='none', knowledge=0, support='undefined', proposal='none'
+    )
 
     def get_prefetched_documents():
         return Document.objects.prefetch_related(

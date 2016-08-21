@@ -14,3 +14,8 @@
 1.0.5:
     * Some code cleanup and under-the-hood work.
     * Documents are updated when information in XML and database differ.
+
+1.0.6:
+    * Issue view: Leave out useless information from other users.
+    * Issue header information is retrieved alongside new issue data when deleting issue dossiers.
+    * Links in comments on dossiers urlized.

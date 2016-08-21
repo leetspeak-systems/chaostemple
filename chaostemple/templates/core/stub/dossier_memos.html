@@ -21,7 +21,7 @@
                         {% endif %}
                     </td>
                     <td>
-                        <span control="memo-content-container" data-id="{{ memo.id }}">&bullet; <span control="memo-content" data-id="{{ memo.id }}">{{ memo.content }}</span></span>
+                        <span control="memo-content-container" data-id="{{ memo.id }}">&bullet; <span control="memo-content" data-id="{{ memo.id }}">{{ memo.content|urlize }}</span></span>
                         <input control="edit-memo-content" type="text" data-id="{{ memo.id }}" data-dossier-id="{{ dossier_id }}" value="{{ memo.content }}" maxlength="2000" />
                     </td>
                 </tr>

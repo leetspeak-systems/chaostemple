@@ -56,7 +56,9 @@ def upcoming(request):
     committee_issues = Issue.objects.select_related('parliament').prefetch_related(
         'proposers__person',
         'committee_agenda_items__committee_agenda',
-    ).filter(committee_agenda_items__committee_agenda__in=next_committee_agendas).distinct()
+    ).filter(committee_agenda_items__committee_agenda__in=next_committee_agendas).order_by(
+        'committee_agenda_items__committee_agenda__timing_start_planned'
+    ).distinct()
 
     # Get the relevant dossier statistics
     IssueUtilities.populate_dossier_statistics(list(session_issues) + list(committee_issues), request.user.id)

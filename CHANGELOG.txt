@@ -19,3 +19,6 @@
     * Issue view: Leave out useless information from other users.
     * Issue header information is retrieved alongside new issue data when deleting issue dossiers.
     * Links in comments on dossiers urlized.
+
+1.0.7:
+    * Issues ordered by datetime on committee agenda schedule on "upcoming" page.

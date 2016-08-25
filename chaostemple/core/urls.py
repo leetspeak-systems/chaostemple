@@ -36,7 +36,7 @@ urlpatterns = [
     url(r'^json/memo/sort/(?P<dossier_id>\d+)/', json_views.sort_memos, name='json_sort_memos'),
 
     url(r'^json/bookmark/issue/toggle/(?P<issue_id>\d+)/$', json_views.issue_bookmark_toggle, name='json_issue_bookmark_toggle'),
-    url(r'^json/bookmark/issue/menu/$', json_views.issue_bookmark_menu, name='json_issue_bookmark_menu'),
+    url(r'^json/bookmark/issue/menu/(?P<parliament_num>\d+)$', json_views.issue_bookmark_menu, name='json_issue_bookmark_menu'),
 
     url(r'^json/user/access/grant/(?P<friend_id>\d+)/$', json_views.user_access_grant),
     url(r'^json/user/access/grant/(?P<friend_id>\d+)/issue/(?P<issue_id>\d+)$', json_views.user_access_grant),

@@ -9,7 +9,7 @@ jQuery.fn.extend({
                 'success': 'Bookmarks reloaded.',
                 'failure': 'Reloading bookmarks failed!',
             },
-            url: '/json/bookmark/issue/menu/',
+            url: '/json/bookmark/issue/menu/' + PARLIAMENT_NUM,
             done: function(data, textStatus) {
                 $menuitems = $menu.find('ul[class="dropdown-menu"]');
                 if (data.bookmarked_issue_count > 0) {

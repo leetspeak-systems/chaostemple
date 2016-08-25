@@ -145,10 +145,9 @@ def issue_bookmark_toggle(request, issue_id):
 
 @login_required
 @jsonize
-def issue_bookmark_menu(request):
+def issue_bookmark_menu(request, parliament_num):
 
     bookmarked_issues = request.extravars['bookmarked_issues']
-    parliament_num = request.extravars['parliament_num']
 
     html_content = render_to_string('core/stub/issue_bookmark_menuitems.html', {
         'bookmarked_issues': bookmarked_issues,

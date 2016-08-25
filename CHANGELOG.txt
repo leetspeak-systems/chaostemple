@@ -22,3 +22,6 @@
 
 1.0.7:
     * Issues ordered by datetime on committee agenda schedule on "upcoming" page.
+
+1.0.8:
+    * Bugfix: Bookmarks menu always loaded most recent parliament's bookmarks through AJAX even when an earlier parliament was selected.

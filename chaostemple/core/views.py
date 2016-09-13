@@ -130,8 +130,8 @@ def parliament_issue(request, parliament_num, issue_num):
         prefetch_query.add(Q(reduce(operator.or_, partial_conditions)), Q.OR)
 
     # Add prefetch query but leave out useless information from other users
-    prefetch_queryset = Dossier.objects.filter(prefetch_query).exclude(
-        ~Q(user_id=request.user.id), attention='none', knowledge=0, support='undefined', proposal='none'
+    prefetch_queryset = Dossier.objects.filter(prefetch_query).annotate(memo_count=Count('memos')).exclude(
+        ~Q(user_id=request.user.id), attention='none', knowledge=0, support='undefined', proposal='none', memo_count=0
     )
 
     def get_prefetched_documents():

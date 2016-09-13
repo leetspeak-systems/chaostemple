@@ -25,3 +25,6 @@
 
 1.0.8:
     * Bugfix: Bookmarks menu always loaded most recent parliament's bookmarks through AJAX even when an earlier parliament was selected.
+
+1.0.9:
+    * Bugfix: Dossiers from other users didn't show up in issue view if only comments were added but no states changed.

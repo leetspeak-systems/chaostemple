@@ -14,6 +14,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
+from django.utils import dateparse
 from django.utils import timezone
 
 from core.models import Access
@@ -35,7 +36,62 @@ from althingi.models import Session
 
 
 def home(request):
-    return redirect(reverse('upcoming'))
+    return redirect(reverse('day'))
+
+
+def day(request, input_date=None):
+
+    # Redirect to today if no date specified
+    if input_date is None:
+        now = timezone.now()
+        return redirect(reverse('day', args=(now.strftime('%Y-%m-%d'),)))
+
+    # Make sure that the date makes sense and otherwise result in a "Page not found" error
+    try:
+        requested_date = timezone.make_aware(dateparse.parse_datetime('%s 00:00:00' % input_date))
+    except ValueError:
+        raise Http404
+
+    requested_yesterday = requested_date - timezone.timedelta(days=1)
+    requested_tomorrow = requested_date + timezone.timedelta(days=1)
+
+    # Get issues of specified day
+    sessions = Session.objects.select_related('parliament').prefetch_related('session_agenda_items').on_date(requested_date)
+    for session in sessions:
+        session.session_agenda_items_loaded = session.session_agenda_items.select_related(
+            'issue__parliament'
+        ).prefetch_related(
+            'issue__proposers__person'
+        )
+
+        # Populate the dossier statistics
+        IssueUtilities.populate_dossier_statistics([i.issue for i in session.session_agenda_items_loaded], request.user.id)
+
+    # Get committee agendas of specified day
+    committee_agendas = CommitteeAgenda.objects.select_related('committee').prefetch_related(
+        'committee_agenda_items'
+    ).on_date(requested_date)
+    for committee_agenda in committee_agendas:
+        committee_agenda.committee_agenda_items_loaded = committee_agenda.committee_agenda_items.select_related(
+            'issue__parliament'
+        ).prefetch_related(
+            'issue__proposers__person'
+        )
+
+        # Populate the dossier statistics
+        IssueUtilities.populate_dossier_statistics(
+            [a.issue for a in committee_agenda.committee_agenda_items_loaded],
+            request.user.id
+        )
+
+    ctx = {
+        'requested_yesterday': requested_yesterday,
+        'requested_date': requested_date,
+        'requested_tomorrow': requested_tomorrow,
+        'sessions': sessions,
+        'committee_agendas': committee_agendas,
+    }
+    return render(request, 'core/day.html', ctx)
 
 
 def upcoming(request):

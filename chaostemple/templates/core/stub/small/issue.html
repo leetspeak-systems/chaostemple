@@ -3,48 +3,55 @@
 
 <tr control="issue-container" data-id="{{ issue.id }}">
     <td>
-        <span style="float: right;">
-            {% if user.is_authenticated %}
-                {% include 'core/stub/small/issue_bookmark.html' %}
-            {% endif %}
-        </span>
+        {% if issue.issue_group == 'A' %}
+            <span style="float: right;">
+                {% if user.is_authenticated %}
+                    {% include 'core/stub/small/issue_bookmark.html' %}
+                {% endif %}
+            </span>
 
-        {{ issue.issue_num }}
-        | <a href="{% url 'parliament_issue' issue.parliament.parliament_num issue.issue_num %}" target="_blank"><strong><span
-                    control="issue-name"
-                    data-id="{{ issue.id }}">{{ issue }}</span></strong></a>
-        {% if issue.description %}
-            <small style="white-space: nowrap;">(<span control="issue-description" data-id="{{ issue.id }}">{{ issue.description }}</span>)</small>
+            {{ issue.issue_num }}
+            | <a href="{% url 'parliament_issue' issue.parliament.parliament_num issue.issue_num %}" target="_blank"><strong><span
+                        control="issue-name"
+                        data-id="{{ issue.id }}">{{ issue }}</span></strong></a>
+            {% if issue.description %}
+                <small style="white-space: nowrap;">(<span control="issue-description" data-id="{{ issue.id }}">{{ issue.description }}</span>)</small>
+            {% endif %}
+
+            <span style="white-space: nowrap;">
+            {% for d in issue.dossier_statistics %}
+                <a href="#" control="toggle-user-dossier-statistics"
+                        data-user-id="{{ d.user_id }}"
+                        data-issue-id="{{ issue.id }}"
+                        class="btn btn-xs btn-default">{{ d.user }}</a>
+            {% endfor %}
+            </span>
+
+            <br />
+
+            <small>
+            {{ issue.get_issue_type_display|capfirst }}:
+            {% with issue.proposers.all.0 as proposer %}
+                {% if proposer.person %}
+                    <a href="{% url 'person' proposer.person.slug proposer.person.subslug %}">{{ proposer }}</a>
+                {% else %}
+                    <a href="#">{{ proposer }}</a>
+                {% endif %}
+            {% endwith %}
+            {% if issue.proposers.all.1 %}{% trans 'and others' %}{% endif %}
+            </small>
+
+            <br />
+
+            <div control="statistic-container" class="small-issues" style="display: none;">
+                <small>{% display_dossier_statistics issue 'small' %}</small>
+            </div>
+        {% elif issue.issue_group == 'B' %}
+            B: <strong><span control="issue-name" data-id="{{ issue.id }}">{{ issue }}</span></strong>
+            {% if issue.description %}
+                <small style="white-space: nowrap;">(<span control="issue-description" data-id="{{ issue.id }}">{{ issue.description }}</span>)</small>
+            {% endif %}
         {% endif %}
-
-        <span style="white-space: nowrap;">
-        {% for d in issue.dossier_statistics %}
-            <a href="#" control="toggle-user-dossier-statistics"
-                    data-user-id="{{ d.user_id }}"
-                    data-issue-id="{{ issue.id }}"
-                    class="btn btn-xs btn-default">{{ d.user }}</a>
-        {% endfor %}
-        </span>
-
-        <br />
-
-        <small>
-        {{ issue.get_issue_type_display|capfirst }}:
-        {% with issue.proposers.all.0 as proposer %}
-            {% if proposer.person %}
-                <a href="{% url 'person' proposer.person.slug proposer.person.subslug %}">{{ proposer }}</a>
-            {% else %}
-                <a href="#">{{ proposer }}</a>
-            {% endif %}
-        {% endwith %}
-        {% if issue.proposers.all.1 %}{% trans 'and others' %}{% endif %}
-        </small>
-
-        <br />
-
-        <div control="statistic-container" class="small-issues" style="display: none;">
-            <small>{% display_dossier_statistics issue 'small' %}</small>
-        </div>
 
         {% comment %}
         {% if issue.dossier_statistics %}

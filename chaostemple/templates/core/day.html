@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+{% load datetime %}
+
+{% block javascript %}
+    <script language="javascript" type="text/javascript" src="{% static 'core/js/issue_control.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+    {% include 'core/dialog/dialog_delete_issue_dossiers.html' %}
+
+    <h1>
+        {% blocktrans %}Today's issues{% endblocktrans %}
+        <small>{{ requested_date|date }}</small>
+        <div class="header-controls">
+        <div class="btn-group btn-group-sm">
+            <a href="{% url 'day' requested_yesterday|isodate %}" class="btn btn-default">{% trans 'Previous day' %}</a>
+            <a href="{% url 'day' requested_tomorrow|isodate %}" class="btn btn-default">{% trans 'Next day' %}</a>
+        </div>
+        </div>
+    </h1>
+
+    <div class="col-md-6">
+        <div class="row">
+        {% for session in sessions %}
+
+            {% include 'core/stub/session_header.html' %}
+
+            <table class="table">
+            {% for session_agenda_item in session.session_agenda_items_loaded %}
+                {% include 'core/stub/small/issue.html' with issue=session_agenda_item.issue session_agenda_item=session_agenda_item %}
+            {% endfor %}
+            </table>
+
+        {% empty %}
+            <em>{% trans 'No sessions on this day.' %}</em>
+        {% endfor %}
+        </div>
+    </div>
+
+    <div class="col-md-6">
+
+        {% for committee_agenda in committee_agendas %}
+
+            {% include 'core/stub/committee_agenda_header.html' %}
+
+            <table class="table">
+            {% for committee_agenda_item in committee_agenda.committee_agenda_items_loaded %}
+                {% include 'core/stub/small/committee_agenda_item.html' %}
+            {% endfor %}
+            </table>
+
+        {% empty %}
+            <em>{% trans 'No committee agendas on this day.' %}</em>
+        {% endfor %}
+
+    </div>
+
+{% endblock %}

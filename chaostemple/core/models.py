@@ -60,6 +60,9 @@ class IssueUtilities():
         )
 
         for issue in issues:
+            if issue is None:
+                continue
+
             for dossier_statistic in dossier_statistics:
                 if dossier_statistic.issue_id == issue.id:
                     if not hasattr(issue, 'dossier_statistics'):

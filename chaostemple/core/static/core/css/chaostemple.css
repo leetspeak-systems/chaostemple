@@ -3,6 +3,7 @@
 
 /* ChaosTemple-specific classes */
 body { padding-top: 50px; }
+h2 small { white-space: nowrap; }
 .btn-default .grey { color: #b0b0b0; }
 .btn-primary .grey { color: #d0d0d0; }
 .btn-success .grey { color: #d0d0d0; }
@@ -16,6 +17,8 @@ body { padding-top: 50px; }
 .parliament-link img { margin-top: 1px; }
 
 .user-link { font-weight: bold; }
+
+h1 div.header-controls { float: right; }
 
 div[control="dossier"] { margin-top: 10px; }
 div[control="dossier"]:first-child { margin-top: 0px; }

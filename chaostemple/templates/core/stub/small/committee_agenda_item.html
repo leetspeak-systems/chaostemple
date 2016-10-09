@@ -1,0 +1,7 @@
+{% if committee_agenda_item.issue_id %}
+    {% include 'core/stub/small/issue.html' with issue=committee_agenda_item.issue %}
+{% else %}
+    <tr>
+        <td><strong>{{ committee_agenda_item.name }}</strong></td>
+    </tr>
+{% endif %}

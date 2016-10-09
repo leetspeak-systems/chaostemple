@@ -9,3 +9,6 @@ register = template.Library()
 def datetime(dt):
     return '%s (%s)' % (date(dt), time(dt))
 
+@register.filter
+def isodate(dt):
+    return dt.isoformat()[0:10]

@@ -1,0 +1,12 @@
+{% load i18n %}
+
+<h2>
+    {{ session.name }}
+    <small>
+        {% if session.timing_start_planned %}
+            {{ session.timing_start_planned }}
+        {% else %}
+            ({% trans 'Following previous session' %})
+        {% endif %}
+    </small>
+</h2>

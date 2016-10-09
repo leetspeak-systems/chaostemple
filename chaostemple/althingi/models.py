@@ -1,5 +1,6 @@
 # -*- coding: utf-8
 from django.db import models
+from django.db.models import Q
 from django.templatetags.static import static
 from django.utils import timezone
 
@@ -9,37 +10,99 @@ import urllib
 from althingi.utils import format_date
 from althingi.utils import capfirst
 
-class SessionManager(models.Manager):
+class SessionQuerySet(models.QuerySet):
+    '''
+    ON CODE:
+    Sometimes a session is planned immediately following another one.
+    In these cases, the first session has timing_start_planned accurately configured,
+    but the following session has no timing_start_planned at all (None).
+    The only way to determine that such sessions are planned to be held on the same day as the previous one
+    is by them having a session_num of the previous session plus one.
+    Example:
+        Session nr. 112 is planned on a specific day. <- timing_start_planned is accurately configured.
+        Session nr. 113 is planned immediately following session nr. 112. <- timing_start_planned is None.
+
+    As a result, to include a session which is following the one requested,
+    such as in SessionManager.upcoming() and SessionManager.on_date(), more than one query is required.
+    This is undesirable but necessary until the XML properly designates "following session X".
+    Currently this is only designated in manually entered text which cannot safely be parsed.
+    If you notice that the XML has been updated to solve this problem, please revise this code accordingly.
+    '''
+
     def upcoming(self):
-
-        # The XML cannot determine the planned timing of a session that comes immediately after
-        # another, we first find the next upcoming session, which will need to have a timing_start_planned
-        # configured. Then we look up all sessions with the same session number or higher. Then we return
-        # the QuerySet object so that the calling function can modify the query further.
-
-        now = timezone.now()
-        today = timezone.make_aware(timezone.datetime(now.year, now.month, now.day), now.tzinfo)
-
+        today = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
         try:
-            next_session = Session.objects.select_related(
-                'parliament'
-            ).filter(timing_start_planned__gt=today).order_by('-session_num')[0:1].get()
-            next_num = next_session.session_num
-            parliament_num = next_session.parliament.parliament_num
+            next_session = self.select_related('parliament').filter(timing_start_planned__gte=today)[0:1].get()
+            return self.filter(
+                session_num__gte=next_session.session_num,
+                parliament__parliament_num=next_session.parliament.parliament_num
+            )
+
         except Session.DoesNotExist:
             return Session.objects.none()
 
-        next_sessions = self.filter(session_num__gte=next_num, parliament__parliament_num=parliament_num)
+    def on_date(self, requested_date):
+        '''
+        ON CODE:
+        Because of how session data is provided (see comment in top of class), this function needs to
+        execute its database queries immediately. Every retrieved session must be checked to see if
+        there is another one following it, so the number of queries executed are number_of_sesssions + 1.
+        Improvements are welcomed.
+        Note however that the resulting queryset is still chainable and is not executed until used.
 
-        return next_sessions
+        For the sake of clarity and performance, "under the hood" queries are entirely separate from the
+        resulting queryset and are therefore called via 'Session.objects' rather than 'self'.
+        This does not impact performance since every "under the hood" query needs to be executed anyway.
+        In fact, if the main queryset were used and modified a lot before execution, it might negatively
+        affect performance.
+        '''
+
+        requested_tomorrow = requested_date + timezone.timedelta(days=1)
+
+        # Get first session of day
+        first_session = Session.objects.select_related('parliament').filter(
+            timing_start_planned__gte=requested_date,
+            timing_start_planned__lt=requested_tomorrow
+        ).order_by('session_num').first()
+
+        # Return with empty result if no session exists on day
+        if first_session is None:
+            return Session.objects.none()
+
+        # Collect following sessions
+        session_nums = [first_session.session_num]
+        next_session = first_session
+        while next_session is not None:
+            try:
+                next_session = Session.objects.select_related('parliament').get(
+                    Q(timing_start_planned=None)
+                    | Q(timing_start_planned__gte=requested_date, timing_start_planned__lt=requested_tomorrow),
+                    parliament__parliament_num=next_session.parliament.parliament_num,
+                    session_num=next_session.session_num+1
+                )
+
+                session_nums.append(next_session.session_num)
+            except Session.DoesNotExist:
+                next_session = None
+                pass
+
+        # Return a chainable QuerySet object
+        return self.filter(
+            parliament__parliament_num=first_session.parliament.parliament_num,
+            session_num__in=session_nums
+        )
 
 
-class CommitteeAgendaManager(models.Manager):
+class CommitteeAgendaQuerySet(models.QuerySet):
     def upcoming(self):
-        now = timezone.now()
-        today = timezone.make_aware(timezone.datetime(now.year, now.month, now.day), now.tzinfo)
+        today = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
 
         return self.filter(timing_start_planned__gte=today)
+
+    def on_date(self, requested_date):
+        requested_tomorrow = requested_date + timezone.timedelta(days=1)
+
+        return self.filter(timing_start_planned__gte=requested_date, timing_start_planned__lt=requested_tomorrow)
 
 
 class Parliament(models.Model):
@@ -347,7 +410,7 @@ class Person(models.Model):
 
 
 class Session(models.Model):
-    objects = SessionManager()
+    objects = SessionQuerySet.as_manager()
 
     parliament = models.ForeignKey('Parliament', related_name='sessions')
     session_num = models.IntegerField()
@@ -392,7 +455,7 @@ class SessionAgendaItem(models.Model):
 
 
 class CommitteeAgenda(models.Model):
-    objects = CommitteeAgendaManager()
+    objects = CommitteeAgendaQuerySet.as_manager()
 
     parliament = models.ForeignKey('Parliament', related_name='committee_agendas')
     committee = models.ForeignKey('Committee', related_name='committee_agendas')

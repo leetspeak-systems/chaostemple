@@ -5,6 +5,8 @@ from core import json_views
 
 urlpatterns = [
     url(r'^$', views.home, name='home'),
+    url(r'^day/$', views.day, name='day'),
+    url(r'^day/(?P<input_date>(\d{4}-[01]\d-[0-3]\d){0,1})/$', views.day, name='day'),
     url(r'^upcoming/$', views.upcoming, name='upcoming'),
     url(r'^parliament/(?P<parliament_num>\d+)/$', views.parliament, name='parliament'),
     url(r'^parliament/(?P<parliament_num>\d+)/issues/$', views.parliament_issues, name='parliament_issues'),

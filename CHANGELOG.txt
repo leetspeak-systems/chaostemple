@@ -28,3 +28,6 @@
 
 1.0.9:
     * Bugfix: Dossiers from other users didn't show up in issue view if only comments were added but no states changed.
+
+1.1.0:
+    * Page added for showing both session and committee agenda for a day, default being today. Default page is now the "today" page.

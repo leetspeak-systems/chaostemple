@@ -11,3 +11,4 @@ local_settings.py
 /chaostemple/static
 /chaostemple/althingi/management/commands/temp_*
 /sql-changes
+/pip-selfcheck.json

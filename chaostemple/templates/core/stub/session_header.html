@@ -4,7 +4,11 @@
     {{ session.name }}
     <small>
         {% if session.timing_start_planned %}
-            {{ session.timing_start_planned }}
+            {% if skipdate %}
+                {{ session.timing_start_planned|time }}
+            {% else %}
+                {{ session.timing_start_planned }}
+            {% endif %}
         {% else %}
             ({% trans 'Following previous session' %})
         {% endif %}

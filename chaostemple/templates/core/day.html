@@ -25,7 +25,7 @@
         <div class="row">
         {% for session in sessions %}
 
-            {% include 'core/stub/session_header.html' %}
+            {% include 'core/stub/session_header.html' with skipdate=True %}
 
             <table class="table">
             {% for session_agenda_item in session.session_agenda_items_loaded %}
@@ -43,7 +43,7 @@
 
         {% for committee_agenda in committee_agendas %}
 
-            {% include 'core/stub/committee_agenda_header.html' %}
+            {% include 'core/stub/committee_agenda_header.html' with skipdate=True %}
 
             <table class="table">
             {% for committee_agenda_item in committee_agenda.committee_agenda_items_loaded %}

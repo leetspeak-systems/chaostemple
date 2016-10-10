@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
 {% load i18n %}
-{% load datetime %}
 
 {% block javascript %}
     <script language="javascript" type="text/javascript" src="{% static 'core/js/issue_control.js' %}"></script>
@@ -16,8 +15,8 @@
         <small>{{ requested_date|date }}</small>
         <div class="header-controls">
         <div class="btn-group btn-group-sm">
-            <a href="{% url 'day' requested_yesterday|isodate %}" class="btn btn-default">{% trans 'Previous day' %}</a>
-            <a href="{% url 'day' requested_tomorrow|isodate %}" class="btn btn-default">{% trans 'Next day' %}</a>
+            <a href="{% url 'day' requested_yesterday|date:'Y-m-d' %}" class="btn btn-default">{% trans 'Previous day' %}</a>
+            <a href="{% url 'day' requested_tomorrow|date:'Y-m-d' %}" class="btn btn-default">{% trans 'Next day' %}</a>
         </div>
         </div>
     </h1>

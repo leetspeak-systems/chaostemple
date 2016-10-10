@@ -1,12 +1,10 @@
-{% load datetime %}
-
 <div class="alert alert-info alert-small" control="issue-header"
         data-id="{{ issue.id }}"
         data-upcoming-committee-agenda-ids="{% for agenda in upcoming_committee_agendas %}{{ agenda.id }}{% if not forloop.last %},{% endif %}{% endfor %}">
     {% for agenda in upcoming_committee_agendas %}
         <span class="subitem">
             <a href="{% url 'parliament_committee' agenda.parliament.parliament_num agenda.committee_id %}">{{ agenda.committee }}</a>
-            - <a href="{% url 'parliament_committee_agenda' agenda.parliament.parliament_num agenda.committee_id agenda.id %}">{{ agenda.timing_start_planned|datetime }}</a>
+            - <a href="{% url 'parliament_committee_agenda' agenda.parliament.parliament_num agenda.committee_id agenda.id %}">{{ agenda.timing_start_planned }}</a>
         </span>
     {% endfor %}
 </div>

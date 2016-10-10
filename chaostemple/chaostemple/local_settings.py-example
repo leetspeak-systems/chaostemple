@@ -40,8 +40,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 DATE_FORMAT = 'Y-m-d'
-DATETIME_FORMAT = 'Y-m-d H:i:s'
-TIME_FORMAT = 'H:i:s'
+DATETIME_FORMAT = 'Y-m-d H:i'
+TIME_FORMAT = 'H:i'
 
 # To test email smtp:
 # $ python -m smtpd -n -c DebuggingServer 127.0.0.1:25000

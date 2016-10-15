@@ -889,7 +889,6 @@ def update_issue(issue_num, parliament_num=None):
                 review.sender_name = sender_name
                 changed = True
 
-            changed = False
             if review.committee_id != committee_id:
                 review.committee_id = committee_id
                 changed = True

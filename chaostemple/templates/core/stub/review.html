@@ -10,7 +10,7 @@
         {% endif %}
         <div>
             <span class="glyphicon glyphicon-inbox"></span>
-            <a class="title" href="{{ review.pdf_link }}" target="_blank">{{ review.sender_name }}</a>
+            <a class="title" href="{{ review.pdf_link }}" target="_blank">{{ review.sender_name }}</a>{% if review.sender_name_description %}<strong>{% if review.sender_name_description.0 != ',' %} {% endif %}{{ review.sender_name_description }}</strong>{% endif %}
             <small>({{ review.get_review_type_display }})</small>
         </div>
     </div>

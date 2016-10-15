@@ -1404,11 +1404,18 @@ def _process_session_agenda_xml(session_xml):
 
     name = session_xml.getElementsByTagName(u'fundarheiti')[0].firstChild.nodeValue
 
-    begins_xml = session_xml.getElementsByTagName(u'hefst')[0].getElementsByTagName(u'dagurtími')
-    if len(begins_xml) == 0:
-        timing_start_planned = None
+    begins_xml = session_xml.getElementsByTagName(u'hefst')[0]
+    timing_start_planned_xml = begins_xml.getElementsByTagName(u'dagurtími')
+    if len(timing_start_planned_xml) > 0:
+        timing_start_planned = sensible_datetime(timing_start_planned_xml[0].firstChild.nodeValue)
     else:
-        timing_start_planned = sensible_datetime(begins_xml[0].firstChild.nodeValue)
+        timing_start_planned = None
+
+    timing_text_xml = begins_xml.getElementsByTagName(u'texti')
+    if len(timing_text_xml) > 0:
+        timing_text = timing_text_xml[0].firstChild.nodeValue
+    else:
+        timing_text = None
 
     try:
         timing_start = sensible_datetime(session_xml.getElementsByTagName(u'fundursettur')[0].firstChild.nodeValue)
@@ -1432,6 +1439,9 @@ def _process_session_agenda_xml(session_xml):
         if session.timing_end != timing_end:
             session.timing_end = timing_end
             changed = True
+        if session.timing_text != timing_text:
+            session.timing_text = timing_text
+            changed = True
 
         if changed:
             session.save()
@@ -1447,6 +1457,7 @@ def _process_session_agenda_xml(session_xml):
         session.timing_start_planned = timing_start_planned
         session.timing_start = timing_start
         session.timing_end = timing_end
+        session.timing_text = timing_text
         session.save()
         print('Added session: %s' % session)
 

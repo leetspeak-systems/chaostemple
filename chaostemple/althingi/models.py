@@ -418,6 +418,7 @@ class Session(models.Model):
     timing_start_planned = models.DateTimeField(null=True)
     timing_start = models.DateTimeField(null=True)
     timing_end = models.DateTimeField(null=True)
+    timing_text = models.CharField(max_length=200, null=True)
 
     def __unicode__(self):
         return u'%s' % self.name

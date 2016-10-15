@@ -2,6 +2,8 @@
 {% load static %}
 {% load jsonizer %}
 {% load parliament %}
+{% load committee %}
+{% load session %}
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -71,8 +73,10 @@
                                             {% endifchanged %}
                                             <li role="presentation">
                                                 <a href="{% url 'parliament_session' session.parliament.parliament_num session.session_num %}">
-                                                    &nbsp;&nbsp;&nbsp;&nbsp;{{ session.name }}
-                                                    <small><em>{{ session.timing_start_planned|time }}</em></small>
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;{{ session.name }},
+                                                    {% with True as skipdate %}
+                                                        <small><em>{{ session|fancy_session_timing:skipdate }}</em></small>
+                                                    {% endwith %}
                                                 </a>
                                             </li>
                                         {% endfor %}
@@ -86,11 +90,9 @@
                                             <li role="presentation">
                                                 <a href="{% url 'parliament_committee_agenda' agenda.parliament.parliament_num agenda.committee_id agenda.id %}">
                                                     &nbsp;&nbsp;&nbsp;&nbsp;{{ agenda.committee }},
-                                                    {% if agenda.timing_start_planned|time == '00:00:00' %}
-                                                        <small><em>({{ agenda.timing_text }})</em></small>
-                                                    {% else %}
-                                                        <small><em>{{ agenda.timing_start_planned|time }}</em></small>
-                                                    {% endif %}
+                                                    {% with True as skipdate %}
+                                                        <small><em>{{ agenda|fancy_committee_agenda_timing:skipdate }}</em></small>
+                                                    {% endwith %}
                                                 </a>
                                             </li>
                                         {% endfor %}

@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load session %}
 
 {% block content %}
 
@@ -17,13 +18,7 @@
                 </tr>
                 {% for session in sessions reversed %}
                     <tr>
-                        <td>
-                            {% if session.timing_start_planned %}
-                                {{ session.timing_start_planned }}
-                            {% else %}
-                                <small>{% trans 'Following previous session' %}</small>
-                            {% endif %}
-                        </td>
+                        <td>{{ session|fancy_session_timing }}</td>
                         <td><a href="{% url 'parliament_session' parliament_num session.session_num %}">{{ session }}</a></td>
                         <td class="text-right">{{ session.session_agenda_item_count }}</td>
                         <td>

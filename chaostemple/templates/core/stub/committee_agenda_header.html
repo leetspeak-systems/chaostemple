@@ -1,12 +1,11 @@
 {% load i18n %}
+{% load committee %}
 <h2>
     {{ committee_agenda.committee }}
     <small>
-    {% if skipdate %}
-        {{ committee_agenda.timing_start_planned|time }}
-    {% else %}
-        {{ committee_agenda.timing_start_planned }}
-    {% endif %}
+    {% with skipdate as skipdate %}
+        {{ committee_agenda|fancy_committee_agenda_timing:skipdate }}
+    {% endwith %}
     </small>
 </h2>
 

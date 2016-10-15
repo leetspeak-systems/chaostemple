@@ -213,6 +213,7 @@ class Review(models.Model):
         (u'uk', u'umsókn'),
         (u'up', u'upplýsingar'),
         (u'vb', u'viðbótarumsögn'),
+        (u'vi', u'viðauki'),
         (u'vs', u'vinnuskjal'),
         (u'xx', u'x'),
         (u'yf', u'yfirlit'),

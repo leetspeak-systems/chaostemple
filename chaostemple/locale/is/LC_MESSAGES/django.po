@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-10-15 18:58+0000\n"
+"POT-Creation-Date: 2016-10-15 19:20+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -178,14 +178,14 @@ msgstr ""
 msgid "Otherwise, please contact us and notify us of the problem."
 msgstr "Ef ekki, endilega láttu okkur vita af vandanum.."
 
-#: templates/base.html:61 templates/base.html:64
+#: templates/base.html:60 templates/base.html:64
 #: templates/core/upcoming.html:14
 msgid "Current and Upcoming"
 msgstr "Á döfinni"
 
-#: templates/base.html:63
-msgid "Today"
-msgstr ""
+#: templates/base.html:62 templates/core/day.html:46
+msgid "Today's issues"
+msgstr "Mál dagsins"
 
 #: templates/base.html:85 templates/core/parliament_issue.html:46
 msgid "Committee Meetings"
@@ -248,10 +248,6 @@ msgstr "Nei"
 #: templates/base.html:210
 msgid "No results found"
 msgstr "Engar niðurstöður fundust"
-
-#: templates/core/day.html:46
-msgid "Today's issues"
-msgstr "Mál dagsins"
 
 #: templates/core/day.html:59
 msgid "Previous day"

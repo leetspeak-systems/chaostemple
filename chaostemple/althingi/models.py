@@ -470,7 +470,7 @@ class CommitteeAgenda(models.Model):
         return u'%s @ %s' % (self.committee, self.timing_start_planned)
 
     class Meta:
-        ordering = ['timing_start_planned']
+        ordering = ['timing_start_planned', 'committee__name']
 
 
 class CommitteeAgendaItem(models.Model):

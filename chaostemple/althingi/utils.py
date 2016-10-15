@@ -138,8 +138,3 @@ def sensible_datetime(value):
     else:
         return pytz.timezone('UTC').localize(d)
 
-
-# Substitute for .capitalize() because it also de-capitalizes the rest of the string
-def capfirst(value):
-    return value[0].capitalize() + value[1:]
-

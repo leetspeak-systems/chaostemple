@@ -1,6 +1,7 @@
 # -*- coding: utf-8
 from django.db import models
 from django.db.models import Q
+from django.template.defaultfilters import capfirst
 from django.templatetags.static import static
 from django.utils import timezone
 
@@ -8,7 +9,6 @@ from BeautifulSoup import BeautifulSoup
 import urllib
 
 from althingi.utils import format_date
-from althingi.utils import capfirst
 
 class SessionQuerySet(models.QuerySet):
     '''

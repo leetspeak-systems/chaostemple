@@ -853,6 +853,10 @@ def update_issue(issue_num, parliament_num=None):
         except AttributeError:
             # Review with log_num 1057 in Parliament 112 lacks a name. Others do not exist.
             sender_name = ''
+        try:
+            sender_name_description = review_xml.getElementsByTagName(u'skýring')[0].firstChild.nodeValue
+        except (AttributeError, IndexError):
+            sender_name_description = ''
 
         review_type = review_xml.getElementsByTagName(u'tegunderindis')[0].getAttribute('tegund')
         try:
@@ -889,6 +893,10 @@ def update_issue(issue_num, parliament_num=None):
                 review.sender_name = sender_name
                 changed = True
 
+            if review.sender_name_description != sender_name_description:
+                review.sender_name_description = sender_name_description
+                changed = True
+
             if review.committee_id != committee_id:
                 review.committee_id = committee_id
                 changed = True
@@ -923,6 +931,7 @@ def update_issue(issue_num, parliament_num=None):
             review.issue = issue
             review.log_num = log_num
             review.sender_name = sender_name
+            review.sender_name_description = sender_name_description
             review.committee_id = committee_id
             review.review_type = review_type
             review.date_arrived = date_arrived

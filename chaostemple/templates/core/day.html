@@ -4,6 +4,38 @@
 
 {% block javascript %}
     <script language="javascript" type="text/javascript" src="{% static 'core/js/issue_control.js' %}"></script>
+
+    {% include 'js-includes/bootstrap-datepicker.html' %}
+
+    <script language="javascript" type="text/javascript">
+
+    $(document).ready(function() {
+        var $date_picker_container = $('div[control="date-picker-container"]');
+        var $date_picker_button = $date_picker_container.find('button[control="date-picker-button"]');
+        var $date_picker_value = $date_picker_container.find('input[control="date-picker-value"]');
+
+        $date_picker_value.datetimepicker({
+            locale: LANGUAGE_CODE,
+            format: 'YYYY-MM-DD',
+            widgetPositioning: {
+                horizontal: 'right',
+            },
+
+            widgetParent: $date_picker_container,
+        }).on('dp.change', function(e) {
+            var old_date = e.oldDate.format('YYYY-MM-DD');
+            var new_date = e.date.format('YYYY-MM-DD');
+            if (old_date != new_date) {
+                location.href = '/day/' + new_date + '/';
+            }
+        });
+
+        $('button[control="date-picker-button"]').on('click', function() {
+            $date_picker_value.data('DateTimePicker').toggle();
+        });
+    });
+
+    </script>
 {% endblock %}
 
 {% block content %}
@@ -13,12 +45,22 @@
     <h1>
         {% blocktrans %}Today's issues{% endblocktrans %}
         <small>{{ requested_date|date }}</small>
-        <div class="header-controls">
-        <div class="btn-group btn-group-sm">
-            <a href="{% url 'day' requested_yesterday|date:'Y-m-d' %}" class="btn btn-default">{% trans 'Previous day' %}</a>
-            <a href="{% url 'day' requested_tomorrow|date:'Y-m-d' %}" class="btn btn-default">{% trans 'Next day' %}</a>
-        </div>
-        </div>
+        <ul class="header-controls">
+            <li>
+                <div control="date-picker-container">
+                    <button type="button" control="date-picker-button" class="btn btn-default btn-sm">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </button>
+                    <input type="hidden" control="date-picker-value" value="{{ requested_date|date:'Y-m-d' }}" />
+                </div>
+            </li>
+            <li>
+                <div class="btn-group btn-group-sm">
+                    <a href="{% url 'day' requested_yesterday|date:'Y-m-d' %}" class="btn btn-default">{% trans 'Previous day' %}</a>
+                    <a href="{% url 'day' requested_tomorrow|date:'Y-m-d' %}" class="btn btn-default">{% trans 'Next day' %}</a>
+                </div>
+            </li>
+        </ul>
     </h1>
 
     <div class="col-md-6">

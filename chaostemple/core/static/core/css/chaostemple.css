@@ -18,7 +18,10 @@ h2 small { white-space: nowrap; }
 
 .user-link { font-weight: bold; }
 
-h1 div.header-controls { float: right; }
+h1 ul.header-controls { float: right; font-size: 10px; }
+h1 ul.header-controls li { float: left; list-style: none; margin-left: 12px; }
+h1 ul.header-controls div[control="date-picker-container"] { position: relative; }
+h1 ul.header-controls div[control="date-picker-container"] .bootstrap-datetimepicker-widget.dropdown-menu.bottom { top: 44px !important; right: 0px !important; }
 
 div[control="dossier"] { margin-top: 10px; }
 div[control="dossier"]:first-child { margin-top: 0px; }

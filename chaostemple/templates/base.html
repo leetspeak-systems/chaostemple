@@ -195,6 +195,7 @@
             // Constants required from server-side by JavaScript
             USER_ID = {% if user.is_authenticated %}{{ user.id }}{% else %}0{% endif %};
             PARLIAMENT_NUM = {{ parliament_num }};
+            LANGUAGE_CODE = '{{ LANGUAGE_CODE }}';
 
             $.fn.bootstrapSwitch.defaults.onText = '{% trans "Yes" %}';
             $.fn.bootstrapSwitch.defaults.offText = '{% trans "No" %}';

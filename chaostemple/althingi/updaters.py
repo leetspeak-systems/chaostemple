@@ -1339,6 +1339,7 @@ def _process_committee_agenda_xml(committee_agenda_xml):
         committee_agenda.timing_start_planned = timing_start_planned
         committee_agenda.timing_start = timing_start
         committee_agenda.timing_end = timing_end
+        committee_agenda.timing_text = timing_text
         committee_agenda.save()
 
         print('Added committee agenda: %s' % committee_agenda)

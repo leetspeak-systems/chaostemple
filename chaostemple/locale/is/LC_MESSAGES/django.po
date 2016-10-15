@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-10-09 19:10+0000\n"
+"POT-Creation-Date: 2016-10-15 18:58+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -22,7 +22,7 @@ msgstr ""
 msgid "Temple of Chaos"
 msgstr "Musteri Glundroðans"
 
-#: core/breadcrumbs.py:16 templates/base.html:49 templates/base.html:52
+#: core/breadcrumbs.py:16 templates/base.html:51 templates/base.html:54
 #: templates/core/parliament_issue.html:32
 #: templates/core/parliament_issue.html:75
 #: templates/core/parliament_issue.html:90
@@ -32,7 +32,7 @@ msgstr "Musteri Glundroðans"
 msgid "parliament"
 msgstr "þing"
 
-#: core/breadcrumbs.py:23 templates/base.html:142
+#: core/breadcrumbs.py:23 templates/base.html:144
 #: templates/core/parliament.html:8 templates/core/person.html:100
 #: templates/core/stub/user_access_list.html:11
 msgid "Issues"
@@ -42,9 +42,9 @@ msgstr "Þingmál"
 msgid "issue"
 msgstr "mál"
 
-#: core/breadcrumbs.py:37 templates/base.html:65 templates/base.html:143
+#: core/breadcrumbs.py:37 templates/base.html:67 templates/base.html:145
 #: templates/core/parliament.html:9 templates/core/parliament_issue.html:58
-#: templates/core/parliament_sessions.html:6
+#: templates/core/parliament_sessions.html:7
 msgid "Parliamentary Sessions"
 msgstr "Þingfundir"
 
@@ -52,13 +52,13 @@ msgstr "Þingfundir"
 msgid "parliamentary session"
 msgstr "þingfundur"
 
-#: core/breadcrumbs.py:51 templates/base.html:144
+#: core/breadcrumbs.py:51 templates/base.html:146
 #: templates/core/parliament.html:10
 #: templates/core/parliament_committees.html:6
 msgid "Committees"
 msgstr "Nefndir"
 
-#: core/breadcrumbs.py:74 templates/base.html:145
+#: core/breadcrumbs.py:74 templates/base.html:147
 #: templates/core/parliament.html:11 templates/core/parliament_persons.html:6
 #: templates/core/parliament_persons.html:13
 msgid "Parliamentarians"
@@ -178,94 +178,94 @@ msgstr ""
 msgid "Otherwise, please contact us and notify us of the problem."
 msgstr "Ef ekki, endilega láttu okkur vita af vandanum.."
 
-#: templates/base.html:59 templates/base.html:62
+#: templates/base.html:61 templates/base.html:64
 #: templates/core/upcoming.html:14
 msgid "Current and Upcoming"
 msgstr "Á döfinni"
 
-#: templates/base.html:61
+#: templates/base.html:63
 msgid "Today"
 msgstr ""
 
-#: templates/base.html:81 templates/core/parliament_issue.html:46
+#: templates/base.html:85 templates/core/parliament_issue.html:46
 msgid "Committee Meetings"
 msgstr "Nefndarfundir"
 
-#: templates/base.html:103 templates/base.html:105
+#: templates/base.html:105 templates/base.html:107
 #: templates/core/user_issues_open.html:13
 msgid "Opened Issues"
 msgstr "Opnuð mál"
 
-#: templates/base.html:108
+#: templates/base.html:110
 msgid "Issues with new data"
 msgstr "Mál með nýjum gögnum"
 
-#: templates/base.html:115 templates/core/stub/issue_menuentry.html:10
+#: templates/base.html:117 templates/core/stub/issue_menuentry.html:10
 msgid "new documents"
 msgstr "ný þingskjöl"
 
-#: templates/base.html:118 templates/core/stub/issue_menuentry.html:13
+#: templates/base.html:120 templates/core/stub/issue_menuentry.html:13
 msgid "new reviews"
 msgstr "nýjar umsagnir"
 
-#: templates/base.html:124
+#: templates/base.html:126
 msgid "No incoming data"
 msgstr "Engin ný gögn"
 
-#: templates/base.html:130
+#: templates/base.html:132
 msgid "Bookmarks"
 msgstr "Bókamerki"
 
-#: templates/base.html:140
+#: templates/base.html:142
 msgid "Lists"
 msgstr "Listar"
 
-#: templates/base.html:152 templates/core/user_home.html:6
+#: templates/base.html:154 templates/core/user_home.html:6
 #: templates/registration/password_change_done.html:11
 msgid "User Home"
 msgstr "Heimasvæði"
 
-#: templates/base.html:153 templates/core/user_access.html:15
+#: templates/base.html:155 templates/core/user_access.html:15
 msgid "Access"
 msgstr "Aðgangur"
 
-#: templates/base.html:155
+#: templates/base.html:157
 msgid "Logout"
 msgstr "Útskrá"
 
-#: templates/base.html:159 templates/registration/login.html:12
+#: templates/base.html:161 templates/registration/login.html:12
 msgid "Login"
 msgstr "Innskrá"
 
-#: templates/base.html:199
+#: templates/base.html:202
 msgid "Yes"
 msgstr "Já"
 
-#: templates/base.html:200
+#: templates/base.html:203
 msgid "No"
 msgstr "Nei"
 
-#: templates/base.html:207
+#: templates/base.html:210
 msgid "No results found"
 msgstr "Engar niðurstöður fundust"
 
-#: templates/core/day.html:15
+#: templates/core/day.html:46
 msgid "Today's issues"
 msgstr "Mál dagsins"
 
-#: templates/core/day.html:19
+#: templates/core/day.html:59
 msgid "Previous day"
 msgstr "Fyrri dagur"
 
-#: templates/core/day.html:20
+#: templates/core/day.html:60
 msgid "Next day"
 msgstr "Næsti dagur"
 
-#: templates/core/day.html:38
+#: templates/core/day.html:79
 msgid "No sessions on this day."
 msgstr "Engir þingfundir á þessum degi."
 
-#: templates/core/day.html:56
+#: templates/core/day.html:97
 msgid "No committee agendas on this day."
 msgstr "Engir nefndafundir á þessum degi."
 
@@ -366,17 +366,17 @@ msgstr ""
 msgid "Are you sure you want to revoke all access from this user?"
 msgstr "Ertu viss um að þú viljir svipta þennan notanda öllum aðgangi?"
 
-#: templates/core/parliament_committee.html:6
+#: templates/core/parliament_committee.html:7
 #: templates/core/parliament_committees.html:13
 msgid "Meetings"
 msgstr "Fundir"
 
-#: templates/core/parliament_committee.html:13
+#: templates/core/parliament_committee.html:14
 msgid "Timing"
 msgstr "Tímasetning"
 
-#: templates/core/parliament_committee.html:14
-#: templates/core/parliament_sessions.html:14
+#: templates/core/parliament_committee.html:15
+#: templates/core/parliament_sessions.html:15
 msgid "Items"
 msgstr "Liðir"
 
@@ -448,26 +448,21 @@ msgstr "Engin þing hafa enn verið sett inn."
 msgid "Deputies"
 msgstr "Varamenn"
 
-#: templates/core/parliament_sessions.html:12
+#: templates/core/parliament_sessions.html:13
 msgid "Planned Timing"
 msgstr "Tímasetning"
 
-#: templates/core/parliament_sessions.html:13
+#: templates/core/parliament_sessions.html:14
 msgid "Number"
 msgstr "Númer"
 
-#: templates/core/parliament_sessions.html:15
+#: templates/core/parliament_sessions.html:16
 msgid "Start Timing"
 msgstr "Upphafstími"
 
-#: templates/core/parliament_sessions.html:16
+#: templates/core/parliament_sessions.html:17
 msgid "End Timing"
 msgstr "Lokatími"
-
-#: templates/core/parliament_sessions.html:24
-#: templates/core/stub/session_header.html:9
-msgid "Following previous session"
-msgstr "Að loknum fyrri fundi"
 
 #: templates/core/person.html:20
 #: templates/core/person_select_from_multiple.html:10

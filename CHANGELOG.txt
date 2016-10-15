@@ -31,3 +31,9 @@
 
 1.1.0:
     * Page added for showing both session and committee agenda for a day, default being today. Default page is now the "today" page.
+
+1.1.1:
+    * Improvements to displaying of timing of sessions and committee agendas.
+    * Committee agendas ordered by name when timing is not enough to determine order.
+    * Calendar added to select a day on day-page.
+    * "Upcoming" menu always visible to show at least "Today's issues".

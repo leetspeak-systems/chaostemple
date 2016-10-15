@@ -1045,8 +1045,16 @@ def update_next_sessions():
     response = get_response(SESSION_NEXT_AGENDA_URL)
     session_full_xml = minidom.parse(response)
     sessions_xml = session_full_xml.getElementsByTagName(u'þingfundur')
+    sessions = []
     for session_xml in sessions_xml:
-        _process_session_agenda_xml(session_xml)
+        session = _process_session_agenda_xml(session_xml)
+        sessions.append(session)
+
+    # These are sessions that are upcoming according to the database but not according to the XML.
+    # We run them through update_session() for consistency's sake, which will delete or update them appropriately.
+    dubious_sessions = Session.objects.select_related('parliament').upcoming().exclude(id__in=[s.id for s in sessions])
+    for dubious_session in dubious_sessions:
+        update_session(dubious_session.session_num, dubious_session.parliament.parliament_num)
 
 
 def update_constituencies(parliament_num=None):
@@ -1233,6 +1241,7 @@ def update_committee_agendas(parliament_num=None, date_limit=None):
 
     committee_agenda_list_xml = minidom.parse(get_response(COMMITTEE_AGENDA_LIST_URL % parliament.parliament_num))
     committee_agenda_stubs_xml = committee_agenda_list_xml.getElementsByTagName(u'nefndarfundur')
+    committee_agendas = []
     for committee_agenda_stub_xml in reversed(committee_agenda_stubs_xml):
 
         meeting_date = sensible_datetime(committee_agenda_stub_xml.getElementsByTagName(u'dagur')[0].firstChild.nodeValue)
@@ -1240,14 +1249,24 @@ def update_committee_agendas(parliament_num=None, date_limit=None):
             break
 
         committee_agenda_xml_id = int(committee_agenda_stub_xml.getAttribute(u'númer'))
-        update_committee_agenda(committee_agenda_xml_id, parliament.parliament_num)
+        committee_agenda = update_committee_agenda(committee_agenda_xml_id, parliament.parliament_num)
+
+        committee_agendas.append(committee_agenda)
+
+    return committee_agendas
 
 
 def update_next_committee_agendas(parliament_num=None):
     now = datetime.now()
     today = datetime(now.year, now.month, now.day)
 
-    update_committee_agendas(parliament_num=parliament_num, date_limit=today)
+    agendas = update_committee_agendas(parliament_num=parliament_num, date_limit=today)
+
+    # These are agendas that are upcoming according to the database but not according to the XML.
+    # We run them through update_committee_agenda() for consistency's sake, which will delete or update them appropriately.
+    dubious_agendas = CommitteeAgenda.objects.select_related('parliament').upcoming().exclude(id__in=[a.id for a in agendas])
+    for dubious_agenda in dubious_agendas:
+        update_committee_agenda(dubious_agenda.committee_agenda_xml_id, dubious_agenda.parliament.parliament_num)
 
 
 def update_committee_agenda(committee_agenda_xml_id, parliament_num=None):
@@ -1268,7 +1287,7 @@ def update_committee_agenda(committee_agenda_xml_id, parliament_num=None):
         print('Deleted non-existent committee agenda: %d' % committee_agenda_xml_id)
         return
 
-    _process_committee_agenda_xml(committee_agenda_xml)
+    return _process_committee_agenda_xml(committee_agenda_xml) # Returns CommitteeAgenda object
 
 
 # NOTE: To become a private function once we turn this into some sort of class
@@ -1393,6 +1412,8 @@ def _process_committee_agenda_xml(committee_agenda_xml):
 
     # Delete items higher than the max_order since that means items has been dropped
     CommitteeAgendaItem.objects.filter(order__gt=max_order, committee_agenda=committee_agenda).delete()
+
+    return committee_agenda
 
 # NOTE: To become a private function once we turn this into some sort of class
 def _process_session_agenda_xml(session_xml):
@@ -1547,3 +1568,5 @@ def _process_session_agenda_xml(session_xml):
         item.delete()
 
         print('Deleted session agenda item %s' % item)
+
+    return session

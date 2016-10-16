@@ -1,7 +1,7 @@
 {% load i18n %}
 {% load static %}
 {% load jsonizer %}
-{% load parliament %}
+{% load smart_urls %}
 {% load committee %}
 {% load session %}
 <!DOCTYPE html>
@@ -51,7 +51,7 @@
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ parliament_num }}. {% trans 'parliament' %} <span class="caret"></span></a>
                                 <ul class="dropdown-menu" role="menu">
                                 {% for parliament in parliaments %}
-                                    <li role="presentation"><a href="{% parliament_link parliament.parliament_num %}">{{ parliament.parliament_num }}. {% trans 'parliament' %}</a></li>
+                                    <li role="presentation"><a href="{% parliament_url parliament.parliament_num %}">{{ parliament.parliament_num }}. {% trans 'parliament' %}</a></li>
                                 {% endfor %}
                                 </ul>
                         </li>

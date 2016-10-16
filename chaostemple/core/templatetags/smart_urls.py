@@ -1,24 +1,10 @@
 from django import template
 from django.core.urlresolvers import reverse
-from django.template.defaulttags import URLNode
-
-from althingi.althingi_settings import ALTHINGI_ISSUE_URL
-from althingi.althingi_settings import ALTHINGI_PERSON_URL
 
 register = template.Library()
 
-@register.simple_tag
-def issue_link(parliament_num, issue_num):
-    return ALTHINGI_ISSUE_URL % (parliament_num, issue_num)
-
-
-@register.simple_tag
-def person_link(person_xml_id):
-    return ALTHINGI_PERSON_URL % person_xml_id
-
-
 @register.simple_tag(takes_context=True)
-def parliament_link(context, parliament_num):
+def parliament_url(context, parliament_num):
 
     # Normally, when a different Parliament is selected, the corresponding page should be loaded with
     # respect to the page currently being viewed. However, when the user is viewing a page where it

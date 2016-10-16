@@ -84,7 +84,7 @@ def delete_issue_dossiers(request, issue_id):
     DossierStatistic.objects.filter(issue_id=issue_id, user_id=request.user.id).delete()
 
     issue = Issue.objects.select_related('parliament').get(id=issue_id)
-    IssueUtilities.populate_dossier_statistics([issue], request.user.id)
+    IssueUtilities.populate_dossier_statistics([issue])
 
     bookmarked_issues = request.extravars['bookmarked_issues']
 

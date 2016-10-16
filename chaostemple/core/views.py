@@ -65,7 +65,7 @@ def day(request, input_date=None):
         )
 
         # Populate the dossier statistics
-        IssueUtilities.populate_dossier_statistics([i.issue for i in session.session_agenda_items_loaded], request.user.id)
+        IssueUtilities.populate_dossier_statistics([i.issue for i in session.session_agenda_items_loaded])
 
     # Get committee agendas of specified day
     committee_agendas = CommitteeAgenda.objects.select_related('committee').prefetch_related(
@@ -79,10 +79,7 @@ def day(request, input_date=None):
         )
 
         # Populate the dossier statistics
-        IssueUtilities.populate_dossier_statistics(
-            [a.issue for a in committee_agenda.committee_agenda_items_loaded],
-            request.user.id
-        )
+        IssueUtilities.populate_dossier_statistics([a.issue for a in committee_agenda.committee_agenda_items_loaded])
 
     ctx = {
         'requested_yesterday': requested_yesterday,
@@ -117,7 +114,7 @@ def upcoming(request):
     ).distinct()
 
     # Get the relevant dossier statistics
-    IssueUtilities.populate_dossier_statistics(list(session_issues) + list(committee_issues), request.user.id)
+    IssueUtilities.populate_dossier_statistics(list(session_issues) + list(committee_issues))
 
     now = timezone.now()
     today = timezone.make_aware(timezone.datetime(now.year, now.month, now.day), now.tzinfo)
@@ -159,7 +156,7 @@ def parliament_issues(request, parliament_num):
         document_count__gt=0
     )
 
-    IssueUtilities.populate_dossier_statistics(issues, request.user.id)
+    IssueUtilities.populate_dossier_statistics(issues)
 
     ctx = {
         'issues': issues,
@@ -249,7 +246,7 @@ def parliament_issue(request, parliament_num, issue_num):
             parliament_num
         )
         # Also reload bookmarks menu (where incoming stuff is also displayed)
-        IssueUtilities.populate_dossier_statistics(request.extravars['bookmarked_issues'], request.user.id)
+        IssueUtilities.populate_dossier_statistics(request.extravars['bookmarked_issues'])
 
     ctx = {
         'issue': issue,
@@ -284,7 +281,7 @@ def parliament_session(request, parliament_num, session_num):
         'issue__proposers__person', 'issue__proposers__committee'
     ).all()
 
-    IssueUtilities.populate_dossier_statistics([i.issue for i in session_agenda_items], request.user.id)
+    IssueUtilities.populate_dossier_statistics([i.issue for i in session_agenda_items])
 
     ctx = {
         'session': session,
@@ -331,7 +328,7 @@ def parliament_committee_agenda(request, parliament_num, committee_id, agenda_id
         'issue__proposers__person', 'issue__proposers__committee'
     ).all()
 
-    IssueUtilities.populate_dossier_statistics(filter(None, [i.issue for i in committee_agenda_items]), request.user.id)
+    IssueUtilities.populate_dossier_statistics(filter(None, [i.issue for i in committee_agenda_items]))
 
     ctx = {
         'committee': committee,
@@ -376,7 +373,7 @@ def person(request, slug, subslug=None):
         documents__is_main=True
     ).order_by('-parliament__parliament_num')
 
-    IssueUtilities.populate_dossier_statistics(issues, request.user.id)
+    IssueUtilities.populate_dossier_statistics(issues)
 
     ctx = {
         'person': person,
@@ -424,7 +421,7 @@ def user_issues_bookmarked(request, parliament_num):
         parliament__parliament_num=parliament_num
     ).order_by('-issue_num')
 
-    IssueUtilities.populate_dossier_statistics(issues, request.user.id)
+    IssueUtilities.populate_dossier_statistics(issues)
 
     ctx = {
         'issues': issues
@@ -447,7 +444,7 @@ def user_issues_incoming(request):
         )
     ).order_by('-issue_num')
 
-    IssueUtilities.populate_dossier_statistics(issues, request.user.id)
+    IssueUtilities.populate_dossier_statistics(issues)
 
     ctx = {
         'issues': issues
@@ -465,7 +462,7 @@ def user_issues_open(request, parliament_num):
         parliament__parliament_num=parliament_num
     ).order_by('issue_num')
 
-    IssueUtilities.populate_dossier_statistics(issues, request.user.id)
+    IssueUtilities.populate_dossier_statistics(issues)
 
     ctx = {
         'issues': issues

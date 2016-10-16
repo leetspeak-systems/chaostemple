@@ -1,5 +1,6 @@
 # -*- coding: utf-8
 import operator
+from threading import currentThread
 
 from django.conf import settings
 from django.db import models
@@ -15,6 +16,20 @@ from althingi.models import Person
 from althingi.models import Review
 
 # Model utilities
+
+class AccessUtilities():
+    cached_access = {}
+    user_id = 0
+
+    @staticmethod
+    def get_access():
+        return AccessUtilities.cached_access[currentThread()]
+
+    @staticmethod
+    def cache_access(user_id):
+        AccessUtilities.cached_access[currentThread()] = Access.objects.filter(friend_id=user_id)
+        AccessUtilities.user_id = user_id
+
 
 class DossierUtilities():
 
@@ -37,12 +52,20 @@ class DossierUtilities():
 class IssueUtilities():
 
     @staticmethod
-    def populate_dossier_statistics(issues, user_id):
+    def populate_dossier_statistics(issues):
+
+        # Get currently logged in user ID
+        user_id = AccessUtilities.user_id
+
+        # Get access objects and sort them
+        accesses = {'partial': [], 'full': []}
+        for access in AccessUtilities.get_access():
+            accesses['full' if access.full_access else 'partial'].append(access)
 
         # Get dossier statistics from partial access given by other users
         partial_conditions = []
         dossier_statistics = DossierStatistic.objects.none()
-        for partial_access in Access.objects.filter(friend_id=user_id, full_access=False):
+        for partial_access in accesses['partial']:
             for issue in partial_access.issues.all():
                 partial_conditions.append(Q(user_id=partial_access.user_id) & Q(issue_id=issue.id))
         if len(partial_conditions) > 0:
@@ -52,7 +75,7 @@ class IssueUtilities():
             ).filter(reduce(operator.or_, partial_conditions))
 
         # Get dossier statistics from full access given by other users
-        visible_user_ids = [a.user_id for a in Access.objects.filter(friend_id=user_id, full_access=True)]
+        visible_user_ids = [a.user_id for a in accesses['full']]
         dossier_statistics = dossier_statistics | DossierStatistic.objects.select_related('user').filter(
             Q(user_id__in=visible_user_ids) | Q(user_id=user_id),
             issue__in=issues,

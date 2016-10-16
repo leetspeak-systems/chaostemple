@@ -11,10 +11,17 @@ from althingi.models import CommitteeAgenda
 from althingi.models import Parliament
 from althingi.models import Session
 
+from core.models import AccessUtilities
 from core.models import DossierStatistic
 from core.models import DossierUtilities
 from core.models import Issue
 from core.models import IssueUtilities
+
+
+class AccessMiddleware():
+    def process_view(self, request, view_func, view_args, view_kwargs):
+        AccessUtilities.cache_access(request.user.id)
+
 
 class ExtraVarsMiddleware():
     # For handing certain variables over to the context processor for global display.
@@ -57,7 +64,7 @@ class ExtraVarsMiddleware():
                 parliament__parliament_num=parliament_num
             ).order_by('issue_num')
 
-            IssueUtilities.populate_dossier_statistics(bookmarked_issues, request.user.id)
+            IssueUtilities.populate_dossier_statistics(bookmarked_issues)
 
             # Get incoming things that the user has not yet seen
             dossier_statistics_incoming = DossierUtilities.get_incoming_dossier_statistics(request.user.id, parliament_num)

@@ -37,15 +37,14 @@ def parliament_link(context, parliament_num):
     resolver_match = context['request'].resolver_match
 
     if 'parliament_num' in resolver_match.kwargs:
-        resolver_match.kwargs['parliament_num'] = parliament_num
+        kwargs = dict(resolver_match.kwargs)
+        kwargs['parliament_num'] = parliament_num
         if resolver_match.view_name in parliament_selection_exceptions:
             view_name, vars_to_remove = parliament_selection_exceptions[resolver_match.view_name]
-            kwargs = dict(resolver_match.kwargs)
             for var_to_remove in vars_to_remove:
                 del kwargs[var_to_remove]
         else:
             view_name = resolver_match.view_name
-            kwargs = resolver_match.kwargs
         return reverse(view_name, kwargs=kwargs)
     else:
         return reverse('parliament', kwargs={'parliament_num': parliament_num})

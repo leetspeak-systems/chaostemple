@@ -3,8 +3,8 @@ from django.utils.translation import ugettext as _
 from althingi.models import Committee
 from althingi.models import CommitteeAgenda
 
-def leave_breadcrumb(breadcrumbs, urlname, caption):
-    return breadcrumbs + ((urlname, caption),)
+def leave_breadcrumb(breadcrumbs, view_func_name, caption):
+    return breadcrumbs + ((view_func_name, caption),)
 
 def make_breadcrumbs(func_name, parliament_num, issue_num, session_num, committee_id, agenda_id):
     breadcrumbs = ()

@@ -87,6 +87,6 @@ class ExtraVarsMiddleware():
             'next_committee_agendas': next_committee_agendas,
             'bookmarked_issues': bookmarked_issues,
             'dossier_statistics_incoming': dossier_statistics_incoming,
-            'urlname': view_func.func_name,
+            'view_func_name': view_func.func_name,
         }
 

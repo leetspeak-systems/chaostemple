@@ -158,7 +158,7 @@
                                 </ul>
                             </li>
                         {% else %}
-                            <li {% if urlname == 'login' %}class="active"{% endif %}><a href="{% url 'auth_login' %}">{% trans "Login" %}</a></li>
+                            <li {% if view_func_name == 'login' %}class="active"{% endif %}><a href="{% url 'auth_login' %}">{% trans "Login" %}</a></li>
                         {% endif %}
                     </ul>
 

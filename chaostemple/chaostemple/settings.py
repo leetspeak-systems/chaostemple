@@ -52,7 +52,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
-    'core.middleware.ForceLoginMiddleware',
     'core.middleware.ExtraVarsMiddleware',
 )
 

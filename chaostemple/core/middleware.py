@@ -83,11 +83,3 @@ class ExtraVarsMiddleware():
             'urlname': view_func.func_name,
         }
 
-class ForceLoginMiddleware():
-    # Force login.
-    def process_view(self, request, view_func, view_args, view_kwargs):
-        return # temp, for development purposes
-
-        if not request.user.is_authenticated() and request.get_full_path() != settings.LOGIN_URL:
-            return redirect(settings.LOGIN_URL)
-

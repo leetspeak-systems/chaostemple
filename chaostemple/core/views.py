@@ -61,7 +61,8 @@ def day(request, input_date=None):
         session.session_agenda_items_loaded = session.session_agenda_items.select_related(
             'issue__parliament'
         ).prefetch_related(
-            'issue__proposers__person'
+            'issue__proposers__person',
+            'issue__proposers__committee'
         )
 
         # Populate the dossier statistics

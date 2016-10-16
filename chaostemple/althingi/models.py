@@ -358,9 +358,9 @@ class Proposer(models.Model):
         super(Proposer, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        if self.person is not None:
+        if self.person_id is not None:
             return self.person.__unicode__()
-        elif self.committee is not None:
+        elif self.committee_id is not None:
             if self.committee_partname:
                 return "%s (%s)" % (self.committee.__unicode__(), self.committee_partname)
             else:

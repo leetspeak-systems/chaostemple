@@ -18,6 +18,7 @@ from django.utils import dateparse
 from django.utils import timezone
 
 from core.models import Access
+from core.models import AccessUtilities
 from core.models import Dossier
 from core.models import DossierStatistic
 from core.models import DossierUtilities
@@ -170,10 +171,15 @@ def parliament_issue(request, parliament_num, issue_num):
     # NOTE: The use of these get_prefetched_* functions is to be revised when Django 1.8 is released.
     # Specifically, it is hoped that the .refresh_from_db() function introduced will be a good replacement.
 
-    visible_user_ids = [a.user_id for a in Access.objects.filter(friend_id=request.user.id, full_access=True)]
+    # Get access objects and sort them
+    accesses = {'partial': [], 'full': []}
+    for access in AccessUtilities.get_access():
+        accesses['full' if access.full_access else 'partial'].append(access)
+
+    visible_user_ids = [a.user_id for a in accesses['full']]
 
     partial_conditions = []
-    for partial_access in Access.objects.filter(friend_id=request.user.id, full_access=False):
+    for partial_access in accesses['partial']:
         for issue in partial_access.issues.all():
             partial_conditions.append(Q(user_id=partial_access.user_id) & Q(issue_id=issue.id))
 

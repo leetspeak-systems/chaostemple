@@ -48,12 +48,12 @@
                     <ul class="nav navbar-nav">
 
                         <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ parliament_num }}. {% trans 'parliament' %} <span class="caret"></span></a>
-                                <ul class="dropdown-menu" role="menu">
-                                {% for parliament in parliaments %}
-                                    <li role="presentation"><a href="{% parliament_url parliament.parliament_num %}">{{ parliament.parliament_num }}. {% trans 'parliament' %}</a></li>
-                                {% endfor %}
-                                </ul>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ parliament_num }}. {% trans 'parliament' %} <span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                            {% for parliament in parliaments %}
+                                <li role="presentation"><a href="{% parliament_url parliament.parliament_num %}">{{ parliament.parliament_num }}. {% trans 'parliament' %}</a></li>
+                            {% endfor %}
+                            </ul>
                         </li>
 
                         <li class="dropdown">

@@ -27,26 +27,8 @@ class ExtraVarsMiddleware():
     # For handing certain variables over to the context processor for global display.
     def process_view(self, request, view_func, view_args, view_kwargs):
 
-        # Collect available information from view
-        parliament_num = view_kwargs.get('parliament_num')
-        issue_num = view_kwargs.get('issue_num')
-        session_num = view_kwargs.get('session_num')
-        committee_id = view_kwargs.get('committee_id')
-        agenda_id = view_kwargs.get('agenda_id')
-        if parliament_num:
-            parliament_num = int(parliament_num)
-        if issue_num:
-            issue_num = int(issue_num)
-        if session_num:
-            session_num = int(session_num)
-        if committee_id:
-            committee_id = int(committee_id)
-        if agenda_id:
-            agenda_id = int(agenda_id)
-
-        # Use settings for parliament_num if not determined in view
-        if not parliament_num:
-            parliament_num = CURRENT_PARLIAMENT_NUM
+        # Figure out which parliament we're viewing
+        parliament_num = int(view_kwargs.get('parliament_num', CURRENT_PARLIAMENT_NUM))
 
         # Determine newest parliament number
         try:
@@ -80,8 +62,7 @@ class ExtraVarsMiddleware():
         request.extravars = {
             'newest_parliament_num': newest_parliament_num,
             'parliament_num': parliament_num,
-            'issue_num': issue_num,
-            'breadcrumbs': make_breadcrumbs(view_func.func_name, parliament_num, issue_num, session_num, committee_id, agenda_id),
+            'breadcrumbs': make_breadcrumbs(request),
             'parliaments': parliaments,
             'next_sessions': next_sessions,
             'next_committee_agendas': next_committee_agendas,

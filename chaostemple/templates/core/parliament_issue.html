@@ -27,7 +27,7 @@
     </h2>
 
     <div>
-        {% include 'core/stub/link_althingi_issue.html' with parliament_num=parliament_num issue_num=issue_num %}
+        {% include 'core/stub/link_althingi_issue.html' with parliament_num=parliament_num issue_num=issue.issue_num %}
         <span class="label label-primary">{{ issue.issue_num }}. {% trans 'parliamentary issue' %}</span>
         <span class="label label-primary">{{ issue.parliament.parliament_num }}. {% trans 'parliament' %}</span>
     </div>

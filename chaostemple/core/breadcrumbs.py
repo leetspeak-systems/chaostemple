@@ -1,32 +1,122 @@
+from django.core.urlresolvers import resolve
+from django.template.defaultfilters import date
+from django.utils import dateparse
+from django.utils import timezone
+from django.utils.http import urlsafe_base64_decode
 from django.utils.translation import ugettext as _
 
 from althingi.althingi_settings import CURRENT_PARLIAMENT_NUM
 from althingi.models import Committee
 from althingi.models import CommitteeAgenda
+from althingi.models import Person
+
+from core.templatetags.committee import fancy_committee_agenda_timing
+
+
+def generate_prepended_views(from_string):
+    if not from_string:
+        return []
+
+    prepended_views = []
+
+    for part in reversed(from_string.split(',')):
+        path = urlsafe_base64_decode(part)
+        resolved_path = resolve(path)
+        prepended_views.append(resolved_path)
+
+    return prepended_views
+
 
 def leave_breadcrumb(breadcrumbs, view_name, caption):
     return breadcrumbs + ((view_name, caption),)
 
+
 def make_breadcrumbs(request):
     breadcrumbs = ()
 
-    view_name = request.resolver_match.view_name
-    kwargs = request.resolver_match.kwargs
+    parliament_num = int(request.resolver_match.kwargs.get('parliament_num', CURRENT_PARLIAMENT_NUM))
 
-    parliament_num = int(kwargs.get('parliament_num', CURRENT_PARLIAMENT_NUM))
-    issue_num = int(kwargs.get('issue_num', 0))
-    session_num = int(kwargs.get('session_num', 0))
-    committee_id = int(kwargs.get('committee_id', 0))
-    agenda_id = int(kwargs.get('agenda_id', 0))
+    # parliament_num should always exist.
+    breadcrumbs = leave_breadcrumb(
+        breadcrumbs,
+        ('parliament', parliament_num),
+        '%d. %s' % (parliament_num, _('parliament'))
+    )
 
-    if parliament_num:
+    prepended_views = generate_prepended_views(request.GET.get('from', ''))
+    for prepended_view in prepended_views:
+        breadcrumbs = process_breadcrumbs(breadcrumbs, prepended_view)
+
+    breadcrumbs = process_breadcrumbs(breadcrumbs, request.resolver_match, True if len(prepended_views) else False)
+
+    return breadcrumbs
+
+
+def process_breadcrumbs(breadcrumbs, view, skip_original_prepending=False):
+
+    # Short-hands.
+    view_name = view.view_name
+    view_kwargs = view.kwargs
+
+    # Variables that need to exist. # TODO: Find a way to check if they exist without referencing them directly.
+    input_date = None
+    subslug = None
+
+    # Iterate through URLconf parameters and set the appropriate variables appropriately.
+    # This is to lessen repetition and uniformly address default values, type conversions and such.
+    for kwarg in view_kwargs:
+        if kwarg == 'parliament_num':
+            parliament_num = int(view_kwargs.get('parliament_num', CURRENT_PARLIAMENT_NUM))
+        elif kwarg == 'input_date':
+            input_date = view_kwargs.get('input_date')
+        elif kwarg == 'issue_num':
+            issue_num = int(view_kwargs.get('issue_num', 0))
+        elif kwarg == 'session_num':
+            session_num = int(view_kwargs.get('session_num', 0))
+        elif kwarg == 'committee_id':
+            committee_id = int(view_kwargs.get('committee_id', 0))
+        elif kwarg == 'agenda_id':
+            agenda_id = int(view_kwargs.get('agenda_id', 0))
+        elif kwarg == 'slug':
+            slug = view_kwargs.get('slug')
+        elif kwarg == 'subslug':
+            subslug = view_kwargs.get('subslug')
+
+    if view_name == 'day':
+        if input_date:
+            requested_date = timezone.make_aware(dateparse.parse_datetime('%s 00:00:00' % input_date))
+            caption = '%s (%s)' % (_('Today\'s issues'), date(requested_date))
+        else:
+            caption = _('Today\'s issues')
+
         breadcrumbs = leave_breadcrumb(
             breadcrumbs,
-            ('parliament', parliament_num),
-            '%d. %s' % (parliament_num, _('parliament'))
+            ('day', input_date),
+            caption
         )
 
-    if view_name in ('parliament_issues', 'parliament_issue'):
+    if view_name == 'user_issues_bookmarked':
+        breadcrumbs = leave_breadcrumb(
+            breadcrumbs,
+            ('user_issues_bookmarked', parliament_num),
+            _('Bookmarks')
+        )
+
+    if view_name == 'user_issues_open':
+        breadcrumbs = leave_breadcrumb(
+            breadcrumbs,
+            ('user_issues_open', parliament_num),
+            _('Opened Issues')
+        )
+
+    if view_name == 'user_issues_incoming':
+        breadcrumbs = leave_breadcrumb(
+            breadcrumbs,
+            ('user_issues_incoming',),
+            _('Issues with new data')
+        )
+
+    if view_name == 'parliament_issues' or (view_name == 'parliament_issue' and not skip_original_prepending):
         breadcrumbs = leave_breadcrumb(
             breadcrumbs,
             ('parliament_issues', parliament_num),
@@ -74,7 +164,7 @@ def make_breadcrumbs(request):
         breadcrumbs = leave_breadcrumb(
             breadcrumbs,
             ('parliament_committee_agenda', parliament_num, committee_id, agenda_id),
-            committee_agenda.timing_start_planned
+            fancy_committee_agenda_timing(committee_agenda)
         )
 
     if view_name == 'parliament_persons':
@@ -83,6 +173,28 @@ def make_breadcrumbs(request):
             ('parliament_persons', parliament_num),
             _('Parliamentarians')
         )
+
+    if view_name == 'person':
+        if subslug:
+            person = Person.objects.get(slug=slug, subslug=subslug)
+            person_count = 1
+        else:
+            persons = Person.objects.filter(slug=slug)
+            person_count = persons.count()
+            person = persons[0] # We'll only use the name so just need either one of them, doesn't matter which.
+
+        if person_count == 1:
+            breadcrumbs = leave_breadcrumb(
+                breadcrumbs,
+                ('person', slug, subslug),
+                '%s (%s %s)' % (person.name, _('b.'), date(person.birthdate))
+            )
+        else:
+            breadcrumbs = leave_breadcrumb(
+                breadcrumbs,
+                ('person', slug),
+                person.name
+            )
 
     return breadcrumbs
 

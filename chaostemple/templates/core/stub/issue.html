@@ -1,5 +1,6 @@
 {% load i18n %}
 {% load dossier %}
+{% load smart_urls %}
 
 <div control="issue-container" data-id="{{ issue.id }}">
     <div class="panel panel-default" control="issue">
@@ -19,7 +20,7 @@
                     <span class="label label-default">{{ issue.get_issue_type_display|capfirst }}</span>
                 </p>
                 <p>
-                    <a href="{% url 'parliament_issue' issue.parliament.parliament_num issue.issue_num %}" target="_blank">
+                    <a href="{% breadcrumb_url 'parliament_issue' issue.parliament.parliament_num issue.issue_num %}">
                         <strong><span control="issue-name" data-id="{{ issue.id }}">{{ issue }}</span></strong>
                     </a>
                     {% if issue.description %}

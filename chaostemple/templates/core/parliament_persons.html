@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load smart_urls %}
 
 {% block content %}
 
@@ -15,7 +16,7 @@
                 {% for person in persons %}
                     <tr>
                         <td>
-                            <a href="{% url 'person' person.slug person.subslug %}">{{ person }}</a>
+                            <a href="{% breadcrumb_url 'person' person.slug person.subslug %}">{{ person }}</a>
                         </td>
                     </tr>
                 {% endfor %}

@@ -37,3 +37,9 @@
     * Committee agendas ordered by name when timing is not enough to determine order.
     * Calendar added to select a day on day-page.
     * "Upcoming" menu always visible to show at least "Today's issues".
+
+1.1.2:
+    * Review name descriptions added (although they're extremely rarely used).
+    * One missing review type added ("addendum", Icel. "viðauki").
+    * Improvements under the hood: Database optimizations, code-refactoring and internal bugfixes.
+    * Breadcrumbs updated and made to follow user's use path. Only links to external websites now open in a new window.

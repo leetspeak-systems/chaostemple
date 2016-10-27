@@ -58,10 +58,6 @@ def process_breadcrumbs(breadcrumbs, view, skip_original_prepending=False):
     view_name = view.view_name
     view_kwargs = view.kwargs
 
-    # Variables that need to exist. # TODO: Find a way to check if they exist without referencing them directly.
-    input_date = None
-    subslug = None
-
     # Iterate through URLconf parameters and set the appropriate variables appropriately.
     # This is to lessen repetition and uniformly address default values, type conversions and such.
     for kwarg in view_kwargs:
@@ -83,10 +79,11 @@ def process_breadcrumbs(breadcrumbs, view, skip_original_prepending=False):
             subslug = view_kwargs.get('subslug')
 
     if view_name == 'day':
-        if input_date:
+        if 'input_date' in locals():
             requested_date = timezone.make_aware(dateparse.parse_datetime('%s 00:00:00' % input_date))
             caption = '%s (%s)' % (_('Today\'s issues'), date(requested_date))
         else:
+            input_date = None
             caption = _('Today\'s issues')
 
         breadcrumbs = leave_breadcrumb(
@@ -175,7 +172,7 @@ def process_breadcrumbs(breadcrumbs, view, skip_original_prepending=False):
         )
 
     if view_name == 'person':
-        if subslug:
+        if 'subslug' in locals():
             person = Person.objects.get(slug=slug, subslug=subslug)
             person_count = 1
         else:
@@ -186,13 +183,13 @@ def process_breadcrumbs(breadcrumbs, view, skip_original_prepending=False):
         if person_count == 1:
             breadcrumbs = leave_breadcrumb(
                 breadcrumbs,
-                ('person', slug, subslug),
+                ('person', person.slug, person.subslug),
                 '%s (%s %s)' % (person.name, _('b.'), date(person.birthdate))
             )
         else:
             breadcrumbs = leave_breadcrumb(
                 breadcrumbs,
-                ('person', slug),
+                ('person', person.slug),
                 person.name
             )
 

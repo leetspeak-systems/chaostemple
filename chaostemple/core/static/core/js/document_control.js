@@ -109,6 +109,7 @@ $(document).ready(function() {
         var $memo_content_container = $('span[control="memo-content-container"][data-id=' + memo_id + ']');
         var $memo_content = $memo_content_container.find('span[control="memo-content"]');
         var $edit_memo_content = $('input[control="edit-memo-content"][data-dossier-id=' + dossier_id + '][data-id=' + memo_id + ']');
+        var $edit_memo_counter = $('td[control="edit-memo-counter"][data-id=' + memo_id + ']');
 
         // Make sure memos are visible.
         $dossier_memos.show();
@@ -125,7 +126,16 @@ $(document).ready(function() {
         $edit_memo_content.show();
         $edit_memo_content.focus();
         $edit_memo_content[0].setSelectionRange(content.length, content.length);
+        $edit_memo_counter.show()
      });
+
+    $(document).on('input', 'input[control="edit-memo-content"]', function(e) {
+        var $this = $(this);
+        var memo_id = $this.attr('data-id');
+        var memo_length = $this.val().length;
+
+        $('span[control="edit-memo-counter-value"]').text(memo_length);
+    });
 
     // Text field: edit-memo-content
     $(document).on('keypress', 'input[control="edit-memo-content"]', function(e) {
@@ -184,6 +194,7 @@ $(document).ready(function() {
             var $memo_list = $('ul[control="memo-list"][data-dossier-id=' + dossier_id + ']');
 
             $('input[control="edit-memo-content"][data-id=' + memo_id + ']').hide();
+            $('td[control="edit-memo-counter"][data-id=' + memo_id + ']').hide();
             $('span[control="memo-content-container"][data-id=' + memo_id + ']').show();
 
             if ($memo_list.find('li[control="memo-line"]').length == 0) {

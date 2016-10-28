@@ -22,15 +22,27 @@
                     </td>
                     <td>
                         <span control="memo-content-container" data-id="{{ memo.id }}">&bullet; <span control="memo-content" data-id="{{ memo.id }}">{{ memo.content|urlize }}</span></span>
-                        <input control="edit-memo-content" type="text" data-id="{{ memo.id }}" data-dossier-id="{{ dossier_id }}" value="{{ memo.content }}" maxlength="2000" />
+                        <input control="edit-memo-content" type="text" data-id="{{ memo.id }}" data-dossier-id="{{ dossier_id }}" value="{{ memo.content }}" maxlength="{{ max_memo_length }}" />
+                    </td>
+                    <td control="edit-memo-counter" data-id="{{ memo.id }}">
+                        <span control="edit-memo-counter-value">{{ memo.content|length }}</span>/{{ max_memo_length }}
                     </td>
                 </tr>
             </table>
         </li>
     {% endfor %}
     <li control="add-memo-line" data-dossier-id="{{ dossier_id }}">
-        <!-- "add-memo-content" and "edit-memo-content" are identical except "add-memo-content" don't already have an ID. -->
-        <input control="edit-memo-content" type="text" data-id="0" data-dossier-id="{{ dossier_id }}" maxlength="2000" />
+        <table>
+            <tr>
+                <td style="width: 99%;">
+                    <!-- "add-memo-content" and "edit-memo-content" are identical except "add-memo-content" don't already have an ID. -->
+                    <input control="edit-memo-content" type="text" data-id="0" data-dossier-id="{{ dossier_id }}" maxlength="{{ max_memo_length }}" />
+                </td>
+                <td control="edit-memo-counter" data-id="0">
+                    <span control="edit-memo-counter-value">0</span>/{{ max_memo_length }}
+                </td>
+            </tr>
+        </table>
     </li>
  </ul>
 

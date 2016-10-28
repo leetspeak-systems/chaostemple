@@ -198,7 +198,12 @@ def add_memo(request, dossier_id):
 
     memos = Memo.objects.filter(dossier_id=dossier_id, user_id=request.user.id)
 
-    html_content = render_to_string('core/stub/dossier_memos.html', { 'memos': memos, 'dossier_id': dossier_id })
+    stub_ctx = {
+        'memos': memos,
+        'dossier_id': dossier_id,
+        'max_memo_length': Memo._meta.get_field('content').max_length,
+    }
+    html_content = render_to_string('core/stub/dossier_memos.html', stub_ctx)
 
     ctx = {
         'html_content': html_content,
@@ -219,7 +224,12 @@ def edit_memo(request, memo_id):
 
     memos = Memo.objects.filter(dossier_id=dossier_id, user_id=request.user.id)
 
-    html_content = render_to_string('core/stub/dossier_memos.html', { 'memos': memos, 'dossier_id': dossier_id })
+    stub_ctx = {
+        'memos': memos,
+        'dossier_id': dossier_id,
+        'max_memo_length': Memo._meta.get_field('content').max_length,
+    }
+    html_content = render_to_string('core/stub/dossier_memos.html', stub_ctx)
 
     ctx = {
         'html_content': html_content,

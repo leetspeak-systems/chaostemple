@@ -1,12 +1,14 @@
 import json
 
 from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse
 from django.db.models import Max
 from django.db.utils import IntegrityError
 from django.template.loader import render_to_string
 
 from althingi.models import CommitteeAgenda
 from althingi.models import CommitteeAgendaItem
+from althingi.models import Proposer
 from althingi.models import Session
 from althingi.models import SessionAgendaItem
 
@@ -20,6 +22,25 @@ from core.models import IssueUtilities
 from core.models import Memo
 
 from jsonizer.utils import jsonize
+
+@jsonize
+def proposer_subproposers(request, proposer_id):
+
+    proposer = Proposer.objects.get(id=proposer_id)
+    if proposer.committee_id:
+        subproposers = Proposer.objects.select_related('person').filter(parent_id=proposer_id)
+    else:
+        subproposers = Proposer.objects.filter(issue_id=proposer.issue_id)
+
+    ctx = {'subproposers': []}
+
+    for subproposer in subproposers:
+        ctx['subproposers'].append({
+            'url': reverse('person', args=(subproposer.person.slug, subproposer.person.subslug)),
+            'name': subproposer.person.name
+        })
+
+    return ctx
 
 @login_required
 @jsonize

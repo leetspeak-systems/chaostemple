@@ -27,6 +27,7 @@ urlpatterns = [
     url(r'^user/issues/incoming/$', views.user_issues_incoming, name='user_issues_incoming'),
     url(r'^parliament/(?P<parliament_num>\d+)/user/issues/open/$', views.user_issues_open, name='user_issues_open'),
 
+    url(r'^json/proposer/(?P<proposer_id>\d+)/subproposers/$', json_views.proposer_subproposers, name='json_proposers_subproposers'),
     url(r'^json/dossier/(?P<dossier_id>\d+)/fieldstate/(?P<fieldname>.+)/$', json_views.dossier_fieldstate, name='json_dossier_fieldstate'),
     url(r'^json/dossier/(?P<dossier_id>\d+)/delete/$', json_views.delete_dossier, name='json_delete_dossier'),
     url(r'^json/issue/list/(?P<parliament_num>\d+)/$', json_views.list_issues, name='json_list_issues'),

@@ -27,6 +27,34 @@ jQuery.fn.extend({
 
 $(document).ready(function() {
 
+    $(document).on('click', 'a[control="expand-proposer"]', function() {
+        var $this = $(this);
+        var proposer_id = $this.attr('data-id');
+
+        $.jsonize({
+            message: {
+                'transit': 'Fetching sub-proposers...',
+                'success': 'Sub-proposers fetched.',
+                'failure': 'Fetching sub-proposers failed!',
+            },
+            url: '/json/proposer/' + proposer_id + '/subproposers/',
+            done: function(data, textStatus) {
+                var name = '';
+                var url = '';
+                var content = '';
+                for (i = 0; i < data.subproposers.length; i++) {
+                    name = data.subproposers[i].name;
+                    url = data.subproposers[i].url;
+                    if (i > 0) {
+                        content += ', ';
+                    }
+                    content += '<a href="' + url + '">' + name + '</a>';
+                }
+                $this.parent().html(content);
+            }
+        });
+    });
+
     $(document).on('click', 'a[control="toggle-user-dossier-statistics"]', function() {
         var $this = $(this);
         var user_id = $this.attr('data-user-id');

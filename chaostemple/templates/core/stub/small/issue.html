@@ -32,14 +32,16 @@
 
             <small>
             {{ issue.get_issue_type_display|capfirst }}:
+            <span>
             {% with issue.proposers.all.0 as proposer %}
                 {% if proposer.person %}
                     <a href="{% url 'person' proposer.person.slug proposer.person.subslug %}">{{ proposer }}</a>
                 {% else %}
-                    <a href="#">{{ proposer }}</a>
+                    <a href="#" control="expand-proposer" data-id="{{ proposer.id }}">{{ proposer }}</a>
                 {% endif %}
             {% endwith %}
-            {% if issue.proposers.all.1 %}{% trans 'and others' %}{% endif %}
+            {% if issue.proposers.all.1 %}<a href="#" control="expand-proposer" data-id="{{ issue.proposers.all.0.id }}">{% trans 'and others' %}</a>{% endif %}
+            </span>
             </small>
 
             <br />

@@ -127,7 +127,7 @@ def process_breadcrumbs(breadcrumbs, view, skip_original_prepending=False):
             '%d. %s' % (issue_num, _('issue'))
         )
 
-    if view_name in ('parliament_sessions', 'parliament_session'):
+    if view_name == 'parliament_sessions' or (view_name == 'parliament_session' and not skip_original_prepending):
         breadcrumbs = leave_breadcrumb(
             breadcrumbs,
             ('parliament_sessions', parliament_num),
@@ -141,7 +141,7 @@ def process_breadcrumbs(breadcrumbs, view, skip_original_prepending=False):
             '%d. %s' % (session_num, _('parliamentary session'))
         )
 
-    if view_name in ('parliament_committees', 'parliament_committee', 'parliament_committee_agenda'):
+    if view_name in ('parliament_committees', 'parliament_committee') or (view_name == 'parliament_committee_agenda' and not skip_original_prepending):
         breadcrumbs = leave_breadcrumb(
             breadcrumbs,
             ('parliament_committees', parliament_num),

@@ -43,3 +43,8 @@
     * One missing review type added ("addendum", Icel. "viðauki").
     * Improvements under the hood: Database optimizations, code-refactoring and internal bugfixes.
     * Breadcrumbs updated and made to follow user's use path. Only links to external websites now open in a new window.
+
+1.1.3:
+    * Committees and "and others" as proposers now expand to show all proposers when clicked.
+    * Links to expand sessions and committee agendas from "Today's issues" page.
+    * Maximum length of memos displayed alongside input field.

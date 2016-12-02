@@ -48,3 +48,6 @@
     * Committees and "and others" as proposers now expand to show all proposers when clicked.
     * Links to expand sessions and committee agendas from "Today's issues" page.
     * Maximum length of memos displayed alongside input field.
+
+1.1.4:
+    * Bugfix: Memo character counter displaying problems fixed.

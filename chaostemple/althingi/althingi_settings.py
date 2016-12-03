@@ -1,7 +1,7 @@
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-CURRENT_PARLIAMENT_NUM = 145
+CURRENT_PARLIAMENT_NUM = 146
 
 STATIC_DOCUMENT_DIR = os.path.join(BASE_DIR, 'althingi/static')
 

@@ -114,20 +114,20 @@ class Parliament(models.Model):
 
 class Issue(models.Model):
     ISSUE_TYPES = (
-        ('l', 'lagafrumvarp'),
-        ('a', 'þingsályktunartillaga'),
-        ('m', 'fyrirspurn'),
-        ('q', 'fyrirspurn til skriflegs svars'),
-        ('s', 'skýrsla'),
-        ('b', 'beiðni um skýrslu'),
-        ('f', 'frestun á fundum Alþingis'),
-        ('n', 'álit'),
-        ('v', 'vantrauststillaga'),
+        (u'l', u'lagafrumvarp'),
+        (u'a', u'þingsályktunartillaga'),
+        (u'm', u'fyrirspurn'),
+        (u'q', u'fyrirspurn til skriflegs svars'),
+        (u's', u'skýrsla'),
+        (u'b', u'beiðni um skýrslu'),
+        (u'f', u'frestun á fundum Alþingis'),
+        (u'n', u'álit'),
+        (u'v', u'vantrauststillaga'),
     )
 
     ISSUE_GROUPS = (
-        ('A', 'þingmál með þingskjölum'),
-        ('B', 'þingmál án þingskjala'),
+        (u'A', u'þingmál með þingskjölum'),
+        (u'B', u'þingmál án þingskjala'),
     )
 
     parliament = models.ForeignKey('Parliament')

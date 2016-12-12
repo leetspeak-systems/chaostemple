@@ -120,6 +120,9 @@ class Issue(models.Model):
         ('q', 'fyrirspurn til skriflegs svars'),
         ('s', 'skýrsla'),
         ('b', 'beiðni um skýrslu'),
+        ('f', 'frestun á fundum Alþingis'),
+        ('n', 'álit'),
+        ('v', 'vantrauststillaga'),
     )
 
     ISSUE_GROUPS = (

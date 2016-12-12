@@ -55,12 +55,6 @@
                 <small style="white-space: nowrap;">(<span control="issue-description" data-id="{{ issue.id }}">{{ issue.description }}</span>)</small>
             {% endif %}
         {% endif %}
-
-        {% comment %}
-        {% if issue.dossier_statistics %}
-            <button control="delete-issue-dossiers" class="btn btn-default btn-xs pull-right" data-session-agenda-item-id="{{ session_agenda_item.id }}" data-id="{{ issue.id }}">{% trans 'Mark as Unopened' %}</button>
-        {% endif %}
-        {% endcomment %}
     </td>
 
 </tr>

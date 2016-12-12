@@ -969,6 +969,21 @@ def _process_docless_issue(issue_xml):
     name = issue_xml.getElementsByTagName(u'málsheiti')[0].firstChild.nodeValue
     issue_type = issue_xml.getElementsByTagName(u'málstegund')[0].getAttribute('id')
 
+    try:
+        special_inquisitor_xml = issue_xml.getElementsByTagName(u'málshefjandi')[0]
+        special_responder_xml = issue_xml.getElementsByTagName(u'til_andsvara')[0]
+
+        special_inquisitor = update_person(int(special_inquisitor_xml.getAttribute('id')))
+        special_inquisitor_description = special_inquisitor_xml.firstChild.nodeValue
+        special_responder = update_person(int(special_responder_xml.getAttribute('id')))
+        special_responder_description = special_responder_xml.firstChild.nodeValue
+    except IndexError:
+        special_inquisitor = None
+        special_inquisitor_description = None
+        special_responder = None
+        special_responder_description = None
+
+
     # Docless issue names can carry a lot of baggage if it's old data (around 116th parliament and earlier)
     name = name.strip()
     while name.find('  ') >= 0:
@@ -986,6 +1001,22 @@ def _process_docless_issue(issue_xml):
             issue.issue_type = issue_type
             changed = True
 
+        if issue.special_inquisitor != special_inquisitor:
+            issue.special_inquisitor = special_inquisitor
+            changed = True
+
+        if issue.special_inquisitor_description != special_inquisitor_description:
+            issue.special_inquisitor_description = special_inquisitor_description
+            changed = True
+
+        if issue.special_responder != special_responder:
+            issue.special_responder = special_responder
+            changed = True
+
+        if issue.special_responder_description != special_responder_description:
+            issue.special_responder_description = special_responder_description
+            changed = True
+
         if changed:
             issue.save()
             print('Updated docless issue: %s' % issue.detailed())
@@ -998,6 +1029,10 @@ def _process_docless_issue(issue_xml):
         issue.issue_group = 'B'
         issue.name = name
         issue.issue_type = issue_type
+        issue.special_inquisitor = special_inquisitor
+        issue.special_inquisitor_description = special_inquisitor_description
+        issue.special_responder = special_responder
+        issue.special_responder_description = special_responder_description
         # issue.description = description # NOTE: This never *seems* to be used
         issue.parliament = parliament
         issue.save()

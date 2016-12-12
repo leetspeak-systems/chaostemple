@@ -157,6 +157,11 @@ class Issue(models.Model):
     description = models.TextField()
     final_vote_complete = models.BooleanField(default=False)
 
+    special_inquisitor = models.ForeignKey('Person', null=True, related_name='issues_special_inquisited')
+    special_inquisitor_description = models.CharField(max_length=50, null=True)
+    special_responder = models.ForeignKey('Person', null=True, related_name='issues_special_responded')
+    special_responder_description = models.CharField(max_length=50, null=True)
+
     previous_issues = models.ManyToManyField('Issue', related_name='future_issues')
 
     document_count = models.IntegerField(default=0) # Auto-populated by Issue.save()

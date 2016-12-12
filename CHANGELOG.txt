@@ -51,3 +51,8 @@
 
 1.1.4:
     * Bugfix: Memo character counter displaying problems fixed.
+
+1.1.5
+    * Added a few a more issue types.
+    * Under-the-hood bugfixes.
+    * Support for Django 1.10

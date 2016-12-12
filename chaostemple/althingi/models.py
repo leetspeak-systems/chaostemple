@@ -246,7 +246,7 @@ class Review(models.Model):
     log_num = models.IntegerField()  # IS: Dagbókarnúmer
     sender_name = models.CharField(max_length=200)
     sender_name_description = models.CharField(max_length=200, default='')
-    committee = models.ForeignKey('Committee')
+    committee = models.ForeignKey('Committee', null=True)
     review_type = models.CharField(max_length=2, choices=REVIEW_TYPES)  #: Tegund erindis
     date_arrived = models.DateField(null=True)
     date_sent = models.DateField(null=True)

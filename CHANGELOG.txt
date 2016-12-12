@@ -56,3 +56,6 @@
     * Added a few a more issue types.
     * Under-the-hood bugfixes.
     * Support for Django 1.10
+
+1.1.6:
+    * Initiating MP and responding minister in special discussions displayed in session agenda lists.

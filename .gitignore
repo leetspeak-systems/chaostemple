@@ -5,6 +5,7 @@
 bin
 include
 lib/python2.7
+lib/python-wheels
 local
 share
 local_settings.py

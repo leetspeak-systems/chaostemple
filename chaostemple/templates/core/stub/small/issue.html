@@ -35,7 +35,7 @@
             <span>
             {% with issue.proposers.all.0 as proposer %}
                 {% if proposer.person %}
-                    <a href="{% url 'person' proposer.person.slug proposer.person.subslug %}">{{ proposer }}</a>
+                    <a href="{% breadcrumb_url 'person' proposer.person.slug proposer.person.subslug %}">{{ proposer }}</a>
                 {% else %}
                     <a href="#" control="expand-proposer" data-id="{{ proposer.id }}">{{ proposer }}</a>
                 {% endif %}

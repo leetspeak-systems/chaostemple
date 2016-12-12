@@ -1,5 +1,6 @@
 {% load i18n %}
 {% load static %}
+{% load smart_urls %}
 
 <div class="panel panel-default" control="document" data-id="{{ document.id }}">
     <div class="panel-body">
@@ -22,7 +23,7 @@
                 <strong>{% trans "Proposers" %}:</strong>
                 {% for proposer in document.proposers.all %}
                     {% if proposer.person %}
-                        <a href="{% url 'person' proposer.person.slug proposer.person.subslug %}">{{ proposer }}</a>{% if not forloop.last %}, {% endif %}
+                        <a href="{% breadcrumb_url 'person' proposer.person.slug proposer.person.subslug %}">{{ proposer }}</a>{% if not forloop.last %}, {% endif %}
                     {% else %}
                         <a href="#">{{ proposer }}</a>{% if not forloop.last %}, {% endif %}
                     {% endif %}

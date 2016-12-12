@@ -959,8 +959,15 @@ def update_issue(issue_num, parliament_num=None):
     return issue
 
 
-def update_docless_issue(issue_num, name, parliament_num=None):
+def _process_docless_issue(issue_xml):
+
+    issue_num = int(issue_xml.getAttribute(u'málsnúmer'))
+    parliament_num = int(issue_xml.getAttribute(u'þingnúmer'))
+
     parliament = update_parliament(parliament_num)
+
+    name = issue_xml.getElementsByTagName(u'málsheiti')[0].firstChild.nodeValue
+    issue_type = issue_xml.getElementsByTagName(u'málstegund')[0].getAttribute('id')
 
     # Docless issue names can carry a lot of baggage if it's old data (around 116th parliament and earlier)
     name = name.strip()
@@ -975,6 +982,10 @@ def update_docless_issue(issue_num, name, parliament_num=None):
             issue.name = name
             changed = True
 
+        if issue.issue_type != issue_type:
+            issue.issue_type = issue_type
+            changed = True
+
         if changed:
             issue.save()
             print('Updated docless issue: %s' % issue.detailed())
@@ -986,6 +997,7 @@ def update_docless_issue(issue_num, name, parliament_num=None):
         issue.issue_num = issue_num
         issue.issue_group = 'B'
         issue.name = name
+        issue.issue_type = issue_type
         # issue.description = description # NOTE: This never *seems* to be used
         issue.parliament = parliament
         issue.save()
@@ -1519,12 +1531,11 @@ def _process_session_agenda_xml(session_xml):
 
         issue_num = int(issue_xml.getAttribute(u'málsnúmer'))
         issue_group = issue_xml.getAttribute(u'málsflokkur')
-        issue_name = issue_xml.getElementsByTagName(u'málsheiti')[0].firstChild.nodeValue
 
         if issue_group == 'A':
             issue = update_issue(issue_num, parliament.parliament_num)
         elif issue_group == 'B':
-            issue = update_docless_issue(issue_num, issue_name, parliament.parliament_num)
+            issue = _process_docless_issue(issue_xml)
 
         if order > max_order:
             max_order = order

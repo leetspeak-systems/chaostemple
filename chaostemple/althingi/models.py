@@ -123,6 +123,24 @@ class Issue(models.Model):
         (u'f', u'frestun á fundum Alþingis'),
         (u'n', u'álit'),
         (u'v', u'vantrauststillaga'),
+
+        (u'al', u'almennar stjórnmálaumræður'),
+        (u'av', u'ávarp'),
+        (u'dr', u'drengskaparheit'),
+        (u'fh', u'framhaldsfundir Alþingis'),
+        (u'ft', u'óundirbúinn fyrirspurnatími'),
+        (u'kb', u'rannsókn kjörbréfs'),
+        (u'ko', u'kosningar'),
+        (u'mi', u'minning'),
+        (u'ra', u'stefnuræða forsætisráðherra'),
+        (u'sr', u'skýrsla ráðherra'),
+        (u'st', u'störf þingsins'),
+        (u'sþ', u'munnleg skýrsla þingmanns'),
+        (u'tk', u'tilkynningar forseta'),
+        (u'tr', u'tilkynning frá ríkisstjórninni'),
+        (u'um', u'sérstök umræða'),
+        (u'yf', u'yfirlýsing forseta'),
+        (u'þi', u'þingsetning'),
     )
 
     ISSUE_GROUPS = (
@@ -133,7 +151,7 @@ class Issue(models.Model):
     parliament = models.ForeignKey('Parliament')
 
     issue_num = models.IntegerField()  # IS: Málsnúmer
-    issue_type = models.CharField(max_length=1, choices=ISSUE_TYPES)  # IS: Málstegund
+    issue_type = models.CharField(max_length=2, choices=ISSUE_TYPES)  # IS: Málstegund
     issue_group = models.CharField(max_length=1, choices=ISSUE_GROUPS, default='A')  # IS: Málsflokkur
     name = models.CharField(max_length=500)
     description = models.TextField()

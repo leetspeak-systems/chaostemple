@@ -19,6 +19,10 @@
                     <span class="label label-default">{{ issue.issue_num }}. {% trans 'parliamentary issue' %}</span>
                     <span class="label label-default">{{ issue.get_issue_type_display|capfirst }}</span>
                 </p>
+                <p class="pull-right" style="clear: right;">
+                    <span class="label label-default">{% trans 'Reviews' %}: {{ issue.review_count }}</span>
+                    <span class="label label-default">{% trans "Parliamentary Documents" %}: {{ issue.document_count }}</span>
+                </p>
                 <p>
                     <a href="{% breadcrumb_url 'parliament_issue' issue.parliament.parliament_num issue.issue_num %}">
                         <strong><span control="issue-name" data-id="{{ issue.id }}">{{ issue }}</span></strong>
@@ -26,10 +30,6 @@
                     {% if issue.description %}
                         <small>(<span control="issue-description" data-id="{{ issue.id }}">{{ issue.description }}</span>)</small>
                     {% endif %}
-                </p>
-                <p class="pull-right">
-                    <span class="label label-default">{% trans 'Reviews' %}: {{ issue.review_count }}</span>
-                    <span class="label label-default">{% trans "Parliamentary Documents" %}: {{ issue.document_count }}</span>
                 </p>
                 <p>
                     <small>
@@ -59,7 +59,26 @@
                 </div>
             {% endif %}
         {% elif issue.issue_group == 'B' %}
-            <div class="panel-body"><strong>{{ issue }}</strong></div>
+            <div class="panel-body">
+                <div class="pull-right">
+                    <span class="label label-default">{{ issue.get_issue_type_display|capfirst }}</span>
+                    <span class="label label-default">{% trans 'B-issue' %}</span>
+                </div>
+
+                <strong>{{ issue }}</strong>
+
+                <br />
+
+                {% if issue.issue_type == 'um' %}
+                    <small>
+                    {% trans 'Inquisitor' %}:
+                    <a href="{% breadcrumb_url 'person' issue.special_inquisitor.slug issue.special_inquisitor.subslug %}">{{ issue.special_inquisitor }}</a>.
+                    &nbsp;
+                    {% trans 'Responder' %}:
+                    <a href="{% breadcrumb_url 'person' issue.special_responder.slug issue.special_responder.subslug %}">{{ issue.special_responder }}</a> ({{ issue.special_responder_description }}).
+                    </small>
+                {% endif %}
+            </div>
         {% endif %}
     </div>
 </div>

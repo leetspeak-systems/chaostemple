@@ -50,9 +50,23 @@
                 <small>{% display_dossier_statistics issue 'small' %}</small>
             </div>
         {% elif issue.issue_group == 'B' %}
-            B: <strong><span control="issue-name" data-id="{{ issue.id }}">{{ issue }}</span></strong>
+            {% if issue.issue_type == 'um' %}
+                {% trans 'Special discussion' %}:
+            {% else %}
+                B:
+            {% endif %}
+            <strong><span control="issue-name" data-id="{{ issue.id }}">{{ issue }}</span></strong>
             {% if issue.description %}
                 <small style="white-space: nowrap;">(<span control="issue-description" data-id="{{ issue.id }}">{{ issue.description }}</span>)</small>
+            {% endif %}
+            {% if issue.issue_type == 'um' %}
+                <br />
+                <small>
+                {% trans 'Inquisitor' %}:
+                <a href="{% breadcrumb_url 'person' issue.special_inquisitor.slug issue.special_inquisitor.subslug %}">{{ issue.special_inquisitor }}</a>.
+                {% trans 'Responder' %}:
+                <a href="{% breadcrumb_url 'person' issue.special_responder.slug issue.special_responder.subslug %}">{{ issue.special_responder }}</a> ({{ issue.special_responder_description }}).
+                </small>
             {% endif %}
         {% endif %}
     </td>

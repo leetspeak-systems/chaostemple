@@ -100,41 +100,52 @@ def upcoming(request):
     next_committee_agendas = request.extravars['next_committee_agendas']
 
     # Get issues that are upcoming in sessions
-    session_issues = Issue.objects.select_related('parliament').prefetch_related(
+    # They are prepended with "garbled_" because we know in advance that they may contain duplicates.
+    garbled_session_issues = Issue.objects.select_related('parliament').prefetch_related(
         'proposers__person',
         'session_agenda_items__session'
     ).filter(
         issue_group = 'A',
         session_agenda_items__session__in=next_sessions
-    ).order_by('session_agenda_items__order').distinct()
+    ).order_by('session_agenda_items__session__session_num', 'session_agenda_items__order').distinct()
 
     # Get issues that are upcoming in committee agendas
-    committee_issues = Issue.objects.select_related('parliament').prefetch_related(
+    # They are prepended with "garbled_" because we know in advance that they may contain duplicates.
+    garbled_committee_issues = Issue.objects.select_related('parliament').prefetch_related(
         'proposers__person',
         'committee_agenda_items__committee_agenda',
     ).filter(committee_agenda_items__committee_agenda__in=next_committee_agendas).order_by(
         'committee_agenda_items__committee_agenda__timing_start_planned'
     ).distinct()
 
-    # Get the relevant dossier statistics
-    IssueUtilities.populate_dossier_statistics(list(session_issues) + list(committee_issues))
+    # Remove duplicates which cannot be excluded by database query, since same issue may pop up at two different times.
+    session_issues = []
+    for issue in garbled_session_issues:
+        if issue not in session_issues:
+            session_issues.append(issue)
+    committee_issues = []
+    for issue in garbled_committee_issues:
+        if issue not in committee_issues:
+            committee_issues.append(issue)
 
-    now = timezone.now()
-    today = timezone.make_aware(timezone.datetime(now.year, now.month, now.day), now.tzinfo)
+    # Get the relevant dossier statistics
+    IssueUtilities.populate_dossier_statistics(session_issues + committee_issues)
+
+    today = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
 
     # Get upcoming sessions for each issue (can this be optimized?)
     for issue in session_issues:
         issue.upcoming_sessions = Session.objects.select_related('parliament').filter(
             session_agenda_items__issue_id=issue.id,
             timing_start_planned__gt=today
-        )
+        ).distinct()
 
     # Get upcoming committee agendas for each issue (can this be optimized?)
     for issue in committee_issues:
         issue.upcoming_committee_agendas = CommitteeAgenda.objects.select_related('parliament', 'committee').filter(
             committee_agenda_items__issue_id=issue.id,
             timing_start_planned__gt=today
-        )
+        ).distinct()
 
     ctx = {
         'session_issues': session_issues,

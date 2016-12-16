@@ -59,3 +59,7 @@
 
 1.1.6:
     * Initiating MP and responding minister in special discussions displayed in session agenda lists.
+
+1.1.7:
+    * Breadcrumb improvements.
+    * "Upcoming" problems resolved: needless repetitions and wrong sort order.

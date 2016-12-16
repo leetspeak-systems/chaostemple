@@ -154,8 +154,6 @@ def upcoming(request):
     return render(request, 'core/upcoming.html', ctx)
 
 
-
-
 def parliament(request, parliament_num):
 
     ctx = {

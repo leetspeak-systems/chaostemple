@@ -59,3 +59,18 @@ def breadcrumb_url(context, view_name, *args):
         from_string = from_string + ',' + context.request.GET.get('from')
 
     return '%s?from=%s' % (reverse(view_name, args=args), from_string)
+
+
+@register.filter()
+def breadcrumb_trace_url(breadcrumb):
+    view = breadcrumb['view']
+    path = reverse(view[0], args=view[1:])
+    if len(breadcrumb['from_string']):
+        path = path + '?from=' + breadcrumb['from_string']
+
+    return path
+
+
+@register.filter()
+def breadcrumb_caption(breadcrumb):
+    return breadcrumb['caption']

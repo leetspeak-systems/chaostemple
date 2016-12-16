@@ -169,16 +169,8 @@
         <div class="container">
 
             <ol class="breadcrumb">
-                {% for urlpath, caption in breadcrumbs %}
-                    {% if urlpath|length > 3 %}
-                        <li><a href="{% url urlpath.0 urlpath.1 urlpath.2 urlpath.3 %}">{{ caption }}</a></li>
-                    {% elif urlpath|length > 2 %}
-                        <li><a href="{% url urlpath.0 urlpath.1 urlpath.2 %}">{{ caption }}</a></li>
-                    {% elif urlpath|length > 1 %}
-                        <li><a href="{% url urlpath.0 urlpath.1 %}">{{ caption }}</a></li>
-                    {% else %}
-                        <li><a href="{% url urlpath.0 %}">{{ caption }}</a></li>
-                    {% endif %}
+                {% for breadcrumb in breadcrumbs %}
+                    <li><a href="{{ breadcrumb|breadcrumb_trace_url }}">{{ breadcrumb|breadcrumb_caption }}</a></li>
                 {% endfor %}
             </ol>
 

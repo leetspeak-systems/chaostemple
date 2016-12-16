@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load committee %}
+{% load smart_urls %}
 
 {% block content %}
 
@@ -17,7 +18,7 @@
                 {% for agenda in agendas reversed %}
                     <tr>
                         <td>
-                            <a href="{% url 'parliament_committee_agenda' parliament_num agenda.committee_id agenda.id %}">{{ agenda|fancy_committee_agenda_timing }}</a>
+                            <a href="{% breadcrumb_url 'parliament_committee_agenda' parliament_num agenda.committee_id agenda.id %}">{{ agenda|fancy_committee_agenda_timing }}</a>
                         </td>
                         <td>{{ agenda.item_count }}</td>
                     </tr>

@@ -1,8 +1,10 @@
 from django.core.urlresolvers import resolve
+from django.core.urlresolvers import reverse
 from django.template.defaultfilters import date
 from django.utils import dateparse
 from django.utils import timezone
 from django.utils.http import urlsafe_base64_decode
+from django.utils.http import urlsafe_base64_encode
 from django.utils.translation import ugettext as _
 
 from althingi.althingi_settings import CURRENT_PARLIAMENT_NUM
@@ -28,11 +30,24 @@ def generate_prepended_views(from_string):
 
 
 def leave_breadcrumb(breadcrumbs, view_name, caption):
-    return breadcrumbs + ((view_name, caption),)
+
+    prior_from_strings = []
+    for breadcrumb in breadcrumbs:
+        view_data = breadcrumb['view']
+        path = reverse(view_data[0], args=view_data[1:])
+        from_string = urlsafe_base64_encode(path)
+        prior_from_strings.append(from_string)
+
+    breadcrumbs.append({
+        'view': view_name, # TODO: Change this variable name to something less confusing?
+        'caption': caption,
+        'from_string': ','.join(reversed(prior_from_strings))
+    })
+    return breadcrumbs
 
 
 def make_breadcrumbs(request):
-    breadcrumbs = ()
+    breadcrumbs = []
 
     parliament_num = int(request.resolver_match.kwargs.get('parliament_num', CURRENT_PARLIAMENT_NUM))
 
@@ -47,12 +62,12 @@ def make_breadcrumbs(request):
     for prepended_view in prepended_views:
         breadcrumbs = process_breadcrumbs(breadcrumbs, prepended_view)
 
-    breadcrumbs = process_breadcrumbs(breadcrumbs, request.resolver_match, True if len(prepended_views) else False)
+    breadcrumbs = process_breadcrumbs(breadcrumbs, request.resolver_match)
 
     return breadcrumbs
 
 
-def process_breadcrumbs(breadcrumbs, view, skip_original_prepending=False):
+def process_breadcrumbs(breadcrumbs, view):
 
     # Short-hands.
     view_name = view.view_name
@@ -113,7 +128,7 @@ def process_breadcrumbs(breadcrumbs, view, skip_original_prepending=False):
             _('Issues with new data')
         )
 
-    if view_name == 'parliament_issues' or (view_name == 'parliament_issue' and not skip_original_prepending):
+    if view_name == 'parliament_issues':
         breadcrumbs = leave_breadcrumb(
             breadcrumbs,
             ('parliament_issues', parliament_num),
@@ -127,7 +142,7 @@ def process_breadcrumbs(breadcrumbs, view, skip_original_prepending=False):
             '%d. %s' % (issue_num, _('issue'))
         )
 
-    if view_name == 'parliament_sessions' or (view_name == 'parliament_session' and not skip_original_prepending):
+    if view_name == 'parliament_sessions':
         breadcrumbs = leave_breadcrumb(
             breadcrumbs,
             ('parliament_sessions', parliament_num),
@@ -141,7 +156,7 @@ def process_breadcrumbs(breadcrumbs, view, skip_original_prepending=False):
             '%d. %s' % (session_num, _('parliamentary session'))
         )
 
-    if view_name in ('parliament_committees', 'parliament_committee') or (view_name == 'parliament_committee_agenda' and not skip_original_prepending):
+    if view_name == 'parliament_committees':
         breadcrumbs = leave_breadcrumb(
             breadcrumbs,
             ('parliament_committees', parliament_num),

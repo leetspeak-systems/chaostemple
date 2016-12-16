@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load smart_urls %}
 
 {% block content %}
 
@@ -15,7 +16,7 @@
                 {% for committee in committees %}
                     <tr>
                         <td>
-                            <a href="{% url 'parliament_committee' parliament_num committee.id %}">{{ committee }}</a>
+                            <a href="{% breadcrumb_url 'parliament_committee' parliament_num committee.id %}">{{ committee }}</a>
                         </td>
                         <td class="text-right">{{ committee.agenda_count }}</td>
                     </tr>

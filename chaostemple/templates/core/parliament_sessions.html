@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load session %}
+{% load smart_urls %}
 
 {% block content %}
 
@@ -19,7 +20,7 @@
                 {% for session in sessions reversed %}
                     <tr>
                         <td>{{ session|fancy_session_timing }}</td>
-                        <td><a href="{% url 'parliament_session' parliament_num session.session_num %}">{{ session }}</a></td>
+                        <td><a href="{% breadcrumb_url 'parliament_session' parliament_num session.session_num %}">{{ session }}</a></td>
                         <td class="text-right">{{ session.session_agenda_item_count }}</td>
                         <td>
                             {% if session.timing_start %}

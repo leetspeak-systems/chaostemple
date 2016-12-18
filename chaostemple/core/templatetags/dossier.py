@@ -25,6 +25,7 @@ fieldstate_css_dict = {
         'neutral': 'info',
         'support': 'primary',
         'strongsupport': 'success',
+        'referral': 'info',
         'other': 'info',
     },
     'proposal': {

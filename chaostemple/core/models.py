@@ -153,6 +153,7 @@ class Dossier(models.Model):
         ('neutral', _('Neutral')),
         ('support', _('Support')),
         ('strongsupport', _('Strong Support')),
+        ('referral', _('Referral')),
         ('other', _('Other')),
     )
 
@@ -321,6 +322,7 @@ class DossierStatistic(models.Model):
     document_support_neutral = models.IntegerField(default=0)
     document_support_support = models.IntegerField(default=0)
     document_support_strongsupport = models.IntegerField(default=0)
+    document_support_referral = models.IntegerField(default=0)
     document_support_other = models.IntegerField(default=0)
     document_proposal_minor = models.IntegerField(default=0)
     document_proposal_some = models.IntegerField(default=0)
@@ -341,6 +343,7 @@ class DossierStatistic(models.Model):
     review_support_neutral = models.IntegerField(default=0)
     review_support_support = models.IntegerField(default=0)
     review_support_strongsupport = models.IntegerField(default=0)
+    review_support_referral = models.IntegerField(default=0)
     review_support_other = models.IntegerField(default=0)
     review_proposal_minor = models.IntegerField(default=0)
     review_proposal_some = models.IntegerField(default=0)

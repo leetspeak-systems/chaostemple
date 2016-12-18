@@ -63,3 +63,6 @@
 1.1.7:
     * Breadcrumb improvements.
     * "Upcoming" problems resolved: needless repetitions and wrong sort order.
+
+1.1.8:
+    * Added new document/review support status: Referral

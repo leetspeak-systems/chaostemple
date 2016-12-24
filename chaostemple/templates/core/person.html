@@ -69,7 +69,7 @@
                 {% for seat in seats reversed %}
                     <tr>
                         <td>{{ seat.parliament.parliament_num }}</td>
-                        <td>{{ seat.timing_in|date }} - {% if seat.timing_out %}{{ seat.timing_out|date }}{% else %}...{% endif %}</td>
+                        <td>{{ seat.timing_in|date:'SHORT_DATE_FORMAT' }} - {% if seat.timing_out %}{{ seat.timing_out|date:'SHORT_DATE_FORMAT' }}{% else %}...{% endif %}</td>
                         <td>{{ seat.party }}</td>
                         <td>{{ seat.seat_type }}</td>
                     </tr>
@@ -88,7 +88,7 @@
                     <tr>
                         <td>{{ committee_seat.parliament.parliament_num }}</td>
                         <td><a href="{% url 'parliament_committee' committee_seat.parliament.parliament_num committee_seat.committee_id %}">{{ committee_seat.committee }}</a></td>
-                        <td>{{ committee_seat.timing_in|date }} - {% if committee_seat.timing_out %}{{ committee_seat.timing_out|date }}{% else %}...{% endif %}</td>
+                        <td>{{ committee_seat.timing_in|date:'SHORT_DATE_FORMAT' }} - {% if committee_seat.timing_out %}{{ committee_seat.timing_out|date:'SHORT_DATE_FORMAT' }}{% else %}...{% endif %}</td>
                         <td>{{ committee_seat.committee_seat_type }}</td>
                     </tr>
                 {% endfor %}

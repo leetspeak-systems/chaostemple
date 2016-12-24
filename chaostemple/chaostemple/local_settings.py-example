@@ -34,15 +34,14 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
+DATETIME_FORMAT = 'd.m.Y (H:i)'
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
 
-DATE_FORMAT = 'Y-m-d'
-DATETIME_FORMAT = 'Y-m-d H:i'
-TIME_FORMAT = 'H:i'
 
 # To test email smtp:
 # $ python -m smtpd -n -c DebuggingServer 127.0.0.1:25000

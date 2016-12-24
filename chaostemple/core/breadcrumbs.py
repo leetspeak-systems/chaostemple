@@ -96,7 +96,7 @@ def process_breadcrumbs(breadcrumbs, view):
     if view_name == 'day':
         if 'input_date' in locals():
             requested_date = timezone.make_aware(dateparse.parse_datetime('%s 00:00:00' % input_date))
-            caption = '%s (%s)' % (_('Today\'s issues'), date(requested_date))
+            caption = '%s (%s)' % (_('Today\'s issues'), date(requested_date, 'SHORT_DATE_FORMAT'))
         else:
             input_date = None
             caption = _('Today\'s issues')
@@ -199,7 +199,7 @@ def process_breadcrumbs(breadcrumbs, view):
             breadcrumbs = leave_breadcrumb(
                 breadcrumbs,
                 ('person', person.slug, person.subslug),
-                '%s (%s %s)' % (person.name, _('b.'), date(person.birthdate))
+                '%s (%s %s)' % (person.name, _('b.'), date(person.birthdate, 'SHORT_DATE_FORMAT'))
             )
         else:
             breadcrumbs = leave_breadcrumb(

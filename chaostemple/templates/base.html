@@ -66,9 +66,9 @@
                                     {% if next_sessions.count %}
                                         <li role="presentation"><a href="{% url 'parliament_sessions' newest_parliament_num %}"><strong>{% trans 'Parliamentary Sessions' %}</strong></a></li>
                                         {% for session in next_sessions %}
-                                            {% ifchanged session.timing_start_planned|date %}
+                                            {% ifchanged session.timing_start_planned|date:'SHORT_DATE_FORMAT' %}
                                                 {% if session.timing_start_planned %}
-                                                    <li role="presentation" class="dropdown-header">{{ session.timing_start_planned|date }}</li>
+                                                    <li role="presentation" class="dropdown-header">{{ session.timing_start_planned|date:'SHORT_DATE_FORMAT' }}</li>
                                                 {% endif %}
                                             {% endifchanged %}
                                             <li role="presentation">
@@ -84,8 +84,8 @@
                                     {% if next_committee_agendas.count %}
                                         <li role="presentation"><a href="{% url 'parliament_committees' newest_parliament_num %}"><strong>{% trans 'Committee Meetings' %}</strong></a></li>
                                         {% for agenda in next_committee_agendas %}
-                                            {% ifchanged agenda.timing_start_planned|date %}
-                                                <li role="presentation" class="dropdown-header">{{ agenda.timing_start_planned|date }}</li>
+                                            {% ifchanged agenda.timing_start_planned|date:'SHORT_DATE_FORMAT' %}
+                                                <li role="presentation" class="dropdown-header">{{ agenda.timing_start_planned|date:'SHORT_DATE_FORMAT' }}</li>
                                             {% endifchanged %}
                                             <li role="presentation">
                                                 <a href="{% url 'parliament_committee_agenda' agenda.parliament.parliament_num agenda.committee_id agenda.id %}">

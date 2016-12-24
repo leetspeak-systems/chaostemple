@@ -44,7 +44,7 @@
 
     <h1>
         {% blocktrans %}Today's issues{% endblocktrans %}
-        <small>{{ requested_date|date }}</small>
+        <small>{{ requested_date|date:'SHORT_DATE_FORMAT' }}</small>
         <ul class="header-controls">
             <li>
                 <div control="date-picker-container">

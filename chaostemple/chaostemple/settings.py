@@ -104,6 +104,7 @@ LOGIN_REDIRECT_URL = '/'
 from chaostemple.local_settings import *
 if DEBUG and DEBUG_TOOLBAR:
     INSTALLED_APPS += ('debug_toolbar.apps.DebugToolbarConfig',)
+    MIDDLEWARE_CLASSES += ('debug_toolbar.middleware.DebugToolbarMiddleware',)
     DEBUG_TOOLBAR_CONFIG = {
         'JQUERY_URL': ''
     }

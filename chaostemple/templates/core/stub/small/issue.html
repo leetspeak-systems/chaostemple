@@ -3,8 +3,10 @@
 {% load smart_urls %}
 
 <tr control="issue-container" data-id="{{ issue.id }}">
-    <td>
+    <td control="issue-small">
         {% if issue.issue_group == 'A' %}
+
+            <div>
             <span style="float: right;">
                 {% if user.is_authenticated %}
                     {% include 'core/stub/small/issue_bookmark.html' %}
@@ -27,9 +29,9 @@
                         class="btn btn-xs btn-default">{{ d.user }}</a>
             {% endfor %}
             </span>
+            </div>
 
-            <br />
-
+            <div>
             <small>
             {{ issue.get_issue_type_display|capfirst }}:
             <span>
@@ -42,13 +44,16 @@
             {% endwith %}
             {% if issue.proposers.all.1 %}<a href="#" control="expand-proposer" data-id="{{ issue.proposers.all.0.id }}">{% trans 'and others' %}</a>{% endif %}
             </span>
+            <span style="float: right;">
+                {{ issue.time_published|date:'SHORT_DATE_FORMAT' }}
+            </span>
             </small>
-
-            <br />
+            </div>
 
             <div control="statistic-container" class="small-issues" style="display: none;">
                 <small>{% display_dossier_statistics issue 'small' %}</small>
             </div>
+
         {% elif issue.issue_group == 'B' %}
             {% if issue.issue_type == 'um' %}
                 {% trans 'Special discussion' %}:

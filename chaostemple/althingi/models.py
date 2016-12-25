@@ -155,6 +155,7 @@ class Issue(models.Model):
     issue_group = models.CharField(max_length=1, choices=ISSUE_GROUPS, default='A')  # IS: Málsflokkur
     name = models.CharField(max_length=500)
     description = models.TextField()
+    time_published = models.DateTimeField(null=True)
     final_vote_complete = models.BooleanField(default=False)
 
     special_inquisitor = models.ForeignKey('Person', null=True, related_name='issues_special_inquisited')
@@ -347,6 +348,11 @@ class Document(models.Model):
         is_new = self.pk is None
 
         super(Document, self).save(*args, **kwargs)
+
+        # If this is a main document, then the issue's publishing date should be the same.
+        if self.is_main and self.issue.time_published != self.time_published:
+            self.issue.time_published = self.time_published
+            self.issue.save()
 
         # Re-calculate Issue's Document count
         if is_new:

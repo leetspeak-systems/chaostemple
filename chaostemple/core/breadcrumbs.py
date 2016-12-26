@@ -15,6 +15,15 @@ from althingi.models import Person
 from core.templatetags.committee import fancy_committee_agenda_timing
 
 
+# Utility function to add an URL to the crumbs in a crumb string.
+def append_to_crumb_string(input_path, input_crumb_string):
+    crumb_string = urlsafe_base64_encode(input_path)
+    if input_crumb_string:
+        crumb_string = crumb_string + ',' + input_crumb_string
+
+    return crumb_string
+
+
 def generate_prepended_views(from_string):
     if not from_string:
         return []

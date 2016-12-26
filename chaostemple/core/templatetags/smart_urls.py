@@ -1,6 +1,7 @@
 from django import template
 from django.core.urlresolvers import reverse
-from django.utils.http import urlsafe_base64_encode
+
+from core.breadcrumbs import append_to_crumb_string
 
 register = template.Library()
 
@@ -40,25 +41,16 @@ def parliament_url(context, parliament_num):
 @register.simple_tag(takes_context=True)
 def breadcrumb_url(context, view_name, *args):
     '''
-    This function is to be used when the user will be directed to a page which can be linked
-    to from multiple different places. For instance, an issue can be accessed via session,
-    committee agenda, bookmark list and in a number of other ways. This function detects the
-    current page and changes the link to the issue (issue merely being used as an example)
-    so that the issue page can then know from whence the user came, thereby appropriately
-    configuring breadcrumbs.
+    This template tag works like the default 'url' template tag, except that it adds the
+    currently visible page to the crumb string in the URL, so that breadcrumbs work.
     '''
 
-    # Get the current path without parameters.
-    path = context.request.get_full_path().split('?')[0]
+    crumb_string = append_to_crumb_string(
+        context.request.get_full_path().split('?')[0],
+        context.request.GET.get('from', '')
+    )
 
-    # Create a from_string from the current path.
-    from_string = urlsafe_base64_encode(path)
-
-    # Check for already existing prepended views in current parameters.
-    if context.request.GET.has_key('from'):
-        from_string = from_string + ',' + context.request.GET.get('from')
-
-    return '%s?from=%s' % (reverse(view_name, args=args), from_string)
+    return '%s?from=%s' % (reverse(view_name, args=args), crumb_string)
 
 
 @register.filter()

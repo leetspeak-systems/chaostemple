@@ -12,6 +12,8 @@ from althingi.models import Proposer
 from althingi.models import Session
 from althingi.models import SessionAgendaItem
 
+from core.breadcrumbs import append_to_crumb_string
+
 from core.models import Access
 from core.models import Document
 from core.models import Dossier
@@ -26,6 +28,8 @@ from jsonizer.utils import jsonize
 @jsonize
 def proposer_subproposers(request, proposer_id):
 
+    crumb_string = append_to_crumb_string(request.POST.get('path'), request.POST.get('crumb_string', ''))
+
     proposer = Proposer.objects.get(id=proposer_id)
     if proposer.committee_id:
         subproposers = Proposer.objects.select_related('person').filter(parent_id=proposer_id)
@@ -34,10 +38,10 @@ def proposer_subproposers(request, proposer_id):
 
     ctx = {'subproposers': []}
 
-    for subproposer in subproposers:
+    for sp in subproposers:
         ctx['subproposers'].append({
-            'url': reverse('person', args=(subproposer.person.slug, subproposer.person.subslug)),
-            'name': subproposer.person.name
+            'url': '%s?from=%s' % (reverse('person', args=(sp.person.slug, sp.person.subslug)), crumb_string),
+            'name': sp.person.name
         })
 
     return ctx

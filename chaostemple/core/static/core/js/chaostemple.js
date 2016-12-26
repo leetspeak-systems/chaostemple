@@ -42,3 +42,18 @@ $(document).on('click', 'a[href="#"]', function(event) {
     event.preventDefault();
 });
 
+// Keep track of URL parameters for easy JavaScript access
+var url_params = {};
+query_index = location.href.indexOf('?');
+if (query_index >= 0) {
+    var_values = location.href.substr(query_index + 1).split('&');
+    for (i = 0; i < var_values.length; i++) {
+        var_value = var_values[i].split('=');
+        url_params[var_value[0]] = var_value[1] || null;
+        delete var_value;
+    }
+    delete var_values;
+    delete i;
+}
+delete query_index;
+

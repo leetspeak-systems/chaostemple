@@ -38,6 +38,11 @@ $(document).ready(function() {
                 'failure': 'Fetching sub-proposers failed!',
             },
             url: '/json/proposer/' + proposer_id + '/subproposers/',
+            type: 'POST',
+            data: {
+                path: location.pathname,
+                crumb_string: url_params['from'],
+            },
             done: function(data, textStatus) {
                 var name = '';
                 var url = '';

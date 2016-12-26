@@ -69,3 +69,7 @@
 
 1.1.9:
     * Publishing dates of issues shown in issue listings.
+
+1.1.10:
+    * Bugfix: Committees and committe parts were not expanding into proposers in documents, only issues.
+    * Bugfix: Breadcrumbs didn't work when proposers in expanded committees (and committee parts) were clicked.

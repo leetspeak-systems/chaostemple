@@ -30,7 +30,7 @@ def proposer_subproposers(request, proposer_id):
     if proposer.committee_id:
         subproposers = Proposer.objects.select_related('person').filter(parent_id=proposer_id)
     else:
-        subproposers = Proposer.objects.filter(issue_id=proposer.issue_id)
+        subproposers = Proposer.objects.select_related('person').filter(issue_id=proposer.issue_id)
 
     ctx = {'subproposers': []}
 

@@ -21,13 +21,15 @@
         {% if document.proposers.all.count %}
             <div class="proposers">
                 <strong>{% trans "Proposers" %}:</strong>
+                <span>
                 {% for proposer in document.proposers.all %}
                     {% if proposer.person %}
                         <a href="{% breadcrumb_url 'person' proposer.person.slug proposer.person.subslug %}">{{ proposer }}</a>{% if not forloop.last %}, {% endif %}
                     {% else %}
-                        <a href="#">{{ proposer }}</a>{% if not forloop.last %}, {% endif %}
+                        <a href="#" control="expand-proposer" data-id="{{ proposer.id }}">{{ proposer }}</a>{% if not forloop.last %}, {% endif %}
                     {% endif %}
                 {% endfor %}
+                </span>
             </div>
         {% endif %}
     </div>

@@ -2,10 +2,12 @@
 from django.db import models
 from django.db.models import Q
 from django.template.defaultfilters import capfirst
+from django.template.defaultfilters import slugify
 from django.templatetags.static import static
 from django.utils import timezone
 
 from BeautifulSoup import BeautifulSoup
+from unidecode import unidecode
 import urllib
 
 from althingi.utils import format_date
@@ -435,6 +437,12 @@ class Person(models.Model):
     subslug = models.CharField(max_length=10, null=True)
 
     person_xml_id = models.IntegerField()
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(unidecode(self.name))
+        self.subslug = 'f-%d' % self.birthdate.year
+
+        super(Person, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return u'%s' % self.name

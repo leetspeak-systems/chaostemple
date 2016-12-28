@@ -4,10 +4,8 @@ from __future__ import print_function
 
 from datetime import datetime
 from django.db.models import Q
-from django.template.defaultfilters import slugify
 from sys import stderr
 from sys import stdout
-from unidecode import unidecode
 from xml.dom import minidom
 from xml.parsers.expat import ExpatError
 
@@ -161,9 +159,6 @@ def update_person(person_xml_id, parliament_num=None):
     name = person_xml.getElementsByTagName(u'nafn')[0].firstChild.nodeValue.strip()
     birthdate = sensible_datetime(person_xml.getElementsByTagName(u'fæðingardagur')[0].firstChild.nodeValue)
 
-    slug = slugify(unidecode(name))
-    subslug = 'f-%d' % birthdate.year
-
     try:
         person = Person.objects.get(person_xml_id=person_xml_id)
 
@@ -200,14 +195,6 @@ def update_person(person_xml_id, parliament_num=None):
             person.website_url = website_url
             changed = True
 
-        if person.slug != slug:
-            person.slug = slug
-            changed = True
-
-        if person.subslug != subslug:
-            person.subslug = subslug
-            changed = True
-
         if changed:
             person.save()
             print('Updated person: %s' % person)
@@ -224,8 +211,6 @@ def update_person(person_xml_id, parliament_num=None):
         person.youtube_url = youtube_url
         person.blog_url = blog_url
         person.website_url = website_url
-        person.slug = slug
-        person.subslug = subslug
         person.person_xml_id = person_xml_id
         person.save()
 

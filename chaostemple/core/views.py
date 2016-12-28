@@ -382,7 +382,7 @@ def person(request, slug, subslug=None):
     # Both 'slug' and 'subslug' exist at this point
     person = Person.objects.get(slug=slug, subslug=subslug)
 
-    seats = person.seats.select_related('parliament', 'party').all()
+    seats = person.seats.select_related('parliament', 'party', 'constituency').all()
     committee_seats = person.committee_seats.select_related('parliament', 'committee').all()
 
     issues = Issue.objects.select_related('parliament').prefetch_related('proposers__person', 'proposers__committee').filter(

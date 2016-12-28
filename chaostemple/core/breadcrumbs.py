@@ -24,13 +24,13 @@ def append_to_crumb_string(input_path, input_crumb_string):
     return crumb_string
 
 
-def generate_prepended_views(from_string):
-    if not from_string:
+def generate_prepended_views(crumb_string):
+    if not crumb_string:
         return []
 
     prepended_views = []
 
-    for part in reversed(from_string.split(',')):
+    for part in reversed(crumb_string.split(',')):
         path = urlsafe_base64_decode(part)
         resolved_path = resolve(path)
         prepended_views.append(resolved_path)
@@ -38,19 +38,19 @@ def generate_prepended_views(from_string):
     return prepended_views
 
 
-def leave_breadcrumb(breadcrumbs, view_name, caption):
+def leave_breadcrumb(breadcrumbs, view, caption):
 
-    prior_from_strings = []
+    prior_crumb_strings = []
     for breadcrumb in breadcrumbs:
         view_data = breadcrumb['view']
         path = reverse(view_data[0], args=view_data[1:])
-        from_string = urlsafe_base64_encode(path)
-        prior_from_strings.append(from_string)
+        crumb_string = urlsafe_base64_encode(path)
+        prior_crumb_strings.append(crumb_string)
 
     breadcrumbs.append({
-        'view': view_name, # TODO: Change this variable name to something less confusing?
+        'view': view,
         'caption': caption,
-        'from_string': ','.join(reversed(prior_from_strings))
+        'crumb_string': ','.join(reversed(prior_crumb_strings))
     })
     return breadcrumbs
 

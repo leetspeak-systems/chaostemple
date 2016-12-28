@@ -57,8 +57,8 @@ def breadcrumb_url(context, view_name, *args):
 def breadcrumb_trace_url(breadcrumb):
     view = breadcrumb['view']
     path = reverse(view[0], args=view[1:])
-    if len(breadcrumb['from_string']):
-        path = path + '?from=' + breadcrumb['from_string']
+    if len(breadcrumb['crumb_string']):
+        path = path + '?from=' + breadcrumb['crumb_string']
 
     return path
 

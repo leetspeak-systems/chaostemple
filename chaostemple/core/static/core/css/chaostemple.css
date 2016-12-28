@@ -12,6 +12,8 @@ h2 small { white-space: nowrap; }
 .btn-danger .grey { color: #d0d0d0; }
 .menu-header { padding: 6px 0px 4px 12px; margin-bottom: 4px; border-bottom: 1px solid #e0e0e0; }
 
+.nowrap { white-space: nowrap; }
+
 .memo-count { border-radius: 1em; }
 
 .parliament-link img { margin-top: 1px; }

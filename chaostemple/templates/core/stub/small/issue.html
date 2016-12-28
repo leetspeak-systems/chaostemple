@@ -18,10 +18,10 @@
                         control="issue-name"
                         data-id="{{ issue.id }}">{{ issue }}</span></strong></a>
             {% if issue.description %}
-                <small style="white-space: nowrap;">(<span control="issue-description" data-id="{{ issue.id }}">{{ issue.description }}</span>)</small>
+                <small class="nowrap">(<span control="issue-description" data-id="{{ issue.id }}">{{ issue.description }}</span>)</small>
             {% endif %}
 
-            <span style="white-space: nowrap;">
+            <span class="nowrap">
             {% for d in issue.dossier_statistics %}
                 <a href="#" control="toggle-user-dossier-statistics"
                         data-user-id="{{ d.user_id }}"
@@ -62,7 +62,7 @@
             {% endif %}
             <strong><span control="issue-name" data-id="{{ issue.id }}">{{ issue }}</span></strong>
             {% if issue.description %}
-                <small style="white-space: nowrap;">(<span control="issue-description" data-id="{{ issue.id }}">{{ issue.description }}</span>)</small>
+                <small class="nowrap">(<span control="issue-description" data-id="{{ issue.id }}">{{ issue.description }}</span>)</small>
             {% endif %}
             {% if issue.issue_type == 'um' %}
                 <br />

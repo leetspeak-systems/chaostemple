@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-12-28 13:14+0000\n"
+"POT-Creation-Date: 2016-12-29 14:56+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -79,7 +79,6 @@ msgstr "Nefndir"
 
 #: core/breadcrumbs.py:195 templates/base.html:147
 #: templates/core/parliament.html:11 templates/core/parliament_persons.html:7
-#: templates/core/parliament_persons.html:14
 msgid "Parliamentarians"
 msgstr "Þingmenn"
 
@@ -450,9 +449,29 @@ msgstr "Nafn, númer, lýsing, tegund eða fyrsti flutningsmaður máls"
 msgid "No parliaments have been configured yet."
 msgstr "Engin þing hafa enn verið sett inn."
 
-#: templates/core/parliament_persons.html:28
-msgid "Deputies"
-msgstr "Varamenn"
+#: templates/core/parliament_persons.html:14
+msgid "Parliamentarian"
+msgstr "Þingmaður"
+
+#: templates/core/parliament_persons.html:15
+#: templates/core/parliament_persons.html:35 templates/core/person.html:78
+msgid "Party"
+msgstr "Flokkur"
+
+#: templates/core/parliament_persons.html:16
+msgid "Parliamentary Seat"
+msgstr "Þingsæti"
+
+#: templates/core/parliament_persons.html:17
+#: templates/core/parliament_persons.html:36 templates/core/person.html:79
+msgid "Constituency"
+msgstr "Kjördæmi"
+
+#: templates/core/parliament_persons.html:34
+#, fuzzy
+#| msgid "Parliamentarian"
+msgid "Deputy Parliamentarian"
+msgstr "Þingmaður"
 
 #: templates/core/parliament_sessions.html:14
 msgid "Planned Timing"
@@ -470,7 +489,7 @@ msgstr "Upphafstími"
 msgid "End Timing"
 msgstr "Lokatími"
 
-#: templates/core/person.html:24
+#: templates/core/person.html:24 templates/core/stub/small/person.html:15
 msgid "parliamentarian"
 msgstr "þingmaður"
 
@@ -505,14 +524,6 @@ msgstr "Þingseta"
 #: templates/core/person.html:77 templates/core/person.html:97
 msgid "Time period"
 msgstr "Tímabil"
-
-#: templates/core/person.html:78
-msgid "Party"
-msgstr "Flokkur"
-
-#: templates/core/person.html:79
-msgid "Constituency"
-msgstr "Kjördæmi"
 
 #: templates/core/person.html:88
 msgid "MP"
@@ -604,6 +615,10 @@ msgstr "o.fl."
 msgid "Special discussion"
 msgstr "Sérstök umræða"
 
+#: templates/core/stub/small/person.html:11
+msgid "tenure ended prematurely"
+msgstr "þingstörfum lauk fyrir þinglok"
+
 #: templates/core/upcoming.html:18
 msgid "In Upcoming Sessions"
 msgstr "Á komandi þingfundum"
@@ -631,6 +646,9 @@ msgstr "Lykilorði þínu var breytt."
 #: templates/registration/password_change_form.html:13
 msgid "OK"
 msgstr "Í lagi"
+
+#~ msgid "Deputies"
+#~ msgstr "Varamenn"
 
 #~ msgid "Proposal"
 #~ msgstr "Tillaga"

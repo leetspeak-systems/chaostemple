@@ -574,6 +574,8 @@ class Party(models.Model):
     parliament_num_last = models.IntegerField(null=True)
     parliaments = models.ManyToManyField('Parliament', related_name='parties')
 
+    special = models.BooleanField(default=False)
+
     slug = models.CharField(max_length=100)
 
     party_xml_id = models.IntegerField()
@@ -581,13 +583,17 @@ class Party(models.Model):
     def save(self, *args, **kwargs):
         self.slug = slugify(unidecode(self.name))
 
+        # Special parties are party-type containers rather than actual parties.
+        if self.name == u'Utan þingflokka':
+            self.special = True
+
         super(Party, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return self.name
 
     class Meta:
-        ordering = ['parliament_num_first']
+        ordering = ['special', 'name']
 
 
 class Constituency(models.Model):

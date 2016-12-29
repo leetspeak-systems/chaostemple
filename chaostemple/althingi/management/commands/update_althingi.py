@@ -84,6 +84,10 @@ class Command(BaseCommand):
 
         try:
             has_run = False
+            if 'parliament' in args:
+                has_run = True
+                update_parliament(parliament_num)
+
             if 'parties' in args:
                 has_run = True
                 update_parties(parliament_num)

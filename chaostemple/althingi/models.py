@@ -110,6 +110,10 @@ class CommitteeAgendaQuerySet(models.QuerySet):
 class Parliament(models.Model):
     parliament_num = models.IntegerField(unique=True)  # IS: Þingnúmer
 
+    era = models.CharField(max_length=9)
+    timing_start = models.DateTimeField()
+    timing_end = models.DateTimeField(null=True)
+
     def __unicode__(self):
         return u'Parliament %d' % self.parliament_num
 

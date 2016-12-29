@@ -468,10 +468,8 @@ msgid "Constituency"
 msgstr "Kjördæmi"
 
 #: templates/core/parliament_persons.html:34
-#, fuzzy
-#| msgid "Parliamentarian"
 msgid "Deputy Parliamentarian"
-msgstr "Þingmaður"
+msgstr "Varaþingmaður"
 
 #: templates/core/parliament_sessions.html:14
 msgid "Planned Timing"

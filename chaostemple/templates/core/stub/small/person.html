@@ -1,0 +1,27 @@
+{% load i18n %}
+{% load smart_urls %}
+{% load person %}
+
+{% if seat.seat_type == 'þingmaður' or seat.seat_type == 'með varamann' %}
+    {% with seat|tenure_ended_prematurely as tenure_ended_prematurely %}
+    <tr>
+        <td>
+            <a href="{% breadcrumb_url 'person' person.slug person.subslug %}">{{ person }}</a>
+            {% if tenure_ended_prematurely %}
+                <small>({% trans 'tenure ended prematurely' %})</small>
+            {% endif %}
+        </td>
+        <td {% if tenure_ended_prematurely %}class="faded-text"{% endif %}>{{ seat.party }}</td>
+        <td {% if tenure_ended_prematurely %}class="faded-text"{% endif %}>{{ seat.constituency_mp_num }}. {% trans 'parliamentarian' %}</td>
+        <td {% if tenure_ended_prematurely %}class="faded-text"{% endif %}>{{ seat.constituency.name }}</td>
+    </tr>
+    {% endwith %}
+{% elif seat.seat_type == 'varamaður' %}
+    <tr>
+        <td>
+            <a href="{% breadcrumb_url 'person' person.slug person.subslug %}">{{ person }}</a>
+        </td>
+        <td>{{ seat.party }}</td>
+        <td>{{ seat.constituency.name }}</td>
+    </tr>
+ {% endif %}

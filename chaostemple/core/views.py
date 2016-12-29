@@ -358,12 +358,15 @@ def parliament_committee_agenda(request, parliament_num, committee_id, agenda_id
 
 def parliament_persons(request, parliament_num):
 
-    persons = Person.objects.filter(seats__parliament__parliament_num=parliament_num, seats__seat_type=u'þingmaður').distinct()
-    deputies = Person.objects.filter(seats__parliament__parliament_num=parliament_num, seats__seat_type=u'varamaður').distinct()
+    parliament = Parliament.objects.get(parliament_num=parliament_num)
+
+    persons = Person.objects.prefetch_latest_seats(parliament, 'party', 'constituency', 'parliament').filter(
+        seats__parliament__parliament_num=parliament_num
+    ).distinct()
 
     ctx = {
+        'parliament': parliament,
         'persons': persons,
-        'deputies': deputies,
     }
     return render(request, 'core/parliament_persons.html', ctx)
 

@@ -11,6 +11,7 @@ h2 small { white-space: nowrap; }
 .btn-warning .grey { color: #e0e0e0; }
 .btn-danger .grey { color: #d0d0d0; }
 .menu-header { padding: 6px 0px 4px 12px; margin-bottom: 4px; border-bottom: 1px solid #e0e0e0; }
+.faded-text { color: #909090; }
 
 .nowrap { white-space: nowrap; }
 

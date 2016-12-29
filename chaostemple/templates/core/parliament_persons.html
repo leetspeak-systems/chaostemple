@@ -8,31 +8,39 @@
     <h3>{{ parliament_num }}. {% trans 'parliament' %}</h3>
 
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-12">
             <table class="table">
                 <tr>
-                    <th>{% trans 'Parliamentarians' %}</th>
+                    <th>{% trans 'Parliamentarian' %}</th>
+                    <th>{% trans 'Party' %}</th>
+                    <th>{% trans 'Parliamentary Seat' %}</th>
+                    <th>{% trans 'Constituency' %}</th>
                 </tr>
                 {% for person in persons %}
-                    <tr>
-                        <td>
-                            <a href="{% breadcrumb_url 'person' person.slug person.subslug %}">{{ person }}</a>
-                        </td>
-                    </tr>
+                    {% with person.last_seat.0 as last_seat %}
+                    {% if last_seat.seat_type == 'þingmaður' or last_seat.seat_type == 'með varamann' %}
+                        {% include 'core/stub/small/person.html' with seat=person.last_seat.0 %}
+                    {% endif %}
+                    {% endwith %}
                 {% endfor %}
             </table>
         </div>
-        <div class="col-md-6">
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
             <table class="table">
                 <tr>
-                    <th>{% trans 'Deputies' %}</th>
+                    <th>{% trans 'Deputy Parliamentarian' %}</th>
+                    <th>{% trans 'Party' %}</th>
+                    <th>{% trans 'Constituency' %}</th>
                 </tr>
-                {% for person in deputies %}
-                    <tr>
-                        <td>
-                            <a href="{% url 'person' person.slug person.subslug %}">{{ person }}</a>
-                        </td>
-                    </tr>
+                {% for person in persons %}
+                    {% with person.last_seat.0 as last_seat %}
+                    {% if last_seat.seat_type == 'varamaður' %}
+                        {% include 'core/stub/small/person.html' with seat=person.last_seat.0 %}
+                    {% endif %}
+                    {% endwith %}
                 {% endfor %}
             </table>
         </div>

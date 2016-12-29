@@ -624,6 +624,13 @@ class Seat(models.Model):
 
     party = models.ForeignKey('Party', related_name='seats')
 
+    def tenure_ended_prematurely(self):
+        p = self.parliament # Short-hand
+        return self.seat_type in (u'þingmaður', u'með varamann') and (
+            (self.timing_out is not None and p.timing_end is None)
+            or (p.timing_end is not None and self.timing_out < p.timing_end - timezone.timedelta(days=1))
+        )
+
     def __unicode__(self):
         if self.timing_out is None:
             return u'%s (%s : ...)' % (self.person, format_date(self.timing_in))

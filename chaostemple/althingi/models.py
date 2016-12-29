@@ -1,5 +1,6 @@
 # -*- coding: utf-8
 from django.db import models
+from django.db.models import Prefetch
 from django.db.models import Q
 from django.template.defaultfilters import capfirst
 from django.template.defaultfilters import slugify
@@ -10,7 +11,33 @@ from BeautifulSoup import BeautifulSoup
 from unidecode import unidecode
 import urllib
 
+from althingi_settings import CURRENT_PARLIAMENT_NUM
 from althingi.utils import format_date
+
+class PersonQuerySet(models.QuerySet):
+    def prefetch_latest_seats(self, parliament=None, *args):
+        if parliament is None:
+            parliament = Parliament.objects.get(CURRENT_PARLIAMENT_NUM)
+
+        if parliament.timing_end is None:
+            q_timing = Q(timing_out=None)
+        else:
+            # NOTE: One day given as wiggle-room due to imperfect data.
+            q_timing = Q(
+                timing_out__lte=parliament.timing_end + timezone.timedelta(days=1),
+                timing_out__gte=parliament.timing_start
+            )
+
+        p_filter = Q(q_timing, parliament__parliament_num=parliament.parliament_num)
+
+        if args:
+            p_queryset = Seat.objects.select_related(*args).filter(p_filter).order_by('-timing_out')
+        else:
+            p_queryset = Seat.objects.filter(p_filter).order_by('-timing_out')
+
+        p = Prefetch('seats', queryset=p_queryset, to_attr='last_seat')
+
+        return self.prefetch_related(p)
 
 class SessionQuerySet(models.QuerySet):
     '''
@@ -426,6 +453,8 @@ class Committee(models.Model):
 
 
 class Person(models.Model):
+    objects = PersonQuerySet.as_manager()
+
     name = models.CharField(max_length=100)
     ssn = models.CharField(max_length=10)
     birthdate = models.DateField()

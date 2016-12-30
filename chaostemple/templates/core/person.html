@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% load i18n %}
+{% load smart_urls %}
 
 {% block javascript %}
     <script language="javascript" type="text/javascript" src="{% static 'core/js/issue_control.js' %}"></script>
@@ -83,7 +84,10 @@
                     {% endifchanged %}
                     <tr>
                         <td>{{ seat.timing_in|date:'SHORT_DATE_FORMAT' }} - {% if seat.timing_out %}{{ seat.timing_out|date:'SHORT_DATE_FORMAT' }}{% else %}...{% endif %}</td>
-                        <td>{{ seat.party.abbreviation_long }} ({{ seat.seat_type }})</td>
+                        <td>
+                            <a href="{% breadcrumb_url 'parliament_persons' parliament_num seat.party.slug %}">{{ seat.party.abbreviation_long }}</a>
+                            ({{ seat.seat_type }})
+                        </td>
                         <td>{{ seat.constituency_mp_num }}. {% trans 'MP' %} {{ seat.constituency.abbreviation_long }}</td>
                     </tr>
                 {% endfor %}

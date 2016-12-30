@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load smart_urls %}
+
+{% block content %}
+
+    <h2>{% trans 'Parliamentary Parties' %}</h2>
+    <h3>{{ parliament_num }}. {% trans 'parliament' %}</h3>
+
+    <div class="row">
+        <div class="col-md-4">
+            <table class="table">
+                <tr>
+                    <th>{% trans 'Parliamentary Party' %}</th>
+                    <th style="text-align: right;">{% trans 'Parliamentarians' %}</th>
+                </tr>
+                {% for party in parties %}
+                    <tr>
+                        <td>
+                            {% if party.special %}
+                                <em><a href="{% breadcrumb_url 'parliament_persons' parliament_num party.slug %}">{{ party.name }}</a></em>
+                            {% else %}
+                                <a href="{% breadcrumb_url 'parliament_persons' parliament_num party.slug %}">{{ party.name }}</a>
+                           {% endif %}
+                        </td>
+                        <td style="text-align: right;">{{ party.mp_count }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+{% endblock %}

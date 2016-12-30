@@ -32,6 +32,7 @@ from althingi.models import Committee
 from althingi.models import CommitteeAgenda
 from althingi.models import Document
 from althingi.models import Parliament
+from althingi.models import Party
 from althingi.models import Person
 from althingi.models import Review
 from althingi.models import Session
@@ -356,17 +357,48 @@ def parliament_committee_agenda(request, parliament_num, committee_id, agenda_id
     return render(request, 'core/parliament_committee_agenda.html', ctx)
 
 
-def parliament_persons(request, parliament_num):
+def parliament_parties(request, parliament_num):
+
+    parliament = Parliament.objects.get(parliament_num=parliament_num)
+    if parliament.timing_end:
+        timing = parliament.timing_end - timezone.timedelta(minutes=1)
+    else:
+        timing = timezone.now()
+
+    parties = Party.objects.filter(
+        Q(parliament_num_last__gte=parliament_num) | Q(parliament_num_last=None),
+        parliament_num_first__lte=parliament_num
+    ).annotate_mp_counts(timing)
+
+    ctx = {
+        'parties': parties,
+    }
+    return render(request,'core/parliament_parties.html', ctx)
+
+
+def parliament_persons(request, parliament_num, party_slug=None):
 
     parliament = Parliament.objects.get(parliament_num=parliament_num)
 
-    persons = Person.objects.prefetch_latest_seats(parliament, 'party', 'constituency', 'parliament').filter(
-        seats__parliament__parliament_num=parliament_num
-    ).distinct()
+    q_persons = Q(seats__parliament__parliament_num=parliament_num)
+
+    if party_slug:
+        party = get_object_or_404(Party, slug=party_slug)
+        q_persons = q_persons & Q(seats__party__slug=party_slug)
+    else:
+        party = None
+
+    persons = Person.objects.prefetch_latest_seats(
+        parliament,
+        'party',
+        'constituency',
+        'parliament'
+    ).filter(q_persons).distinct()
 
     ctx = {
         'parliament': parliament,
         'persons': persons,
+        'party': party,
     }
     return render(request, 'core/parliament_persons.html', ctx)
 

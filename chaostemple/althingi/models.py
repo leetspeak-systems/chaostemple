@@ -1,7 +1,12 @@
 # -*- coding: utf-8
 from django.db import models
+from django.db.models import Case
+from django.db.models import Count
+from django.db.models import F
+from django.db.models import IntegerField
 from django.db.models import Prefetch
 from django.db.models import Q
+from django.db.models import When
 from django.template.defaultfilters import capfirst
 from django.template.defaultfilters import slugify
 from django.templatetags.static import static
@@ -13,6 +18,26 @@ import urllib
 
 from althingi_settings import CURRENT_PARLIAMENT_NUM
 from althingi.utils import format_date
+
+class PartyQuerySet(models.QuerySet):
+    def annotate_mp_counts(self, timing):
+        return self.annotate(
+            mp_count=Count(
+                Case(
+                    When(
+                        Q(
+                            Q(seats__timing_out__gte=timing) | Q(seats__timing_out=None),
+                            seats__timing_in__lte=timing,
+                            seats__seat_type__in=[u'þingmaður', u'varamaður'],
+                            seats__party_id=F('id')
+                        ),
+                        then='seats__person_id'
+                    ),
+                    output_field=IntegerField()
+                ),
+                distinct=True
+            )
+        )
 
 class PersonQuerySet(models.QuerySet):
     def prefetch_latest_seats(self, parliament=None, *args):
@@ -566,6 +591,8 @@ class CommitteeAgendaItem(models.Model):
 
 
 class Party(models.Model):
+    objects = PartyQuerySet.as_manager()
+
     name = models.CharField(max_length=50)
     abbreviation_short = models.CharField(max_length=20)
     abbreviation_long = models.CharField(max_length=30)

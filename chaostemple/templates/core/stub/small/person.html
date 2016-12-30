@@ -10,7 +10,9 @@
             <small>({% trans 'tenure ended prematurely' %})</small>
         {% endif %}
     </td>
-    <td {% if tenure_ended_prematurely %}class="faded-text"{% endif %}>{{ seat.party }}</td>
+    <td {% if tenure_ended_prematurely %}class="faded-text"{% endif %}>
+        <a href="{% breadcrumb_url 'parliament_persons' parliament_num seat.party.slug %}">{{ seat.party }}</a>
+    </td>
     <td {% if tenure_ended_prematurely %}class="faded-text"{% endif %}>{{ seat.constituency_mp_num }}. {% trans 'parliamentarian' %}</td>
     <td {% if tenure_ended_prematurely %}class="faded-text"{% endif %}>{{ seat.constituency.name }}</td>
 </tr>

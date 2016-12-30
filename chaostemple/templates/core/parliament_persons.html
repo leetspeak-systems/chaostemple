@@ -4,7 +4,7 @@
 
 {% block content %}
 
-    <h2>{% trans 'Parliamentarians' %}</h2>
+    <h2>{% trans 'Parliamentarians' %}{% if party %} <small>({{ party }})</small>{% endif %}</h2>
     <h3>{{ parliament_num }}. {% trans 'parliament' %}</h3>
 
     <div class="row">

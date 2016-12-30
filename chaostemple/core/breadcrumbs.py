@@ -10,6 +10,7 @@ from django.utils.translation import ugettext as _
 from althingi.althingi_settings import CURRENT_PARLIAMENT_NUM
 from althingi.models import Committee
 from althingi.models import CommitteeAgenda
+from althingi.models import Party
 from althingi.models import Person
 
 from core.templatetags.committee import fancy_committee_agenda_timing
@@ -188,11 +189,23 @@ def process_breadcrumbs(breadcrumbs, view):
             fancy_committee_agenda_timing(committee_agenda)
         )
 
-    if view_name == 'parliament_persons':
+    if view_name == 'parliament_parties':
         breadcrumbs = leave_breadcrumb(
             breadcrumbs,
-            ('parliament_persons', parliament_num),
-            _('Parliamentarians')
+            ('parliament_parties', parliament_num),
+            _('Parliamentary Parties')
+        )
+
+    if view_name == 'parliament_persons':
+        if view_kwargs.has_key('party_slug'):
+            party = Party.objects.get(slug=view_kwargs.get('party_slug'))
+        else:
+            party = None
+
+        breadcrumbs = leave_breadcrumb(
+            breadcrumbs,
+            ('parliament_persons', parliament_num, party.slug) if party else ('parliament_persons', parliament_num),
+            party if party else _('Parliamentarians')
         )
 
     if view_name == 'person':

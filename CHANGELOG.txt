@@ -73,3 +73,10 @@
 1.1.10:
     * Bugfix: Committees and committe parts were not expanding into proposers in documents, only issues.
     * Bugfix: Breadcrumbs didn't work when proposers in expanded committees (and committee parts) were clicked.
+
+1.1.11:
+    * Party listing with MP counts and MP listing filterable by party.
+    * Parliamentarian listing significantly improved.
+    * Improvements to person view page.
+    * Displaying of parliament info improved and made more consistent.
+    * Minor interface improvements.

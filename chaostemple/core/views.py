@@ -359,7 +359,7 @@ def parliament_committee_agenda(request, parliament_num, committee_id, agenda_id
 
 def parliament_parties(request, parliament_num):
 
-    parliament = Parliament.objects.get(parliament_num=parliament_num)
+    parliament = request.extravars['parliament']
     if parliament.timing_end:
         timing = parliament.timing_end - timezone.timedelta(minutes=1)
     else:
@@ -378,7 +378,7 @@ def parliament_parties(request, parliament_num):
 
 def parliament_persons(request, parliament_num, party_slug=None):
 
-    parliament = Parliament.objects.get(parliament_num=parliament_num)
+    parliament = request.extravars['parliament']
 
     q_persons = Q(seats__parliament__parliament_num=parliament_num)
 

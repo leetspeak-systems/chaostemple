@@ -56,7 +56,7 @@ def leave_breadcrumb(breadcrumbs, view, caption):
     return breadcrumbs
 
 
-def make_breadcrumbs(request):
+def make_breadcrumbs(request, parliament):
     breadcrumbs = []
 
     parliament_num = int(request.resolver_match.kwargs.get('parliament_num', CURRENT_PARLIAMENT_NUM))
@@ -65,7 +65,7 @@ def make_breadcrumbs(request):
     breadcrumbs = leave_breadcrumb(
         breadcrumbs,
         ('parliament', parliament_num),
-        '%d. %s' % (parliament_num, _('parliament'))
+        '%d. %s (%s)' % (parliament_num, _('parliament'), parliament.era)
     )
 
     prepended_views = generate_prepended_views(request.GET.get('from', ''))

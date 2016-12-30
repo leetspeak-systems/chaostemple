@@ -29,6 +29,7 @@ class ExtraVarsMiddleware():
 
         # Figure out which parliament we're viewing
         parliament_num = int(view_kwargs.get('parliament_num', CURRENT_PARLIAMENT_NUM))
+        parliament = Parliament.objects.get(parliament_num=parliament_num)
 
         # Determine newest parliament number
         try:
@@ -59,10 +60,13 @@ class ExtraVarsMiddleware():
         len(next_sessions) # Forces a len() instead of a DB-call when count is checked
         len(next_committee_agendas) # Forces a len() instead of a DB-call when count is checked
 
+        breadcrumbs = make_breadcrumbs(request, parliament)
+
         request.extravars = {
             'newest_parliament_num': newest_parliament_num,
             'parliament_num': parliament_num,
-            'breadcrumbs': make_breadcrumbs(request),
+            'parliament': parliament,
+            'breadcrumbs': breadcrumbs,
             'parliaments': parliaments,
             'next_sessions': next_sessions,
             'next_committee_agendas': next_committee_agendas,

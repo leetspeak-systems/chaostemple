@@ -2,7 +2,7 @@ from django import template
 from django.template import loader
 from django.utils.safestring import mark_safe
 
-from core.models import Dossier
+from dossier.models import Dossier
 
 register = template.Library()
 

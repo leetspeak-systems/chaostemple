@@ -19,13 +19,14 @@ from django.utils import timezone
 
 from core.models import Access
 from core.models import AccessUtilities
-from core.models import Dossier
-from core.models import DossierStatistic
-from core.models import DossierUtilities
 from core.models import Issue
 from core.models import IssueBookmark
 from core.models import IssueUtilities
-from core.models import Memo
+
+from dossier.models import Dossier
+from dossier.models import DossierStatistic
+from dossier.models import DossierUtilities
+from dossier.models import Memo
 
 from althingi.althingi_settings import CURRENT_PARLIAMENT_NUM
 from althingi.models import Committee

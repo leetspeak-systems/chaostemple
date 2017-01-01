@@ -8,6 +8,7 @@ from django.template.loader import render_to_string
 
 from althingi.models import CommitteeAgenda
 from althingi.models import CommitteeAgendaItem
+from althingi.models import Document
 from althingi.models import Proposer
 from althingi.models import Session
 from althingi.models import SessionAgendaItem
@@ -15,13 +16,13 @@ from althingi.models import SessionAgendaItem
 from core.breadcrumbs import append_to_crumb_string
 
 from core.models import Access
-from core.models import Document
-from core.models import Dossier
-from core.models import DossierStatistic
 from core.models import Issue
 from core.models import IssueBookmark
 from core.models import IssueUtilities
-from core.models import Memo
+
+from dossier.models import Dossier
+from dossier.models import DossierStatistic
+from dossier.models import Memo
 
 from jsonizer.utils import jsonize
 

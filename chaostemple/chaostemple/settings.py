@@ -33,6 +33,7 @@ INSTALLED_APPS = (
     'registration',
 
     'core',
+    'dossier',
     'althingi',
     'jsonizer',
 )

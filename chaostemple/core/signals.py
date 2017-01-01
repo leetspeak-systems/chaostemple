@@ -5,8 +5,11 @@ from django.dispatch import receiver
 from althingi.models import Document
 from althingi.models import Person
 from althingi.models import Review
-from core.models import Dossier
+
 from core.models import UserProfile
+
+from dossier.models import Dossier
+
 from django.contrib.auth.models import User
 
 @receiver(pre_delete, sender=Review)

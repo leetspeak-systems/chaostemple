@@ -12,11 +12,10 @@ from althingi.models import Parliament
 from althingi.models import Session
 
 from core.models import AccessUtilities
-from core.models import DossierStatistic
-from core.models import DossierUtilities
 from core.models import Issue
 from core.models import IssueUtilities
 
+from dossier.models import DossierUtilities
 
 class AccessMiddleware():
     def process_view(self, request, view_func, view_args, view_kwargs):

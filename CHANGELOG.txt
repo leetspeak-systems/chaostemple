@@ -80,3 +80,7 @@
     * Improvements to person view page.
     * Displaying of parliament info improved and made more consistent.
     * Minor interface improvements.
+
+1.1.12:
+    * Bugfix: Deleting all of issue's dossiers from issue listing (a.k.a. marking as unopened) didn't work.
+    * Code refactoring.

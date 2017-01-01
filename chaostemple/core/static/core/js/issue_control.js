@@ -117,11 +117,13 @@ $(document).ready(function() {
         var $dialog = $('div[control="delete-issue-dossiers-dialog"]');
 
         // Copy header attributes to dialog
-        $.each($header[0].attributes, function(i, attr) {
-            if (attr.name.substring(0, 5) == 'data-') {
-                $dialog.attr(attr.name, attr.value);
-            }
-        });
+        if ($header.length) {
+            $.each($header[0].attributes, function(i, attr) {
+                if (attr.name.substring(0, 5) == 'data-') {
+                    $dialog.attr(attr.name, attr.value);
+                }
+            });
+        }
 
         var display_name = issue_name;
         if (issue_description.length > 0) {

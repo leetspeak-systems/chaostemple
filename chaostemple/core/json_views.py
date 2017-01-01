@@ -137,12 +137,11 @@ def delete_issue_dossiers(request, issue_id):
         )
 
     stub_ctx.update({
-        'request': request,
         'issue': issue,
         'user': request.user,
         'bookmarked_issues': bookmarked_issues,
     })
-    html_content = render_to_string('core/stub/issue.html', stub_ctx)
+    html_content = render_to_string('core/stub/issue.html', stub_ctx, request=request)
 
     ctx = {
         'issue_id': issue_id,

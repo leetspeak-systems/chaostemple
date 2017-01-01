@@ -145,7 +145,7 @@ $(document).ready(function() {
                 'success': 'Issue\'s dossiers deleted.',
                 'failure': 'Issue\'s dossier deletion failed!',
             },
-            url: '/json/issue/' + issue_id + '/dossiers/delete/',
+            url: '/dossier/issue/' + issue_id + '/delete/',
             data: {
                 'session_agenda_item_id': $dialog.attr('data-session-agenda-item-id'),
                 'committee_agenda_item_id': $dialog.attr('data-committee-agenda-item-id'),

@@ -34,7 +34,7 @@ $(document).ready(function() {
                 'success': 'Fieldstate set.',
                 'failure': 'Failed to set fieldstate!',
             },
-            url: '/json/dossier/' + dossier_id + '/fieldstate/' + fieldname + '/',
+            url: '/dossier/' + dossier_id + '/fieldstate/' + fieldname + '/',
             data: { 'fieldstate': fieldstate },
             done: function(data, textStatus) {
                 $('a[control="set-fieldstate"][data-dossier-id=' + dossier_id + '][data-fieldname=' + fieldname + ']').each(function() {
@@ -81,7 +81,7 @@ $(document).ready(function() {
                 'success': 'Dossier deleted.',
                 'failure': 'Dossier deletion failed!',
             },
-            url: '/json/dossier/' + dossier_id + '/delete/',
+            url: '/dossier/' + dossier_id + '/delete/',
             done: function(data, textStatus) {
                 if (data.document_id) {
                     $('div[control="document"][data-id=' + data.document_id + '] .panel-footer[data-dossier-id=' + dossier_id + ']').remove();
@@ -158,7 +158,7 @@ $(document).ready(function() {
                         'success': 'Memo added.',
                         'failure': 'Memo adding failed!',
                     },
-                    url: '/json/memo/' + dossier_id + '/add/',
+                    url: '/dossier/memo/' + dossier_id + '/add/',
                     type: 'POST',
                     data: {
                         content: content,
@@ -178,7 +178,7 @@ $(document).ready(function() {
                         'success': 'Memo updated.',
                         'failure': 'Memo updating failed!',
                     },
-                    url: '/json/memo/' + memo_id + '/edit/',
+                    url: '/dossier/memo/' + memo_id + '/edit/',
                     type: 'POST',
                     data: {
                         content: content,
@@ -228,7 +228,7 @@ $(document).ready(function() {
                 'success': 'Memo deleted.',
                 'failure': 'Memo deletion failed!',
             },
-            url: '/json/memo/' + memo_id + '/delete/',
+            url: '/dossier/memo/' + memo_id + '/delete/',
             done: function(data, textStatus) {
                 $('div[control="dossier-memos"][data-id=' + data.dossier_id + ']').html(data.html_content);
                 $('.sortable').sortable();
@@ -255,7 +255,7 @@ $(document).ready(function() {
                 'success': 'Memos re-ordered.',
                 'failure': 'Memo re-ordering failed!',
             },
-            url: '/json/memo/sort/' + dossier_id + '/',
+            url: '/dossier/memo/sort/' + dossier_id + '/',
             type: 'POST',
             data: {
                 order_map: JSON.stringify(order_map), // To send it in JSON

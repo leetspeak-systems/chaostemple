@@ -13,7 +13,7 @@ from althingi.models import CommitteeAgenda
 from althingi.models import Party
 from althingi.models import Person
 
-from core.templatetags.committee import fancy_committee_agenda_timing
+from althingi.templatetags.committee import fancy_committee_agenda_timing
 
 
 # Utility function to add an URL to the crumbs in a crumb string.

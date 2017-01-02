@@ -107,32 +107,32 @@ $(document).ready(function() {
 
         var $dossier_memos = $('div[control="dossier-memos"][data-id=' + dossier_id + '] ul');
         var $memo_list = $('ul[control="memo-list"][data-dossier-id=' + dossier_id + ']');
-        var $memo_content_container = $('span[control="memo-content-container"][data-id=' + memo_id + ']');
-        var $memo_content = $memo_content_container.find('span[control="memo-content"]');
-        var $edit_memo_content = $('input[control="edit-memo-content"][data-dossier-id=' + dossier_id + '][data-id=' + memo_id + ']');
+        var $memo_content = $('span[control="memo-content"][data-id=' + memo_id + ']');
+        var $edit_memo_content = $('textarea[control="edit-memo-content"][data-id=' + memo_id + ']');
         var $edit_memo_counter = $dossier_memos.find('td[control="edit-memo-counter"][data-id=' + memo_id + ']');
 
         // Make sure memos are visible.
         $dossier_memos.show();
 
         // Cancel editing anywhere else in the dossier
-        $memo_list.find('span[control="memo-content-container"]').show();
-        $memo_list.find('input[control="edit-memo-content"]').hide();
+        $memo_list.find('span[control="memo-content"]').show();
+        $memo_list.find('textarea[control="edit-memo-content"]').hide();
         $memo_list.find('td[control="edit-memo-counter"]').hide();
 
         var content = $memo_content.text();
 
+        $memo_content.hide();
         $edit_memo_content.val(content);
-
-        $memo_content_container.hide();
         $edit_memo_content.show();
         $edit_memo_content.focus();
         $edit_memo_content.trigger('input');
         $edit_memo_content[0].setSelectionRange(content.length, content.length);
         $edit_memo_counter.show()
+
+        $edit_memo_content.height($edit_memo_content[0].scrollHeight + 'px');
      });
 
-    $(document).on('input', 'input[control="edit-memo-content"]', function(e) {
+    $(document).on('input', 'textarea[control="edit-memo-content"]', function(e) {
         var $this = $(this);
         var memo_id = $this.attr('data-id');
         var memo_length = $this.val().length;
@@ -197,9 +197,9 @@ $(document).ready(function() {
 
             var $memo_list = $('ul[control="memo-list"][data-dossier-id=' + dossier_id + ']');
 
-            $('input[control="edit-memo-content"][data-id=' + memo_id + ']').hide();
+            $('textarea[control="edit-memo-content"][data-id=' + memo_id + ']').hide();
             $('td[control="edit-memo-counter"][data-id=' + memo_id + ']').hide();
-            $('span[control="memo-content-container"][data-id=' + memo_id + ']').show();
+            $('span[control="memo-content"][data-id=' + memo_id + ']').show();
 
             if ($memo_list.find('li[control="memo-line"]').length == 0) {
                 $memo_list.hide();

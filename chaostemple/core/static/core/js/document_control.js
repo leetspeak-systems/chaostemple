@@ -142,7 +142,7 @@ $(document).ready(function() {
     });
 
     // Text field: edit-memo-content
-    $(document).on('keypress', 'input[control="edit-memo-content"]', function(e) {
+    $(document).on('keydown', 'textarea[control="edit-memo-content"]', function(e) {
         keycode = e.keyCode || e.which; // Cross-browser key detection (still ugly as hell)
 
         if (keycode == 13) { // Enter key

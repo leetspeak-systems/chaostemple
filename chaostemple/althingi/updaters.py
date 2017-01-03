@@ -34,7 +34,7 @@ from althingi.utils import maybe_download_document
 from althingi.utils import maybe_download_review
 from althingi.utils import sensible_datetime
 
-PARLIAMENT_LIST_URL = 'http://www.althingi.is/altext/xml/loggjafarthing/'
+PARLIAMENT_URL = 'http://www.althingi.is/altext/xml/loggjafarthing/?lthing=%d'
 ISSUE_LIST_URL = 'http://www.althingi.is/altext/xml/thingmalalisti/?lthing=%d'
 ISSUE_URL = 'http://www.althingi.is/altext/xml/thingmalalisti/thingmal/?lthing=%d&malnr=%d'
 ISSUE_SUMMARY_URL = 'http://www.althingi.is/altext/xml/samantektir/samantekt/?lthing=%d&malnr=%d'
@@ -93,63 +93,51 @@ def update_parliament(parliament_num):
     if already_haves['parliaments'].has_key(parliament_num):
         return already_haves['parliaments'][parliament_num]
 
-    # NOTE: This should be revisited when parliaments have their own, individual XML page
-    def parse_parliament_xml(xml_url):
-        # Cache the XML document, so that we only need to retrieve it once per run
-        if already_haves['xml'].has_key(xml_url):
-            parliaments_full_xml = already_haves['xml'][xml_url]
+    parliaments_full_xml = minidom.parse(get_response(PARLIAMENT_URL % parliament_num))
+
+    try:
+        parliament_xml = parliaments_full_xml.getElementsByTagName(u'þing')[0]
+    except IndexError:
+        raise AlthingiException('Parliament %s could not be found' % parliament_num)
+
+    era = parliament_xml.getElementsByTagName(u'tímabil')[0].firstChild.nodeValue;
+    timing_start = sensible_datetime(parliament_xml.getElementsByTagName(u'þingsetning')[0].firstChild.nodeValue)
+    try:
+        timing_end = sensible_datetime(parliament_xml.getElementsByTagName(u'þinglok')[0].firstChild.nodeValue)
+    except IndexError:
+        timing_end = None
+
+    try:
+        parliament = Parliament.objects.get(parliament_num=parliament_num)
+
+        changed = False
+        if parliament.era != era:
+            parliament.era = era
+            changed = True
+
+        if parliament.timing_start != sensible_datetime(timing_start):
+            parliament.timing_start = timing_start
+            changed = True
+
+        if parliament.timing_end != sensible_datetime(timing_end):
+            parliament.timing_end = timing_end
+            changed = True
+
+        if changed:
+            parliament.save()
+            print('Updated parliament: %s' % parliament)
         else:
-            parliaments_full_xml = minidom.parse(get_response(xml_url))
-            already_haves['xml'][xml_url] = parliaments_full_xml
+            print('Already have parliament: %s' % parliament)
 
-        parliaments_xml = parliaments_full_xml.getElementsByTagName(u'þing')
+    except Parliament.DoesNotExist:
+        parliament = Parliament()
+        parliament.parliament_num = parliament_num
+        parliament.era = era
+        parliament.timing_start = timing_start
+        parliament.timing_end = timing_end
+        parliament.save()
 
-        parliament = None
-        for parliament_xml in parliaments_xml:
-            if int(parliament_xml.getAttribute(u'númer')) == parliament_num:
-
-                era = parliament_xml.getElementsByTagName(u'tímabil')[0].firstChild.nodeValue;
-                timing_start = sensible_datetime(parliament_xml.getElementsByTagName(u'þingsetning')[0].firstChild.nodeValue)
-                try:
-                    timing_end = sensible_datetime(parliament_xml.getElementsByTagName(u'þinglok')[0].firstChild.nodeValue)
-                except IndexError:
-                    timing_end = None
-
-                try:
-                    parliament = Parliament.objects.get(parliament_num=parliament_num)
-
-                    changed = False
-                    if parliament.era != era:
-                        parliament.era = era
-                        changed = True
-
-                    if parliament.timing_start != sensible_datetime(timing_start):
-                        parliament.timing_start = timing_start
-                        changed = True
-
-                    if parliament.timing_end != sensible_datetime(timing_end):
-                        parliament.timing_end = timing_end
-                        changed = True
-
-                    if changed:
-                        parliament.save()
-                        print('Updated parliament: %s' % parliament)
-                    else:
-                        print('Already have parliament: %s' % parliament)
-
-                except Parliament.DoesNotExist:
-                    parliament = Parliament()
-                    parliament.parliament_num = parliament_num
-                    parliament.era = era
-                    parliament.timing_start = timing_start
-                    parliament.timing_end = timing_end
-                    parliament.save()
-
-                    print('Added parliament: %s' % parliament)
-
-                return parliament # We have found what we're looking for.
-
-    parliament = parse_parliament_xml(PARLIAMENT_LIST_URL)
+        print('Added parliament: %s' % parliament)
 
     already_haves['parliaments'][parliament_num] = parliament
 

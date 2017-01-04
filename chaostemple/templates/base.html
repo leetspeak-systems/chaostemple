@@ -110,7 +110,7 @@
                                     <li><a href="{% url 'user_issues_incoming' %}"><strong>{% trans 'Issues with new data' %}</strong></a></li>
                                     {% for stat in dossier_statistics_incoming %}
                                         <li>
-                                            <a href="{% url 'parliament_issue' stat.issue.parliament.parliament_num stat.issue.issue_num %}">
+                                            <a href="{% url 'parliament_issue' stat.issue.parliament.parliament_num stat.issue.issue_num %}?from={% crumb_string 'user_issues_incoming' %}">
                                                 &nbsp;&nbsp;&nbsp;&nbsp;{% include 'core/stub/issue_menuentry.html' with issue=stat.issue %}
                                                 &nbsp;
                                                 {% if stat.new_documents %}

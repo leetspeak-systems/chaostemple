@@ -39,6 +39,16 @@ def parliament_url(context, parliament_num):
 
 
 @register.simple_tag(takes_context=True)
+def crumb_string(context, view_name, *args):
+    '''
+    This template tag only generates a crumb_string as if the input is the current page.
+    Used for overriding the currently visible page, for example when linking from menus.
+    '''
+
+    return append_to_crumb_string(reverse(view_name, args=args), None)
+
+
+@register.simple_tag(takes_context=True)
 def breadcrumb_url(context, view_name, *args):
     '''
     This template tag works like the default 'url' template tag, except that it adds the

@@ -106,19 +106,12 @@
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{% url 'user_issues_open' parliament_num %}"><strong>{% trans 'Opened Issues' %}</strong></a></li>
                                 <li class="divider"></li>
-                                {% if dossier_statistics_incoming %}
+                                {% if incoming_issues %}
                                     <li><a href="{% url 'user_issues_incoming' %}"><strong>{% trans 'Issues with new data' %}</strong></a></li>
-                                    {% for stat in dossier_statistics_incoming %}
+                                    {% for issue in incoming_issues %}
                                         <li>
-                                            <a href="{% url 'parliament_issue' stat.issue.parliament.parliament_num stat.issue.issue_num %}?from={% crumb_string 'user_issues_incoming' %}">
-                                                &nbsp;&nbsp;&nbsp;&nbsp;{% include 'core/stub/issue_menuentry.html' with issue=stat.issue %}
-                                                &nbsp;
-                                                {% if stat.new_documents %}
-                                                    <span class="label label-danger memo-count">{{ stat.new_documents }} {% trans 'new documents' %}</span>
-                                                {% endif %}
-                                                {% if stat.new_reviews %}
-                                                    <span class="label label-danger memo-count">{{ stat.new_reviews }} {% trans 'new reviews' %}</span>
-                                                {% endif %}
+                                            <a href="{% url 'parliament_issue' issue.parliament.parliament_num issue.issue_num %}?from={% crumb_string 'user_issues_incoming' %}">
+                                                {% include 'core/stub/issue_menuentry.html' %}
                                             </a>
                                         </li>
                                     {% endfor %}

@@ -4,12 +4,42 @@ from threading import currentThread
 
 from django.conf import settings
 from django.db import models
+from django.db.models import F
 from django.db.models import Q
 
 from althingi.models import Issue as AlthingiIssue
 from althingi.models import Person
 
 from dossier.models import DossierStatistic
+
+# Custom query sets and model managers
+
+class IssueQuerySet(models.QuerySet):
+
+    def annotate_news(self, user_id):
+        '''
+        Annotates the query with the number of new_documents and new_reviews.
+        Note that a side-effect is that it limits the joined dossier statistics
+        to the given user.
+        '''
+
+        issues = self.filter(dossierstatistic__user_id=user_id, dossierstatistic__has_useful_info=True).annotate(
+            new_documents=F('document_count') - F('dossierstatistic__document_count'),
+            new_reviews=F('review_count') - F('dossierstatistic__review_count')
+        )
+
+        return issues
+
+    def incoming(self, user_id):
+        '''
+        Returns issues with new documents or new reviews.
+        See also IssueQuerySet.annotate_news().
+        '''
+
+        issues = self.annotate_news(user_id).exclude(new_documents=0, new_reviews=0)
+
+        return issues
+
 
 # Model utilities
 
@@ -70,10 +100,6 @@ class IssueUtilities():
                         issue.dossier_statistics = []
                     issue.dossier_statistics.append(dossier_statistic)
 
-                    # Add current user's new_documents and new_reviews
-                    if dossier_statistic.user_id == user_id:
-                        issue.new_documents = issue.document_count - dossier_statistic.document_count
-                        issue.new_reviews = issue.review_count - dossier_statistic.review_count
         return issues
 
 
@@ -92,6 +118,8 @@ class IssueBookmark(models.Model):
 
 
 class Issue(AlthingiIssue):
+    objects = IssueQuerySet.as_manager()
+
     class Meta:
         proxy = True
 

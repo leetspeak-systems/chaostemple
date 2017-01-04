@@ -7,7 +7,6 @@ from django.core.urlresolvers import reverse
 from django.db.models import Case
 from django.db.models import Count
 from django.db.models import Prefetch
-from django.db.models import F
 from django.db.models import Q
 from django.db.models import When
 from django.http import Http404
@@ -25,7 +24,6 @@ from core.models import IssueUtilities
 
 from dossier.models import Dossier
 from dossier.models import DossierStatistic
-from dossier.models import DossierUtilities
 from dossier.models import Memo
 
 from althingi.althingi_settings import CURRENT_PARLIAMENT_NUM
@@ -246,15 +244,6 @@ def parliament_issue(request, parliament_num, issue_num):
             # Save previously collectec dossier statistics
             statistic.save()
 
-            # Reload incoming menu
-            request.extravars['dossier_statistics_incoming'] = DossierUtilities.get_incoming_dossier_statistics(
-                request.user.id,
-                parliament_num
-            )
-
-            # Also reload bookmarks menu (where incoming stuff is also displayed)
-            IssueUtilities.populate_dossier_statistics(request.extravars['bookmarked_issues'])
-
     ctx = {
         'issue': issue,
         'issue_sessions': issue_sessions,
@@ -474,17 +463,7 @@ def user_issues_bookmarked(request, parliament_num):
 @login_required
 def user_issues_incoming(request):
 
-    issues = Issue.objects.select_related('parliament').prefetch_related('proposers__person', 'proposers__committee').filter(
-        Q(
-            dossierstatistic__user_id=request.user.id,
-            dossierstatistic__has_useful_info=True,
-            parliament__parliament_num=request.extravars['parliament_num']
-        ),
-        ~Q(
-            document_count=F('dossierstatistic__document_count'),
-            review_count=F('dossierstatistic__review_count')
-        )
-    ).order_by('-issue_num')
+    issues = request.extravars['incoming_issues'].prefetch_related('proposers__person', 'proposers__committee')
 
     IssueUtilities.populate_dossier_statistics(issues)
 

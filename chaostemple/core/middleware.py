@@ -15,8 +15,6 @@ from core.models import AccessUtilities
 from core.models import Issue
 from core.models import IssueUtilities
 
-from dossier.models import DossierUtilities
-
 class AccessMiddleware():
     def process_view(self, request, view_func, view_args, view_kwargs):
         AccessUtilities.cache_access(request.user.id)
@@ -38,18 +36,18 @@ class ExtraVarsMiddleware():
 
         # Stuff for logged in users
         bookmarked_issues = None
-        dossier_statistics_incoming = None
+        incoming_issues = None
         if request.user.is_authenticated():
             # Bookmarks
             bookmarked_issues = Issue.objects.select_related('parliament').filter(
                 issue_bookmarks__user_id=request.user.id,
                 parliament__parliament_num=parliament_num
-            ).order_by('issue_num')
-
-            IssueUtilities.populate_dossier_statistics(bookmarked_issues)
+            ).annotate_news(request.user.id).order_by('issue_num')
 
             # Get incoming things that the user has not yet seen
-            dossier_statistics_incoming = DossierUtilities.get_incoming_dossier_statistics(request.user.id, parliament_num)
+            incoming_issues = Issue.objects.select_related('parliament').filter(
+                parliament__parliament_num=parliament_num
+            ).incoming(request.user.id).order_by('-issue_num')
 
         # Get parliaments, next sessions and next committees (we use this virtually always)
         parliaments = Parliament.objects.order_by('-parliament_num')
@@ -70,7 +68,7 @@ class ExtraVarsMiddleware():
             'next_sessions': next_sessions,
             'next_committee_agendas': next_committee_agendas,
             'bookmarked_issues': bookmarked_issues,
-            'dossier_statistics_incoming': dossier_statistics_incoming,
+            'incoming_issues': incoming_issues,
             'view_func_name': view_func.func_name,
         }
 

@@ -13,24 +13,6 @@ from althingi.models import Review
 
 from model_utils import FieldTracker
 
-class DossierUtilities():
-
-    @staticmethod
-    def get_incoming_dossier_statistics(user_id, parliament_num):
-        dossier_statistics_incoming = DossierStatistic.objects.select_related('issue__parliament').filter(
-            Q(user_id=user_id, has_useful_info=True, issue__parliament__parliament_num=parliament_num),
-            ~Q(
-                document_count=F('issue__document_count'),
-                review_count=F('issue__review_count')
-            )
-        ).order_by('-issue__issue_num')
-        for stat in dossier_statistics_incoming:
-            stat.new_documents = stat.issue.document_count - stat.document_count
-            stat.new_reviews = stat.issue.review_count - stat.review_count
-
-        return dossier_statistics_incoming
-
-
 
 class Dossier(models.Model):
     tracker = FieldTracker(fields=['attention', 'knowledge', 'support', 'proposal'])

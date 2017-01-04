@@ -180,8 +180,11 @@ def parliament_issues(request, parliament_num):
 
 def parliament_issue(request, parliament_num, issue_num):
 
-    # NOTE: The use of these get_prefetched_* functions is to be revised when Django 1.8 is released.
-    # Specifically, it is hoped that the .refresh_from_db() function introduced will be a good replacement.
+    issue = Issue.objects.select_related('parliament').get(
+        parliament__parliament_num=parliament_num,
+        issue_group='A',
+        issue_num=issue_num
+    )
 
     # Get access objects and sort them
     accesses = {'partial': [], 'full': []}
@@ -206,30 +209,20 @@ def parliament_issue(request, parliament_num, issue_num):
         ~Q(user_id=request.user.id), attention='none', knowledge=0, support='undefined', proposal='none', memo_count=0
     )
 
-    def get_prefetched_documents():
-        return Document.objects.prefetch_related(
-            Prefetch('dossiers', queryset=prefetch_queryset),
-            'dossiers__memos',
-            'dossiers__user',
-            'proposers__person',
-            'proposers__committee',
-        ).filter(issue=issue)
+    documents = Document.objects.prefetch_related(
+        Prefetch('dossiers', queryset=prefetch_queryset),
+        'dossiers__memos',
+        'dossiers__user',
+        'proposers__person',
+        'proposers__committee',
+    ).filter(issue=issue)
 
-    def get_prefetched_reviews():
-        return Review.objects.prefetch_related(
-            Prefetch('dossiers', queryset=prefetch_queryset),
-            'dossiers__memos',
-            'dossiers__user',
-            'committee'
-        ).select_related('issue__parliament').filter(issue=issue)
-
-    issue = Issue.objects.select_related('parliament').get(
-        parliament__parliament_num=parliament_num,
-        issue_group='A',
-        issue_num=issue_num
-    )
-    documents = get_prefetched_documents()
-    reviews = get_prefetched_reviews()
+    reviews = Review.objects.prefetch_related(
+        Prefetch('dossiers', queryset=prefetch_queryset),
+        'dossiers__memos',
+        'dossiers__user',
+        'committee'
+    ).select_related('issue__parliament').filter(issue=issue)
 
     issue_sessions = Session.objects.select_related('parliament').filter(session_agenda_items__issue_id=issue.id)
     issue_committee_agendas = CommitteeAgenda.objects.select_related(
@@ -237,35 +230,30 @@ def parliament_issue(request, parliament_num, issue_num):
         'committee'
     ).filter(committee_agenda_items__issue_id=issue.id)
 
-    reload_documents = False
-    reload_reviews = False
     if request.user.is_authenticated():
         statistic, c = DossierStatistic.objects.get_or_create(issue_id=issue.id, user_id=request.user.id)
 
+        stats_updated = False
         for document in Document.objects.filter(issue_id=issue.id).exclude(dossiers__user_id=request.user.id):
             Dossier(document=document, user_id=request.user.id).save(input_statistic=statistic)
-            reload_documents = True
+            stats_updated = True
 
         for review in Review.objects.filter(issue_id=issue.id).exclude(dossiers__user_id=request.user.id):
             Dossier(review=review, user_id=request.user.id).save(input_statistic=statistic)
-            reload_reviews = True
+            stats_updated = True
 
-    if reload_documents or reload_reviews:
-        if reload_documents:
-            documents = get_prefetched_documents()
-        if reload_reviews:
-            reviews = get_prefetched_reviews()
+        if stats_updated:
+            # Save previously collectec dossier statistics
+            statistic.save()
 
-        # Save previously collectec dossier statistics
-        statistic.save()
+            # Reload incoming menu
+            request.extravars['dossier_statistics_incoming'] = DossierUtilities.get_incoming_dossier_statistics(
+                request.user.id,
+                parliament_num
+            )
 
-        # Reload incoming menu
-        request.extravars['dossier_statistics_incoming'] = DossierUtilities.get_incoming_dossier_statistics(
-            request.user.id,
-            parliament_num
-        )
-        # Also reload bookmarks menu (where incoming stuff is also displayed)
-        IssueUtilities.populate_dossier_statistics(request.extravars['bookmarked_issues'])
+            # Also reload bookmarks menu (where incoming stuff is also displayed)
+            IssueUtilities.populate_dossier_statistics(request.extravars['bookmarked_issues'])
 
     ctx = {
         'issue': issue,

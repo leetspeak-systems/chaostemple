@@ -89,3 +89,9 @@
     * Memo editing improved: Editing field enlargens itself to fit text requested to be edited. User can also change size of text field on the go.
     * Bugfix: Maximum memo length was not visible after deleting a memo or sorting them.
     * Bugfix: scape-key didn't work to close text field when editing memos in Google Chrome.
+
+1.1.14:
+    * Fixed broken memo adding button.
+    * Code improvements.
+    * Issues in new-data menu and bookmark menu declare appropriate breadcrumbs.
+    * Display issues with mobile devices fixed.

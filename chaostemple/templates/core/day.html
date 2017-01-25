@@ -42,61 +42,64 @@
 
     {% include 'core/dialog/dialog_delete_issue_dossiers.html' %}
 
+    <ul class="header-controls">
+        <li>
+            <div control="date-picker-container">
+                <button type="button" control="date-picker-button" class="btn btn-default btn-sm">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </button>
+                <input type="hidden" control="date-picker-value" value="{{ requested_date|date:'Y-m-d' }}" />
+            </div>
+        </li>
+        <li>
+            <div class="btn-group btn-group-sm">
+                <a href="{% url 'day' requested_yesterday|date:'Y-m-d' %}" class="btn btn-default">{% trans 'Previous day' %}</a>
+                <a href="{% url 'day' requested_tomorrow|date:'Y-m-d' %}" class="btn btn-default">{% trans 'Next day' %}</a>
+            </div>
+        </li>
+    </ul>
+
     <h1>
         {% blocktrans %}Today's issues{% endblocktrans %}
         <small>{{ requested_date|date:'SHORT_DATE_FORMAT' }}</small>
-        <ul class="header-controls">
-            <li>
-                <div control="date-picker-container">
-                    <button type="button" control="date-picker-button" class="btn btn-default btn-sm">
-                        <span class="glyphicon glyphicon-calendar"></span>
-                    </button>
-                    <input type="hidden" control="date-picker-value" value="{{ requested_date|date:'Y-m-d' }}" />
-                </div>
-            </li>
-            <li>
-                <div class="btn-group btn-group-sm">
-                    <a href="{% url 'day' requested_yesterday|date:'Y-m-d' %}" class="btn btn-default">{% trans 'Previous day' %}</a>
-                    <a href="{% url 'day' requested_tomorrow|date:'Y-m-d' %}" class="btn btn-default">{% trans 'Next day' %}</a>
-                </div>
-            </li>
-        </ul>
     </h1>
 
-    <div class="col-md-6">
-        <div class="row">
-        {% for session in sessions %}
+    <div class="row">
+        <div class="col-md-6">
 
-            {% include 'core/stub/session_header.html' with skipdate=True %}
+            {% for session in sessions %}
 
-            <table class="table">
-            {% for session_agenda_item in session.session_agenda_items_loaded %}
-                {% include 'core/stub/small/issue.html' with issue=session_agenda_item.issue session_agenda_item=session_agenda_item %}
+                {% include 'core/stub/session_header.html' with skipdate=True %}
+
+                <table class="table">
+                {% for session_agenda_item in session.session_agenda_items_loaded %}
+                    {% include 'core/stub/small/issue.html' with issue=session_agenda_item.issue session_agenda_item=session_agenda_item %}
+                {% endfor %}
+                </table>
+
+            {% empty %}
+                <em>{% trans 'No sessions on this day.' %}</em>
             {% endfor %}
-            </table>
 
-        {% empty %}
-            <em>{% trans 'No sessions on this day.' %}</em>
-        {% endfor %}
         </div>
-    </div>
 
-    <div class="col-md-6">
+        <div class="col-md-6">
 
-        {% for committee_agenda in committee_agendas %}
+            {% for committee_agenda in committee_agendas %}
 
-            {% include 'core/stub/committee_agenda_header.html' with skipdate=True %}
+                {% include 'core/stub/committee_agenda_header.html' with skipdate=True %}
 
-            <table class="table">
-            {% for committee_agenda_item in committee_agenda.committee_agenda_items_loaded %}
-                {% include 'core/stub/small/committee_agenda_item.html' %}
+                <table class="table">
+                {% for committee_agenda_item in committee_agenda.committee_agenda_items_loaded %}
+                    {% include 'core/stub/small/committee_agenda_item.html' %}
+                {% endfor %}
+                </table>
+
+            {% empty %}
+                <em>{% trans 'No committee agendas on this day.' %}</em>
             {% endfor %}
-            </table>
 
-        {% empty %}
-            <em>{% trans 'No committee agendas on this day.' %}</em>
-        {% endfor %}
-
+        </div>
     </div>
 
 {% endblock %}

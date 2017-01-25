@@ -108,7 +108,7 @@ $(document).ready(function() {
         var $dossier_memos = $('div[control="dossier-memos"][data-id=' + dossier_id + '] ul');
         var $memo_list = $('ul[control="memo-list"][data-dossier-id=' + dossier_id + ']');
         var $memo_content = $('span[control="memo-content"][data-id=' + memo_id + ']');
-        var $edit_memo_content = $('textarea[control="edit-memo-content"][data-id=' + memo_id + ']');
+        var $edit_memo_content = $dossier_memos.find('textarea[control="edit-memo-content"][data-id=' + memo_id + ']');
         var $edit_memo_counter = $dossier_memos.find('td[control="edit-memo-counter"][data-id=' + memo_id + ']');
 
         // Make sure memos are visible.

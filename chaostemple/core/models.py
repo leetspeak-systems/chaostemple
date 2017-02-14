@@ -65,6 +65,8 @@ class IssueUtilities():
         # Get currently logged in user ID
         user_id = AccessUtilities.user_id
 
+        access_filter = Q()
+
         # Get access objects and sort them
         accesses = {'partial': [], 'full': []}
         for access in AccessUtilities.get_access():
@@ -77,19 +79,20 @@ class IssueUtilities():
             for issue in partial_access.issues.all():
                 partial_conditions.append(Q(user_id=partial_access.user_id) & Q(issue_id=issue.id))
         if len(partial_conditions) > 0:
-            dossier_statistics = DossierStatistic.objects.select_related('user').filter(
-                issue__in=issues,
-                has_useful_info=True
-            ).filter(reduce(operator.or_, partial_conditions))
+            access_filter = access_filter | Q(reduce(operator.or_, partial_conditions))
 
         # Get dossier statistics from full access given by other users
         visible_user_ids = [a.user_id for a in accesses['full']]
-        dossier_statistics = dossier_statistics | DossierStatistic.objects.select_related('user').filter(
-            Q(user_id__in=visible_user_ids) | Q(user_id=user_id),
+        access_filter = access_filter | Q(Q(user_id__in=visible_user_ids) | Q(user_id=user_id))
+
+        dossier_statistics = DossierStatistic.objects.select_related('user').filter(
+            access_filter,
             issue__in=issues,
             has_useful_info=True
         )
 
+        # TODO: Maybe we can make this fit with Issue.QuerySet.as_manager()
+        # Perhaps by using annotate/aggregate with the DossierStatistic.objects.-query above.
         for issue in issues:
             if issue is None:
                 continue

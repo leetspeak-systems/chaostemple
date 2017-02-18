@@ -14,7 +14,9 @@ urlpatterns = [
     url(r'^', include('core.urls')),
 ]
 
-if settings.DEBUG_TOOLBAR:
+
+# Add Django Debug Toolbar urls patterns if it is installed and debug is enabled
+if settings.DEBUG and 'debug_toolbar.apps.DebugToolbarConfig' in settings.INSTALLED_APPS:
     import debug_toolbar
     urlpatterns += [
         url(r'^__debug__/', include(debug_toolbar.urls)),

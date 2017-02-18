@@ -19,6 +19,7 @@ urlpatterns = [
     url(r'^parliament/(?P<parliament_num>\d+)/parties/$', views.parliament_parties, name='parliament_parties'),
     url(r'^parliament/(?P<parliament_num>\d+)/persons/$', views.parliament_persons, name='parliament_persons'),
     url(r'^parliament/(?P<parliament_num>\d+)/persons/party/(?P<party_slug>[A-Za-z0-9\-]+)/$', views.parliament_persons, name='parliament_persons'),
+    url(r'^parliament/missing-data/', views.parliament_missing_data, name='parliament_missing_data'),
 
     url(r'^person/(?P<slug>[A-Za-z\-]+)/$', views.person, name='person'),
     url(r'^person/(?P<slug>[A-Za-z\-]+)/(?P<subslug>[A-Za-z0-9\-]+)/$', views.person, name='person'),

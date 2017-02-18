@@ -1,5 +1,4 @@
 django
-MySQL-python
 beautifulsoup
 django-registration-redux
 pytz

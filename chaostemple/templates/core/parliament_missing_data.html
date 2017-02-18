@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+
+<p>{% blocktrans %}Data from Althingi is required for this software to operate. In order to fetch all supported data for the current parliament (which is recommended), issue the management command "python manage.py update_althingi all" in the directory where the software is installed. You may also explore more options by issuing "python manage.py update_althingi help".{% endblocktrans %}</p>
+
+<p>{% blocktrans %}If you are unfamiliar with Django management commands you must either seek the assistance of someone who is familiar with them, or spend some time learning about Django management with the internet's assistance. If you're used to command lines you should be able to figure it out on your own.{% endblocktrans %}</p>
+
+{% endblock %}

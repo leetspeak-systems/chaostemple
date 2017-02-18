@@ -1,6 +1,8 @@
 from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.db.models import F
 from django.db.models import Q
+from django.http import Http404
 from django.shortcuts import redirect
 from django.utils.translation import ugettext as _
 
@@ -26,7 +28,18 @@ class ExtraVarsMiddleware():
 
         # Figure out which parliament we're viewing
         parliament_num = int(view_kwargs.get('parliament_num', CURRENT_PARLIAMENT_NUM))
-        parliament = Parliament.objects.get(parliament_num=parliament_num)
+        try:
+            parliament = Parliament.objects.get(parliament_num=parliament_num)
+        except Parliament.DoesNotExist:
+            # If the requested parliament isn't the current one, we raise a "page not found" error.
+            if parliament_num != CURRENT_PARLIAMENT_NUM:
+                raise Http404
+
+            # We're missing data. We'll redirect to a help page if we're not already there.
+            if view_func.func_name != 'parliament_missing_data':
+                return redirect(reverse('parliament_missing_data'))
+            else:
+                parliament = None
 
         # Determine newest parliament number
         try:
@@ -57,7 +70,7 @@ class ExtraVarsMiddleware():
         len(next_sessions) # Forces a len() instead of a DB-call when count is checked
         len(next_committee_agendas) # Forces a len() instead of a DB-call when count is checked
 
-        breadcrumbs = make_breadcrumbs(request, parliament)
+        breadcrumbs = None if parliament is None else make_breadcrumbs(request, parliament)
 
         request.extravars = {
             'newest_parliament_num': newest_parliament_num,

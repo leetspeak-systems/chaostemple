@@ -7,11 +7,10 @@ SECRET_KEY = ''
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-DEBUG_TOOLBAR = True
 
 JSONIZER_DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost']
 INTERNAL_IPS = ('127.0.0.1',)
 
 
@@ -20,11 +19,15 @@ INTERNAL_IPS = ('127.0.0.1',)
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'chaostemple',
-        'USER': '',
-        'PASSWORD': '',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'chaostemple.sqlite',
     }
+    #'default': {
+    #    'ENGINE': 'django.db.backends.mysql',
+    #    'NAME': 'chaostemple',
+    #    'USER': '',
+    #    'PASSWORD': '',
+    #}
 }
 
 # Internationalization

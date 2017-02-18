@@ -381,6 +381,15 @@ def parliament_persons(request, parliament_num, party_slug=None):
     return render(request, 'core/parliament_persons.html', ctx)
 
 
+def parliament_missing_data(request):
+    # If the requested parliament exists now, we'll redirect to the front page.
+    if request.extravars['parliament']:
+        return redirect(reverse('home'))
+
+    ctx = {}
+    return render(request, 'core/parliament_missing_data.html', ctx)
+
+
 def person(request, slug, subslug=None):
     # If no subslug is provided, we try to figure out who the person is and if we can't, we ask the user
     if subslug is None:

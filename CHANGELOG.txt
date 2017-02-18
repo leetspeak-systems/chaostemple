@@ -95,3 +95,7 @@
     * Code improvements.
     * Issues in new-data menu and bookmark menu declare appropriate breadcrumbs.
     * Display issues with mobile devices fixed.
+
+1.1.15:
+    * Minor code improvements.
+    * Setup process improved.

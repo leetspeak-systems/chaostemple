@@ -497,6 +497,9 @@ def update_issues(parliament_num=None):
     issues_xml = issue_list_xml.getElementsByTagName(u'mál')
 
     for issue_xml in issues_xml:
+        # We are only interested in A-issues (with documents).
+        if issue_xml.getAttribute(u'málsflokkur') != 'A':
+            continue
 
         issue_num = int(issue_xml.getAttribute(u'málsnúmer'))
 

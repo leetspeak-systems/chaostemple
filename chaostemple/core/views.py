@@ -137,14 +137,14 @@ def upcoming(request):
     for issue in session_issues:
         issue.upcoming_sessions = Session.objects.select_related('parliament').filter(
             session_agenda_items__issue_id=issue.id,
-            timing_start_planned__gt=today
+            timing_start_planned__gte=today
         ).distinct()
 
     # Get upcoming committee agendas for each issue (can this be optimized?)
     for issue in committee_issues:
         issue.upcoming_committee_agendas = CommitteeAgenda.objects.select_related('parliament', 'committee').filter(
             committee_agenda_items__issue_id=issue.id,
-            timing_start_planned__gt=today
+            timing_start_planned__gte=today
         ).distinct()
 
     ctx = {

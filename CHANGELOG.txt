@@ -99,3 +99,6 @@
 1.1.15:
     * Minor code improvements.
     * Setup process improved.
+
+1.1.16:
+    * Bugfix: Due to changes in XML, B-issues were being processed as A-issues. Now fixed.

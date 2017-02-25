@@ -164,14 +164,23 @@ def parliament(request, parliament_num):
 def parliament_issues(request, parliament_num):
 
     issues = Issue.objects.select_related('parliament').prefetch_related('proposers__person', 'proposers__committee').filter(
+        issue_group='A',
         parliament__parliament_num=parliament_num,
         document_count__gt=0
     )
+
+    issue_types = set(issues.filter(issue_group='A').values_list('issue_type', flat=True).distinct())
+
+    issue_type_labels = []
+    for issue_type, issue_type_label in Issue.ISSUE_TYPES:
+        if issue_type in issue_types:
+            issue_type_labels += [issue_type_label]
 
     IssueUtilities.populate_dossier_statistics(issues)
 
     ctx = {
         'issues': issues,
+        'issue_type_labels': issue_type_labels,
     }
     return render(request, 'core/parliament_issues.html', ctx)
 

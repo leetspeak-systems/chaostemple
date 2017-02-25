@@ -42,6 +42,11 @@ $(document).on('click', 'a[href="#"]', function(event) {
     event.preventDefault();
 });
 
+// Prevent dropdowns with checkboxes from closing when a checkbox inside is clicked
+$(document).on('click', 'ul.checkboxes li', function(event) {
+    event.stopPropagation();
+});
+
 // Keep track of URL parameters for easy JavaScript access
 var url_params = {};
 query_index = location.href.indexOf('?');

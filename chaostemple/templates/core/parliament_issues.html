@@ -8,7 +8,7 @@
 
     <script language="javascript">
         $(document).ready(function() {
-            $('input[control="issue-search"]').tableFilter('table[control="issue-list"]');
+            $('div[control="issue-filter"]').tableFilter('table[control="issue-list"]');
         });
     </script>
 
@@ -18,7 +18,19 @@
 
     {% include 'core/dialog/dialog_delete_issue_dossiers.html' %}
 
-    <input type="text" control="issue-search" class="form-control" placeholder="{% trans 'Name, number, description, type or first proposer of issue' %}" />
+    <div control="issue-filter">
+        <div class="input-group">
+            <input type="text" control="issue-search" class="form-control" placeholder="{% trans 'Name, number, description, type or first proposer of issue' %}" />
+            <div class="input-group-btn">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{% trans 'Issue types' %} <span class="caret"></span></button>
+                <ul class="dropdown-menu dropdown-menu-right checkboxes">
+                    {% for issue_type_label in issue_type_labels %}
+                        <li><a><label><input type="checkbox" skip-switch="true" value="{{ issue_type_label }}" /> {{ issue_type_label|capfirst }}</label></a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
 
     <table class="table" control="issue-list">
         {% for issue in issues reversed %}

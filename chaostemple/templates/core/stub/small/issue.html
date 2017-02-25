@@ -33,7 +33,7 @@
 
             <div>
             <small>
-            {{ issue.get_issue_type_display|capfirst }}:
+            <span control="issue-type">{{ issue.get_issue_type_display|capfirst }}</span>:
             <span>
             {% with issue.proposers.all.0 as proposer %}
                 {% if proposer.person %}

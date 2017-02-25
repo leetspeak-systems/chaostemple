@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-18 13:00+0000\n"
+"POT-Creation-Date: 2017-02-25 17:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -439,9 +439,13 @@ msgstr "Afgreiðsla"
 msgid "Media Coverage"
 msgstr "Fjölmiðlaumfjöllun"
 
-#: templates/core/parliament_issues.html:21
+#: templates/core/parliament_issues.html:23
 msgid "Name, number, description, type or first proposer of issue"
 msgstr "Nafn, númer, lýsing, tegund eða fyrsti flutningsmaður máls"
+
+#: templates/core/parliament_issues.html:25
+msgid "Issue types"
+msgstr "Málstegundir"
 
 #: templates/core/parliament_missing_data.html:6
 msgid ""

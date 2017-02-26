@@ -102,3 +102,9 @@
 
 1.1.16:
     * Bugfix: Due to changes in XML, B-issues were being processed as A-issues. Now fixed.
+
+1.1.17:
+    * Bugfix: Header didn't show on issues on Upcoming-page if time of day of a today's session or today's committee agenda was not specified.
+    * Dropdown with issue types added to issue filter.
+    * "Upcoming" page added to breadcrumbs.
+    * Breadcrumbs improvement: each breadcrumb only once in a row.

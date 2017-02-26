@@ -25,20 +25,6 @@ def append_to_crumb_string(input_path, input_crumb_string):
     return crumb_string
 
 
-def generate_prepended_views(crumb_string):
-    if not crumb_string:
-        return []
-
-    prepended_views = []
-
-    for part in reversed(crumb_string.split(',')):
-        path = urlsafe_base64_decode(part)
-        resolved_path = resolve(path)
-        prepended_views.append(resolved_path)
-
-    return prepended_views
-
-
 def leave_breadcrumb(breadcrumbs, view, caption):
 
     prior_crumb_strings = []
@@ -68,9 +54,11 @@ def make_breadcrumbs(request, parliament):
         '%d. %s (%s)' % (parliament_num, _('parliament'), parliament.era)
     )
 
-    prepended_views = generate_prepended_views(request.GET.get('from', ''))
-    for prepended_view in prepended_views:
-        breadcrumbs = process_breadcrumbs(breadcrumbs, prepended_view)
+    # Prepend breadcrumbs from crumb string
+    crumb_string = request.GET.get('from', '')
+    for part in reversed(crumb_string.split(',') if crumb_string else []):
+        path = urlsafe_base64_decode(part)
+        breadcrumbs = process_breadcrumbs(breadcrumbs, resolve(path))
 
     breadcrumbs = process_breadcrumbs(breadcrumbs, request.resolver_match)
 

@@ -28,17 +28,19 @@ def append_to_crumb_string(input_path, input_crumb_string):
 def leave_breadcrumb(breadcrumbs, view, caption):
 
     prior_crumb_strings = []
+    last_view = None
     for breadcrumb in breadcrumbs:
-        view_data = breadcrumb['view']
+        last_view = view_data = breadcrumb['view']
         path = reverse(view_data[0], args=view_data[1:])
         crumb_string = urlsafe_base64_encode(path)
         prior_crumb_strings.append(crumb_string)
 
-    breadcrumbs.append({
-        'view': view,
-        'caption': caption,
-        'crumb_string': ','.join(reversed(prior_crumb_strings))
-    })
+    if view != last_view: # Each breadcrumb only once at a time.
+        breadcrumbs.append({
+            'view': view,
+            'caption': caption,
+            'crumb_string': ','.join(reversed(prior_crumb_strings))
+        })
     return breadcrumbs
 
 

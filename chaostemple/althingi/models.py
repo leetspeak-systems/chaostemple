@@ -705,7 +705,12 @@ class CommitteeSeat(models.Model):
         if self.timing_out is None:
             return u'%s (%s, %s : ...)' % (self.person, self.committee, format_date(self.timing_in))
         else:
-            return u'%s (%s, %s : %s)' % (self.person, self.committee, format_date(self.timing_in), format_date(self.timing_out))
+            # Short-hands
+            person = self.person
+            committee = self.committee
+            timing_in = self.timing_in
+            timing_out = self.timing_out
+            return u'%s (%s, %s : %s)' % (person, committee, format_date(timing_in), format_date(timing_out))
 
     class Meta:
         ordering = ['timing_in', 'timing_out']

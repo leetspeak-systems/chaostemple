@@ -1,5 +1,6 @@
 from django.core.urlresolvers import resolve
 from django.core.urlresolvers import reverse
+from django.shortcuts import get_object_or_404
 from django.template.defaultfilters import date
 from django.utils import dateparse
 from django.utils import timezone
@@ -207,12 +208,15 @@ def process_breadcrumbs(breadcrumbs, view):
 
     if view_name == 'person':
         if 'subslug' in locals():
-            person = Person.objects.get(slug=slug, subslug=subslug)
+            person = get_object_or_404(Person, slug=slug, subslug=subslug)
             person_count = 1
         else:
             persons = Person.objects.filter(slug=slug)
             person_count = persons.count()
-            person = persons[0] # We'll only use the name so just need either one of them, doesn't matter which.
+            try:
+                person = persons[0] # We'll only use the name so just need either one of them, doesn't matter which.
+            except IndexError:
+                person_count = 0
 
         if person_count == 1:
             breadcrumbs = leave_breadcrumb(
@@ -220,7 +224,7 @@ def process_breadcrumbs(breadcrumbs, view):
                 ('person', person.slug, person.subslug),
                 '%s (%s %s)' % (person.name, _('b.'), date(person.birthdate, 'SHORT_DATE_FORMAT'))
             )
-        else:
+        elif person_count > 1:
             breadcrumbs = leave_breadcrumb(
                 breadcrumbs,
                 ('person', person.slug),

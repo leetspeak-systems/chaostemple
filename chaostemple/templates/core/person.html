@@ -133,6 +133,18 @@
             </table>
             {% endif %}
 
+            {% if special_discussions.count %}
+            <h3>{% trans 'Special discussions' %}</h3>
+            <table class="table">
+                {% for issue in special_discussions %}
+                    {% ifchanged issue.parliament.parliament_num %}
+                        <tr><th>{{ issue.parliament.parliament_num }}. {% trans 'parliament' %}</th></tr>
+                    {% endifchanged %}
+                    {% include 'core/stub/small/issue.html' %}
+                {% endfor %}
+            </table>
+            {% endif %}
+
         </div>
     </div>
 

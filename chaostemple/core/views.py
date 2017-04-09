@@ -424,11 +424,18 @@ def person(request, slug, subslug=None):
 
     IssueUtilities.populate_dossier_statistics(issues)
 
+    special_discussions = Issue.objects.select_related('parliament', 'special_inquisitor', 'special_responder').filter(
+        issue_group='B',
+        issue_type='um',
+        special_inquisitor_id=person.id
+    ).order_by('-parliament__parliament_num')
+
     ctx = {
         'person': person,
         'seats': seats,
         'committee_seats': committee_seats,
         'issues': issues,
+        'special_discussions': special_discussions,
     }
     return render(request, 'core/person.html', ctx)
 

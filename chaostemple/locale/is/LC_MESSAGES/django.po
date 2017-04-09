@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-25 17:54+0000\n"
+"POT-Creation-Date: 2017-04-09 07:21+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -22,72 +22,78 @@ msgstr ""
 msgid "Temple of Chaos"
 msgstr "Musteri Glundroðans"
 
-#: core/breadcrumbs.py:68 templates/base.html:51 templates/base.html:54
+#: core/breadcrumbs.py:57 templates/base.html:51 templates/base.html:54
 #: templates/core/parliament_issue.html:33
 #: templates/core/parliament_issue.html:76
 #: templates/core/parliament_issue.html:91 templates/core/person.html:84
 #: templates/core/person.html:106 templates/core/person.html:130
+#: templates/core/person.html:142
 #: templates/core/stub/parliament_selection.html:5
 #: templates/core/stub/parliament_selection.html:12
 msgid "parliament"
 msgstr "þing"
 
-#: core/breadcrumbs.py:109 core/breadcrumbs.py:112 templates/base.html:62
+#: core/breadcrumbs.py:100 core/breadcrumbs.py:103 templates/base.html:62
 #: templates/core/day.html:63
 msgid "Today's issues"
 msgstr "Mál dagsins"
 
-#: core/breadcrumbs.py:124 templates/base.html:125
+#: core/breadcrumbs.py:115 templates/base.html:60 templates/base.html:64
+#: templates/core/upcoming.html:14
+msgid "Current and Upcoming"
+msgstr "Á döfinni"
+
+#: core/breadcrumbs.py:122 templates/base.html:125
 msgid "Bookmarks"
 msgstr "Bókamerki"
 
-#: core/breadcrumbs.py:131 templates/base.html:105 templates/base.html:107
+#: core/breadcrumbs.py:129 templates/base.html:105 templates/base.html:107
 #: templates/core/user_issues_open.html:13
 msgid "Opened Issues"
 msgstr "Opnuð mál"
 
-#: core/breadcrumbs.py:138 templates/base.html:110
+#: core/breadcrumbs.py:136 templates/base.html:110
 msgid "Issues with new data"
 msgstr "Mál með nýjum gögnum"
 
-#: core/breadcrumbs.py:145 templates/base.html:137
+#: core/breadcrumbs.py:143 templates/base.html:137
 #: templates/core/parliament.html:8 templates/core/person.html:126
 #: templates/core/stub/user_access_list.html:11
 msgid "Issues"
 msgstr "Þingmál"
 
-#: core/breadcrumbs.py:152
+#: core/breadcrumbs.py:150
 msgid "issue"
 msgstr "mál"
 
-#: core/breadcrumbs.py:159 templates/base.html:67 templates/base.html:139
+#: core/breadcrumbs.py:157 templates/base.html:67 templates/base.html:139
 #: templates/core/parliament.html:9 templates/core/parliament_issue.html:59
 #: templates/core/parliament_sessions.html:8
 msgid "Parliamentary Sessions"
 msgstr "Þingfundir"
 
-#: core/breadcrumbs.py:166
+#: core/breadcrumbs.py:164
 msgid "parliamentary session"
 msgstr "þingfundur"
 
-#: core/breadcrumbs.py:173 templates/base.html:140
+#: core/breadcrumbs.py:171 templates/base.html:140
 #: templates/core/parliament.html:10
 #: templates/core/parliament_committees.html:7
 msgid "Committees"
 msgstr "Nefndir"
 
-#: core/breadcrumbs.py:196 templates/base.html:143
+#: core/breadcrumbs.py:194 templates/base.html:143
 #: templates/core/parliament_parties.html:7
 msgid "Parliamentary Parties"
 msgstr "Þingflokkar"
 
-#: core/breadcrumbs.py:208 templates/base.html:142
+#: core/breadcrumbs.py:206 templates/base.html:142
 #: templates/core/parliament.html:11 templates/core/parliament_parties.html:14
 #: templates/core/parliament_persons.html:7
 msgid "Parliamentarians"
 msgstr "Þingmenn"
 
-#: core/breadcrumbs.py:224 templates/core/person.html:34
+#: core/breadcrumbs.py:225 templates/core/person.html:34
 #: templates/core/person_select_from_multiple.html:10
 msgid "b."
 msgstr "f."
@@ -210,11 +216,6 @@ msgstr ""
 #: templates/500.html:13
 msgid "Otherwise, please contact us and notify us of the problem."
 msgstr "Ef ekki, endilega láttu okkur vita af vandanum.."
-
-#: templates/base.html:60 templates/base.html:64
-#: templates/core/upcoming.html:14
-msgid "Current and Upcoming"
-msgstr "Á döfinni"
 
 #: templates/base.html:85 templates/core/parliament_issue.html:47
 msgid "Committee Meetings"
@@ -568,6 +569,10 @@ msgstr "þm."
 msgid "Committee Seats"
 msgstr "Nefndasetur"
 
+#: templates/core/person.html:138
+msgid "Special discussions"
+msgstr "Sérstakar umræður"
+
 #: templates/core/person_select_from_multiple.html:6
 msgid "Which person do you mean?"
 msgstr "Hvaða einstakling áttu við?"
@@ -689,6 +694,11 @@ msgstr "Lykilorði þínu var breytt."
 #: templates/registration/password_change_form.html:13
 msgid "OK"
 msgstr "Í lagi"
+
+#, fuzzy
+#~| msgid "Special discussion"
+#~ msgid "Special Discussions"
+#~ msgstr "Sérstök umræða"
 
 #~ msgid "Deputies"
 #~ msgstr "Varamenn"

@@ -4,34 +4,13 @@ from __future__ import print_function
 
 import errno
 import os
-import urllib2
 import pytz
 
-from sys import stderr
 from sys import stdout
 from datetime import date
 from datetime import datetime
+
 from althingi import althingi_settings
-
-def get_response(web_url):
-
-    retry_count = 2
-
-    success = False
-    while not success and retry_count > -1:
-        try:
-            response = urllib2.urlopen(web_url, timeout=5)
-            success = True
-        except IOError:
-            print('Retrieving remote content failed, retries left: %s...' % retry_count)
-            retry_count = retry_count - 1
-
-    if success:
-        return response
-    else:
-        print('Error: Failed retrieving URL: %s' % web_url, file=stderr)
-        quit(1)
-
 
 def mkpath(path):
     try:

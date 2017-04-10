@@ -6,7 +6,6 @@ from datetime import datetime
 from django.db.models import Q
 from sys import stderr
 from sys import stdout
-from xml.dom import minidom
 from xml.parsers.expat import ExpatError
 
 from althingi.models import Committee
@@ -29,28 +28,12 @@ from althingi.models import SessionAgendaItem
 from althingi.exceptions import AlthingiException
 
 from althingi.utils import get_last_parliament_num
-from althingi.utils import get_response
 from althingi.utils import maybe_download_document
 from althingi.utils import maybe_download_review
 from althingi.utils import sensible_datetime
 
-PARLIAMENT_URL = 'http://www.althingi.is/altext/xml/loggjafarthing/?lthing=%d'
-ISSUE_LIST_URL = 'http://www.althingi.is/altext/xml/thingmalalisti/?lthing=%d'
-ISSUE_URL = 'http://www.althingi.is/altext/xml/thingmalalisti/thingmal/?lthing=%d&malnr=%d'
-ISSUE_SUMMARY_URL = 'http://www.althingi.is/altext/xml/samantektir/samantekt/?lthing=%d&malnr=%d'
-PARTIES_URL = 'http://www.althingi.is/altext/xml/thingflokkar/?lthing=%d'
-PERSON_URL = 'http://www.althingi.is/altext/xml/thingmenn/thingmadur/?nr=%d'
-COMMITTEE_FULL_LIST_URL = 'http://www.althingi.is/altext/xml/nefndir/'
-COMMITTEE_LIST_URL = 'http://www.althingi.is/altext/xml/nefndir/?lthing=%d'
-COMMITTEE_AGENDA_LIST_URL = 'http://www.althingi.is/altext/xml/nefndarfundir/?lthing=%d'
-COMMITTEE_AGENDA_URL = 'http://www.althingi.is/altext/xml/nefndarfundir/nefndarfundur/?dagskrarnumer=%d'
-COMMITTEE_SEATS_URL = 'http://www.althingi.is/altext/xml/thingmenn/thingmadur/nefndaseta/?nr=%d'
-CONSTITUENCIES_URL = 'http://www.althingi.is/altext/xml/kjordaemi/?lthing=%d'
-SESSION_LIST_URL = 'http://www.althingi.is/altext/xml/thingfundir/?lthing=%d'
-SESSION_AGENDA_URL = 'http://www.althingi.is/altext/xml/dagskra/thingfundur/?lthing=%d&fundur=%d'
-SESSION_NEXT_AGENDA_URL = 'http://www.althingi.is/altext/xml/dagskra/thingfundur/'
-PERSONS_URL = 'http://www.althingi.is/altext/xml/thingmenn/?lthing=%d'
-SEATS_URL = 'http://www.althingi.is/altext/xml/thingmenn/thingmadur/thingseta/?nr=%d'
+from althingi.xmlutils import get_xml
+
 
 '''
 already_haves
@@ -93,7 +76,7 @@ def update_parliament(parliament_num):
     if already_haves['parliaments'].has_key(parliament_num):
         return already_haves['parliaments'][parliament_num]
 
-    parliaments_full_xml = minidom.parse(get_response(PARLIAMENT_URL % parliament_num))
+    parliaments_full_xml = get_xml('PARLIAMENT_URL', parliament_num)
 
     try:
         parliament_xml = parliaments_full_xml.getElementsByTagName(u'þing')[0]
@@ -148,8 +131,7 @@ def update_persons(parliament_num=None):
 
     parliament = update_parliament(parliament_num)
 
-    response = get_response(PERSONS_URL % parliament.parliament_num)
-    persons_full_xml = minidom.parse(response)
+    persons_full_xml = get_xml('PERSONS_URL', parliament.parliament_num)
 
     persons_xml = persons_full_xml.getElementsByTagName(u'þingmaður')
 
@@ -165,7 +147,7 @@ def update_person(person_xml_id, parliament_num=None):
     if already_haves['persons'].has_key(person_xml_id):
         return already_haves['persons'][person_xml_id]
 
-    person_xml = minidom.parse(get_response(PERSON_URL % person_xml_id))
+    person_xml = get_xml('PERSON_URL', person_xml_id)
 
     try:
         # For some unknown reason, an email address is given in two separate tags
@@ -275,8 +257,7 @@ def update_seats(person_xml_id, parliament_num=None):
     update_constituencies(parliament.parliament_num)
     update_parties(parliament.parliament_num)
 
-    response = get_response(SEATS_URL % person_xml_id)
-    seats_full_xml = minidom.parse(response)
+    seats_full_xml = get_xml('SEATS_URL', person_xml_id)
     seats_xml = seats_full_xml.getElementsByTagName(u'þingsetur')[0].getElementsByTagName(u'þingseta')
 
     seats = []
@@ -352,8 +333,7 @@ def update_committee_seats(person_xml_id, parliament_num=None):
     if already_haves['committee_seats'].has_key(ah_key):
         return already_haves['committee_seats'][ah_key]
 
-    response = get_response(COMMITTEE_SEATS_URL % person_xml_id)
-    committee_seats_full_xml = minidom.parse(response)
+    committee_seats_full_xml = get_xml('COMMITTEE_SEATS_URL', person_xml_id)
     committee_seats_xml = committee_seats_full_xml.getElementsByTagName(u'nefndasetur')[0].getElementsByTagName(u'nefndaseta')
 
     committee_seats = []
@@ -423,12 +403,18 @@ def update_committee(committee_xml_id, parliament_num=None):
         return already_haves['committees'][ah_key]
 
     # NOTE: This should be revisited when committees have their own, individual XML page
-    def parse_committee_xml(xml_url):
+    def parse_committee_xml(xml_url_name, parliament_num):
+        # NOTE: We import this here, only because this entire function should go away when
+        # committees have their own, individual XML page.
+        from althingi.xmlutils import xml_urls
+
+        xml_url = xml_urls[xml_url_name] % parliament_num
+
         # Cache the XML document, so that we only need to retrieve it once per run
         if already_haves['xml'].has_key(xml_url):
             committees_full_xml = already_haves['xml'][xml_url]
         else:
-            committees_full_xml = minidom.parse(get_response(xml_url))
+            committees_full_xml = get_xml(xml_url_name, parliament_num)
             already_haves['xml'][xml_url] = committees_full_xml
 
         committees_xml = committees_full_xml.getElementsByTagName(u'nefnd')
@@ -472,7 +458,7 @@ def update_committee(committee_xml_id, parliament_num=None):
 
         return committee
 
-    committee = parse_committee_xml(COMMITTEE_LIST_URL % parliament.parliament_num)
+    committee = parse_committee_xml('COMMITTEE_LIST_URL', parliament.parliament_num)
     if committee is None:
         # if the variable 'committee' is still None at this point, it means that the committee we requested
         # does not exist in the appropriate parliament's XML. This is a mistake in the XML that the XML
@@ -493,7 +479,7 @@ def update_issues(parliament_num=None):
 
     parliament = update_parliament(parliament_num)
 
-    issue_list_xml = minidom.parse(get_response(ISSUE_LIST_URL % parliament.parliament_num))
+    issue_list_xml = get_xml('ISSUE_LIST_URL', parliament.parliament_num)
     issues_xml = issue_list_xml.getElementsByTagName(u'mál')
 
     for issue_xml in issues_xml:
@@ -519,7 +505,7 @@ def update_issue(issue_num, parliament_num=None):
     # Contains a list of structs, for exmaple: {'parliament_num': 144, 'issue_num': 524 }
     previously_published_as = []
 
-    issue_xml = minidom.parse(get_response(ISSUE_URL % (parliament.parliament_num, issue_num)))
+    issue_xml = get_xml('ISSUE_URL', parliament.parliament_num, issue_num)
     docstubs_xml = issue_xml.getElementsByTagName(u'þingskjöl')[0].getElementsByTagName(u'þingskjal')
     reviews_xml = issue_xml.getElementsByTagName(u'erindaskrá')[0].getElementsByTagName(u'erindi')
 
@@ -585,8 +571,7 @@ def update_issue(issue_num, parliament_num=None):
     summary_xml_try = issue_xml.getElementsByTagName(u'mál')[0].getElementsByTagName(u'samantekt')
     if len(summary_xml_try) > 0:
         # Yes, it has summary information
-        summary_xml_url = ISSUE_SUMMARY_URL % (parliament.parliament_num, issue.issue_num)
-        summary_xml = minidom.parse(get_response(summary_xml_url))
+        summary_xml = get_xml('ISSUE_SUMMARY_URL', parliament.parliament_num, issue.issue_num)
 
         purpose = summary_xml.getElementsByTagName(u'markmið')[0].firstChild.nodeValue
         try:
@@ -687,12 +672,10 @@ def update_issue(issue_num, parliament_num=None):
             # If this is the zero-eth iterator, this is the main document.
             is_main = True
 
-        doc_xml_url = docstub_xml.getElementsByTagName(u'slóð')[0].getElementsByTagName(u'xml')[0].firstChild.nodeValue
+        doc_num = int(docstub_xml.getAttribute(u'skjalsnúmer'))
 
-        doc_full_xml = minidom.parse(get_response(doc_xml_url))
+        doc_full_xml = get_xml('DOCUMENT_URL', parliament.parliament_num, doc_num)
         doc_xml = doc_full_xml.getElementsByTagName(u'þingskjal')[0].getElementsByTagName(u'þingskjal')[0]
-
-        doc_num = int(doc_xml.getAttribute(u'skjalsnúmer'))
 
         doc_nums.append(doc_num)
 
@@ -1077,7 +1060,7 @@ def update_sessions(parliament_num=None, date_limit=None):
     if date_limit is not None:
         date_limit = sensible_datetime(date_limit)
 
-    sessions_xml = minidom.parse(get_response(SESSION_LIST_URL % parliament.parliament_num))
+    sessions_xml = get_xml('SESSION_LIST_URL', parliament.parliament_num)
     for session_xml in reversed(sessions_xml.getElementsByTagName(u'þingfundur')):
         session_num = int(session_xml.getAttribute(u'númer'))
 
@@ -1101,8 +1084,7 @@ def update_session(session_num, parliament_num=None):
 
     parliament = update_parliament(parliament_num)
 
-    response = get_response(SESSION_AGENDA_URL % (parliament.parliament_num, session_num))
-    session_full_xml = minidom.parse(response)
+    session_full_xml = get_xml('SESSION_AGENDA_URL', parliament.parliament_num, session_num)
     try:
         session_xml = session_full_xml.getElementsByTagName(u'þingfundur')[0]
     except IndexError:
@@ -1125,8 +1107,7 @@ def update_session(session_num, parliament_num=None):
 
 def update_next_sessions():
 
-    response = get_response(SESSION_NEXT_AGENDA_URL)
-    session_full_xml = minidom.parse(response)
+    session_full_xml = get_xml('SESSION_NEXT_AGENDA_URL')
     sessions_xml = session_full_xml.getElementsByTagName(u'þingfundur')
     sessions = []
     for session_xml in sessions_xml:
@@ -1148,9 +1129,7 @@ def update_constituencies(parliament_num=None):
     if already_haves['constituencies'].has_key(ah_key):
         return already_haves['constituencies'][ah_key]
 
-    response = get_response(CONSTITUENCIES_URL % parliament.parliament_num)
-
-    constituencies_xml = minidom.parse(response)
+    constituencies_xml = get_xml('CONSTITUENCIES_URL', parliament.parliament_num)
 
     constituencies = []
     for constituency_xml in constituencies_xml.getElementsByTagName(u'kjördæmin')[0].getElementsByTagName(u'kjördæmið'):
@@ -1241,9 +1220,7 @@ def update_parties(parliament_num=None):
     if already_haves['parties'].has_key(ah_key):
         return already_haves['parties'][ah_key]
 
-    response = get_response(PARTIES_URL % parliament.parliament_num)
-
-    parties_xml = minidom.parse(response)
+    parties_xml = get_xml('PARTIES_URL', parliament.parliament_num)
 
     parties = []
     for party_xml in parties_xml.getElementsByTagName(u'þingflokkar')[0].getElementsByTagName(u'þingflokkur'):
@@ -1322,7 +1299,7 @@ def update_committee_agendas(parliament_num=None, date_limit=None):
     if date_limit is not None:
         date_limit = sensible_datetime(date_limit)
 
-    committee_agenda_list_xml = minidom.parse(get_response(COMMITTEE_AGENDA_LIST_URL % parliament.parliament_num))
+    committee_agenda_list_xml = get_xml('COMMITTEE_AGENDA_LIST_URL', parliament.parliament_num)
     committee_agenda_stubs_xml = committee_agenda_list_xml.getElementsByTagName(u'nefndarfundur')
     committee_agendas = []
     for committee_agenda_stub_xml in reversed(committee_agenda_stubs_xml):
@@ -1356,11 +1333,11 @@ def update_committee_agenda(committee_agenda_xml_id, parliament_num=None):
 
     parliament = update_parliament(parliament_num)
 
-    response = get_response(COMMITTEE_AGENDA_URL % committee_agenda_xml_id)
     try:
-        committee_agenda_full_xml = minidom.parse(response)
+        committee_agenda_full_xml = get_xml('COMMITTEE_AGENDA_URL', committee_agenda_xml_id)
     except ExpatError:
         raise AlthingiException('Committee agenda with XML-ID %d not found' % committee_agenda_xml_id)
+
     committee_agenda_xml = committee_agenda_full_xml.getElementsByTagName(u'nefndarfundur')[0]
 
     if not committee_agenda_xml.getAttribute(u'númer'):
@@ -1566,8 +1543,7 @@ def _process_session_agenda_xml(session_xml):
         print('Added session: %s' % session)
 
     # Prepare for agenda processing.
-    response = get_response(SESSION_AGENDA_URL % (parliament.parliament_num, session_num))
-    session_agenda_full_xml = minidom.parse(response)
+    session_agenda_full_xml = get_xml('SESSION_AGENDA_URL', parliament.parliament_num, session_num)
     session_agenda_xml = session_agenda_full_xml.getElementsByTagName(u'dagskrá')[0]
 
     max_order = 0

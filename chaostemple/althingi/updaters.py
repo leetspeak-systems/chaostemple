@@ -437,6 +437,7 @@ def update_committee(committee_xml_id, parliament_num=None):
                         changed = True
 
                     if changed:
+                        committee.save()
                         print('Updated committee: %s' % committee)
                     else:
                         print('Already have committee: %s' % committee)

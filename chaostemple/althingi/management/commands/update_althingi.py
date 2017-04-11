@@ -157,7 +157,7 @@ class Command(BaseCommand):
                 try:
                     agenda_xml_id = int(args['committee_agenda'])
                 except (TypeError, ValueError):
-                    self.error('Invalid committee XML-ID')
+                    self.error('Invalid committee agenda XML-ID')
                 update_committee_agenda(agenda_xml_id, parliament_num)
 
             if 'upcoming' in args:

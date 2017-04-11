@@ -394,6 +394,18 @@ def update_committee_seats(person_xml_id, parliament_num=None):
     return committee_seats
 
 
+def update_committees(parliament_num=None):
+
+    parliament = update_parliament(parliament_num)
+
+    committees_full_xml = get_xml('COMMITTEE_LIST_URL', parliament.parliament_num)
+    committees_xml = committees_full_xml.getElementsByTagName(u'nefndir')[0]
+
+    for committee_xml in committees_xml.getElementsByTagName(u'nefnd'):
+        committee_xml_id = int(committee_xml.getAttribute(u'id'))
+        update_committee(committee_xml_id)
+
+
 def update_committee(committee_xml_id, parliament_num=None):
 
     parliament = update_parliament(parliament_num)

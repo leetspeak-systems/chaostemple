@@ -423,15 +423,30 @@ def update_committee(committee_xml_id, parliament_num=None):
         for committee_xml in committees_xml:
             if int(committee_xml.getAttribute(u'id')) == committee_xml_id:
                 abbreviations_xml = committee_xml.getElementsByTagName(u'skammstafanir')[0]
+                period_xml = committee_xml.getElementsByTagName(u'tímabil')[0]
 
                 name = committee_xml.getElementsByTagName(u'heiti')[0].firstChild.nodeValue
                 abbreviation_short = abbreviations_xml.getElementsByTagName(u'stuttskammstöfun')[0].firstChild.nodeValue
                 abbreviation_long = abbreviations_xml.getElementsByTagName(u'löngskammstöfun')[0].firstChild.nodeValue
 
+                parliament_num_first = int(period_xml.getElementsByTagName(u'fyrstaþing')[0].firstChild.nodeValue)
+                try:
+                    parliament_num_last = int(period_xml.getElementsByTagName(u'síðastaþing')[0].firstChild.nodeValue)
+                except (AttributeError, IndexError):
+                    parliament_num_last = None
+
                 try:
                     committee = Committee.objects.get(committee_xml_id=committee_xml_id)
 
                     changed = False
+                    if committee.parliament_num_first != parliament_num_first:
+                        committee.parliament_num_first = parliament_num_first
+                        changed = True
+
+                    if committee.parliament_num_last != parliament_num_last:
+                        committee.parliament_num_last = parliament_num_last
+                        changed = True
+
                     if parliament not in committee.parliaments.all():
                         committee.parliaments.add(parliament)
                         changed = True
@@ -447,7 +462,8 @@ def update_committee(committee_xml_id, parliament_num=None):
                     committee.name = name
                     committee.abbreviation_short = abbreviation_short
                     committee.abbreviation_long = abbreviation_long
-                    committee.parliament = parliament
+                    committee.parliament_num_first = parliament_num_first
+                    committee.parliament_num_last = parliament_num_last
                     committee.committee_xml_id = committee_xml_id
 
                     committee.save()

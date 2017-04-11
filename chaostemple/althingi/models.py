@@ -466,6 +466,9 @@ class Committee(models.Model):
     name = models.CharField(max_length=100)
     abbreviation_short = models.CharField(max_length=20)
     abbreviation_long = models.CharField(max_length=30)
+
+    parliament_num_first = models.IntegerField()
+    parliament_num_last = models.IntegerField(null=True)
     parliaments = models.ManyToManyField('Parliament', related_name='committees')
 
     committee_xml_id = models.IntegerField()

@@ -1,6 +1,7 @@
 
 from django.core.management.base import BaseCommand
 
+from althingi.updaters import update_committee
 from althingi.updaters import update_committee_agenda
 from althingi.updaters import update_committee_agendas
 from althingi.updaters import update_constituencies
@@ -35,6 +36,7 @@ class Command(BaseCommand):
         print '  persons                           Updates persons (MPs) in default or specified parliament'
         print '  person=<person_xml_id>            Updates person by XML ID (see Althingi\'s XML)'
         print '  parties                           Updates parties in default or specified parliament'
+        print '  committee=<committee_xml_id>      Updates committee by XML ID (see Althingi\'s XML)'
         print '  committee_agendas                 Updates committee agendas in default or specified parliament'
         print '  committee_agenda=<agenda_xml_id>  Updates committee agenda by XML ID (see Althingi\'s XML)'
         print '  constituencies                    Updates constituencies in default or specified parliament'
@@ -131,6 +133,14 @@ class Command(BaseCommand):
                 except (TypeError, ValueError):
                     self.error('Invalid session number')
                 update_session(session_num, parliament_num)
+
+            if 'committee' in args:
+                has_run = True
+                try:
+                    committee_xml_id = int(args['committee'])
+                except (TypeError, ValueError):
+                    self.error('Invalid committee XML-ID')
+                update_committee(committee_xml_id)
 
             if 'committee_agendas' in args:
                 has_run = True

@@ -124,7 +124,7 @@
             {% if issues.count %}
             <h3>{% trans 'Issues' %}</h3>
             <table class="table">
-                {% for issue in issues %}
+                {% for issue in issues reversed %}
                     {% ifchanged issue.parliament.parliament_num %}
                         <tr><th>{{ issue.parliament.parliament_num }}. {% trans 'parliament' %}</th></tr>
                     {% endifchanged %}
@@ -136,7 +136,7 @@
             {% if special_discussions.count %}
             <h3>{% trans 'Special discussions' %}</h3>
             <table class="table">
-                {% for issue in special_discussions %}
+                {% for issue in special_discussions reversed %}
                     {% ifchanged issue.parliament.parliament_num %}
                         <tr><th>{{ issue.parliament.parliament_num }}. {% trans 'parliament' %}</th></tr>
                     {% endifchanged %}

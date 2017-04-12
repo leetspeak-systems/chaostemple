@@ -16,6 +16,8 @@ from althingi.updaters import update_persons
 from althingi.updaters import update_person
 from althingi.updaters import update_sessions
 from althingi.updaters import update_session
+from althingi.updaters import update_vote_casting
+from althingi.updaters import update_vote_castings
 
 from althingi.exceptions import AlthingiException
 
@@ -42,6 +44,8 @@ class Command(BaseCommand):
         print '  committee_agendas                 Updates committee agendas in default or specified parliament'
         print '  committee_agenda=<agenda_xml_id>  Updates committee agenda by XML ID (see Althingi\'s XML)'
         print '  constituencies                    Updates constituencies in default or specified parliament'
+        print '  vote_castings                     Updates vote castings in default or specified parliament'
+        print '  vote_casting=<casting_xml_id>     Updates vote casting by XML ID (see Althingi\'s XML)'
         print '  all                               Updates issues, sessions, persons, parties, constituencies and committee agendas in default or specified parliament'
         print
         print 'Options:'
@@ -159,6 +163,18 @@ class Command(BaseCommand):
                 except (TypeError, ValueError):
                     self.error('Invalid committee agenda XML-ID')
                 update_committee_agenda(agenda_xml_id, parliament_num)
+
+            if 'vote_castings' in args:
+                has_run = True
+                update_vote_castings(parliament_num)
+
+            if 'vote_casting' in args:
+                has_run = True
+                try:
+                    vote_casting_xml_id = int(args['vote_casting'])
+                except (TypeError, ValueError):
+                    self.error('Invalid vote casting XML-ID')
+                update_vote_casting(vote_casting_xml_id, parliament_num)
 
             if 'upcoming' in args:
                 has_run = True

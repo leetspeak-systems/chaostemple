@@ -24,6 +24,7 @@ from althingi.models import Review
 from althingi.models import Seat
 from althingi.models import Session
 from althingi.models import SessionAgendaItem
+from althingi.models import VoteCasting
 
 from althingi.exceptions import AlthingiException
 
@@ -65,6 +66,7 @@ already_haves = {
     'committee_seats': {},
     'constituencies': {},
     'issues': {},
+    'vote_castings': {},
 
     'xml': {},
 }
@@ -323,6 +325,187 @@ def update_seats(person_xml_id, parliament_num=None):
     already_haves['seats'][ah_key] = seats
 
     return seats
+
+
+def update_vote_castings(parliament_num=None):
+
+    parliament = update_parliament(parliament_num)
+
+    vote_castings_full_xml = get_xml('VOTE_CASTINGS_URL', parliament.parliament_num)
+
+    vote_castings_xml = vote_castings_full_xml.getElementsByTagName(u'atkvæðagreiðsla')
+
+    for vote_casting_xml in vote_castings_xml:
+        vote_casting_xml_id = int(vote_casting_xml.getAttribute(u'atkvæðagreiðslunúmer'))
+
+        update_vote_casting(vote_casting_xml_id, parliament.parliament_num)
+
+
+def update_vote_casting(vote_casting_xml_id, parliament_num):
+
+    parliament = update_parliament(parliament_num)
+
+    if already_haves['vote_castings'].has_key('vote_casting_xml_id'):
+        return already_haves['vote_castings'][vote_casting_xml_id]
+
+    vote_casting_full_xml = get_xml('VOTE_CASTING_URL', vote_casting_xml_id)
+    vote_casting_xml = vote_casting_full_xml.getElementsByTagName(u'atkvæðagreiðsla')[0]
+
+    issue_num = int(vote_casting_xml.getAttribute(u'málsnúmer'))
+    issue_group = vote_casting_xml.getAttribute(u'málsflokkur')
+
+    if issue_group == 'A':
+        issue = update_issue(issue_num, parliament.parliament_num)
+
+        doc_num = int(vote_casting_xml.getElementsByTagName(u'þingskjal')[0].getAttribute(u'skjalsnúmer'))
+        document = issue.documents.get(doc_num=doc_num)
+    # NOTE / TODO: Waiting for B-issue types to appear in XML for vote castings.
+    #elif issue_group == 'B':
+    #    docless_issue_xml = vote_casting_xml.getElementsByTagName(u'mál')[0]
+    #    issue = _process_docless_issue(docless_issue_xml)
+    #    document = None
+    else:
+        issue = None
+        document = None
+
+    timing = sensible_datetime(vote_casting_xml.getElementsByTagName(u'tími')[0].firstChild.nodeValue)
+    vote_casting_type = vote_casting_xml.getElementsByTagName(u'tegund')[0].firstChild.nodeValue
+    specifics = vote_casting_xml.getElementsByTagName(u'nánar')[0].firstChild.nodeValue.strip()
+
+    session_num = int(vote_casting_xml.getElementsByTagName(u'fundur')[0].firstChild.nodeValue)
+    session = Session.objects.get(session_num=session_num, parliament__parliament_num=parliament_num)
+
+    try:
+        committee_xml_id = int(vote_casting_xml.getElementsByTagName(u'til')[0].getAttribute('id'))
+        to_committee = update_committee(committee_xml_id, parliament.parliament_num)
+    except IndexError:
+        to_committee = None
+
+    try:
+        conclusion_xml = vote_casting_xml.getElementsByTagName(u'niðurstaða')[0]
+
+        try:
+            method = conclusion_xml.getElementsByTagName(u'aðferð')[0].firstChild.nodeValue
+        except IndexError:
+            method = None
+
+        try:
+            count_yes = int(
+                conclusion_xml.getElementsByTagName(u'já')[0].getElementsByTagName(u'fjöldi')[0].firstChild.nodeValue
+            )
+        except (IndexError, AttributeError):
+            count_yes = None
+
+        try:
+            count_no = int(
+                conclusion_xml.getElementsByTagName(u'nei')[0].getElementsByTagName(u'fjöldi')[0].firstChild.nodeValue
+            )
+        except (IndexError, AttributeError):
+            count_no = None
+
+        try:
+            count_abstain = int(
+                conclusion_xml.getElementsByTagName(
+                    u'greiðirekkiatkvæði'
+                )[0].getElementsByTagName(u'fjöldi')[0].firstChild.nodeValue
+            )
+        except (IndexError, AttributeError):
+            count_abstain = None
+
+        try:
+            conclusion = conclusion_xml.getElementsByTagName(u'niðurstaða')[0].firstChild.nodeValue
+        except:
+            conclusion = None
+
+    except IndexError:
+        method = None
+        count_yes = None
+        count_no = None
+        count_abstain = None
+        conclusion = None
+
+    try:
+        vote_casting = VoteCasting.objects.get(vote_casting_xml_id=vote_casting_xml_id)
+
+        changed = False
+        if sensible_datetime(vote_casting.timing) != sensible_datetime(timing):
+            vote_casting.timing = sensible_datetime(timing)
+            changed = True
+
+        if vote_casting.vote_casting_type != vote_casting_type:
+            vote_casting.vote_casting_type = vote_casting_type
+            changed = True
+
+        if vote_casting.specifics != specifics:
+            vote_casting.specifics = specifics
+            changed = True
+
+        if vote_casting.method != method:
+            vote_casting.method = method
+            changed = True
+
+        if vote_casting.count_yes != count_yes:
+            vote_casting.count_yes = count_yes
+            changed = True
+
+        if vote_casting.count_no != count_no:
+            vote_casting.count_no = count_no
+            changed = True
+
+        if vote_casting.count_abstain != count_abstain:
+            vote_casting.count_abstain = count_abstain
+            changed = True
+
+        if vote_casting.conclusion != conclusion:
+            vote_casting.conclusion = conclusion
+            changed = True
+
+        if vote_casting.issue != issue:
+            vote_casting.issue = issue
+            changed = True
+
+        if vote_casting.document != document:
+            vote_casting.document = document
+            changed = True
+
+        if vote_casting.session != session:
+            vote_casting.session = session
+            changed = True
+
+        if vote_casting.to_committee != to_committee:
+            vote_casting.to_committee = to_committee
+            changed = True
+
+        if changed:
+            vote_casting.save()
+            print('Updated vote casting: %s' % vote_casting)
+        else:
+            print('Already have vote casting: %s' % vote_casting)
+
+    except VoteCasting.DoesNotExist:
+        vote_casting = VoteCasting()
+
+        vote_casting.timing = timing
+        vote_casting.vote_casting_type = vote_casting_type
+        vote_casting.specifics = specifics
+        vote_casting.method = method
+        vote_casting.count_yes = count_yes
+        vote_casting.count_no = count_no
+        vote_casting.count_abstain = count_abstain
+        vote_casting.conclusion = conclusion
+        vote_casting.issue = issue
+        vote_casting.document = document
+        vote_casting.session = session
+        vote_casting.to_committee = to_committee
+        vote_casting.vote_casting_xml_id = vote_casting_xml_id
+
+        vote_casting.save()
+
+        print('Added vote casting: %s' % vote_casting)
+
+    already_haves['vote_castings'][vote_casting_xml_id] = vote_casting
+
+    return vote_casting
 
 
 def update_committee_seats(person_xml_id, parliament_num=None):

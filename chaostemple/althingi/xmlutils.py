@@ -29,6 +29,8 @@ xml_urls = {
     'SESSION_NEXT_AGENDA_URL': 'http://www.althingi.is/altext/xml/dagskra/thingfundur/',
     'PERSONS_URL': 'http://www.althingi.is/altext/xml/thingmenn/?lthing=%d',
     'SEATS_URL': 'http://www.althingi.is/altext/xml/thingmenn/thingmadur/thingseta/?nr=%d',
+    'VOTE_CASTING_URL': 'http://www.althingi.is/altext/xml/atkvaedagreidslur/atkvaedagreidsla/?numer=%d',
+    'VOTE_CASTINGS_URL': 'http://www.althingi.is/altext/xml/atkvaedagreidslur/?lthing=%d',
 }
 
 

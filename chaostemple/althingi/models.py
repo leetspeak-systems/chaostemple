@@ -717,3 +717,32 @@ class CommitteeSeat(models.Model):
 
     class Meta:
         ordering = ['timing_in', 'timing_out']
+
+
+class VoteCasting(models.Model):
+    timing = models.DateTimeField()
+    vote_casting_type = models.CharField(max_length=100)
+    specifics = models.CharField(max_length=100)
+
+    method = models.CharField(max_length=50, null=True)
+    count_yes = models.IntegerField(null=True)
+    count_no = models.IntegerField(null=True)
+    count_abstain = models.IntegerField(null=True)
+    conclusion = models.CharField(max_length=100, null=True)
+
+    issue = models.ForeignKey('Issue', null=True, related_name='vote_castings')
+    document = models.ForeignKey('Document', null=True, related_name='vote_castings')
+    session = models.ForeignKey('Session', related_name='vote_castings')
+
+    to_committee = models.ForeignKey('Committee', null=True, related_name='vote_castings')
+
+    vote_casting_xml_id = models.IntegerField()
+
+    def __unicode__(self):
+        if self.specifics:
+            return u'%s (%s), %s @ %s' % (self.vote_casting_type, self.specifics, self.method, self.timing)
+        else:
+            return u'%s, %s @ %s' % (self.vote_casting_type, self.method, self.timing)
+
+    class Meta:
+        ordering = ['timing']

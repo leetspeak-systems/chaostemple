@@ -1,15 +1,20 @@
 {% extends "base.html" %}
+{% load static %}
 {% load i18n %}
 {% load committee %}
 {% load smart_urls %}
 
+{% block javascript %}
+    <script language="javascript" type="text/javascript" src="{% static 'core/js/issue_control.js' %}"></script>
+{% endblock %}
+
 {% block content %}
 
-    <h2>{% trans 'Meetings' %}</h2>
-    <h3>{{ committee }}</h3>
+    <h2>{{ committee }}</h2>
 
     <div class="row">
         <div class="col-md-4">
+            <h3>{% trans 'Meetings' %}</h3>
             <table class="table">
                 <tr>
                     <th>{% trans 'Timing' %}</th>
@@ -22,6 +27,15 @@
                         </td>
                         <td>{{ agenda.item_count }}</td>
                     </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <div class="col-md-8">
+            <h3>{% trans 'Issues' %}</h3>
+            <table class="table">
+                {% for issue in issues reversed %}
+                    {% include 'core/stub/small/issue.html' %}
                 {% endfor %}
             </table>
         </div>

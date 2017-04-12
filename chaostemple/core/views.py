@@ -318,10 +318,16 @@ def parliament_committee(request, parliament_num, committee_id):
     agendas = committee.committee_agendas.filter(parliament__parliament_num=parliament_num).annotate(
         item_count=Count('committee_agenda_items')
     )
+    issues = Issue.objects.prefetch_related('proposers__person').select_related('parliament').filter(
+        vote_castings__to_committee=committee, parliament__parliament_num=parliament_num
+    )
+
+    IssueUtilities.populate_dossier_statistics(issues)
 
     ctx = {
         'committee': committee,
         'agendas': agendas,
+        'issues': issues,
     }
     return render(request, 'core/parliament_committee.html', ctx)
 

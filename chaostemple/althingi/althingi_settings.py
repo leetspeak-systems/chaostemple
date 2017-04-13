@@ -1,3 +1,5 @@
+# NOTE: These are only default values. If you want to change them, override them in 'althingi/settings.py'.
+
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
@@ -14,4 +16,11 @@ USE_XML_CACHE = False
 
 ALTHINGI_ISSUE_URL = 'http://www.althingi.is/dba-bin/ferill.pl?ltg=%d&mnr=%d' # % (parliament_num, issue_num)
 ALTHINGI_PERSON_URL = 'http://www.althingi.is/altext/cv/is/?nfaerslunr=%d' # % person_xml_id
+
+if not os.path.isfile('althingi/settings.py'):
+    with open('althingi/settings.py', 'w') as f:
+        f.write('# Put your custom settings here. See \'althingi/althingi_settings.py\' for available options.\n')
+        f.close()
+
+from althingi.settings import *
 

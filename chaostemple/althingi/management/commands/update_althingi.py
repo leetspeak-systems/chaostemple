@@ -190,6 +190,7 @@ class Command(BaseCommand):
                 update_issues(parliament_num)
                 update_sessions(parliament_num)
                 update_committee_agendas(parliament_num)
+                update_vote_castings(parliament_num)
         except AlthingiException as e:
             self.error(e)
 

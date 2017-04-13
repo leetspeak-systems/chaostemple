@@ -18,14 +18,14 @@
             <table class="table">
                 <tr>
                     <th>{% trans 'Timing' %}</th>
-                    <th>{% trans 'Items' %}</th>
+                    <th style="text-align: right;">{% trans 'Items' %}</th>
                 </tr>
                 {% for agenda in agendas reversed %}
                     <tr>
                         <td>
                             <a href="{% breadcrumb_url 'parliament_committee_agenda' parliament_num agenda.committee_id agenda.id %}">{{ agenda|fancy_committee_agenda_timing }}</a>
                         </td>
-                        <td>{{ agenda.item_count }}</td>
+                        <td style="text-align: right;">{{ agenda.item_count }}</td>
                     </tr>
                 {% endfor %}
             </table>

@@ -108,3 +108,12 @@
     * Dropdown with issue types added to issue filter.
     * "Upcoming" page added to breadcrumbs.
     * Breadcrumbs improvement: each breadcrumb only once in a row.
+
+1.1.18:
+    * Bugfix: 500-error changed to 404-error (page not found) when a person is requested that does not exist.
+    * Special discussions listed on person's page.
+    * Bugfix: Changes to committees were not actually being saved.
+    * Issues on person page ordered so that the newest are topmost.
+    * Committee page now lists issues that have been formally sent to it by parliament.
+    * Slight layout improvements.
+    * Committee members now shown in committee view.

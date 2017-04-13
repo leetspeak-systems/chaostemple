@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-09 07:21+0000\n"
+"POT-Creation-Date: 2017-04-13 11:24+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -57,8 +57,8 @@ msgid "Issues with new data"
 msgstr "Mál með nýjum gögnum"
 
 #: core/breadcrumbs.py:143 templates/base.html:137
-#: templates/core/parliament.html:8 templates/core/person.html:126
-#: templates/core/stub/user_access_list.html:11
+#: templates/core/parliament.html:8 templates/core/parliament_committee.html:35
+#: templates/core/person.html:126 templates/core/stub/user_access_list.html:11
 msgid "Issues"
 msgstr "Þingmál"
 
@@ -370,19 +370,31 @@ msgstr ""
 msgid "Are you sure you want to revoke all access from this user?"
 msgstr "Ertu viss um að þú viljir svipta þennan notanda öllum aðgangi?"
 
-#: templates/core/parliament_committee.html:8
+#: templates/core/parliament_committee.html:17
 #: templates/core/parliament_committees.html:14
 msgid "Meetings"
 msgstr "Fundir"
 
-#: templates/core/parliament_committee.html:15
+#: templates/core/parliament_committee.html:20
 msgid "Timing"
 msgstr "Tímasetning"
 
-#: templates/core/parliament_committee.html:16
+#: templates/core/parliament_committee.html:21
 #: templates/core/parliament_sessions.html:16
 msgid "Items"
 msgstr "Liðir"
+
+#: templates/core/parliament_committee.html:47
+msgid "Committee Members"
+msgstr "Nefndarmenn"
+
+#: templates/core/parliament_committee.html:53
+msgid "Deputies"
+msgstr "Varamenn"
+
+#: templates/core/parliament_committee.html:56
+msgid "Observers"
+msgstr "Áheyrnarfulltrúar"
 
 #: templates/core/parliament_committees.html:13 templates/core/person.html:102
 msgid "Committee"
@@ -694,14 +706,6 @@ msgstr "Lykilorði þínu var breytt."
 #: templates/registration/password_change_form.html:13
 msgid "OK"
 msgstr "Í lagi"
-
-#, fuzzy
-#~| msgid "Special discussion"
-#~ msgid "Special Discussions"
-#~ msgstr "Sérstök umræða"
-
-#~ msgid "Deputies"
-#~ msgstr "Varamenn"
 
 #~ msgid "Proposal"
 #~ msgstr "Tillaga"

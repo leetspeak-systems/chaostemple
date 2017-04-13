@@ -117,3 +117,6 @@
     * Committee page now lists issues that have been formally sent to it by parliament.
     * Slight layout improvements.
     * Committee members now shown in committee view.
+
+1.1.19:
+    * Bugfix: Althingi module's "all" command didn't include vote castings.

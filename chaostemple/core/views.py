@@ -29,6 +29,7 @@ from dossier.models import Memo
 from althingi.althingi_settings import CURRENT_PARLIAMENT_NUM
 from althingi.models import Committee
 from althingi.models import CommitteeAgenda
+from althingi.models import CommitteeSeat
 from althingi.models import Document
 from althingi.models import Parliament
 from althingi.models import Party
@@ -322,12 +323,33 @@ def parliament_committee(request, parliament_num, committee_id):
         vote_castings__to_committee=committee, parliament__parliament_num=parliament_num
     )
 
+    parliament = request.extravars['parliament']
+    if parliament.timing_end:
+        timing = parliament.timing_end - timezone.timedelta(minutes=1)
+    else:
+        timing = timezone.now()
+
+    persons = Person.objects.filter(
+        Q(committee_seats__timing_out__gte=timing) | Q(committee_seats__timing_out=None),
+        committee_seats__timing_in__lte=timing,
+        committee_seats__committee_id=committee.id
+    ).prefetch_latest_committee_seats(
+        committee,
+        parliament
+    ).prefetch_latest_seats(
+        parliament,
+        'party'
+    ).order_by(
+        'committee_seats__order'
+    )
+
     IssueUtilities.populate_dossier_statistics(issues)
 
     ctx = {
         'committee': committee,
         'agendas': agendas,
         'issues': issues,
+        'persons': persons,
     }
     return render(request, 'core/parliament_committee.html', ctx)
 

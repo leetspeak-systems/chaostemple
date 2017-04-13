@@ -64,6 +64,31 @@ class PersonQuerySet(models.QuerySet):
 
         return self.prefetch_related(p)
 
+    def prefetch_latest_committee_seats(self, committee, parliament=None, *args):
+        if parliament is None:
+            parliament = Parliament.objects.get(CURRENT_PARLIAMENT_NUM)
+
+        if parliament.timing_end is None:
+            q_timing = Q(timing_out=None)
+        else:
+            # NOTE: One day given as wiggle-room due to imperfect data.
+            q_timing = Q(
+                timing_out__lte=parliament.timing_end + timezone.timedelta(days=1),
+                timing_out__gte=parliament.timing_start
+            )
+
+        p_filter = Q(q_timing, committee=committee, parliament__parliament_num=parliament.parliament_num)
+
+        if args:
+            p_queryset = CommitteeSeat.objects.select_related(*args).filter(p_filter).order_by('-timing_out')
+        else:
+            p_queryset = CommitteeSeat.objects.filter(p_filter).order_by('-timing_out')
+
+        p = Prefetch('seats', queryset=p_queryset, to_attr='last_committee_seat')
+
+        return self.prefetch_related(p)
+
+
 class SessionQuerySet(models.QuerySet):
     '''
     ON CODE:

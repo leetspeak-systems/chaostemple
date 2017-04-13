@@ -39,6 +39,42 @@
                 {% endfor %}
             </table>
         </div>
+
+    </div>
+    <div class="row">
+
+        <div class="col-md-4">
+            <h3>{% trans 'Committee Members' %}</h3>
+            <table class="table">
+                {% for person in persons %}
+                    {% with person.last_committee_seat.0 as committee_seat %}
+                    {% ifchanged committee_seat.committee_seat_type %}
+                        {% if committee_seat.committee_seat_type in 'varamaður,kjörinn varamaður' %}
+                            <tr><th colspan="2">{% trans 'Deputies' %}</th></tr>
+                        {% endif %}
+                        {% if committee_seat.committee_seat_type == 'áheyrnarfulltrúi' %}
+                            <tr><th colspan="2">{% trans 'Observers' %}</th></tr>
+                        {% endif %}
+                    {% endifchanged %}
+                    <tr>
+                        <td>
+                            {% with person.last_seat.0.party as party %}
+                            <span style="float: right;">
+                                <a href="{% breadcrumb_url 'parliament_persons' parliament_num party.slug %}">{{ party.abbreviation_short }}</a>
+                            </span>
+                            {% endwith %}
+                            <a href="{% breadcrumb_url 'person' person.slug person.subslug %}">{{ person }}</a>
+                            {% if committee_seat.committee_seat_type in 'formaður,1. varaformaður,2. varaformaður' %}
+                                <br />
+                                <small>{{ committee_seat.get_committee_seat_type_display|capfirst }}</small>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endwith %}
+                {% endfor %}
+            </table>
+        </div>
+
     </div>
 
 {% endblock %}

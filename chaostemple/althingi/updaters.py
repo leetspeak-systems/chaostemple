@@ -66,6 +66,7 @@ already_haves = {
     'committee_seats': {},
     'constituencies': {},
     'issues': {},
+    'sessions': {},
     'vote_castings': {},
 
     'xml': {},
@@ -1296,6 +1297,10 @@ def update_session(session_num, parliament_num=None):
 
     parliament = update_parliament(parliament_num)
 
+    ah_key = '%d-%d' % (session_num, parliament.parliament_num)
+    if already_haves['sessions'].has_key(ah_key):
+        return already_haves['sessions'][ah_key]
+
     session_full_xml = get_xml('SESSION_AGENDA_URL', parliament.parliament_num, session_num)
     try:
         session_xml = session_full_xml.getElementsByTagName(u'þingfundur')[0]
@@ -1314,7 +1319,11 @@ def update_session(session_num, parliament_num=None):
         except Session.DoesNotExist:
             raise AlthingiException('Session %d in parliament %d does not exist' % (session_num, parliament.parliament_num))
 
-    _process_session_agenda_xml(session_xml)
+    session = _process_session_agenda_xml(session_xml)
+
+    already_haves['sessions'][ah_key] = session
+
+    return session
 
 
 def update_next_sessions():

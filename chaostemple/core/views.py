@@ -321,7 +321,7 @@ def parliament_committee(request, parliament_num, committee_id):
     )
     issues = Issue.objects.prefetch_related('proposers__person').select_related('parliament').filter(
         vote_castings__to_committee=committee, parliament__parliament_num=parliament_num
-    )
+    ).distinct()
 
     parliament = request.extravars['parliament']
     if parliament.timing_end:

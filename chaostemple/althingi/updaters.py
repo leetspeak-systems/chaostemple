@@ -677,8 +677,13 @@ def update_committee(committee_xml_id, parliament_num=None):
         # does not exist in the appropriate parliament's XML. This is a mistake in the XML that the XML
         # maintainers should be notified of, but we can still remedy this by downloading a different,
         # much larger XML document which contains all committees regardless of parliament.
-        committee = parse_committee_xml(COMMITTEE_FULL_LIST_URL)
-        print('Warning! Committee with ID %d is missing from committee listing in parliament %d! Tell the XML keeper!' % (committee_xml_id, parliament_num), file=stderr)
+
+        # UPDATE / NOTE: Previous versions of this script tried running parse_committee_xml() again with
+        # a different XML file when the above failed, because sometimes the committees did not exist in
+        # their proper XML file. It now appears that the XML has been fixed, so we'll try raising
+        # an exception here for the time being. Remove this and revise this entire function
+        # if 2017-04-16 was a long time ago.
+        raise AlthingiException('Committee with ID %d is missing from committee listing in parliament %d! Tell the XML keeper!' % (committee_xml_id, parliament.parliament_num))
 
     already_haves['committees'][ah_key] = committee
 

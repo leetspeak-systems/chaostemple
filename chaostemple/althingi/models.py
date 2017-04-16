@@ -771,3 +771,20 @@ class VoteCasting(models.Model):
 
     class Meta:
         ordering = ['timing']
+
+
+class Vote(models.Model):
+    VOTE_RESPONSES = (
+        (u'já', u'já'),
+        (u'nei', u'nei'),
+        (u'fjarverandi', u'fjarverandi'),
+        (u'boðaði fjarvist', u'boðaði fjarvist'),
+        (u'greiðir ekki atkvæði', u'greiðir ekki atkvæði'),
+    )
+
+    vote_casting = models.ForeignKey('VoteCasting', related_name='votes')
+    vote_response = models.CharField(max_length=20, choices=VOTE_RESPONSES)
+    person = models.ForeignKey('Person', related_name='votes')
+
+    def __unicode__(self):
+        return u'%s: %s' % (self.person, self.vote_response)

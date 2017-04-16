@@ -24,6 +24,7 @@ from althingi.models import Review
 from althingi.models import Seat
 from althingi.models import Session
 from althingi.models import SessionAgendaItem
+from althingi.models import Vote
 from althingi.models import VoteCasting
 
 from althingi.exceptions import AlthingiException
@@ -503,6 +504,42 @@ def update_vote_casting(vote_casting_xml_id, parliament_num):
         vote_casting.save()
 
         print('Added vote casting: %s' % vote_casting)
+
+    # Process actual votes, if they exist.
+    votes_xml = vote_casting_xml.getElementsByTagName(u'atkvæðaskrá')
+    if len(votes_xml) > 0:
+        for vote_xml in votes_xml[0].getElementsByTagName(u'þingmaður'):
+            person_xml_id = int(vote_xml.getAttribute(u'id'))
+            vote_response = vote_xml.getElementsByTagName(u'atkvæði')[0].firstChild.nodeValue
+
+            # NOTE: To be removed when XML is fixed.
+            if vote_response == u'f: óþekktur kóði':
+                vote_response = u'boðaði fjarvist'
+
+            person = update_person(person_xml_id, parliament.parliament_num)
+
+            try:
+                vote = vote_casting.votes.get(vote_casting_id=vote_casting.id, person_id=person.id)
+
+                changed = False
+                if vote.vote_response != vote_response:
+                    vote.vote_response = vote_response
+                    changed = True
+
+                if changed:
+                    vote.save()
+                    print('Updated vote: %s' % vote)
+                else:
+                    print('Already have vote: %s' % vote)
+            except Vote.DoesNotExist:
+                vote = Vote()
+                vote.vote_casting_id = vote_casting.id
+                vote.person_id = person.id
+                vote.vote_response = vote_response
+
+                vote.save()
+
+                print('Added vote: %s' % vote)
 
     already_haves['vote_castings'][vote_casting_xml_id] = vote_casting
 

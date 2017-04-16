@@ -374,7 +374,7 @@ def update_vote_casting(vote_casting_xml_id, parliament_num):
     specifics = vote_casting_xml.getElementsByTagName(u'nánar')[0].firstChild.nodeValue.strip()
 
     session_num = int(vote_casting_xml.getElementsByTagName(u'fundur')[0].firstChild.nodeValue)
-    session = Session.objects.get(session_num=session_num, parliament__parliament_num=parliament_num)
+    session = update_session(session_num, parliament.parliament_num)
 
     try:
         committee_xml_id = int(vote_casting_xml.getElementsByTagName(u'til')[0].getAttribute('id'))

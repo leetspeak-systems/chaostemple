@@ -587,7 +587,7 @@ def update_committees(parliament_num=None):
 
     for committee_xml in committees_xml.getElementsByTagName(u'nefnd'):
         committee_xml_id = int(committee_xml.getAttribute(u'id'))
-        update_committee(committee_xml_id)
+        update_committee(committee_xml_id, parliament.parliament_num)
 
 
 def update_committee(committee_xml_id, parliament_num=None):

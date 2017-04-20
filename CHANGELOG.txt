@@ -120,3 +120,8 @@
 
 1.1.19:
     * Bugfix: Althingi module's "all" command didn't include vote castings.
+
+1.1.20:
+    * Improvements under the hood: bugfixes, data management and code improvements.
+    * Bugfix: Removed repetitions of the same issues in committee view.
+    * More document types added.

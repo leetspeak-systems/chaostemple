@@ -125,3 +125,6 @@
     * Improvements under the hood: bugfixes, data management and code improvements.
     * Bugfix: Removed repetitions of the same issues in committee view.
     * More document types added.
+
+1.1.21:
+    * Bugfix: Althingi module couldn't create settings.py file in all cases.

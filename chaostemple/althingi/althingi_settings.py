@@ -17,8 +17,8 @@ USE_XML_CACHE = False
 ALTHINGI_ISSUE_URL = 'http://www.althingi.is/dba-bin/ferill.pl?ltg=%d&mnr=%d' # % (parliament_num, issue_num)
 ALTHINGI_PERSON_URL = 'http://www.althingi.is/altext/cv/is/?nfaerslunr=%d' # % person_xml_id
 
-if not os.path.isfile('althingi/settings.py'):
-    with open('althingi/settings.py', 'w') as f:
+if not os.path.isfile(os.path.join(BASE_DIR, 'althingi/settings.py')):
+    with open(os.path.join(BASE_DIR, 'althingi/settings.py'), 'w') as f:
         f.write('# Put your custom settings here. See \'althingi/althingi_settings.py\' for available options.\n')
         f.close()
 

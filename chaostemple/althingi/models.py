@@ -194,6 +194,9 @@ class Parliament(models.Model):
     def __unicode__(self):
         return u'Parliament %d' % self.parliament_num
 
+    class Meta:
+        ordering = ['-parliament_num']
+
 
 class Issue(models.Model):
     ISSUE_TYPES = (

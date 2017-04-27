@@ -41,12 +41,6 @@ class ExtraVarsMiddleware():
             else:
                 parliament = None
 
-        # Determine newest parliament number
-        try:
-            newest_parliament_num = Parliament.objects.order_by('-parliament_num')[0].parliament_num
-        except IndexError:
-            newest_parliament_num = None
-
         # Stuff for logged in users
         bookmarked_issues = None
         incoming_issues = None
@@ -73,7 +67,7 @@ class ExtraVarsMiddleware():
         breadcrumbs = None if parliament is None else make_breadcrumbs(request, parliament)
 
         request.extravars = {
-            'newest_parliament_num': newest_parliament_num,
+            'newest_parliament_num': CURRENT_PARLIAMENT_NUM,
             'parliament_num': parliament_num,
             'parliament': parliament,
             'breadcrumbs': breadcrumbs,

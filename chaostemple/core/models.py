@@ -23,7 +23,7 @@ class IssueQuerySet(models.QuerySet):
         to the given user.
         '''
 
-        issues = self.filter(dossierstatistic__user_id=user_id, dossierstatistic__has_useful_info=True).annotate(
+        issues = self.filter(dossierstatistic__user_id=user_id).annotate(
             new_documents=F('document_count') - F('dossierstatistic__document_count'),
             new_reviews=F('review_count') - F('dossierstatistic__review_count')
         )
@@ -36,7 +36,10 @@ class IssueQuerySet(models.QuerySet):
         See also IssueQuerySet.annotate_news().
         '''
 
-        issues = self.annotate_news(user_id).exclude(new_documents=0, new_reviews=0)
+        issues = self.annotate_news(user_id).exclude(new_documents=0, new_reviews=0).filter(
+            dossierstatistic__user_id=user_id,
+            dossierstatistic__has_useful_info=True
+        )
 
         return issues
 

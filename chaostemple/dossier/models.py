@@ -86,8 +86,8 @@ class Dossier(models.Model):
     issue = models.ForeignKey(Issue, related_name='dossiers')
     dossier_type = models.CharField(max_length=10, choices=DOSSIER_TYPES)
 
-    document = models.ForeignKey(Document, null=True, related_name='dossiers')
-    review = models.ForeignKey(Review, null=True, related_name='dossiers')
+    document = models.ForeignKey(Document, null=True, related_name='dossiers', on_delete=models.PROTECT)
+    review = models.ForeignKey(Review, null=True, related_name='dossiers', on_delete=models.PROTECT)
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='dossiers')
     attention = models.CharField(max_length=20, default='none', choices=ATTENTION_STATES)

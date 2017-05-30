@@ -138,3 +138,6 @@
 
 1.1.24:
     * Bugfix: Issue bookmarks were not showing up unless the user had entered some data about them.
+
+1.1.25:
+    * Dossiers will refuse to be deleted when reviews and documents are.

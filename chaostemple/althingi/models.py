@@ -290,6 +290,14 @@ class IssueSummary(models.Model):
     media_coverage = models.TextField()
 
 
+class Rapporteur(models.Model):
+    issue = models.ForeignKey('Issue', related_name='rapporteurs')
+    person = models.ForeignKey('Person', related_name='rapporteurs')
+
+    def __unicode__(self):
+        return u'%s (%s)' % (self.person, self.issue)
+
+
 class Review(models.Model):
     REVIEW_TYPES = (
         (u'aa', u'áætlun'),

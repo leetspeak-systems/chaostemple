@@ -20,6 +20,7 @@ from althingi.models import Parliament
 from althingi.models import Party
 from althingi.models import Person
 from althingi.models import Proposer
+from althingi.models import Rapporteur
 from althingi.models import Review
 from althingi.models import Seat
 from althingi.models import Session
@@ -807,6 +808,33 @@ def update_issue(issue_num, parliament_num=None):
         issue.save()
 
         print('Added issue: %s' % issue.detailed())
+
+    # Add or remove rapporteurs
+    rapporteurs_xml = issue_xml.getElementsByTagName(u'framsögumenn')
+    if len(rapporteurs_xml) > 0:
+        rapporteur_ids = []
+        for rapporteur_xml in rapporteurs_xml[0].getElementsByTagName(u'framsögumaður'):
+            person_xml_id = int(rapporteur_xml.getAttribute(u'id'))
+            person = update_person(person_xml_id, parliament.parliament_num)
+
+            try:
+                rapporteur = Rapporteur.objects.get(issue_id=issue.id, person_id=person.id)
+
+                print('Already have rapporteur: %s' % rapporteur)
+            except Rapporteur.DoesNotExist:
+                rapporteur = Rapporteur()
+                rapporteur.issue_id = issue.id
+                rapporteur.person_id = person.id
+                rapporteur.save()
+
+                print('Added rapporteur: %s' % rapporteur)
+
+            rapporteur_ids.append(rapporteur.id)
+
+        # Delete rapporteurs that no longer exist online.
+        for rapporteur in Rapporteur.objects.filter(issue_id=issue.id).exclude(id__in=rapporteur_ids):
+            rapporteur.delete()
+            print('Deleted non-existent rapporteur: %s' % rapporteur)
 
     # Check if issue was previously published
     linked_issues_xml = issue_xml.getElementsByTagName(u'tengdMál')

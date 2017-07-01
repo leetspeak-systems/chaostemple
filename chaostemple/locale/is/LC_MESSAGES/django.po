@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-01 20:10+0000\n"
+"POT-Creation-Date: 2017-07-01 20:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -38,30 +38,30 @@ msgstr "þing"
 msgid "Today's issues"
 msgstr "Mál dagsins"
 
-#: core/breadcrumbs.py:115 templates/base.html:60 templates/base.html:64
+#: core/breadcrumbs.py:115 templates/base.html:60
 #: templates/core/upcoming.html:14
 msgid "Current and Upcoming"
 msgstr "Á döfinni"
 
-#: core/breadcrumbs.py:122 templates/base.html:127
+#: core/breadcrumbs.py:122 templates/base.html:126
 msgid "Bookmarks"
 msgstr "Bókamerki"
 
-#: core/breadcrumbs.py:129 templates/base.html:107 templates/base.html:109
+#: core/breadcrumbs.py:129 templates/base.html:106 templates/base.html:108
 #: templates/core/user_issues_open.html:13
 msgid "Opened Issues"
 msgstr "Opnuð mál"
 
-#: core/breadcrumbs.py:136 templates/base.html:112
+#: core/breadcrumbs.py:136 templates/base.html:111
 msgid "Issues with new data"
 msgstr "Mál með nýjum gögnum"
 
-#: core/breadcrumbs.py:143 templates/base.html:66
+#: core/breadcrumbs.py:143 templates/base.html:65
 #: templates/core/parliament_documents_new.html:11
 msgid "New Parliamentary Documents"
 msgstr "Ný þingskjöl"
 
-#: core/breadcrumbs.py:150 templates/base.html:139
+#: core/breadcrumbs.py:150 templates/base.html:138
 #: templates/core/parliament.html:8 templates/core/parliament_committee.html:35
 #: templates/core/person.html:126 templates/core/stub/user_access_list.html:11
 msgid "Issues"
@@ -71,7 +71,7 @@ msgstr "Þingmál"
 msgid "issue"
 msgstr "mál"
 
-#: core/breadcrumbs.py:164 templates/base.html:69 templates/base.html:141
+#: core/breadcrumbs.py:164 templates/base.html:68 templates/base.html:140
 #: templates/core/parliament.html:9 templates/core/parliament_issue.html:59
 #: templates/core/parliament_sessions.html:8
 msgid "Parliamentary Sessions"
@@ -81,18 +81,18 @@ msgstr "Þingfundir"
 msgid "parliamentary session"
 msgstr "þingfundur"
 
-#: core/breadcrumbs.py:178 templates/base.html:142
+#: core/breadcrumbs.py:178 templates/base.html:141
 #: templates/core/parliament.html:10
 #: templates/core/parliament_committees.html:7
 msgid "Committees"
 msgstr "Nefndir"
 
-#: core/breadcrumbs.py:201 templates/base.html:145
+#: core/breadcrumbs.py:201 templates/base.html:144
 #: templates/core/parliament_parties.html:7
 msgid "Parliamentary Parties"
 msgstr "Þingflokkar"
 
-#: core/breadcrumbs.py:213 templates/base.html:144
+#: core/breadcrumbs.py:213 templates/base.html:143
 #: templates/core/parliament.html:11 templates/core/parliament_parties.html:14
 #: templates/core/parliament_persons.html:7
 msgid "Parliamentarians"
@@ -222,44 +222,48 @@ msgstr ""
 msgid "Otherwise, please contact us and notify us of the problem."
 msgstr "Ef ekki, endilega láttu okkur vita af vandanum.."
 
-#: templates/base.html:87 templates/core/parliament_issue.html:47
+#: templates/base.html:64
+msgid "Upcoming Issues"
+msgstr "Komandi mál"
+
+#: templates/base.html:86 templates/core/parliament_issue.html:47
 msgid "Committee Meetings"
 msgstr "Nefndarfundir"
 
-#: templates/base.html:121
+#: templates/base.html:120
 msgid "No incoming data"
 msgstr "Engin ný gögn"
 
-#: templates/base.html:137
+#: templates/base.html:136
 msgid "Lists"
 msgstr "Listar"
 
-#: templates/base.html:152 templates/core/user_home.html:6
+#: templates/base.html:151 templates/core/user_home.html:6
 #: templates/registration/password_change_done.html:11
 msgid "User Home"
 msgstr "Heimasvæði"
 
-#: templates/base.html:153 templates/core/user_access.html:15
+#: templates/base.html:152 templates/core/user_access.html:15
 msgid "Access"
 msgstr "Aðgangur"
 
-#: templates/base.html:155
+#: templates/base.html:154
 msgid "Logout"
 msgstr "Útskrá"
 
-#: templates/base.html:159 templates/registration/login.html:12
+#: templates/base.html:158 templates/registration/login.html:12
 msgid "Login"
 msgstr "Innskrá"
 
-#: templates/base.html:192
+#: templates/base.html:191
 msgid "Yes"
 msgstr "Já"
 
-#: templates/base.html:193
+#: templates/base.html:192
 msgid "No"
 msgstr "Nei"
 
-#: templates/base.html:200
+#: templates/base.html:199
 msgid "No results found"
 msgstr "Engar niðurstöður fundust"
 

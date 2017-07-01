@@ -61,8 +61,7 @@
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{% url 'day' %}"><strong>{% blocktrans %}Today's issues{% endblocktrans %}</strong></a></li>
                                 {% if next_sessions.count or next_committee_agendas.count %}
-                                    <li><a href="{% url 'upcoming' %}"><strong>{% trans 'Current and Upcoming' %}</strong></a></li>
-                                    <li class="divider"></li>
+                                    <li><a href="{% url 'upcoming' %}"><strong>{% trans 'Upcoming Issues' %}</strong></a></li>
                                     <li><a href="{% url 'parliament_documents_new' parliament_num %}"><strong>{% trans 'New Parliamentary Documents' %}</strong></a></li>
                                     <li class="divider"></li>
                                     {% if next_sessions.count %}

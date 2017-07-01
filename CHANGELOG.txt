@@ -141,3 +141,6 @@
 
 1.1.25:
     * Dossiers will refuse to be deleted when reviews and documents are.
+
+1.2:
+    * List of new parliamentary documents implemented.

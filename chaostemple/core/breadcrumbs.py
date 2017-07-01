@@ -112,7 +112,7 @@ def process_breadcrumbs(breadcrumbs, view):
         breadcrumbs = leave_breadcrumb(
             breadcrumbs,
             ('upcoming',),
-            _('Current and Upcoming')
+            _('Upcoming Issues')
         )
 
     if view_name == 'user_issues_bookmarked':

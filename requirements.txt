@@ -3,3 +3,4 @@ beautifulsoup
 django-registration-redux
 django-model-utils
 unidecode
+dateutils

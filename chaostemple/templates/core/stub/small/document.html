@@ -1,0 +1,3 @@
+{% load smart_urls %}
+
+<a href="{% breadcrumb_url 'parliament_issue' document.issue.parliament.parliament_num document.issue.issue_num %}">{{ document.get_doc_type_display|capfirst }} ({{ document.doc_num }})</a>

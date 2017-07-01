@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block javascript %}
+    <script language="javascript" type="text/javascript" src="{% static 'core/js/issue_control.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+    <h1>{% trans 'New Parliamentary Documents' %}</h1>
+
+    <table class="table">
+        <tr>
+            <th>{% trans 'Published' %}</th>
+            <th>{% trans 'Parliamentary Document' %}</th>
+            <th>{% trans 'Issue' %}</th>
+        </tr>
+        {% for document in documents %}
+            <tr>
+                <td class="nowrap">{{ document.time_published|date }} ({{ document.time_published|time }})</td>
+                <td>
+                    <table style="width: 100%;">
+                        {% include 'core/stub/small/document.html' %}
+                    </table>
+                </td>
+                <td>
+                    <table style="width: 100%;">
+                        {% include 'core/stub/small/issue.html' with issue=document.issue %}
+                    </table>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+{% endblock %}

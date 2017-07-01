@@ -136,6 +136,13 @@ def process_breadcrumbs(breadcrumbs, view):
             _('Issues with new data')
         )
 
+    if view_name == 'parliament_documents_new':
+        breadcrumbs = leave_breadcrumb(
+            breadcrumbs,
+            ('parliament_documents_new', parliament_num),
+            _('New Parliamentary Documents')
+        )
+
     if view_name == 'parliament_issues':
         breadcrumbs = leave_breadcrumb(
             breadcrumbs,

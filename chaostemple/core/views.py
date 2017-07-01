@@ -16,6 +16,8 @@ from django.shortcuts import render
 from django.utils import dateparse
 from django.utils import timezone
 
+from chaostemple.settings import MEANING_OF_RECENT
+
 from core.models import Access
 from core.models import AccessUtilities
 from core.models import Issue
@@ -160,6 +162,22 @@ def parliament(request, parliament_num):
     ctx = {
     }
     return render(request, 'core/parliament.html', ctx)
+
+
+def parliament_documents_new(request, parliament_num):
+    today = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    a_while_ago = today - MEANING_OF_RECENT
+    documents = Document.objects.select_related('issue__parliament').prefetch_related('issue__proposers__person').filter(
+        time_published__gte=a_while_ago
+    ).order_by('-time_published')
+
+    IssueUtilities.populate_dossier_statistics([d.issue for d in documents])
+
+    ctx = {
+        'documents': documents
+    }
+
+    return render(request, 'core/parliament_documents_new.html', ctx)
 
 
 def parliament_issues(request, parliament_num):

@@ -144,3 +144,6 @@
 
 1.2:
     * List of new parliamentary documents implemented.
+
+1.2.1:
+    * Minor: Confusing title of "Upcoming Issues" page fixed.

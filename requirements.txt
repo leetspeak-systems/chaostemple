@@ -4,3 +4,4 @@ django-registration-redux
 django-model-utils
 unidecode
 dateutils
+markdown2

@@ -1,3 +1,4 @@
+{% load markdown %}
 
 <ul control="memo-list" data-dossier-id="{{ dossier_id }}" {% if dossier.user == request.user %}class="sortable"{% endif %} style="{% if memos.count == 0 %}display: none;{% endif %}">
     {% for memo in memos %}
@@ -21,7 +22,8 @@
                         {% endif %}
                     </td>
                     <td control="memo-content-container" data-id="{{ memo.id }}">
-                        <span control="memo-content" data-id="{{ memo.id }}">{{ memo.content|urlize }}</span>
+                        <span control="memo-content-plaintext" data-id="{{ memo.id }}" style="display: none;">{{ memo.content }}</span>
+                        <span control="memo-content" data-id="{{ memo.id }}">{{ memo.content|urlize|markdown }}</span>
                         <textarea control="edit-memo-content" data-id="{{ memo.id }}" data-dossier-id="{{ dossier_id }}" maxlength="{{ max_memo_length }}">{{ memo.content }}</textarea>
                     </td>
                 </tr>

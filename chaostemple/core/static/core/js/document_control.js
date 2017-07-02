@@ -107,6 +107,7 @@ $(document).ready(function() {
 
         var $dossier_memos = $('div[control="dossier-memos"][data-id=' + dossier_id + '] ul');
         var $memo_list = $('ul[control="memo-list"][data-dossier-id=' + dossier_id + ']');
+        var $memo_content_plaintext = $('span[control="memo-content-plaintext"][data-id=' + memo_id + ']');
         var $memo_content = $('span[control="memo-content"][data-id=' + memo_id + ']');
         var $edit_memo_content = $dossier_memos.find('textarea[control="edit-memo-content"][data-id=' + memo_id + ']');
         var $edit_memo_counter = $dossier_memos.find('td[control="edit-memo-counter"][data-id=' + memo_id + ']');
@@ -119,7 +120,7 @@ $(document).ready(function() {
         $memo_list.find('textarea[control="edit-memo-content"]').hide();
         $memo_list.find('td[control="edit-memo-counter"]').hide();
 
-        var content = $memo_content.text();
+        var content = $memo_content_plaintext.text();
 
         $memo_content.hide();
         $edit_memo_content.val(content);

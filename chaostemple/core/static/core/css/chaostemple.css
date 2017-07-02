@@ -41,6 +41,7 @@ div[control="dossier-memos"] div[control="edit-memo-controls"] .btn { vertical-a
 div[control="dossier-memos"] div[control="add-memo-controls"] { display: inline; margin-right: 6px; visibility: hidden; }
 div[control="dossier-memos"] td[control="memo-content-container"] { vertical-align: top; } /* Needed for consistent vertical alignment. */
 div[control="dossier-memos"] span[control="memo-content"] { margin: 1px 12px 0px 2px; display: block; }
+div[control="dossier-memos"] span[control="memo-content"] p { margin: 0px; }
 div[control="dossier-memos"] textarea[control="edit-memo-content"] { display: none; height: 1px /* is set by JavaScript. */; width: 100%; padding: 0px 0px 0px 1px; }
 div[control="dossier-memos"] td[control="edit-memo-counter"] { text-align: right; vertical-align: top; display: none; width: 1px; padding-left: 6px; }
 div[control="dossier-memos"] li[control="add-memo-line"] textarea[control="edit-memo-content"] { margin: 1px 0px 5px 0px; }

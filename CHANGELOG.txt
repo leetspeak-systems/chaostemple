@@ -150,3 +150,6 @@
 
 1.2.2:
     * Minor: Confusing breadcrumb fixed.
+
+1.2.3:
+    * A bug in the annotation of new data fixed, which was breaking bookmarks.

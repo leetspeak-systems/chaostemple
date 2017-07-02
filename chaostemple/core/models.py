@@ -5,7 +5,10 @@ from threading import currentThread
 from django.conf import settings
 from django.db import models
 from django.db.models import F
+from django.db.models import IntegerField
+from django.db.models import OuterRef
 from django.db.models import Q
+from django.db.models import Subquery
 
 from althingi.models import Issue as AlthingiIssue
 from althingi.models import Person
@@ -19,13 +22,19 @@ class IssueQuerySet(models.QuerySet):
     def annotate_news(self, user_id):
         '''
         Annotates the query with the number of new_documents and new_reviews.
-        Note that a side-effect is that it limits the joined dossier statistics
-        to the given user.
         '''
 
-        issues = self.filter(dossierstatistic__user_id=user_id).annotate(
+        news_subquery = Issue.objects.filter(
+            dossierstatistic__user_id=user_id,
+            pk=OuterRef('pk')
+        ).annotate(
             new_documents=F('document_count') - F('dossierstatistic__document_count'),
             new_reviews=F('review_count') - F('dossierstatistic__review_count')
+        )
+
+        issues = self.annotate(
+            new_documents=Subquery(news_subquery.values('new_documents'), output_field=IntegerField()),
+            new_reviews=Subquery(news_subquery.values('new_reviews'), output_field=IntegerField())
         )
 
         return issues

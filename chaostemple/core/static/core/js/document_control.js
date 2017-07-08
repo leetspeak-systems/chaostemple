@@ -111,6 +111,7 @@ $(document).ready(function() {
         var $memo_content = $('span[control="memo-content"][data-id=' + memo_id + ']');
         var $edit_memo_content = $dossier_memos.find('textarea[control="edit-memo-content"][data-id=' + memo_id + ']');
         var $edit_memo_counter = $dossier_memos.find('td[control="edit-memo-counter"][data-id=' + memo_id + ']');
+        var $sort_memo = $dossier_memos.find('span[control="sort-memo"][data-id=' + memo_id + ']');
 
         // Make sure memos are visible.
         $dossier_memos.show();
@@ -123,6 +124,7 @@ $(document).ready(function() {
         var content = $memo_content_plaintext.text();
 
         $memo_content.hide();
+        $sort_memo.hide();
         $edit_memo_content.val(content);
         $edit_memo_content.show();
         $edit_memo_content.focus();
@@ -201,6 +203,7 @@ $(document).ready(function() {
             $('textarea[control="edit-memo-content"][data-id=' + memo_id + ']').hide();
             $('td[control="edit-memo-counter"][data-id=' + memo_id + ']').hide();
             $('span[control="memo-content"][data-id=' + memo_id + ']').show();
+            $('span[control="sort-memo"][data-id=' + memo_id + ']').show();
 
             if ($memo_list.find('li[control="memo-line"]').length == 0) {
                 $memo_list.hide();

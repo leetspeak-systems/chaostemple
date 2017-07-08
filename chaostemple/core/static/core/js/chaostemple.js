@@ -20,6 +20,11 @@ function csrfSafeMethod(method) {
     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 }
 
+function reloadSortable() {
+    // Make things sortable
+    $('.sortable').sortable({ handle: '.handle' });
+}
+
 $(document).ready(function() {
     // Set focus on first text field on page, if it exists
     $("form input[type='text']").focus();
@@ -33,8 +38,7 @@ $(document).ready(function() {
         }
     });
 
-    // Make things sortable
-    $('.sortable').sortable();
+    reloadSortable();
 });
 
 // Prevent anchors used as buttons from scrolling to top of page

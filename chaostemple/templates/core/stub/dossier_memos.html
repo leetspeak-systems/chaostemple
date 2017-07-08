@@ -22,6 +22,10 @@
                         {% endif %}
                     </td>
                     <td control="memo-content-container" data-id="{{ memo.id }}">
+                        {% if dossier.user == request.user %}
+                            <span control="sort-memo" class="glyphicon glyphicon-move handle" style="float: right;"></span>
+                        {% endif %}
+
                         <span control="memo-content-plaintext" data-id="{{ memo.id }}" style="display: none;">{{ memo.content }}</span>
                         <span control="memo-content" data-id="{{ memo.id }}">{{ memo.content|urlize|markdown }}</span>
                         <textarea control="edit-memo-content" data-id="{{ memo.id }}" data-dossier-id="{{ dossier_id }}" maxlength="{{ max_memo_length }}">{{ memo.content }}</textarea>

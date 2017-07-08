@@ -33,9 +33,10 @@ div[control="dossier"] label.fieldname { display: inline; margin: 0px 12px 0px 1
 div[control="dossier"] .badge { font-size: xx-small; }
 
 div[control="dossier-memos"] ul { margin: 10px 0px 0px 0px; padding: 10px 0px 0px 18px; border-top: 1px solid #e0e0e0; font-size: small; }
-div[control="dossier-memos"] ul li { list-style: none; cursor: move; margin-top: 4px; margin-left: -18px; }
+div[control="dossier-memos"] ul li { list-style: none; margin-top: 4px; margin-left: -18px; }
 div[control="dossier-memos"] ul li:first-child { margin-top: 0px; }
 div[control="dossier-memos"] ul li input[type="text"] { border: 1px solid #808080; margin: 0px 2px 0px 2px; padding: 0px 6px 0px 6px; width: 100%; }
+div[control="dossier-memos"] span[control="sort-memo"] { cursor: move; }
 div[control="dossier-memos"] div[control="edit-memo-controls"] { display: inline; margin-right: 6px; }
 div[control="dossier-memos"] div[control="edit-memo-controls"] .btn { vertical-align: top; } /* Needed for consistent vertical alignment. */
 div[control="dossier-memos"] div[control="add-memo-controls"] { display: inline; margin-right: 6px; visibility: hidden; }

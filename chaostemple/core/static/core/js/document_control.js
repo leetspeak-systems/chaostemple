@@ -166,7 +166,7 @@ $(document).ready(function() {
                     },
                     done: function(data, textStatus) {
                         $('div[control="dossier-memos"][data-id=' + data.dossier_id + ']').html(data.html_content);
-                        $('.sortable').sortable(); // Refresh sortables
+                        reloadSortable();
 
                         $('div[control="dossier"][data-id=' + data.dossier_id + ']').setMemoCount(data.memo_count);
                     },
@@ -186,7 +186,7 @@ $(document).ready(function() {
                     },
                     done: function(data, textStatus) {
                         $('div[control="dossier-memos"][data-id=' + data.dossier_id + ']').html(data.html_content);
-                        $('.sortable').sortable(); // Refresh sortables
+                        reloadSortable();
                     },
                 });
             }
@@ -232,7 +232,7 @@ $(document).ready(function() {
             url: '/dossier/memo/' + memo_id + '/delete/',
             done: function(data, textStatus) {
                 $('div[control="dossier-memos"][data-id=' + data.dossier_id + ']').html(data.html_content);
-                $('.sortable').sortable();
+                reloadSortable();
 
                 $('div[control="dossier"][data-id=' + data.dossier_id + ']').setMemoCount(data.memo_count);
             }
@@ -263,7 +263,7 @@ $(document).ready(function() {
             },
             done: function(data, textStatus) {
                 $('div[control="dossier-memos"][data-id=' + data.dossier_id + ']').html(data.html_content);
-                $('.sortable').sortable(); // Refresh sortables
+                reloadSortable();
             },
         });
 

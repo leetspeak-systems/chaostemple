@@ -95,6 +95,15 @@ class Dossier(models.Model):
     support = models.CharField(max_length=20, default='undefined', choices=SUPPORT_STATES)
     proposal = models.CharField(max_length=20, default='none', choices=PROPOSAL_STATES)
 
+    def is_useful(self):
+        return any([
+            self.memos.count() != 0,
+            self.attention != 'none',
+            self.knowledge != 0,
+            self.support != 'undefined',
+            self.proposal != 'none',
+        ])
+
     def update_statistic(self, statistic, field, old_value, new_value):
         # Short-hands
         issue_id = self.issue_id

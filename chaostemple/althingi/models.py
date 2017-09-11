@@ -375,7 +375,7 @@ class Review(models.Model):
             super(Review, self).delete()
         except models.deletion.ProtectedError:
 
-            msg = u'Attempted to remove a review with dossier data:'
+            msg = u'Attempted to remove a review with referenced data:'
             msg += u' issue_id = %d' % self.issue_id
             msg += u', review_id = %d' % self.id
             msg += u', issue_name = "%s"' % self.issue.name

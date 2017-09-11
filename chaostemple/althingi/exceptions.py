@@ -3,5 +3,5 @@ class AlthingiException(Exception):
     pass
 
 
-class DataIntegrityException(AlthingiException):
+class DataIntegrityException(Exception):
     pass

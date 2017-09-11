@@ -382,7 +382,7 @@ class Review(models.Model):
             msg += u', review_sender_name = "%s"' % self.sender_name
             msg += u', review_log_num = %d' % self.log_num
 
-            raise DataIntegrityException(msg)
+            raise DataIntegrityException(msg.encode('utf-8'))
 
         # Re-calculate Issue's Review count
         self.issue.review_count = Review.objects.filter(issue=self.issue).count()

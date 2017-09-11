@@ -20,7 +20,6 @@ from althingi.updaters import update_vote_casting
 from althingi.updaters import update_vote_castings
 
 from althingi.exceptions import AlthingiException
-from althingi.exceptions import DataIntegrityException
 
 from datetime import datetime
 
@@ -193,8 +192,6 @@ class Command(BaseCommand):
                 update_sessions(parliament_num)
                 update_committee_agendas(parliament_num)
                 update_vote_castings(parliament_num)
-        except DataIntegrityException as e:
-            self.error(e, show_help=False)
         except AlthingiException as e:
             self.error(e)
 

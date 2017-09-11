@@ -159,3 +159,6 @@
 
 1.2.5:
     * Memo text now selectable. A specific handle is provided for re-ordering instead of text itself used as a handle.
+
+1.2.6:
+    * Internal diagnostics improved.

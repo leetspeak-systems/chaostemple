@@ -162,3 +162,6 @@
 
 1.2.6:
     * Internal diagnostics improved.
+
+1.2.7:
+    * More internal diagnostics gymnastics.

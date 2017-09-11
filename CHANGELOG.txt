@@ -156,3 +156,6 @@
 
 1.2.4:
     * Markdown support added to memos in dossiers.
+
+1.2.5:
+    * Memo text now selectable. A specific handle is provided for re-ordering instead of text itself used as a handle.

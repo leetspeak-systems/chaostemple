@@ -17,6 +17,7 @@ from unidecode import unidecode
 import urllib
 
 from althingi_settings import CURRENT_PARLIAMENT_NUM
+from althingi.exceptions import DataIntegrityException
 from althingi.utils import format_date
 
 class PartyQuerySet(models.QuerySet):
@@ -370,7 +371,19 @@ class Review(models.Model):
             self.issue.save()
 
     def delete(self):
-        super(Review, self).delete()
+        try:
+            super(Review, self).delete()
+        except models.deletion.ProtectedError:
+
+            msg = u'Attempted to remove a review with dossier data:'
+            msg += u' issue_id = %d' % self.issue_id
+            msg += u', review_id = %d' % self.id
+            msg += u', issue_name = "%s"' % self.issue.name
+            msg += u', review_sender_name = "%s"' % self.sender_name
+            msg += u', review_log_num = %d' % self.log_num
+
+            raise DataIntegrityException(msg)
+
         # Re-calculate Issue's Review count
         self.issue.review_count = Review.objects.filter(issue=self.issue).count()
         self.issue.save()

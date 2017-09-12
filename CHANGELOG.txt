@@ -165,3 +165,6 @@
 
 1.2.7:
     * More internal diagnostics gymnastics.
+
+1.3:
+    * Icelandic Parliament number increased to 147. Version number celebratorily increased to 1.3.

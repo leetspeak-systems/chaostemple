@@ -290,22 +290,14 @@ def update_seats(person_xml_id, parliament_num=None):
             party_xml_id = int(seat_xml.getElementsByTagName(u'þingflokkur')[0].getAttribute(u'id'))
 
             try:
-                seat = Seat.objects.filter(
+                seat = Seat.objects.get(
                     person__person_xml_id=person_xml_id,
                     parliament__parliament_num=parliament.parliament_num,
-                    timing_in=timing_in
-                ).get(Q(timing_out=timing_out) | Q(timing_out=None))
+                    timing_in=timing_in,
+                    timing_out=timing_out
+                )
 
-                changed = False
-                if seat.timing_out != timing_out:
-                    seat.timing_out = timing_out
-                    changed = True
-
-                if changed:
-                    seat.save()
-                    print('Updated seat: %s' % seat)
-                else:
-                    print('Already have seat: %s' % seat)
+                print('Already have seat: %s' % seat)
 
             except Seat.DoesNotExist:
                 seat = Seat()
@@ -324,6 +316,14 @@ def update_seats(person_xml_id, parliament_num=None):
                 print('Added seat: %s' % seat)
 
             seats.append(seat)
+
+    deletable_seats = Seat.objects.filter(
+        parliament__parliament_num=parliament.parliament_num,
+        person__person_xml_id=person_xml_id
+    ).exclude(id__in=[s.id for s in seats])
+    for seat in deletable_seats:
+        seat.delete()
+        print('Deleted non-existent seat: %s' % seat)
 
     already_haves['seats'][ah_key] = seats
 

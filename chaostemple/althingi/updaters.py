@@ -1718,7 +1718,12 @@ def _process_committee_agenda_xml(committee_agenda_xml):
     items_xml = committee_agenda_xml.getElementsByTagName(u'dagskrárliður')
     for item_xml in items_xml:
         order = int(item_xml.getAttribute(u'númer'))
-        name = item_xml.getElementsByTagName(u'heiti')[0].firstChild.nodeValue
+
+        try:
+            name = item_xml.getElementsByTagName(u'heiti')[0].firstChild.nodeValue
+        except AttributeError:
+            name = '[ Missing name ]'
+
         issue = None
 
         if order > max_order:
@@ -1732,7 +1737,15 @@ def _process_committee_agenda_xml(committee_agenda_xml):
             issue_parliament_num = int(issue_xml.getAttribute(u'löggjafarþing'))
 
             # It is assumed that issue_group will be 'A' (i.e. not 'B', which means an issue without documents)
-            issue = update_issue(issue_num, issue_parliament_num)
+            try:
+                issue = update_issue(issue_num, issue_parliament_num)
+            except AlthingiException:
+                # If the update_issue function fails here, something is wrong
+                # in the XML. We'll move on with our lives. Probably, the only
+                # indication will be that the order of agenda items will be
+                # missing a number, which will heal when the updater is run
+                # again once the XML has been fixed.
+                continue
 
         try:
             item = CommitteeAgendaItem.objects.get(order=order, committee_agenda=committee_agenda)

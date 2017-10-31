@@ -172,3 +172,6 @@
 1.3.1:
     * Althingi module: Seats mindlessly added and deleted when they change, instead of updated, because entry's true uniqueness seems kind of unpredictable.
     * Tolerance added for broken XML in committee agendas.
+
+1.3.2:
+    * Icelandic Parliament number increased to 148. Version number celebratorily increased to 1.3.2.

@@ -1607,6 +1607,16 @@ def update_committee_agendas(parliament_num=None, date_limit=None):
 
         committee_agendas.append(committee_agenda)
 
+    # Delete committee agendas that no longer exist in the requested
+    # parliament. We'll skip this if we're searching by date_limit because
+    # then the search criteria is no longer valid.
+    if date_limit is None:
+        for committee_agenda in CommitteeAgenda.objects.filter(
+            parliament__parliament_num=parliament.parliament_num
+        ).exclude(id__in=[a.id for a in committee_agendas]):
+            # Safe delete. The function will delete the agenda if it truly no longer exists.
+            update_committee_agenda(committee_agenda.committee_agenda_xml_id, parliament.parliament_num)
+
     return committee_agendas
 
 
@@ -1635,10 +1645,22 @@ def update_committee_agenda(committee_agenda_xml_id, parliament_num=None):
     committee_agenda_xml = committee_agenda_full_xml.getElementsByTagName(u'nefndarfundur')[0]
 
     if not committee_agenda_xml.getAttribute(u'númer'):
-        # Committee has been deleted in XML, meaning cancelled.
+        # Committee agenda has been deleted in XML, meaning cancelled.
         CommitteeAgenda.objects.get(committee_agenda_xml_id=committee_agenda_xml_id).delete()
 
         print('Deleted non-existent committee agenda: %d' % committee_agenda_xml_id)
+        return
+    elif int(committee_agenda_xml.getAttribute(u'þingnúmer')) != parliament.parliament_num:
+        # Committee agenda exists, but not in this parliament. (A corrected
+        # mistake in the XML, most likely.)
+        CommitteeAgenda.objects.get(
+            committee_agenda_xml_id=committee_agenda_xml_id,
+            parliament__parliament_num=parliament.parliament_num
+        ).delete()
+        print('Deleted committee agenda from parliament: %d (parliament %d)' % (
+            committee_agenda_xml_id,
+            parliament.parliament_num)
+        )
         return
 
     return _process_committee_agenda_xml(committee_agenda_xml) # Returns CommitteeAgenda object

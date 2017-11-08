@@ -373,7 +373,10 @@ def update_vote_casting(vote_casting_xml_id, parliament_num):
 
     timing = sensible_datetime(vote_casting_xml.getElementsByTagName(u'tími')[0].firstChild.nodeValue)
     vote_casting_type = vote_casting_xml.getElementsByTagName(u'tegund')[0].firstChild.nodeValue
-    specifics = vote_casting_xml.getElementsByTagName(u'nánar')[0].firstChild.nodeValue.strip()
+    try:
+        specifics = vote_casting_xml.getElementsByTagName(u'nánar')[0].firstChild.nodeValue.strip()
+    except (IndexError, AttributeError):
+        specifics = ''
 
     session_num = int(vote_casting_xml.getElementsByTagName(u'fundur')[0].firstChild.nodeValue)
     session = update_session(session_num, parliament.parliament_num)

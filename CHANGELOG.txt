@@ -175,3 +175,6 @@
 
 1.3.2:
     * Icelandic Parliament number increased to 148. Version number celebratorily increased to 1.3.2.
+
+1.3.3:
+    * Improvements to Althingi data retrieval mechanism.

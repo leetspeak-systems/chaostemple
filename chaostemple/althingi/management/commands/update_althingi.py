@@ -18,6 +18,7 @@ from althingi.updaters import update_sessions
 from althingi.updaters import update_session
 from althingi.updaters import update_vote_casting
 from althingi.updaters import update_vote_castings
+from althingi.utils import get_last_parliament_num
 
 from althingi.exceptions import AlthingiException
 
@@ -50,6 +51,7 @@ class Command(BaseCommand):
         print
         print 'Options:'
         print '  parliament=<parliament_num>       Specify parliament number (defaults to current)'
+        print '                                    Must be integer or range of integers, for example 130-140'
         print
 
     def error(self, msg, show_help=True):
@@ -81,19 +83,36 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         try:
             processed_args = self.process_args(options['arguments'])
-            self.update_data(processed_args)
+
+            if 'parliament' in processed_args:
+                # If parliament is specified...
+                try:
+                    # Check if we want a range of parliaments.
+                    if '-' in processed_args['parliament']:
+                        from_to = processed_args['parliament'].split('-')
+                        parliament_from = int(from_to[0])
+                        parliament_to = int(from_to[1])
+                    else:
+                        parliament_from = parliament_to = int(processed_args['parliament'])
+                except (TypeError, ValueError):
+                    self.error('Invalid parliament number')
+            else:
+                # ...else, get the current one.
+                parliament_from = parliament_to = get_last_parliament_num()
+
+            # Determine order of iteration
+            if parliament_from > parliament_to:
+                iterator = reversed(xrange(parliament_to, parliament_from + 1))
+            else:
+                iterator = xrange(parliament_from, parliament_to + 1)
+
+            for parliament_num in iterator:
+                self.update_data(parliament_num, processed_args)
+
         except KeyboardInterrupt:
             quit(1)
 
-    def update_data(self, args):
-
-        parliament_num = None
-        if 'parliament' in args:
-            try:
-                parliament_num = int(args['parliament'])
-            except (TypeError, ValueError):
-                self.error('Invalid parliament number')
-
+    def update_data(self, parliament_num, args):
         try:
             has_run = False
             if 'parliament' in args:

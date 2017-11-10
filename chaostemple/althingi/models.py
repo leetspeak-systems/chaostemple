@@ -276,6 +276,7 @@ class Issue(models.Model):
 
     class Meta:
         ordering = ['issue_num']
+        unique_together = ('parliament', 'issue_num', 'issue_group')
 
 
 class IssueSummary(models.Model):
@@ -297,6 +298,9 @@ class Rapporteur(models.Model):
 
     def __unicode__(self):
         return u'%s (%s)' % (self.person, self.issue)
+
+    class Meta:
+        unique_together = ('issue', 'person')
 
 
 class Review(models.Model):
@@ -393,6 +397,7 @@ class Review(models.Model):
 
     class Meta:
         ordering = ['sender_name', 'date_arrived', 'log_num']
+        unique_together = ('issue', 'log_num')
 
 
 class Document(models.Model):
@@ -492,6 +497,7 @@ class Document(models.Model):
 
     class Meta:
         ordering = ['doc_num']
+        unique_together = ('issue', 'doc_num')
 
 
 class Proposer(models.Model):
@@ -524,6 +530,7 @@ class Proposer(models.Model):
 
     class Meta:
         ordering = ['order']
+        unique_together = ('issue', 'person', 'committee', 'order')
 
 
 class Committee(models.Model):
@@ -535,7 +542,7 @@ class Committee(models.Model):
     parliament_num_last = models.IntegerField(null=True)
     parliaments = models.ManyToManyField('Parliament', related_name='committees')
 
-    committee_xml_id = models.IntegerField()
+    committee_xml_id = models.IntegerField(unique=True)
 
     def __unicode__(self):
         return capfirst(self.name)
@@ -561,7 +568,7 @@ class Person(models.Model):
     slug = models.CharField(max_length=100)
     subslug = models.CharField(max_length=10, null=True)
 
-    person_xml_id = models.IntegerField()
+    person_xml_id = models.IntegerField(unique=True)
 
     def save(self, *args, **kwargs):
         self.slug = slugify(unidecode(self.name))
@@ -592,6 +599,7 @@ class Session(models.Model):
 
     class Meta:
         ordering = ['session_num']
+        unique_together = ('parliament', 'session_num')
 
 
 class SessionAgendaItem(models.Model):
@@ -620,6 +628,7 @@ class SessionAgendaItem(models.Model):
 
     class Meta:
         ordering = ['order']
+        unique_together = ('session', 'order')
 
 
 class CommitteeAgenda(models.Model):
@@ -632,7 +641,7 @@ class CommitteeAgenda(models.Model):
     timing_end = models.DateTimeField(null=True)
     timing_text = models.CharField(max_length=200, null=True)
 
-    committee_agenda_xml_id = models.IntegerField()
+    committee_agenda_xml_id = models.IntegerField(unique=True)
 
     def __unicode__(self):
         return u'%s @ %s' % (self.committee, self.timing_start_planned)
@@ -655,6 +664,7 @@ class CommitteeAgendaItem(models.Model):
 
     class Meta:
         ordering = ['order']
+        unique_together = ('committee_agenda', 'order')
 
 
 class Party(models.Model):
@@ -672,7 +682,7 @@ class Party(models.Model):
 
     slug = models.CharField(max_length=100)
 
-    party_xml_id = models.IntegerField()
+    party_xml_id = models.IntegerField(unique=True)
 
     def save(self, *args, **kwargs):
         self.slug = slugify(unidecode(self.name))
@@ -700,7 +710,7 @@ class Constituency(models.Model):
     parliament_num_last = models.IntegerField(null=True)
     parliaments = models.ManyToManyField('Parliament', related_name='constituencies')
 
-    constituency_xml_id = models.IntegerField()
+    constituency_xml_id = models.IntegerField(unique=True)
 
     def __unicode__(self):
         return self.name
@@ -800,7 +810,7 @@ class VoteCasting(models.Model):
 
     to_committee = models.ForeignKey('Committee', null=True, related_name='vote_castings')
 
-    vote_casting_xml_id = models.IntegerField()
+    vote_casting_xml_id = models.IntegerField(unique=True)
 
     def __unicode__(self):
         if self.specifics:
@@ -827,3 +837,6 @@ class Vote(models.Model):
 
     def __unicode__(self):
         return u'%s: %s' % (self.person, self.vote_response)
+
+    class Meta:
+        unique_together = ('vote_casting', 'person')

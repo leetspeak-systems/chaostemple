@@ -63,7 +63,10 @@ class Command(BaseCommand):
         processed_args = {}
         for arg in args:
             if '=' in arg:
-                varname, varvalue = arg.split('=')
+                try:
+                    varname, varvalue = arg.split('=')
+                except ValueError:
+                    self.error('Argument "%s" is invalid' % arg)
             else:
                 varname = arg
                 varvalue = None

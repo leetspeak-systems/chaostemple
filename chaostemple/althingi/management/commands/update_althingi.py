@@ -113,6 +113,9 @@ class Command(BaseCommand):
             quit(1)
 
     def update_data(self, parliament_num, args):
+
+        print 'Processing parliament %d with args: %s' % (parliament_num, args)
+
         try:
             has_run = False
             if 'parliament' in args:

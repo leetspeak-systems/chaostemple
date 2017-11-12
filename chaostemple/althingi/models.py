@@ -192,6 +192,8 @@ class Parliament(models.Model):
     timing_start = models.DateTimeField()
     timing_end = models.DateTimeField(null=True)
 
+    last_full_update = models.DateTimeField(default=None, null=True)
+
     def __unicode__(self):
         return u'Parliament %d' % self.parliament_num
 

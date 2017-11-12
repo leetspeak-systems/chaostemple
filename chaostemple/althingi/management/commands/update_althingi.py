@@ -1,5 +1,8 @@
 
 from django.core.management.base import BaseCommand
+from django.utils import timezone
+
+from althingi.models import Parliament
 
 from althingi.updaters import update_committee
 from althingi.updaters import update_committee_agenda
@@ -21,8 +24,6 @@ from althingi.updaters import update_vote_castings
 from althingi.utils import get_last_parliament_num
 
 from althingi.exceptions import AlthingiException
-
-from datetime import datetime
 
 class Command(BaseCommand):
 
@@ -217,6 +218,12 @@ class Command(BaseCommand):
                 update_sessions(parliament_num)
                 update_committee_agendas(parliament_num)
                 update_vote_castings(parliament_num)
+
+                # Mark parliament as fully updated.
+                parliament = Parliament.objects.get(parliament_num=parliament_num)
+                parliament.last_full_update = timezone.now()
+                parliament.save()
+
         except AlthingiException as e:
             self.error(e)
 

@@ -149,8 +149,12 @@ def update_person(person_xml_id, parliament_num=None):
 
     parliament = update_parliament(parliament_num)
 
-    if already_haves['persons'].has_key(person_xml_id):
-        return already_haves['persons'][person_xml_id]
+    # Cached by parliament_num as well, to make sure that if we're iterating
+    # through multiple parliaments, we also catch the seats and committee
+    # seats below.
+    ah_key = '%d-%d' % (parliament.parliament_num, person_xml_id)
+    if already_haves['persons'].has_key(ah_key):
+        return already_haves['persons'][ah_key]
 
     person_xml = get_xml('PERSON_URL', person_xml_id)
 
@@ -1080,7 +1084,7 @@ def update_issue(issue_num, parliament_num=None):
                     person_xml_id = int(person_xml.getAttribute(u'id'))
                     order = int(person_xml.getAttribute(u'röð'))
 
-                    person = update_person(person_xml_id)
+                    person = update_person(person_xml_id, parliament.parliament_num)
 
                     try:
                         subproposer = Proposer.objects.get(parent=proposer, person=person)
@@ -1110,7 +1114,7 @@ def update_issue(issue_num, parliament_num=None):
 
                     order = int(person_xml.getAttribute(u'röð'))
 
-                    person = update_person(person_xml_id)
+                    person = update_person(person_xml_id, parliament.parliament_num)
 
                     try:
                         proposer = Proposer.objects.get(document=doc, person=person)
@@ -1270,9 +1274,9 @@ def _process_docless_issue(issue_xml):
         special_inquisitor_xml = issue_xml.getElementsByTagName(u'málshefjandi')[0]
         special_responder_xml = issue_xml.getElementsByTagName(u'til_andsvara')[0]
 
-        special_inquisitor = update_person(int(special_inquisitor_xml.getAttribute('id')))
+        special_inquisitor = update_person(int(special_inquisitor_xml.getAttribute('id')), parliament.parliament_num)
         special_inquisitor_description = special_inquisitor_xml.firstChild.nodeValue
-        special_responder = update_person(int(special_responder_xml.getAttribute('id')))
+        special_responder = update_person(int(special_responder_xml.getAttribute('id')), parliament.parliament_num)
         special_responder_description = special_responder_xml.firstChild.nodeValue
     except IndexError:
         special_inquisitor = None

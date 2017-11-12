@@ -181,3 +181,6 @@
 
 1.3.4:
     * Increased data integrity and support added for parliament ranges in data retriever.
+
+1.3.5:
+    * Parliaments only listed in menubar if full information about them has been retrieved (as opposed to partial).

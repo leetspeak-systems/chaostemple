@@ -7,7 +7,7 @@
     <td>
         <a href="{% breadcrumb_url 'person' person.slug person.subslug %}">{{ person }}</a>
         {% if tenure_ended_prematurely %}
-            <small>({% trans 'tenure ended prematurely' %})</small>
+            <small>({% trans 'tenure ended prematurely' %}: {{ seat.timing_out|date:'SHORT_DATE_FORMAT' }})</small>
         {% endif %}
     </td>
     <td {% if tenure_ended_prematurely %}class="faded-text"{% endif %}>

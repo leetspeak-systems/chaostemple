@@ -247,7 +247,7 @@ def update_person(person_xml_id, parliament_num=None):
 
         print('Added person: %s' % person)
 
-    already_haves['persons'][person_xml_id] = person
+    already_haves['persons'][ah_key] = person
 
     update_seats(person_xml_id, parliament.parliament_num)
     update_committee_seats(person_xml_id, parliament.parliament_num)

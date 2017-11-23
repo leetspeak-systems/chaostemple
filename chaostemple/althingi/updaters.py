@@ -644,18 +644,24 @@ def update_committee(committee_xml_id, parliament_num=None):
         return already_haves['committees'][ah_key]
 
     # NOTE: This should be revisited when committees have their own, individual XML page
-    def parse_committee_xml(xml_url_name, parliament_num):
+    def parse_committee_xml(xml_url_name, parliament_num=None):
         # NOTE: We import this here, only because this entire function should go away when
         # committees have their own, individual XML page.
         from althingi.xmlutils import xml_urls
 
-        xml_url = xml_urls[xml_url_name] % parliament_num
+        if parliament_num:
+            xml_url = xml_urls[xml_url_name] % parliament_num
+        else:
+            xml_url = xml_urls[xml_url_name]
 
         # Cache the XML document, so that we only need to retrieve it once per run
         if already_haves['xml'].has_key(xml_url):
             committees_full_xml = already_haves['xml'][xml_url]
         else:
-            committees_full_xml = get_xml(xml_url_name, parliament_num)
+            if parliament_num:
+                committees_full_xml = get_xml(xml_url_name, parliament_num)
+            else:
+                committees_full_xml = get_xml(xml_url_name)
             already_haves['xml'][xml_url] = committees_full_xml
 
         committees_xml = committees_full_xml.getElementsByTagName(u'nefnd')
@@ -722,13 +728,11 @@ def update_committee(committee_xml_id, parliament_num=None):
         # does not exist in the appropriate parliament's XML. This is a mistake in the XML that the XML
         # maintainers should be notified of, but we can still remedy this by downloading a different,
         # much larger XML document which contains all committees regardless of parliament.
-
-        # UPDATE / NOTE: Previous versions of this script tried running parse_committee_xml() again with
-        # a different XML file when the above failed, because sometimes the committees did not exist in
-        # their proper XML file. It now appears that the XML has been fixed, so we'll try raising
-        # an exception here for the time being. Remove this and revise this entire function
-        # if 2017-04-16 was a long time ago.
-        raise AlthingiException('Committee with ID %d is missing from committee listing in parliament %d! Tell the XML keeper!' % (committee_xml_id, parliament.parliament_num))
+        print('Warning: Committee with ID %d is missing from committee listing in parliament %d! Tell the XML keeper!' % (
+            committee_xml_id,
+            parliament.parliament_num
+        ), file=stderr)
+        committee = parse_committee_xml('COMMITTEE_FULL_LIST_URL')
 
     already_haves['committees'][ah_key] = committee
 

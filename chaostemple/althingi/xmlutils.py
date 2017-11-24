@@ -49,31 +49,28 @@ def xml_cache_filename(xml_url_name, *args):
 # Retrieve XML and cache it
 def get_xml(xml_url_name, *args):
 
-    if althingi_settings.USE_XML_CACHE:
-        cache_filename = xml_cache_filename(xml_url_name, *args)
+    cache_filename = xml_cache_filename(xml_url_name, *args)
 
-        if not os.path.isdir(althingi_settings.XML_CACHE_DIR):
-            os.makedirs(althingi_settings.XML_CACHE_DIR)
+    if not os.path.isdir(althingi_settings.XML_CACHE_DIR):
+        os.makedirs(althingi_settings.XML_CACHE_DIR)
 
-        if os.path.isfile(cache_filename):
-            with open(cache_filename, 'r') as f:
-                xml_content = f.read()
-                f.close()
+    if althingi_settings.USE_XML_CACHE and os.path.isfile(cache_filename):
+        with open(cache_filename, 'r') as f:
+            xml_content = f.read()
+            f.close()
 
-            return minidom.parseString(xml_content)
-        else:
-            response = get_response(xml_urls[xml_url_name] % args)
-            xml_content = response.read()
-
-            # Write the XML contents to cache file.
-            with open(cache_filename, 'w') as f:
-                f.write(xml_content)
-                f.close()
-
-            # Return the parsed XML.
-            return minidom.parseString(xml_content)
+        return minidom.parseString(xml_content)
     else:
-        return minidom.parse(get_response(xml_urls[xml_url_name] % args))
+        response = get_response(xml_urls[xml_url_name] % args)
+        xml_content = response.read()
+
+        # Write the XML contents to cache file.
+        with open(cache_filename, 'w') as f:
+            f.write(xml_content)
+            f.close()
+
+        # Return the parsed XML.
+        return minidom.parseString(xml_content)
 
 
 # Clear XML cache.

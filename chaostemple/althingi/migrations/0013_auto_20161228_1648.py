@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 
 import datetime
 from django.db import migrations, models
+from django.utils.timezone import utc
 
 
 class Migration(migrations.Migration):
@@ -27,7 +28,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='parliament',
             name='timing_start',
-            field=models.DateTimeField(default=datetime.datetime(1970, 1, 1, 0, 0)),
+            field=models.DateTimeField(default=datetime.datetime(1970, 1, 1, 0, 0, tzinfo=utc)),
             preserve_default=False,
         ),
     ]

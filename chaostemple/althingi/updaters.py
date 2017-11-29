@@ -1793,7 +1793,7 @@ def _process_committee_agenda_xml(committee_agenda_xml):
 
             if changed:
                 item.save()
-                print('Update committee agenda item: %s' % item)
+                print('Updated committee agenda item: %s' % item)
             else:
                 print('Already have committee agenda item: %s' % item)
 

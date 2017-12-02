@@ -466,7 +466,7 @@ def person(request, slug, subslug=None):
         documents__proposers__person_id=person.id,
         documents__proposers__order=1,
         documents__is_main=True
-    ).order_by('-parliament__parliament_num')
+    ).order_by('parliament__parliament_num')
 
     IssueUtilities.populate_dossier_statistics(issues)
 

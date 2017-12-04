@@ -3,6 +3,8 @@
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
+FIRST_PARLIAMENT_NUM = 20
+
 CURRENT_PARLIAMENT_NUM = 148
 
 STATIC_DOCUMENT_DIR = os.path.join(BASE_DIR, 'althingi/static')

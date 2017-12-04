@@ -8,6 +8,8 @@ from sys import stderr
 from sys import stdout
 from xml.parsers.expat import ExpatError
 
+from althingi.althingi_settings import FIRST_PARLIAMENT_NUM
+
 from althingi.models import Committee
 from althingi.models import CommitteeAgenda
 from althingi.models import CommitteeAgendaItem
@@ -76,7 +78,19 @@ already_haves = {
 
 
 def update_parliament(parliament_num):
-    parliament_num = parliament_num if parliament_num else get_last_parliament_num()
+
+    last_parliament_num = get_last_parliament_num()
+
+    # Make sure that input makes sense
+    if parliament_num is not None and not isinstance(parliament_num, (int, long)):
+        raise TypeError('Function update_parliament() expects either None or exactly one integer as input')
+
+    # Default to most recent parliament number if nothing is provided
+    parliament_num = parliament_num if parliament_num else last_parliament_num
+
+    # Make sure that the parliament number makes sense (information before the 20th does not exist)
+    if parliament_num < FIRST_PARLIAMENT_NUM or parliament_num > last_parliament_num:
+        raise AlthingiException('Parliament number must be between %d and %d' % (FIRST_PARLIAMENT_NUM, last_parliament_num))
 
     if already_haves['parliaments'].has_key(parliament_num):
         return already_haves['parliaments'][parliament_num]

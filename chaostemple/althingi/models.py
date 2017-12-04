@@ -254,7 +254,7 @@ class Issue(models.Model):
 
     previous_issues = models.ManyToManyField('Issue', related_name='future_issues')
 
-    document_count = models.IntegerField(default=0) # Auto-populated by Issue.save()
+    document_count = models.IntegerField(default=0) # Auto-populated by Document.save()
     review_count = models.IntegerField(default=0) # Auto-populated by Review.save()
 
     # Django does not appear to support a default order for ManyToMany fields. Thus this fucking shit.

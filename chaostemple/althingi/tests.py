@@ -1,16 +1,43 @@
-"""
-This file demonstrates writing tests using the unittest module. These will pass
-when you run "manage.py test".
-
-Replace this with more appropriate tests for your application.
-"""
+import os
+import sys
 
 from django.test import TestCase
 
 
-class SimpleTest(TestCase):
-    def test_basic_addition(self):
-        """
-        Tests that 1 + 1 always equals 2.
-        """
-        self.assertEqual(1 + 1, 2)
+class HiddenPrints:
+    def __enter__(self):
+        self._original_stdout = sys.stdout
+        sys.stdout = open(os.devnull, 'w')
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        sys.stdout = self._original_stdout
+
+
+class AlthingiUpdaterTest(TestCase):
+
+    def test_update_parliament(self):
+        from althingi.althingi_settings import FIRST_PARLIAMENT_NUM
+        from althingi.exceptions import AlthingiException
+        from althingi.updaters import update_parliament
+        from althingi.utils import get_last_parliament_num
+
+        last_parliament_num = get_last_parliament_num()
+
+        with HiddenPrints():
+
+            # Pass: Basic usage
+            parliament = update_parliament(last_parliament_num)
+            self.assertEquals(parliament.parliament_num, last_parliament_num)
+
+            # Pass: Figure out default parliament_num
+            parliament = update_parliament(None)
+            self.assertEquals(parliament.parliament_num, last_parliament_num)
+
+            # Fail: Good number passed as string
+            self.assertRaises(TypeError, update_parliament, str(last_parliament_num))
+
+            # Fail: Get a parliament before the first one
+            self.assertRaises(AlthingiException, update_parliament, FIRST_PARLIAMENT_NUM - 1)
+
+            # Fail: Get a parliament from the (apparent) future
+            self.assertRaises(AlthingiException, update_parliament, last_parliament_num + 1)

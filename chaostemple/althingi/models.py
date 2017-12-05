@@ -797,7 +797,8 @@ class CommitteeSeat(models.Model):
 
 class VoteCasting(models.Model):
     timing = models.DateTimeField()
-    vote_casting_type = models.CharField(max_length=100)
+    vote_casting_type = models.CharField(max_length=2)
+    vote_casting_type_text = models.CharField(max_length=100)
     specifics = models.CharField(max_length=100)
 
     method = models.CharField(max_length=50, null=True)
@@ -816,9 +817,9 @@ class VoteCasting(models.Model):
 
     def __unicode__(self):
         if self.specifics:
-            return u'%s (%s), %s @ %s' % (self.vote_casting_type, self.specifics, self.method, self.timing)
+            return u'%s (%s), %s @ %s' % (self.vote_casting_type_text, self.specifics, self.method, self.timing)
         else:
-            return u'%s, %s @ %s' % (self.vote_casting_type, self.method, self.timing)
+            return u'%s, %s @ %s' % (self.vote_casting_type_text, self.method, self.timing)
 
     class Meta:
         ordering = ['timing']

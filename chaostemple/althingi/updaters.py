@@ -389,8 +389,11 @@ def update_vote_casting(vote_casting_xml_id, parliament_num):
         issue = None
         document = None
 
+    vote_casting_type_xml = vote_casting_xml.getElementsByTagName(u'tegund')[0]
+
     timing = sensible_datetime(vote_casting_xml.getElementsByTagName(u'tími')[0].firstChild.nodeValue)
-    vote_casting_type = vote_casting_xml.getElementsByTagName(u'tegund')[0].firstChild.nodeValue
+    vote_casting_type = vote_casting_type_xml.getAttribute('tegund')
+    vote_casting_type_text = vote_casting_type_xml.firstChild.nodeValue
     try:
         specifics = vote_casting_xml.getElementsByTagName(u'nánar')[0].firstChild.nodeValue.strip()
     except (IndexError, AttributeError):
@@ -460,6 +463,10 @@ def update_vote_casting(vote_casting_xml_id, parliament_num):
             vote_casting.vote_casting_type = vote_casting_type
             changed = True
 
+        if vote_casting.vote_casting_type_text != vote_casting_type_text:
+            vote_casting.vote_casting_type_text = vote_casting_type_text
+            changed = True
+
         if vote_casting.specifics != specifics:
             vote_casting.specifics = specifics
             changed = True
@@ -511,6 +518,7 @@ def update_vote_casting(vote_casting_xml_id, parliament_num):
 
         vote_casting.timing = timing
         vote_casting.vote_casting_type = vote_casting_type
+        vote_casting.vote_casting_type_text = vote_casting_type_text
         vote_casting.specifics = specifics
         vote_casting.method = method
         vote_casting.count_yes = count_yes

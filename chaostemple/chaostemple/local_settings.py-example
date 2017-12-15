@@ -27,6 +27,10 @@ DATABASES = {
     #    'NAME': 'chaostemple',
     #    'USER': '',
     #    'PASSWORD': '',
+    #    'OPTIONS': {
+    #        'sql_mode': 'TRADITIONAL',
+    #        'charset': 'utf8',
+    #    }
     #}
 }
 

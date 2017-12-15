@@ -1,4 +1,4 @@
-django
+django==1.11.8
 beautifulsoup
 django-registration-redux
 django-model-utils

@@ -184,3 +184,8 @@
 
 1.3.5:
     * Parliaments only listed in menubar if full information about them has been retrieved (as opposed to partial).
+
+1.3.6:
+    * Order of issues with regard to parliament fixed on parliamentarian's page.
+    * Human-readable date added for indicators of prematurely ended terms in MP listing.
+    * Improvements and bugfixes in data gathering.

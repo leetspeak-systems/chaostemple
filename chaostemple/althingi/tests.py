@@ -21,23 +21,23 @@ class AlthingiUpdaterTest(TestCase):
         from althingi.updaters import update_parliament
         from althingi.utils import get_last_parliament_num
 
-        last_parliament_num = get_last_parliament_num()
+        parliament_num = get_last_parliament_num()
 
         with HiddenPrints():
 
             # Pass: Basic usage
-            parliament = update_parliament(last_parliament_num)
-            self.assertEquals(parliament.parliament_num, last_parliament_num)
+            parliament = update_parliament(parliament_num)
+            self.assertEquals(parliament.parliament_num, parliament_num)
 
             # Pass: Figure out default parliament_num
             parliament = update_parliament(None)
-            self.assertEquals(parliament.parliament_num, last_parliament_num)
+            self.assertEquals(parliament.parliament_num, parliament_num)
 
             # Fail: Good number passed as string
-            self.assertRaises(TypeError, update_parliament, str(last_parliament_num))
+            self.assertRaises(TypeError, update_parliament, str(parliament_num))
 
             # Fail: Get a parliament before the first one
             self.assertRaises(AlthingiException, update_parliament, FIRST_PARLIAMENT_NUM - 1)
 
             # Fail: Get a parliament from the (apparent) future
-            self.assertRaises(AlthingiException, update_parliament, last_parliament_num + 1)
+            self.assertRaises(AlthingiException, update_parliament, parliament_num + 1)

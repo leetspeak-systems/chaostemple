@@ -3,6 +3,11 @@ import sys
 
 from django.test import TestCase
 
+from althingi.althingi_settings import FIRST_PARLIAMENT_NUM
+from althingi.exceptions import AlthingiException
+from althingi.updaters import update_parliament
+from althingi.utils import get_last_parliament_num
+
 
 class HiddenPrints:
     def __enter__(self):
@@ -16,10 +21,6 @@ class HiddenPrints:
 class AlthingiUpdaterTest(TestCase):
 
     def test_update_parliament(self):
-        from althingi.althingi_settings import FIRST_PARLIAMENT_NUM
-        from althingi.exceptions import AlthingiException
-        from althingi.updaters import update_parliament
-        from althingi.utils import get_last_parliament_num
 
         parliament_num = get_last_parliament_num()
 

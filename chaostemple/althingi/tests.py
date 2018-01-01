@@ -48,6 +48,11 @@ class AlthingiUpdaterTest(TestCase):
         clear_already_haves()
 
     def test_update_parliament(self):
+        '''
+        Any updater function that takes parliament_num as a parameter will
+        pass it on to the update_parliament function. Testing the
+        parliament_num parameter in other functions in therefore redundant.
+        '''
 
         parliament_num = get_last_parliament_num()
 

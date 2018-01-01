@@ -5,6 +5,7 @@ from django.test import TestCase
 
 from althingi.althingi_settings import FIRST_PARLIAMENT_NUM
 from althingi.exceptions import AlthingiException
+from althingi.updaters import clear_already_haves
 from althingi.updaters import update_parliament
 from althingi.utils import get_last_parliament_num
 
@@ -19,6 +20,9 @@ class HiddenPrints:
 
 
 class AlthingiUpdaterTest(TestCase):
+
+    def setUp(self):
+        clear_already_haves()
 
     def test_update_parliament(self):
 

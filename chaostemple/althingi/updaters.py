@@ -77,6 +77,11 @@ already_haves = {
 }
 
 
+def clear_already_haves():
+    for varname in already_haves:
+        already_haves[varname] = {}
+
+
 def update_parliament(parliament_num):
 
     last_parliament_num = get_last_parliament_num()

@@ -168,6 +168,10 @@ def update_person(person_xml_id, parliament_num=None):
 
     parliament = update_parliament(parliament_num)
 
+    # Make sure that input makes sense
+    if person_xml_id is not None and not isinstance(person_xml_id, (int, long)):
+        raise TypeError('Parameter person_xml_id must be a number')
+
     # Cached by parliament_num as well, to make sure that if we're iterating
     # through multiple parliaments, we also catch the seats and committee
     # seats below.
@@ -175,7 +179,10 @@ def update_person(person_xml_id, parliament_num=None):
     if already_haves['persons'].has_key(ah_key):
         return already_haves['persons'][ah_key]
 
-    person_xml = get_xml('PERSON_URL', person_xml_id)
+    try:
+        person_xml = get_xml('PERSON_URL', person_xml_id)
+    except ExpatError:
+        raise AlthingiException('Person with XML-ID %d not found' % person_xml_id)
 
     try:
         # For some unknown reason, an email address is given in two separate tags

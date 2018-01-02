@@ -7,7 +7,9 @@ from django.test import TestCase
 from althingi.althingi_settings import FIRST_PARLIAMENT_NUM
 from althingi.exceptions import AlthingiException
 from althingi.updaters import clear_already_haves
+from althingi.updaters import update_committee
 from althingi.updaters import update_committee_seats
+from althingi.updaters import update_committees
 from althingi.updaters import update_parliament
 from althingi.updaters import update_person
 from althingi.updaters import update_persons
@@ -24,6 +26,10 @@ broken_test_dummy = (3, 148, 'Broken Test Dummy')
 # Test dummy vote castings.
 test_dummy_vote_casting = (54805, 148)
 broken_test_dummy_vote_casting = (1, 148)
+
+# Test dummy committee.
+test_dummy_committee = (201, 148, u'allsherjar- og menntamálanefnd')
+broken_test_dummy_committee = (1, 148, u'broken test dummy committee')
 
 
 class HiddenPrints:
@@ -165,3 +171,25 @@ class AlthingiUpdaterTest(TestCase):
         # Pass: Fetch committee seats for a person known to be valid.
         person_xml_id, parliament_num, name = test_dummy
         update_committee_seats(person_xml_id, parliament_num)
+
+    @hidden_prints
+    def test_update_committees(self):
+        update_committees()
+
+    @hidden_prints
+    def test_update_committee(self):
+
+        # Fail: Good number passed as something else than number.
+        committee_xml_id, parliament_num, name = test_dummy_committee
+        with self.assertRaisesRegexp(TypeError, 'Parameter committee_xml_id must be a number'):
+            update_committee(str(committee_xml_id), parliament_num)
+
+        # Fail: Fetch committe that does not exist.
+        committee_xml_id, parliament_num, name = broken_test_dummy_committee
+        with self.assertRaisesRegexp(AlthingiException, 'Committee with XML-ID \d+ does not exist'):
+            update_committee(committee_xml_id, parliament_num)
+
+        # Pass: Fetch committee known to exist.
+        committee_xml_id, parliament_num, name = test_dummy_committee
+        committee = update_committee(committee_xml_id, parliament_num)
+        self.assertEquals(committee.name, name)

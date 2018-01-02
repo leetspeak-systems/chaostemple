@@ -687,6 +687,10 @@ def update_committee(committee_xml_id, parliament_num=None):
 
     parliament = update_parliament(parliament_num)
 
+    # Make sure that input makes sense
+    if committee_xml_id is not None and not isinstance(committee_xml_id, (int, long)):
+        raise TypeError('Parameter committee_xml_id must be a number')
+
     ah_key = '%d-%d' % (parliament.parliament_num, committee_xml_id)
     if already_haves['committees'].has_key(ah_key):
         return already_haves['committees'][ah_key]
@@ -781,6 +785,9 @@ def update_committee(committee_xml_id, parliament_num=None):
             parliament.parliament_num
         ), file=stderr)
         committee = parse_committee_xml('COMMITTEE_FULL_LIST_URL')
+
+    if committee is None:
+        raise AlthingiException('Committee with XML-ID %d does not exist' % committee_xml_id)
 
     already_haves['committees'][ah_key] = committee
 

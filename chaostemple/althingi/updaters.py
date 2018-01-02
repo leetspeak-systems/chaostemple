@@ -284,6 +284,7 @@ def update_person(person_xml_id, parliament_num=None):
 def update_seats(person_xml_id, parliament_num=None):
 
     parliament = update_parliament(parliament_num)
+    person = update_person(person_xml_id, parliament.parliament_num)
 
     ah_key = '%d-%d' % (parliament.parliament_num, person_xml_id)
     if already_haves['seats'].has_key(ah_key):
@@ -292,7 +293,11 @@ def update_seats(person_xml_id, parliament_num=None):
     update_constituencies(parliament.parliament_num)
     update_parties(parliament.parliament_num)
 
-    seats_full_xml = get_xml('SEATS_URL', person_xml_id)
+    try:
+        seats_full_xml = get_xml('SEATS_URL', person_xml_id)
+    except ExpatError:
+        raise AlthingiException('Seats for person with XML-ID %d not found' % person_xml_id)
+
     seats_xml = seats_full_xml.getElementsByTagName(u'þingsetur')[0].getElementsByTagName(u'þingseta')
 
     seats = []
@@ -321,7 +326,7 @@ def update_seats(person_xml_id, parliament_num=None):
 
             try:
                 seat = Seat.objects.get(
-                    person__person_xml_id=person_xml_id,
+                    person=person,
                     parliament__parliament_num=parliament.parliament_num,
                     timing_in=timing_in,
                     timing_out=timing_out
@@ -331,7 +336,7 @@ def update_seats(person_xml_id, parliament_num=None):
 
             except Seat.DoesNotExist:
                 seat = Seat()
-                seat.person = Person.objects.get(person_xml_id=person_xml_id)
+                seat.person = person
                 seat.parliament = parliament
                 seat.seat_type = seat_type
                 seat.name_abbreviation = name_abbreviation

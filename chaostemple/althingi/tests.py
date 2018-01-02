@@ -10,6 +10,7 @@ from althingi.updaters import clear_already_haves
 from althingi.updaters import update_parliament
 from althingi.updaters import update_person
 from althingi.updaters import update_persons
+from althingi.updaters import update_seats
 from althingi.utils import get_last_parliament_num
 
 
@@ -97,3 +98,21 @@ class AlthingiUpdaterTest(TestCase):
             for person_xml_id, parliament_num, name in test_dummies:
                 person = update_person(person_xml_id, parliament_num)
                 self.assertEquals(person.name, name)
+
+    def test_update_seats(self):
+
+        with HiddenPrints():
+
+            # Fail: Good number passed as something else than a number.
+            person_xml_id, parliament_num, name = main_test_dummy
+            with self.assertRaisesRegexp(TypeError, 'Parameter person_xml_id must be a number'):
+                update_seats(str(person_xml_id), parliament_num)
+
+            # Fail: Fetch seats for a person that does not exist.
+            person_xml_id, parliament_num, name = broken_test_dummy
+            with self.assertRaisesRegexp(AlthingiException, 'Person with XML-ID \d+ not found'):
+                update_seats(person_xml_id, parliament_num)
+
+            # Pass: Fetch the seats of a person known to exist.
+            person_xml_id, parliament_num, name = main_test_dummy
+            update_seats(person_xml_id, parliament_num)

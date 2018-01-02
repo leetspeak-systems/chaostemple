@@ -58,7 +58,22 @@ broken_test_dummy_vote_casting = (1, 148)
 class HiddenPrints:
     def __enter__(self):
         self._original_stdout = sys.stdout
-        sys.stdout = open(os.devnull, 'w')
+
+        # Okay, I don't know why this works. The open(os.devnull...) method of
+        # suppressing print messages created a very strange problem where a
+        # UnicodeEncodeError was raised when it shouldn't have been. It works
+        # fine with most tests, for example test_update_seats, but not others
+        # like test_update_vote_castings, even though everything regarding
+        # encoding is exactly the same in both cases. Setting sys.stdout to
+        # None should produce an error because it doesn't have a write
+        # function, but it doesn't. Instead it suppresses output, which is
+        # what is wanted. Courageous souls may try reverting to using the
+        # open(os.devnull...) method again to see if the encoding problem
+        # either goes away in time or can be figured out. I'm leaving this the
+        # way it is for now, because it works, even though I don't know why.
+
+        #sys.stdout = open(os.devnull, 'w')
+        sys.stdout = None
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         sys.stdout = self._original_stdout

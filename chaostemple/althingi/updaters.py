@@ -818,6 +818,10 @@ def update_issue(issue_num, parliament_num=None):
 
     parliament = update_parliament(parliament_num)
 
+    # Make sure that input makes sense
+    if issue_num is not None and not isinstance(issue_num, (int, long)):
+        raise TypeError('Parameter issue_num must be a number')
+
     ah_key = '%d-%d' % (parliament.parliament_num, issue_num)
     if already_haves['issues'].has_key(ah_key):
         return already_haves['issues'][ah_key]

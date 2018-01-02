@@ -11,6 +11,8 @@ from althingi.updaters import update_parliament
 from althingi.updaters import update_person
 from althingi.updaters import update_persons
 from althingi.updaters import update_seats
+from althingi.updaters import update_vote_casting
+from althingi.updaters import update_vote_castings
 from althingi.utils import get_last_parliament_num
 
 
@@ -32,6 +34,25 @@ main_test_dummy = test_dummies[0]
 
 # An additional test dummy known to not exist.
 broken_test_dummy = (3, 148, 'Broken Test Dummy')
+
+# Vote castings known to be valid.
+test_dummy_vote_castings = (
+    (54805, 148),
+    (54799, 147),
+    (53954, 146),
+    (51984, 145),
+    (50400, 144),
+    (48958, 143), # Note: No actual votes, speaker declaration.
+    (48871, 142),
+    (47192, 141),
+    (45412, 140),
+)
+
+# Main test dummy vote casting
+main_test_dummy_vote_casting = test_dummy_vote_castings[0]
+
+# Vote casting known to be invalid.
+broken_test_dummy_vote_casting = (1, 148)
 
 
 class HiddenPrints:
@@ -120,3 +141,24 @@ class AlthingiUpdaterTest(TestCase):
         # Pass: Fetch the seats of a person known to exist.
         person_xml_id, parliament_num, name = main_test_dummy
         update_seats(person_xml_id, parliament_num)
+
+    @hidden_prints
+    def test_update_vote_castings(self):
+        update_vote_castings()
+
+    @hidden_prints
+    def test_update_vote_casting(self):
+
+        # Fail: Good number passed as something else than number.
+        vote_casting_xml_id, parliament_num = main_test_dummy_vote_casting
+        with self.assertRaisesRegexp(TypeError, 'Parameter vote_casting_xml_id must be a number'):
+            update_vote_casting(str(vote_casting_xml_id), parliament_num)
+
+        # Fail: Fetch vote casting that does not exist.
+        vote_casting_xml_id, parliament_num = broken_test_dummy_vote_casting
+        with self.assertRaisesRegexp(AlthingiException, 'Vote casting \d+ does not exist'):
+            update_vote_casting(vote_casting_xml_id, parliament_num)
+
+        # Pass: Fetch some vote castings known to be valid.
+        for vote_casting_xml_id, parliament_num in test_dummy_vote_castings:
+            update_vote_casting(vote_casting_xml_id, parliament_num)

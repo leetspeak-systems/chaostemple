@@ -383,14 +383,22 @@ def update_vote_casting(vote_casting_xml_id, parliament_num):
 
     parliament = update_parliament(parliament_num)
 
+    # Make sure that input makes sense
+    if vote_casting_xml_id is not None and not isinstance(vote_casting_xml_id, (int, long)):
+        raise TypeError('Parameter vote_casting_xml_id must be a number')
+
     if already_haves['vote_castings'].has_key('vote_casting_xml_id'):
         return already_haves['vote_castings'][vote_casting_xml_id]
 
     vote_casting_full_xml = get_xml('VOTE_CASTING_URL', vote_casting_xml_id)
     vote_casting_xml = vote_casting_full_xml.getElementsByTagName(u'atkvæðagreiðsla')[0]
 
-    issue_num = int(vote_casting_xml.getAttribute(u'málsnúmer'))
-    issue_group = vote_casting_xml.getAttribute(u'málsflokkur')
+    try:
+        issue_num = int(vote_casting_xml.getAttribute(u'málsnúmer'))
+        issue_group = vote_casting_xml.getAttribute(u'málsflokkur')
+    except ValueError:
+        # This is currently the only way of seeing if the vote casting exists.
+        raise AlthingiException('Vote casting %d does not exist' % vote_casting_xml_id)
 
     if issue_group == 'A':
         issue = update_issue(issue_num, parliament.parliament_num)

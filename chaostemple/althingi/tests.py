@@ -81,18 +81,19 @@ class AlthingiUpdaterTest(TestCase):
 
     def test_update_person(self):
 
-        # Fail: Good number passed as something else than a number.
-        person_xml_id, parliament_num, name = main_test_dummy
-        with self.assertRaisesRegexp(TypeError, 'Parameter person_xml_id must be a number'):
-            update_person(str(person_xml_id), parliament_num)
-
-        # Fail: Fetch a person that we know does not exist.
-        person_xml_id, parliament_num, name = broken_test_dummy
-        with self.assertRaisesRegexp(AlthingiException, 'Person with XML-ID \d+ not found'):
-            update_person(person_xml_id, parliament_num)
-
-        # Pass: Iterate through our test dummies and check their names.
         with HiddenPrints():
+
+            # Fail: Good number passed as something else than a number.
+            person_xml_id, parliament_num, name = main_test_dummy
+            with self.assertRaisesRegexp(TypeError, 'Parameter person_xml_id must be a number'):
+                update_person(str(person_xml_id), parliament_num)
+
+            # Fail: Fetch a person that we know does not exist.
+            person_xml_id, parliament_num, name = broken_test_dummy
+            with self.assertRaisesRegexp(AlthingiException, 'Person with XML-ID \d+ not found'):
+                update_person(person_xml_id, parliament_num)
+
+            # Pass: Iterate through our test dummies and check their names.
             for person_xml_id, parliament_num, name in test_dummies:
                 person = update_person(person_xml_id, parliament_num)
                 self.assertEquals(person.name, name)

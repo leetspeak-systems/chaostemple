@@ -1405,29 +1405,13 @@ def _process_docless_issue(issue_xml):
     return issue
 
 
-def update_sessions(parliament_num=None, date_limit=None):
+def update_sessions(parliament_num=None):
 
     parliament = update_parliament(parliament_num)
-
-    if date_limit is not None:
-        date_limit = sensible_datetime(date_limit)
 
     sessions_xml = get_xml('SESSION_LIST_URL', parliament.parliament_num)
     for session_xml in reversed(sessions_xml.getElementsByTagName(u'þingfundur')):
         session_num = int(session_xml.getAttribute(u'númer'))
-
-        session_date_tag = session_xml.getElementsByTagName(u'dagur')
-        if len(session_date_tag) == 0: # If 0, then this is a session that started immediately following another.
-            session_date_tag = session_xml.getElementsByTagName(u'fundursettur')
-
-        # NOTE: If session_date is entirely unavailable, session is in the future so never less than date_limit.
-        # Hence, loop is never exited on basis of a missing session_date.
-        if session_date_tag[0].firstChild is not None:
-            # If this raises an IndexError, suspect that XML is wrong.
-            session_date = sensible_datetime(session_date_tag[0].firstChild.nodeValue)
-
-            if date_limit is not None and session_date < date_limit:
-                break
 
         update_session(session_num, parliament.parliament_num)
 

@@ -7,6 +7,7 @@ from django.test import TestCase
 from althingi.althingi_settings import FIRST_PARLIAMENT_NUM
 from althingi.exceptions import AlthingiException
 from althingi.updaters import clear_already_haves
+from althingi.updaters import update_committee_seats
 from althingi.updaters import update_parliament
 from althingi.updaters import update_person
 from althingi.updaters import update_persons
@@ -177,3 +178,20 @@ class AlthingiUpdaterTest(TestCase):
         # Pass: Fetch some vote castings known to be valid.
         for vote_casting_xml_id, parliament_num in test_dummy_vote_castings:
             update_vote_casting(vote_casting_xml_id, parliament_num)
+
+    @hidden_prints
+    def test_update_committee_seats(self):
+
+        # Fail: Good number passed as something else than number.
+        person_xml_id, parliament_num, name = main_test_dummy
+        with self.assertRaisesRegexp(TypeError, 'Parameter person_xml_id must be a number'):
+            update_committee_seats(str(person_xml_id), parliament_num)
+
+        # Fail: Fetch committee seats for a person that does not exist.
+        person_xml_id, parliament_num, name = broken_test_dummy
+        with self.assertRaisesRegexp(AlthingiException, 'Person with XML-ID \d+ not found'):
+            update_committee_seats(person_xml_id, parliament_num)
+
+        # Pass: Fetch committee seats for a person known to be valid.
+        person_xml_id, parliament_num, name = main_test_dummy
+        update_committee_seats(person_xml_id, parliament_num)

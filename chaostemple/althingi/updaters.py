@@ -604,6 +604,7 @@ def update_vote_casting(vote_casting_xml_id, parliament_num):
 def update_committee_seats(person_xml_id, parliament_num=None):
 
     parliament = update_parliament(parliament_num)
+    person = update_person(person_xml_id, parliament.parliament_num)
 
     ah_key = '%d-%d' % (parliament.parliament_num, person_xml_id)
     if already_haves['committee_seats'].has_key(ah_key):
@@ -633,7 +634,7 @@ def update_committee_seats(person_xml_id, parliament_num=None):
 
             try:
                 committee_seat = CommitteeSeat.objects.filter(
-                    person__person_xml_id=person_xml_id,
+                    person=person,
                     committee=committee,
                     parliament__parliament_num=parliament.parliament_num,
                     timing_in=timing_in
@@ -652,7 +653,7 @@ def update_committee_seats(person_xml_id, parliament_num=None):
 
             except CommitteeSeat.DoesNotExist:
                 committee_seat = CommitteeSeat()
-                committee_seat.person = Person.objects.get(person_xml_id=person_xml_id)
+                committee_seat.person = person
                 committee_seat.committee = committee
                 committee_seat.parliament = parliament
                 committee_seat.committee_seat_type = committee_seat_type

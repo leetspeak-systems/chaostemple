@@ -179,9 +179,8 @@ def update_person(person_xml_id, parliament_num=None):
     if already_haves['persons'].has_key(ah_key):
         return already_haves['persons'][ah_key]
 
-    try:
-        person_xml = get_xml('PERSON_URL', person_xml_id)
-    except ExpatError:
+    person_xml = get_xml('PERSON_URL', person_xml_id)
+    if len(person_xml.getElementsByTagName(u'villa')) > 0:
         raise AlthingiException('Person with XML-ID %d not found' % person_xml_id)
 
     try:

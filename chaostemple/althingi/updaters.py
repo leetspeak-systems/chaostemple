@@ -1420,6 +1420,10 @@ def update_session(session_num, parliament_num=None):
 
     parliament = update_parliament(parliament_num)
 
+    # Make sure that input makes sense
+    if session_num is not None and not isinstance(session_num, (int, long)):
+        raise TypeError('Parameter session_num must be a number')
+
     ah_key = '%d-%d' % (session_num, parliament.parliament_num)
     if already_haves['sessions'].has_key(ah_key):
         return already_haves['sessions'][ah_key]

@@ -16,6 +16,8 @@ from althingi.updaters import update_parliament
 from althingi.updaters import update_person
 from althingi.updaters import update_persons
 from althingi.updaters import update_seats
+from althingi.updaters import update_session
+from althingi.updaters import update_sessions
 from althingi.updaters import update_vote_casting
 from althingi.updaters import update_vote_castings
 from althingi.utils import get_last_parliament_num
@@ -36,6 +38,10 @@ broken_test_dummy_committee = (1, 148, u'broken test dummy committee')
 # Test dummy issue.
 test_dummy_issue = (1, 148, u'fjárlög 2018')
 broken_test_dummy_issue = (139, 147, u'Broken Test Dummy Issue')
+
+# Test dummy sessions
+test_dummy_session = (3, 148, u'3. fundur')
+broken_test_dummy_session = (9, 147, u'Broken Test Dummy Session')
 
 
 class HiddenPrints:
@@ -221,3 +227,25 @@ class AlthingiUpdaterTest(TestCase):
         issue_num, parliament_num, name = test_dummy_issue
         issue = update_issue(issue_num, parliament_num)
         self.assertEquals(issue.name, name)
+
+    @hidden_prints
+    def test_update_sessions(self):
+        update_sessions()
+
+    @hidden_prints
+    def test_update_session(self):
+
+        # Fail: Good number passed as something else than number.
+        session_num, parliament_num, name = test_dummy_session
+        with self.assertRaisesRegexp(TypeError, 'Parameter session_num must be a number'):
+            update_session(str(session_num), parliament_num)
+
+        # Fail: Fetch session that does not exist.
+        session_num, parliament_num, name = broken_test_dummy_session
+        with self.assertRaisesRegexp(AlthingiException, 'Session \d+ in parliament \d+ does not exist'):
+            update_session(session_num, parliament_num)
+
+        # Pass: Fetch session that is known to exist.
+        session_num, parliament_num, name = test_dummy_session
+        session = update_session(session_num, parliament_num)
+        self.assertEquals(session.name, name)

@@ -192,3 +192,6 @@
 
 1.3.7:
     * Fixes relevant to setting up of project.
+
+1.3.8:
+    * Althingi module: Unit tests for updater functions added.

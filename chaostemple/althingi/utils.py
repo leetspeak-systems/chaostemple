@@ -110,7 +110,10 @@ def sensible_datetime(value):
                 try:
                     d = datetime.strptime(value, '%d.%m.%Y')
                 except ValueError:
-                    d = datetime.strptime(value, '%Y-%m-%d %H:%M+00:00')
+                    try:
+                        d = datetime.strptime(value, '%Y-%m-%d %H:%M+00:00')
+                    except ValueError:
+                        raise ValueError('Could not figure out datetime format for "%s"' % value)
 
     if d.tzinfo:
         return d

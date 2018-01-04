@@ -1675,10 +1675,13 @@ def update_committee_agendas(parliament_num=None, date_limit=None):
 
 
 def update_next_committee_agendas(parliament_num=None):
+
+    parliament = update_parliament(parliament_num)
+
     now = datetime.now()
     today = datetime(now.year, now.month, now.day)
 
-    agendas = update_committee_agendas(parliament_num=parliament_num, date_limit=today)
+    agendas = update_committee_agendas(parliament_num=parliament.parliament_num, date_limit=today)
 
     # These are agendas that are upcoming according to the database but not according to the XML.
     # We run them through update_committee_agenda() for consistency's sake, which will delete or update them appropriately.
@@ -1691,19 +1694,26 @@ def update_committee_agenda(committee_agenda_xml_id, parliament_num=None):
 
     parliament = update_parliament(parliament_num)
 
-    try:
-        committee_agenda_full_xml = get_xml('COMMITTEE_AGENDA_URL', committee_agenda_xml_id)
-    except ExpatError:
-        raise AlthingiException('Committee agenda with XML-ID %d not found' % committee_agenda_xml_id)
+    # Make sure that input makes sense
+    if committee_agenda_xml_id is not None and not isinstance(committee_agenda_xml_id, (int, long)):
+        raise TypeError('Parameter committee_agenda_xml_id must be a number')
 
+    committee_agenda_full_xml = get_xml('COMMITTEE_AGENDA_URL', committee_agenda_xml_id)
     committee_agenda_xml = committee_agenda_full_xml.getElementsByTagName(u'nefndarfundur')[0]
 
     if not committee_agenda_xml.getAttribute(u'númer'):
-        # Committee agenda has been deleted in XML, meaning cancelled.
-        CommitteeAgenda.objects.get(committee_agenda_xml_id=committee_agenda_xml_id).delete()
+        try:
+            # Committee agenda has been deleted in XML, meaning cancelled.
+            CommitteeAgenda.objects.get(committee_agenda_xml_id=committee_agenda_xml_id).delete()
 
-        print('Deleted non-existent committee agenda: %d' % committee_agenda_xml_id)
-        return
+            print('Deleted non-existent committee agenda: %d' % committee_agenda_xml_id)
+            return
+        except CommitteeAgenda.DoesNotExist:
+            raise AlthingiException('Committee agenda %d in parliament %d does not exist' % (
+                committee_agenda_xml_id,
+                parliament.parliament_num
+            ))
+
     elif int(committee_agenda_xml.getAttribute(u'þingnúmer')) != parliament.parliament_num:
         # Committee agenda exists, but not in this parliament. (A corrected
         # mistake in the XML, most likely.)

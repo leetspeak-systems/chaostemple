@@ -2,17 +2,26 @@
 import os
 import sys
 
+from datetime import timedelta
+
 from django.test import TestCase
+from django.utils import timezone
 
 from althingi.althingi_settings import FIRST_PARLIAMENT_NUM
 from althingi.exceptions import AlthingiException
 from althingi.updaters import clear_already_haves
 from althingi.updaters import update_committee
+from althingi.updaters import update_committee_agenda
+from althingi.updaters import update_committee_agendas
 from althingi.updaters import update_committee_seats
 from althingi.updaters import update_committees
+from althingi.updaters import update_constituencies
 from althingi.updaters import update_issue
 from althingi.updaters import update_issues
+from althingi.updaters import update_next_committee_agendas
+from althingi.updaters import update_next_sessions
 from althingi.updaters import update_parliament
+from althingi.updaters import update_parties
 from althingi.updaters import update_person
 from althingi.updaters import update_persons
 from althingi.updaters import update_seats
@@ -42,6 +51,10 @@ broken_test_dummy_issue = (139, 147, u'Broken Test Dummy Issue')
 # Test dummy sessions
 test_dummy_session = (3, 148, u'3. fundur')
 broken_test_dummy_session = (9, 147, u'Broken Test Dummy Session')
+
+# Test dummy committee agenda.
+test_dummy_committee_agenda = (18462, 148, u'21. desember 17, kl. 10:00 árdegis')
+broken_test_dummy_committee_agenda = (1, 148, 'Broken Test Dummy Committee Agenda')
 
 
 class HiddenPrints:
@@ -249,3 +262,52 @@ class AlthingiUpdaterTest(TestCase):
         session_num, parliament_num, name = test_dummy_session
         session = update_session(session_num, parliament_num)
         self.assertEquals(session.name, name)
+
+    @hidden_prints
+    def test_update_next_sessions(self):
+        update_next_sessions()
+
+    @hidden_prints
+    def test_update_constituencies(self):
+        update_constituencies()
+
+    @hidden_prints
+    def test_update_parties(self):
+        update_parties()
+
+    @hidden_prints
+    def test_update_committee_agendas(self):
+
+        # Fail: Garbage datetime.
+        with self.assertRaisesRegexp(ValueError, 'Could not figure out datetime format for ".+"'):
+            update_committee_agendas(None, 'garbage')
+
+        # Fail: Properly formatted but incorrect datetime.
+        with self.assertRaisesRegexp(ValueError, 'Could not figure out datetime format for ".+"'):
+            update_committee_agendas(None, '2017-02-29')
+
+        # Pass: Fetch committee agendas with a date limit from a week ago.
+        date_limit = timezone.now() - timedelta(days=7)
+        update_committee_agendas(None, date_limit)
+
+    @hidden_prints
+    def test_update_next_committee_agendas(self):
+        update_next_committee_agendas()
+
+    @hidden_prints
+    def test_update_committee_agenda(self):
+
+        # Fail: Good number passed as something else than number.
+        committee_agenda_xml_id, parliament_num, timing_text = test_dummy_committee_agenda
+        with self.assertRaisesRegexp(TypeError, 'Parameter committee_agenda_xml_id must be a number'):
+            update_committee_agenda(str(committee_agenda_xml_id), parliament_num)
+
+        # Fail: Fetch committee agenda that does not exist.
+        committee_agenda_xml_id, parliament_num, timing_text = broken_test_dummy_committee_agenda
+        with self.assertRaisesRegexp(AlthingiException, 'Committee agenda \d+ in parliament \d+ does not exist'):
+            update_committee_agenda(committee_agenda_xml_id, parliament_num)
+
+        # Pass> Fetch a committee agenda known to exist.
+        committee_agenda_xml_id, parliament_num, timing_text = test_dummy_committee_agenda
+        committee_agenda = update_committee_agenda(committee_agenda_xml_id, parliament_num)
+        self.assertEquals(committee_agenda.timing_text, timing_text)

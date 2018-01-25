@@ -557,6 +557,14 @@ class Committee(models.Model):
 
     committee_xml_id = models.IntegerField(unique=True)
 
+    def issues(self, parliament_num=None):
+        if parliament_num is None:
+            parliament_num = CURRENT_PARLIAMENT_NUM
+        return Issue.objects.filter(
+            vote_castings__to_committee=self,
+            parliament__parliament_num=parliament_num
+        ).distinct()
+
     def __unicode__(self):
         return capfirst(self.name)
 

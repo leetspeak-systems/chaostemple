@@ -337,9 +337,7 @@ def parliament_committee(request, parliament_num, committee_id):
     agendas = committee.committee_agendas.filter(parliament__parliament_num=parliament_num).annotate(
         item_count=Count('committee_agenda_items')
     )
-    issues = Issue.objects.prefetch_related('proposers__person').select_related('parliament').filter(
-        vote_castings__to_committee=committee, parliament__parliament_num=parliament_num
-    ).distinct()
+    issues = committee.issues(parliament_num).prefetch_related('proposers__person').select_related('parliament')
 
     parliament = request.extravars['parliament']
     if parliament.timing_end:

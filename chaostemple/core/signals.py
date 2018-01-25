@@ -24,7 +24,8 @@ def delete_dossiers_on_deletion(sender, instance, **kwargs):
 
     dossiers = Dossier.objects.filter(**dossier_kwargs)
     for dossier in dossiers:
-        dossier.delete()
+        if not dossier.is_useful():
+            dossier.delete()
 
 
 @receiver(post_save, sender=Person)

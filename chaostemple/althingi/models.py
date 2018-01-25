@@ -378,6 +378,17 @@ class Review(models.Model):
 
     def delete(self):
         try:
+            # Force a pre_delete signal being sent before we attempt to
+            # delete, since Django doesn't still send the signal before
+            # collecting related objects that will prevent deletion. This
+            # means that the pre_delete signal is sent twice. We recklessly
+            # assume that's not a problem. (Django 1.11.9)
+            # The importing is done here because this should be removed when
+            # Django changes in such a way that pre_delete is sent before
+            # collecting related objects.
+            from django.db.models.signals import pre_delete
+            pre_delete.send(Review, instance=self)
+
             super(Review, self).delete()
         except models.deletion.ProtectedError:
 

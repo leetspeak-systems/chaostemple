@@ -201,7 +201,7 @@ class Command(BaseCommand):
                     vote_casting_xml_id = int(args['vote_casting'])
                 except (TypeError, ValueError):
                     self.error('Invalid vote casting XML-ID')
-                update_vote_casting(vote_casting_xml_id, parliament_num)
+                update_vote_casting(vote_casting_xml_id)
 
             if 'upcoming' in args:
                 has_run = True

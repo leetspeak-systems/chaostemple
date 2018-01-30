@@ -375,12 +375,10 @@ def update_vote_castings(parliament_num=None):
     for vote_casting_xml in vote_castings_xml:
         vote_casting_xml_id = int(vote_casting_xml.getAttribute(u'atkvæðagreiðslunúmer'))
 
-        update_vote_casting(vote_casting_xml_id, parliament.parliament_num)
+        update_vote_casting(vote_casting_xml_id)
 
 
-def update_vote_casting(vote_casting_xml_id, parliament_num):
-
-    parliament = update_parliament(parliament_num)
+def update_vote_casting(vote_casting_xml_id):
 
     # Make sure that input makes sense
     if vote_casting_xml_id is not None and not isinstance(vote_casting_xml_id, (int, long)):
@@ -395,6 +393,9 @@ def update_vote_casting(vote_casting_xml_id, parliament_num):
     try:
         issue_num = int(vote_casting_xml.getAttribute(u'málsnúmer'))
         issue_group = vote_casting_xml.getAttribute(u'málsflokkur')
+
+        parliament_num = int(vote_casting_xml.getAttribute(u'þingnúmer'))
+        parliament = update_parliament(parliament_num)
     except ValueError:
         # This is currently the only way of seeing if the vote casting exists.
         raise AlthingiException('Vote casting %d does not exist' % vote_casting_xml_id)

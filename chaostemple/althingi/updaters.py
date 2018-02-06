@@ -738,6 +738,10 @@ def update_committee(committee_xml_id, parliament_num=None):
                     committee = Committee.objects.get(committee_xml_id=committee_xml_id)
 
                     changed = False
+                    if committee.name != name:
+                        committee.name = name
+                        changed = True
+
                     if committee.parliament_num_first != parliament_num_first:
                         committee.parliament_num_first = parliament_num_first
                         changed = True

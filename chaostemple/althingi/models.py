@@ -12,7 +12,6 @@ from django.template.defaultfilters import slugify
 from django.templatetags.static import static
 from django.utils import timezone
 
-from BeautifulSoup import BeautifulSoup
 from unidecode import unidecode
 import urllib
 

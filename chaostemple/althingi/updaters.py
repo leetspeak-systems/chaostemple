@@ -100,18 +100,16 @@ def update_parliament(parliament_num):
     if already_haves['parliaments'].has_key(parliament_num):
         return already_haves['parliaments'][parliament_num]
 
-    parliaments_full_xml = get_xml('PARLIAMENT_URL', parliament_num)
+    xml = get_xml('PARLIAMENT_URL', parliament_num).find(u'þing')
 
-    try:
-        parliament_xml = parliaments_full_xml.getElementsByTagName(u'þing')[0]
-    except IndexError:
+    if xml is None:
         raise AlthingiException('Parliament %s could not be found' % parliament_num)
 
-    era = parliament_xml.getElementsByTagName(u'tímabil')[0].firstChild.nodeValue;
-    timing_start = sensible_datetime(parliament_xml.getElementsByTagName(u'þingsetning')[0].firstChild.nodeValue)
+    era = xml.find(u'tímabil').text
+    timing_start = sensible_datetime(xml.find(u'þingsetning').text)
     try:
-        timing_end = sensible_datetime(parliament_xml.getElementsByTagName(u'þinglok')[0].firstChild.nodeValue)
-    except IndexError:
+        timing_end = sensible_datetime(xml.find(u'þinglok').text)
+    except AttributeError:
         timing_end = None
 
     try:
@@ -155,14 +153,13 @@ def update_persons(parliament_num=None):
 
     parliament = update_parliament(parliament_num)
 
-    persons_full_xml = get_xml('PERSONS_URL', parliament.parliament_num)
-
-    persons_xml = persons_full_xml.getElementsByTagName(u'þingmaður')
+    persons_xml = get_xml('PERSONS_URL', parliament.parliament_num).findall(u'þingmaður')
 
     for person_xml in persons_xml:
-        person_xml_id = int(person_xml.getAttribute(u'id'))
+        person_xml_id = int(person_xml.attrib[u'id'])
 
         update_person(person_xml_id, parliament.parliament_num)
+
 
 def update_person(person_xml_id, parliament_num=None):
 
@@ -179,41 +176,44 @@ def update_person(person_xml_id, parliament_num=None):
     if already_haves['persons'].has_key(ah_key):
         return already_haves['persons'][ah_key]
 
-    person_xml = get_xml('PERSON_URL', person_xml_id)
-    if len(person_xml.getElementsByTagName(u'villa')) > 0:
+    xml = get_xml('PERSON_URL', person_xml_id)
+    if xml.tag != u'þingmaður':
         raise AlthingiException('Person with XML-ID %d not found' % person_xml_id)
 
     try:
-        # For some unknown reason, an email address is given in two separate tags
-        email_xml = person_xml.getElementsByTagName(u'netfang')[0]
-        email_name = email_xml.getElementsByTagName(u'nafn')[0].firstChild.nodeValue.strip()
-        email_domain = email_xml.getElementsByTagName(u'lén')[0].firstChild.nodeValue.strip()
+        email_name = xml.find(u'netfang/nafn').text
+        email_domain = xml.find(u'netfang/lén').text
         email = '%s@%s' % (email_name, email_domain)
-    except (AttributeError, IndexError):
+    except AttributeError:
         email = None
+
     try:
-        facebook_url = person_xml.getElementsByTagName(u'facebook')[0].firstChild.nodeValue.strip()
-    except (AttributeError, IndexError):
+        facebook_url = xml.find(u'facebook').text
+    except AttributeError:
         facebook_url = None
+
     try:
-        twitter_url = person_xml.getElementsByTagName(u'twitter')[0].firstChild.nodeValue.strip()
-    except (AttributeError, IndexError):
+        twitter_url = xml.find(u'twitter').text
+    except AttributeError:
         twitter_url = None
+
     try:
-        youtube_url = person_xml.getElementsByTagName(u'youtube')[0].firstChild.nodeValue.strip()
-    except (AttributeError, IndexError):
+        youtube_url = xml.find(u'youtube').text
+    except AttributeError:
         youtube_url = None
+
     try:
-        blog_url = person_xml.getElementsByTagName(u'blogg')[0].firstChild.nodeValue.strip()
-    except (AttributeError, IndexError):
+        blog_url = xml.find(u'blogg').text
+    except AttributeError:
         blog_url = None
+
     try:
-        website_url = person_xml.getElementsByTagName(u'vefur')[0].firstChild.nodeValue.strip()
-    except (AttributeError, IndexError):
+        website_url = xml.find(u'vefur').text
+    except AttributeError:
         website_url = None
 
-    name = person_xml.getElementsByTagName(u'nafn')[0].firstChild.nodeValue.strip()
-    birthdate = sensible_datetime(person_xml.getElementsByTagName(u'fæðingardagur')[0].firstChild.nodeValue)
+    name = xml.find(u'nafn').text
+    birthdate = sensible_datetime(xml.find(u'fæðingardagur').text)
 
     try:
         person = Person.objects.get(person_xml_id=person_xml_id)
@@ -292,36 +292,33 @@ def update_seats(person_xml_id, parliament_num=None):
     update_constituencies(parliament.parliament_num)
     update_parties(parliament.parliament_num)
 
-    try:
-        seats_full_xml = get_xml('SEATS_URL', person_xml_id)
-    except ExpatError:
-        raise AlthingiException('Seats for person with XML-ID %d not found' % person_xml_id)
-
-    seats_xml = seats_full_xml.getElementsByTagName(u'þingsetur')[0].getElementsByTagName(u'þingseta')
+    xml = get_xml('SEATS_URL', person_xml_id).findall(u'þingsetur/þingseta')
 
     seats = []
-    for seat_xml in seats_xml:
-        seat_parliament_num = int(seat_xml.getElementsByTagName(u'þing')[0].firstChild.nodeValue)
+    for seat_xml in xml:
+        seat_parliament_num = int(seat_xml.find(u'þing').text)
 
         if seat_parliament_num == parliament.parliament_num:
-            seat_type = seat_xml.getElementsByTagName(u'tegund')[0].firstChild.nodeValue
+            seat_type = seat_xml.find(u'tegund').text
 
-            name_abbreviation = seat_xml.getElementsByTagName(u'skammstöfun')[0].firstChild.nodeValue
+            name_abbreviation = seat_xml.find(u'skammstöfun').text
+
             try:
-                physical_seat_number = int(seat_xml.getElementsByTagName(u'þingsalssæti')[0].firstChild.nodeValue)
-            except AttributeError:
+                physical_seat_number = int(seat_xml.find(u'þingsalssæti').text)
+            except (AttributeError, TypeError):
                 physical_seat_number = None
 
-            timing_in = sensible_datetime(seat_xml.getElementsByTagName(u'inn')[0].firstChild.nodeValue)
+            timing_in = sensible_datetime(seat_xml.find(u'tímabil/inn').text)
+
             try:
-                timing_out = sensible_datetime(seat_xml.getElementsByTagName(u'út')[0].firstChild.nodeValue)
+                timing_out = sensible_datetime(seat_xml.find(u'tímabil/út').text)
             except AttributeError:
                 timing_out = None
 
-            constituency_xml_id = int(seat_xml.getElementsByTagName(u'kjördæmi')[0].getAttribute(u'id'))
-            constituency_mp_num = int(seat_xml.getElementsByTagName(u'kjördæmanúmer')[0].firstChild.nodeValue)
+            constituency_xml_id = int(seat_xml.find(u'kjördæmi').attrib[u'id'])
+            constituency_mp_num = int(seat_xml.find(u'kjördæmanúmer').text)
 
-            party_xml_id = int(seat_xml.getElementsByTagName(u'þingflokkur')[0].getAttribute(u'id'))
+            party_xml_id = int(seat_xml.find(u'þingflokkur').attrib[u'id'])
 
             try:
                 seat = Seat.objects.get(
@@ -368,12 +365,10 @@ def update_vote_castings(parliament_num=None):
 
     parliament = update_parliament(parliament_num)
 
-    vote_castings_full_xml = get_xml('VOTE_CASTINGS_URL', parliament.parliament_num)
+    xml = get_xml('VOTE_CASTINGS_URL', parliament.parliament_num).findall(u'atkvæðagreiðsla')
 
-    vote_castings_xml = vote_castings_full_xml.getElementsByTagName(u'atkvæðagreiðsla')
-
-    for vote_casting_xml in vote_castings_xml:
-        vote_casting_xml_id = int(vote_casting_xml.getAttribute(u'atkvæðagreiðslunúmer'))
+    for vote_casting_xml in xml:
+        vote_casting_xml_id = int(vote_casting_xml.attrib[u'atkvæðagreiðslunúmer'])
 
         update_vote_casting(vote_casting_xml_id)
 
@@ -387,93 +382,72 @@ def update_vote_casting(vote_casting_xml_id):
     if already_haves['vote_castings'].has_key('vote_casting_xml_id'):
         return already_haves['vote_castings'][vote_casting_xml_id]
 
-    vote_casting_full_xml = get_xml('VOTE_CASTING_URL', vote_casting_xml_id)
-    vote_casting_xml = vote_casting_full_xml.getElementsByTagName(u'atkvæðagreiðsla')[0]
+    xml = get_xml('VOTE_CASTING_URL', vote_casting_xml_id)
 
     try:
-        issue_num = int(vote_casting_xml.getAttribute(u'málsnúmer'))
-        issue_group = vote_casting_xml.getAttribute(u'málsflokkur')
+        issue_num = int(xml.attrib[u'málsnúmer'])
+        issue_group = xml.attrib[u'málsflokkur']
 
-        parliament_num = int(vote_casting_xml.getAttribute(u'þingnúmer'))
+        parliament_num = int(xml.attrib[u'þingnúmer'])
         parliament = update_parliament(parliament_num)
-    except ValueError:
+    except KeyError:
         # This is currently the only way of seeing if the vote casting exists.
         raise AlthingiException('Vote casting %d does not exist' % vote_casting_xml_id)
 
     if issue_group == 'A':
         issue = update_issue(issue_num, parliament.parliament_num)
 
-        doc_num = int(vote_casting_xml.getElementsByTagName(u'þingskjal')[0].getAttribute(u'skjalsnúmer'))
+        doc_num = int(xml.find(u'þingskjal').attrib[u'skjalsnúmer'])
         document = issue.documents.get(doc_num=doc_num)
     # NOTE / TODO: Waiting for B-issue types to appear in XML for vote castings.
     #elif issue_group == 'B':
-    #    docless_issue_xml = vote_casting_xml.getElementsByTagName(u'mál')[0]
+    #    docless_issue_xml = vote_casting_xml.find(u'mál')
     #    issue = _process_docless_issue(docless_issue_xml)
     #    document = None
     else:
         issue = None
         document = None
 
-    vote_casting_type_xml = vote_casting_xml.getElementsByTagName(u'tegund')[0]
-
-    timing = sensible_datetime(vote_casting_xml.getElementsByTagName(u'tími')[0].firstChild.nodeValue)
-    vote_casting_type = vote_casting_type_xml.getAttribute('tegund')
-    vote_casting_type_text = vote_casting_type_xml.firstChild.nodeValue
+    timing = sensible_datetime(xml.find(u'tími').text)
+    vote_casting_type = xml.find(u'tegund').attrib['tegund']
+    vote_casting_type_text = xml.find(u'tegund').text
     try:
-        specifics = vote_casting_xml.getElementsByTagName(u'nánar')[0].firstChild.nodeValue.strip()
-    except (IndexError, AttributeError):
+        specifics = xml.find(u'nánar').text.strip()
+    except AttributeError:
         specifics = ''
 
-    session_num = int(vote_casting_xml.getElementsByTagName(u'fundur')[0].firstChild.nodeValue)
+    session_num = int(xml.find(u'fundur').text)
     session = update_session(session_num, parliament.parliament_num)
 
     try:
-        committee_xml_id = int(vote_casting_xml.getElementsByTagName(u'til')[0].getAttribute('id'))
+        committee_xml_id = int(xml.find(u'til').attrib[u'id'])
         to_committee = update_committee(committee_xml_id, parliament.parliament_num)
-    except IndexError:
+    except AttributeError:
         to_committee = None
 
     try:
-        conclusion_xml = vote_casting_xml.getElementsByTagName(u'niðurstaða')[0]
-
-        try:
-            method = conclusion_xml.getElementsByTagName(u'aðferð')[0].firstChild.nodeValue
-        except IndexError:
-            method = None
-
-        try:
-            count_yes = int(
-                conclusion_xml.getElementsByTagName(u'já')[0].getElementsByTagName(u'fjöldi')[0].firstChild.nodeValue
-            )
-        except (IndexError, AttributeError):
-            count_yes = None
-
-        try:
-            count_no = int(
-                conclusion_xml.getElementsByTagName(u'nei')[0].getElementsByTagName(u'fjöldi')[0].firstChild.nodeValue
-            )
-        except (IndexError, AttributeError):
-            count_no = None
-
-        try:
-            count_abstain = int(
-                conclusion_xml.getElementsByTagName(
-                    u'greiðirekkiatkvæði'
-                )[0].getElementsByTagName(u'fjöldi')[0].firstChild.nodeValue
-            )
-        except (IndexError, AttributeError):
-            count_abstain = None
-
-        try:
-            conclusion = conclusion_xml.getElementsByTagName(u'niðurstaða')[0].firstChild.nodeValue
-        except:
-            conclusion = None
-
-    except IndexError:
+        method = xml.find(u'niðurstaða/aðferð').text
+    except AttributeError:
         method = None
+
+    try:
+        count_yes = int(xml.find(u'niðurstaða/já/fjöldi').text)
+    except (AttributeError, TypeError):
         count_yes = None
+
+    try:
+        count_no = int(xml.find(u'niðurstaða/nei/fjöldi').text)
+    except (AttributeError, TypeError):
         count_no = None
+
+    try:
+        count_abstain = int(xml.find(u'niðurstaða/greiðirekkiatkvæði/fjöldi').text)
+    except (AttributeError, TypeError):
         count_abstain = None
+
+    try:
+        conclusion = xml.find(u'niðurstaða/niðurstaða').text
+    except AttributeError:
         conclusion = None
 
     try:
@@ -561,40 +535,38 @@ def update_vote_casting(vote_casting_xml_id):
         print('Added vote casting: %s' % vote_casting)
 
     # Process actual votes, if they exist.
-    votes_xml = vote_casting_xml.getElementsByTagName(u'atkvæðaskrá')
-    if len(votes_xml) > 0:
-        for vote_xml in votes_xml[0].getElementsByTagName(u'þingmaður'):
-            person_xml_id = int(vote_xml.getAttribute(u'id'))
-            vote_response = vote_xml.getElementsByTagName(u'atkvæði')[0].firstChild.nodeValue
+    for vote_xml in xml.findall(u'atkvæðaskrá/þingmaður'):
+        person_xml_id = int(vote_xml.attrib[u'id'])
+        vote_response = vote_xml.find(u'atkvæði').text
 
-            # NOTE: To be removed when XML is fixed.
-            if vote_response == u'f: óþekktur kóði':
-                vote_response = u'boðaði fjarvist'
+        # NOTE: To be removed when XML is fixed.
+        if vote_response == u'f: óþekktur kóði':
+            vote_response = u'boðaði fjarvist'
 
-            person = update_person(person_xml_id, parliament.parliament_num)
+        person = update_person(person_xml_id, parliament.parliament_num)
 
-            try:
-                vote = vote_casting.votes.get(vote_casting_id=vote_casting.id, person_id=person.id)
+        try:
+            vote = vote_casting.votes.get(vote_casting_id=vote_casting.id, person_id=person.id)
 
-                changed = False
-                if vote.vote_response != vote_response:
-                    vote.vote_response = vote_response
-                    changed = True
-
-                if changed:
-                    vote.save()
-                    print('Updated vote: %s' % vote)
-                else:
-                    print('Already have vote: %s' % vote)
-            except Vote.DoesNotExist:
-                vote = Vote()
-                vote.vote_casting_id = vote_casting.id
-                vote.person_id = person.id
+            changed = False
+            if vote.vote_response != vote_response:
                 vote.vote_response = vote_response
+                changed = True
 
+            if changed:
                 vote.save()
+                print('Updated vote: %s' % vote)
+            else:
+                print('Already have vote: %s' % vote)
+        except Vote.DoesNotExist:
+            vote = Vote()
+            vote.vote_casting_id = vote_casting.id
+            vote.person_id = person.id
+            vote.vote_response = vote_response
 
-                print('Added vote: %s' % vote)
+            vote.save()
+
+            print('Added vote: %s' % vote)
 
     already_haves['vote_castings'][vote_casting_xml_id] = vote_casting
 
@@ -610,26 +582,26 @@ def update_committee_seats(person_xml_id, parliament_num=None):
     if already_haves['committee_seats'].has_key(ah_key):
         return already_haves['committee_seats'][ah_key]
 
-    committee_seats_full_xml = get_xml('COMMITTEE_SEATS_URL', person_xml_id)
-    committee_seats_xml = committee_seats_full_xml.getElementsByTagName(u'nefndasetur')[0].getElementsByTagName(u'nefndaseta')
+    xml = get_xml('COMMITTEE_SEATS_URL', person_xml_id).findall(u'nefndasetur/nefndaseta')
 
     committee_seats = []
-    for committee_seat_xml in committee_seats_xml:
-        committee_seat_parliament_num = int(committee_seat_xml.getElementsByTagName(u'þing')[0].firstChild.nodeValue)
+    for committee_seat_xml in xml:
+        committee_seat_parliament_num = int(committee_seat_xml.find(u'þing').text)
 
         if committee_seat_parliament_num == parliament.parliament_num:
 
-            committee_xml_id = int(committee_seat_xml.getElementsByTagName(u'nefnd')[0].getAttribute('id'))
+            committee_xml_id = int(committee_seat_xml.find(u'nefnd').attrib['id'])
             committee = update_committee(committee_xml_id, parliament.parliament_num)
 
-            committee_seat_type = committee_seat_xml.getElementsByTagName(u'staða')[0].firstChild.nodeValue
+            committee_seat_type = committee_seat_xml.find(u'staða').text
 
-            order = committee_seat_xml.getElementsByTagName(u'röð')[0].firstChild.nodeValue
+            order = committee_seat_xml.find(u'röð').text
 
-            timing_in = sensible_datetime(committee_seat_xml.getElementsByTagName(u'inn')[0].firstChild.nodeValue)
+            timing_in = sensible_datetime(committee_seat_xml.find(u'tímabil/inn').text)
+
             try:
-                timing_out = sensible_datetime(committee_seat_xml.getElementsByTagName(u'út')[0].firstChild.nodeValue)
-            except IndexError:
+                timing_out = sensible_datetime(committee_seat_xml.find(u'tímabil/út').text)
+            except AttributeError:
                 timing_out = None
 
             try:
@@ -675,11 +647,10 @@ def update_committees(parliament_num=None):
 
     parliament = update_parliament(parliament_num)
 
-    committees_full_xml = get_xml('COMMITTEE_LIST_URL', parliament.parliament_num)
-    committees_xml = committees_full_xml.getElementsByTagName(u'nefndir')[0]
+    xml = get_xml('COMMITTEE_LIST_URL', parliament.parliament_num).findall(u'nefnd')
 
-    for committee_xml in committees_xml.getElementsByTagName(u'nefnd'):
-        committee_xml_id = int(committee_xml.getAttribute(u'id'))
+    for committee_xml in xml:
+        committee_xml_id = int(committee_xml.attrib[u'id'])
         update_committee(committee_xml_id, parliament.parliament_num)
 
 
@@ -708,30 +679,26 @@ def update_committee(committee_xml_id, parliament_num=None):
 
         # Cache the XML document, so that we only need to retrieve it once per run
         if already_haves['xml'].has_key(xml_url):
-            committees_full_xml = already_haves['xml'][xml_url]
+            xml = already_haves['xml'][xml_url]
         else:
             if parliament_num:
-                committees_full_xml = get_xml(xml_url_name, parliament_num)
+                xml = get_xml(xml_url_name, parliament_num).findall(u'nefnd')
             else:
-                committees_full_xml = get_xml(xml_url_name)
-            already_haves['xml'][xml_url] = committees_full_xml
-
-        committees_xml = committees_full_xml.getElementsByTagName(u'nefnd')
+                xml = get_xml(xml_url_name).findall(u'nefnd')
+            already_haves['xml'][xml_url] = xml
 
         committee = None
-        for committee_xml in committees_xml:
-            if int(committee_xml.getAttribute(u'id')) == committee_xml_id:
-                abbreviations_xml = committee_xml.getElementsByTagName(u'skammstafanir')[0]
-                period_xml = committee_xml.getElementsByTagName(u'tímabil')[0]
+        for committee_xml in xml:
+            if int(committee_xml.attrib[u'id']) == committee_xml_id:
 
-                name = committee_xml.getElementsByTagName(u'heiti')[0].firstChild.nodeValue
-                abbreviation_short = abbreviations_xml.getElementsByTagName(u'stuttskammstöfun')[0].firstChild.nodeValue
-                abbreviation_long = abbreviations_xml.getElementsByTagName(u'löngskammstöfun')[0].firstChild.nodeValue
+                name = committee_xml.find(u'heiti').text
+                abbreviation_short = committee_xml.find(u'skammstafanir/stuttskammstöfun').text
+                abbreviation_long = committee_xml.find(u'skammstafanir/löngskammstöfun').text
 
-                parliament_num_first = int(period_xml.getElementsByTagName(u'fyrstaþing')[0].firstChild.nodeValue)
+                parliament_num_first = int(committee_xml.find(u'tímabil/fyrstaþing').text)
                 try:
-                    parliament_num_last = int(period_xml.getElementsByTagName(u'síðastaþing')[0].firstChild.nodeValue)
-                except (AttributeError, IndexError):
+                    parliament_num_last = int(committee_xml.find(u'tímabil/síðastaþing').text)
+                except AttributeError:
                     parliament_num_last = None
 
                 try:
@@ -805,15 +772,14 @@ def update_issues(parliament_num=None):
 
     parliament = update_parliament(parliament_num)
 
-    issue_list_xml = get_xml('ISSUE_LIST_URL', parliament.parliament_num)
-    issues_xml = issue_list_xml.getElementsByTagName(u'mál')
+    xml = get_xml('ISSUE_LIST_URL', parliament.parliament_num).findall(u'mál')
 
-    for issue_xml in issues_xml:
+    for issue_xml in xml:
         # We are only interested in A-issues (with documents).
-        if issue_xml.getAttribute(u'málsflokkur') != 'A':
+        if issue_xml.attrib[u'málsflokkur'] != 'A':
             continue
 
-        issue_num = int(issue_xml.getAttribute(u'málsnúmer'))
+        issue_num = int(issue_xml.attrib[u'málsnúmer'])
 
         update_issue(issue_num, parliament_num=parliament.parliament_num)
 
@@ -835,19 +801,22 @@ def update_issue(issue_num, parliament_num=None):
     # Contains a list of structs, for exmaple: {'parliament_num': 144, 'issue_num': 524 }
     previously_published_as = []
 
-    issue_xml = get_xml('ISSUE_URL', parliament.parliament_num, issue_num)
-    docstubs_xml = issue_xml.getElementsByTagName(u'þingskjöl')[0].getElementsByTagName(u'þingskjal')
-    reviews_xml = issue_xml.getElementsByTagName(u'erindaskrá')[0].getElementsByTagName(u'erindi')
+    xml = get_xml('ISSUE_URL', parliament.parliament_num, issue_num)
 
-    if len(issue_xml.getElementsByTagName(u'mál')) == 0:
+    issue_xml = xml.find(u'mál')
+    rapporteurs_xml = xml.findall(u'framsögumenn/framsögumaður')
+    docstubs_xml = xml.findall(u'þingskjöl/þingskjal')
+    reviews_xml = xml.findall(u'erindaskrá/erindi')
+
+    if issue_xml is None:
         raise AlthingiException('Issue %d in parliament %d does not exist' % (issue_num, parliament.parliament_num))
 
-    issue_type = issue_xml.getElementsByTagName(u'málstegund')[0].getAttribute(u'málstegund')
+    issue_type = issue_xml.find(u'málstegund').attrib[u'málstegund']
 
-    name = issue_xml.getElementsByTagName(u'málsheiti')[0].firstChild.nodeValue.strip()
+    name = issue_xml.find(u'málsheiti').text.strip()
 
-    description = issue_xml.getElementsByTagName(u'efnisgreining')[0].firstChild
-    description = description.nodeValue.strip() if description != None else ''
+    description = issue_xml.find(u'efnisgreining').text
+    description = '' if description is None else description.strip()
 
     try:
         issue = Issue.objects.get(issue_num=issue_num, issue_group='A', parliament=parliament)
@@ -884,79 +853,73 @@ def update_issue(issue_num, parliament_num=None):
         print('Added issue: %s' % issue.detailed())
 
     # Add or remove rapporteurs
-    rapporteurs_xml = issue_xml.getElementsByTagName(u'framsögumenn')
-    if len(rapporteurs_xml) > 0:
-        rapporteur_ids = []
-        for rapporteur_xml in rapporteurs_xml[0].getElementsByTagName(u'framsögumaður'):
-            person_xml_id = int(rapporteur_xml.getAttribute(u'id'))
-            person = update_person(person_xml_id, parliament.parliament_num)
+    rapporteur_ids = []
+    for rapporteur_xml in rapporteurs_xml:
+        person_xml_id = int(rapporteur_xml.attrib[u'id'])
+        person = update_person(person_xml_id, parliament.parliament_num)
 
-            try:
-                rapporteur = Rapporteur.objects.get(issue_id=issue.id, person_id=person.id)
+        try:
+            rapporteur = Rapporteur.objects.get(issue_id=issue.id, person_id=person.id)
 
-                print('Already have rapporteur: %s' % rapporteur)
-            except Rapporteur.DoesNotExist:
-                rapporteur = Rapporteur()
-                rapporteur.issue_id = issue.id
-                rapporteur.person_id = person.id
-                rapporteur.save()
+            print('Already have rapporteur: %s' % rapporteur)
+        except Rapporteur.DoesNotExist:
+            rapporteur = Rapporteur()
+            rapporteur.issue_id = issue.id
+            rapporteur.person_id = person.id
+            rapporteur.save()
 
-                print('Added rapporteur: %s' % rapporteur)
+            print('Added rapporteur: %s' % rapporteur)
 
-            rapporteur_ids.append(rapporteur.id)
+        rapporteur_ids.append(rapporteur.id)
 
-        # Delete rapporteurs that no longer exist online.
-        for rapporteur in Rapporteur.objects.filter(issue_id=issue.id).exclude(id__in=rapporteur_ids):
-            rapporteur.delete()
-            print('Deleted non-existent rapporteur: %s' % rapporteur)
+    # Delete rapporteurs that no longer exist online.
+    for rapporteur in Rapporteur.objects.filter(issue_id=issue.id).exclude(id__in=rapporteur_ids):
+        rapporteur.delete()
+        print('Deleted non-existent rapporteur: %s' % rapporteur)
 
     # Check if issue was previously published
-    linked_issues_xml = issue_xml.getElementsByTagName(u'tengdMál')
-    if len(linked_issues_xml) > 0:
-        previously_published_xml = linked_issues_xml[0].getElementsByTagName(u'lagtFramÁðurSem')
-        if len(previously_published_xml) > 0:
-            for previous_issue_xml in previously_published_xml[0].getElementsByTagName(u'mál'):
-                previous_parliament_num = int(previous_issue_xml.getAttribute(u'þingnúmer'))
-                previous_issue_num = int(previous_issue_xml.getAttribute(u'málsnúmer'))
+    for previous_issue_xml in xml.findall(u'tengdMál/lagtFramÁðurSem/mál'):
+        previous_parliament_num = int(previous_issue_xml.attrib[u'þingnúmer'])
+        previous_issue_num = int(previous_issue_xml.attrib[u'málsnúmer'])
 
-                previously_published_as.append({
-                    'parliament_num': previous_parliament_num,
-                    'issue_num': previous_issue_num,
-                })
+        previously_published_as.append({
+            'parliament_num': previous_parliament_num,
+            'issue_num': previous_issue_num,
+        })
 
     # See if this issue has summary information
-    summary_xml_try = issue_xml.getElementsByTagName(u'mál')[0].getElementsByTagName(u'samantekt')
-    if len(summary_xml_try) > 0:
+    summary_xml_try = issue_xml.find(u'samantekt')
+    if summary_xml_try is not None:
         # Yes, it has summary information
         summary_xml = get_xml('ISSUE_SUMMARY_URL', parliament.parliament_num, issue.issue_num)
 
-        purpose = summary_xml.getElementsByTagName(u'markmið')[0].firstChild.nodeValue
+        purpose = summary_xml.find(u'markmið').text
         try:
-            change_description = summary_xml.getElementsByTagName(u'helstuBreytingar')[0].firstChild.nodeValue
+            change_description = summary_xml.find(u'helstuBreytingar').text
         except AttributeError:
             change_description = ''
         try:
-            changes_to_law = summary_xml.getElementsByTagName(u'breytingaráLögum')[0].firstChild.nodeValue
+            changes_to_law = summary_xml.find(u'breytingaráLögum').text
         except AttributeError:
             changes_to_law = ''
         try:
-            cost_and_revenue = summary_xml.getElementsByTagName(u'kostnaðurOgTekjur')[0].firstChild.nodeValue
+            cost_and_revenue = summary_xml.find(u'kostnaðurOgTekjur').text
         except AttributeError:
             cost_and_revenue = ''
         try:
-            other_info = summary_xml.getElementsByTagName(u'aðrarUpplýsingar')[0].firstChild.nodeValue
+            other_info = summary_xml.find(u'aðrarUpplýsingar').text
         except AttributeError:
             other_info = ''
         try:
-            review_description = summary_xml.getElementsByTagName(u'umsagnir')[0].firstChild.nodeValue
+            review_description = summary_xml.find(u'umsagnir').text
         except AttributeError:
             review_description = ''
         try:
-            fate = summary_xml.getElementsByTagName(u'afgreiðsla')[0].firstChild.nodeValue
+            fate = summary_xml.find(u'afgreiðsla').text
         except AttributeError:
             fate = ''
         try:
-            media_coverage = summary_xml.getElementsByTagName(u'fjölmiðlaumfjöllun')[0].firstChild.nodeValue
+            media_coverage = summary_xml.find(u'fjölmiðlaumfjöllun').text
         except AttributeError:
             media_coverage = ''
 
@@ -1021,7 +984,7 @@ def update_issue(issue_num, parliament_num=None):
     doc_nums = [] # Keep track of legit documents. Sometimes docs get deleted from the XML and so should be deleted locally.
     for i, docstub_xml in enumerate(docstubs_xml):
         # Make sure that this is indeed the correct issue.
-        if int(docstub_xml.getAttribute(u'málsnúmer')) != issue.issue_num or int(docstub_xml.getAttribute(u'þingnúmer')) != parliament.parliament_num:
+        if int(docstub_xml.attrib[u'málsnúmer']) != issue.issue_num or int(docstub_xml.attrib[u'þingnúmer']) != parliament.parliament_num:
             continue
 
         is_main = False
@@ -1029,28 +992,23 @@ def update_issue(issue_num, parliament_num=None):
             # If this is the zero-eth iterator, this is the main document.
             is_main = True
 
-        doc_num = int(docstub_xml.getAttribute(u'skjalsnúmer'))
+        doc_num = int(docstub_xml.attrib[u'skjalsnúmer'])
 
-        doc_full_xml = get_xml('DOCUMENT_URL', parliament.parliament_num, doc_num)
-        doc_xml = doc_full_xml.getElementsByTagName(u'þingskjal')[0].getElementsByTagName(u'þingskjal')[0]
+        doc_xml = get_xml('DOCUMENT_URL', parliament.parliament_num, doc_num).find(u'þingskjal')
 
         doc_nums.append(doc_num)
 
-        doc_type = doc_xml.getElementsByTagName(u'skjalategund')[0].firstChild.nodeValue
-        time_published = doc_xml.getElementsByTagName(u'útbýting')[0].firstChild.nodeValue + "+00:00"
+        doc_type = doc_xml.find(u'skjalategund').text
+        time_published = doc_xml.find(u'útbýting').text + "+00:00"
 
-        paths_xml = doc_xml.getElementsByTagName(u'slóð')
-        html_paths_xml = paths_xml[0].getElementsByTagName(u'html')
-        pdf_paths_xml = paths_xml[0].getElementsByTagName(u'pdf')
-
-        if len(html_paths_xml) > 0:
-            path_html = html_paths_xml[0].firstChild.nodeValue
-        else:
+        try:
+            path_html = doc_xml.find(u'slóð/html').text
+        except AttributeError:
             path_html = None
 
-        if len(pdf_paths_xml) > 0:
-            path_pdf = pdf_paths_xml[0].firstChild.nodeValue
-        else:
+        try:
+            path_pdf = doc_xml.find(u'slóð/pdf').text
+        except AttributeError:
             path_pdf = None
 
         if path_html is None and path_pdf is None:
@@ -1111,93 +1069,92 @@ def update_issue(issue_num, parliament_num=None):
 
         # Process proposers.
         proposer_ids = []
-        for proposer_xml in doc_xml.getElementsByTagName(u'flutningsmenn'):
-            committeepart = None # Reset from possible previous iteration
+        committeepart = None # Reset from possible previous iteration
 
-            committee_xml = proposer_xml.getElementsByTagName(u'nefnd')
-            if len(committee_xml) > 0:
-                # NOTE: This try/except should be removed once the XML is fixed and committees are displayer properly.
+        committee_xml = doc_xml.find(u'flutningsmenn/nefnd')
+        if committee_xml is not None:
+            # NOTE: This try/except should be removed once the XML is fixed and committees are displayer properly.
+            try:
+                committee_xml_id = int(committee_xml.attrib['id'])
+            except ValueError:
+                print('Warning! Document is missing committee ID in Parliament %d, issue %d, document %d! Assumed "sérnefnd". Tell the XML keeper!' % (parliament.parliament_num, issue.issue_num, doc.doc_num), file=stderr)
+                committee_xml_id = Committee.objects.get(abbreviation_short='sn').committee_xml_id
+
+            committee = update_committee(committee_xml_id, parliament.parliament_num)
+
+            committee_partname = committee_xml.find(u'hluti').text
+            if committee_partname is None:
+                committee_partname = ''
+
+            try:
+                proposer = Proposer.objects.get(document=doc, committee=committee, committee_partname=committee_partname)
+
+                print('Already have proposer: %s on document %s' % (proposer, doc))
+
+            except Proposer.DoesNotExist:
+                proposer = Proposer()
+                proposer.committee = committee
+                proposer.committee_partname = committee_partname
+                proposer.document = doc
+                proposer.save()
+
+                print('Added proposer: %s to document %s' % (proposer, doc))
+
+            proposer_ids.append(proposer.id)
+
+            persons_xml = committee_xml.findall(u'flutningsmaður')
+            subproposer_ids = []
+            for person_xml in persons_xml:
+                person_xml_id = int(person_xml.attrib[u'id'])
+                order = int(person_xml.attrib[u'röð'])
+
+                person = update_person(person_xml_id, parliament.parliament_num)
+
                 try:
-                    committee_xml_id = int(committee_xml[0].getAttribute('id'))
-                except ValueError:
-                    print('Warning! Document is missing committee ID in Parliament %d, issue %d, document %d! Assumed "sérnefnd". Tell the XML keeper!' % (parliament.parliament_num, issue.issue_num, doc.doc_num), file=stderr)
-                    committee_xml_id = Committee.objects.get(abbreviation_short='sn').committee_xml_id
+                    subproposer = Proposer.objects.get(parent=proposer, person=person)
 
-                committee = update_committee(committee_xml_id, parliament.parliament_num)
+                    print('Already have sub-proposer: %s on committee %s' % (subproposer, committee))
 
-                committee_partname_node = committee_xml[0].getElementsByTagName(u'hluti')[0].firstChild
+                except Proposer.DoesNotExist:
+                    subproposer = Proposer()
+                    subproposer.person = person
+                    subproposer.order = order
+                    subproposer.parent = proposer
+                    subproposer.save()
 
-                committee_partname = committee_partname_node.nodeValue if committee_partname_node else ''
+                    print('Added sub-proposer: %s to committee %s' % (subproposer, committee))
+
+                subproposer_ids.append(subproposer.id)
+
+            # Delete sub-proposers that no longer exist online.
+            for subproposer in Proposer.objects.filter(parent=proposer).exclude(id__in=subproposer_ids):
+                subproposer.delete()
+                print('Deleted non-existent sub-proposer: %s' % subproposer)
+
+        else:
+            persons_xml = doc_xml.findall(u'flutningsmenn/flutningsmaður')
+            for person_xml in persons_xml:
+                person_xml_id = int(person_xml.attrib[u'id'])
+
+                order = int(person_xml.attrib[u'röð'])
+
+                person = update_person(person_xml_id, parliament.parliament_num)
 
                 try:
-                    proposer = Proposer.objects.get(document=doc, committee=committee, committee_partname=committee_partname)
+                    proposer = Proposer.objects.get(document=doc, person=person)
 
                     print('Already have proposer: %s on document %s' % (proposer, doc))
 
                 except Proposer.DoesNotExist:
                     proposer = Proposer()
-                    proposer.committee = committee
-                    proposer.committee_partname = committee_partname
+                    proposer.person = person
+                    proposer.order = order
                     proposer.document = doc
                     proposer.save()
 
                     print('Added proposer: %s to document %s' % (proposer, doc))
 
                 proposer_ids.append(proposer.id)
-
-                persons_xml = committee_xml[0].getElementsByTagName(u'flutningsmaður')
-                subproposer_ids = []
-                for person_xml in persons_xml:
-                    person_xml_id = int(person_xml.getAttribute(u'id'))
-                    order = int(person_xml.getAttribute(u'röð'))
-
-                    person = update_person(person_xml_id, parliament.parliament_num)
-
-                    try:
-                        subproposer = Proposer.objects.get(parent=proposer, person=person)
-
-                        print('Already have sub-proposer: %s on committee %s' % (subproposer, committee))
-
-                    except Proposer.DoesNotExist:
-                        subproposer = Proposer()
-                        subproposer.person = person
-                        subproposer.order = order
-                        subproposer.parent = proposer
-                        subproposer.save()
-
-                        print('Added sub-proposer: %s to committee %s' % (subproposer, committee))
-
-                    subproposer_ids.append(subproposer.id)
-
-                # Delete sub-proposers that no longer exist online.
-                for subproposer in Proposer.objects.filter(parent=proposer).exclude(id__in=subproposer_ids):
-                    subproposer.delete()
-                    print('Deleted non-existent sub-proposer: %s' % subproposer)
-
-            else:
-                persons_xml = proposer_xml.getElementsByTagName(u'flutningsmaður')
-                for person_xml in persons_xml:
-                    person_xml_id = int(person_xml.getAttribute(u'id'))
-
-                    order = int(person_xml.getAttribute(u'röð'))
-
-                    person = update_person(person_xml_id, parliament.parliament_num)
-
-                    try:
-                        proposer = Proposer.objects.get(document=doc, person=person)
-
-                        print('Already have proposer: %s on document %s' % (proposer, doc))
-
-                    except Proposer.DoesNotExist:
-                        proposer = Proposer()
-                        proposer.person = person
-                        proposer.order = order
-                        proposer.document = doc
-                        proposer.save()
-
-                        print('Added proposer: %s to document %s' % (proposer, doc))
-
-                    proposer_ids.append(proposer.id)
 
         # Delete proposers that no longer exist online.
         for proposer in Proposer.objects.filter(document=doc).exclude(id__in=proposer_ids):
@@ -1212,35 +1169,35 @@ def update_issue(issue_num, parliament_num=None):
     # Process reviews.
     log_nums = [] # Keep track of legit reviews. Sometimes reviews get deleted from the XML and so should be deleted locally.
     for review_xml in reviews_xml:
-        log_num = int(review_xml.getAttribute(u'dagbókarnúmer'))
+        log_num = int(review_xml.attrib[u'dagbókarnúmer'])
 
         log_nums.append(log_num)
 
         try:
-            sender_name = review_xml.getElementsByTagName(u'sendandi')[0].firstChild.nodeValue
+            sender_name = review_xml.find(u'sendandi').text
         except AttributeError:
             # Review with log_num 1057 in Parliament 112 lacks a name. Others do not exist.
             sender_name = ''
         try:
-            sender_name_description = review_xml.getElementsByTagName(u'skýring')[0].firstChild.nodeValue
-        except (AttributeError, IndexError):
+            sender_name_description = review_xml.find(u'skýring').text
+        except AttributeError:
             sender_name_description = ''
 
-        review_type = review_xml.getElementsByTagName(u'tegunderindis')[0].getAttribute('tegund')
+        review_type = review_xml.find(u'tegunderindis').attrib['tegund']
         try:
-            date_arrived = review_xml.getElementsByTagName(u'komudagur')[0].firstChild.nodeValue
+            date_arrived = review_xml.find(u'komudagur').text
         except AttributeError:
             date_arrived = None
         try:
-            date_sent = review_xml.getElementsByTagName(u'sendingadagur')[0].firstChild.nodeValue
+            date_sent = review_xml.find(u'sendingadagur').text
         except AttributeError:
             date_sent = None
 
         try:
-            committee_xml_id = int(review_xml.getElementsByTagName(u'nefnd')[0].getAttribute(u'id'))
+            committee_xml_id = int(review_xml.find(u'viðtakandi/nefnd').attrib[u'id'])
             committee = update_committee(committee_xml_id, parliament.parliament_num)
             committee_id = committee.id
-        except IndexError:
+        except AttributeError:
             committee_id = None
 
         # sender_name can contain a lot of baggage if it's old data (around 116th parliament and earlir)
@@ -1248,10 +1205,7 @@ def update_issue(issue_num, parliament_num=None):
         while sender_name.find('  ') >= 0:
             sender_name = sender_name.replace('  ', ' ')
 
-        paths_xml = review_xml.getElementsByTagName(u'slóð')
-        pdf_paths_xml = paths_xml[0].getElementsByTagName(u'pdf')
-
-        path_pdf = pdf_paths_xml[0].firstChild.nodeValue
+        path_pdf = review_xml.find(u'slóð/pdf').text
 
         try:
             review = Review.objects.get(log_num=log_num, issue=issue)
@@ -1329,23 +1283,23 @@ def update_issue(issue_num, parliament_num=None):
 
 def _process_docless_issue(issue_xml):
 
-    issue_num = int(issue_xml.getAttribute(u'málsnúmer'))
-    parliament_num = int(issue_xml.getAttribute(u'þingnúmer'))
+    issue_num = int(issue_xml.attrib[u'málsnúmer'])
+    parliament_num = int(issue_xml.attrib[u'þingnúmer'])
 
     parliament = update_parliament(parliament_num)
 
-    name = issue_xml.getElementsByTagName(u'málsheiti')[0].firstChild.nodeValue
-    issue_type = issue_xml.getElementsByTagName(u'málstegund')[0].getAttribute('id')
+    name = issue_xml.find(u'málsheiti').text
+    issue_type = issue_xml.find(u'málstegund').attrib['id']
 
     try:
-        special_inquisitor_xml = issue_xml.getElementsByTagName(u'málshefjandi')[0]
-        special_responder_xml = issue_xml.getElementsByTagName(u'til_andsvara')[0]
+        special_inquisitor_xml = issue_xml.find(u'málshefjandi')
+        special_responder_xml = issue_xml.find(u'til_andsvara')
 
-        special_inquisitor = update_person(int(special_inquisitor_xml.getAttribute('id')), parliament.parliament_num)
-        special_inquisitor_description = special_inquisitor_xml.firstChild.nodeValue
-        special_responder = update_person(int(special_responder_xml.getAttribute('id')), parliament.parliament_num)
-        special_responder_description = special_responder_xml.firstChild.nodeValue
-    except IndexError:
+        special_inquisitor = update_person(int(special_inquisitor_xml.attrib['id']), parliament.parliament_num)
+        special_inquisitor_description = special_inquisitor_xml.text
+        special_responder = update_person(int(special_responder_xml.attrib['id']), parliament.parliament_num)
+        special_responder_description = special_responder_xml.text
+    except AttributeError:
         special_inquisitor = None
         special_inquisitor_description = None
         special_responder = None
@@ -1414,9 +1368,9 @@ def update_sessions(parliament_num=None):
 
     parliament = update_parliament(parliament_num)
 
-    sessions_xml = get_xml('SESSION_LIST_URL', parliament.parliament_num)
-    for session_xml in reversed(sessions_xml.getElementsByTagName(u'þingfundur')):
-        session_num = int(session_xml.getAttribute(u'númer'))
+    xml = get_xml('SESSION_LIST_URL', parliament.parliament_num).findall(u'þingfundur')
+    for session_xml in reversed(xml):
+        session_num = int(session_xml.attrib[u'númer'])
 
         update_session(session_num, parliament.parliament_num)
 
@@ -1433,10 +1387,8 @@ def update_session(session_num, parliament_num=None):
     if already_haves['sessions'].has_key(ah_key):
         return already_haves['sessions'][ah_key]
 
-    session_full_xml = get_xml('SESSION_AGENDA_URL', parliament.parliament_num, session_num)
-    try:
-        session_xml = session_full_xml.getElementsByTagName(u'þingfundur')[0]
-    except IndexError:
+    xml = get_xml('SESSION_AGENDA_URL', parliament.parliament_num, session_num).find(u'þingfundur')
+    if xml is None:
         # Check if session exists in database, because if it does, it shouldn't.
         try:
             nonexistent_session = Session.objects.get(
@@ -1451,7 +1403,7 @@ def update_session(session_num, parliament_num=None):
         except Session.DoesNotExist:
             raise AlthingiException('Session %d in parliament %d does not exist' % (session_num, parliament.parliament_num))
 
-    session = _process_session_agenda_xml(session_xml)
+    session = _process_session_agenda_xml(xml)
 
     already_haves['sessions'][ah_key] = session
 
@@ -1460,10 +1412,10 @@ def update_session(session_num, parliament_num=None):
 
 def update_next_sessions():
 
-    session_full_xml = get_xml('SESSION_NEXT_AGENDA_URL')
-    sessions_xml = session_full_xml.getElementsByTagName(u'þingfundur')
+    xml = get_xml('SESSION_NEXT_AGENDA_URL')
+
     sessions = []
-    for session_xml in sessions_xml:
+    for session_xml in xml:
         session = _process_session_agenda_xml(session_xml)
         sessions.append(session)
 
@@ -1482,33 +1434,34 @@ def update_constituencies(parliament_num=None):
     if already_haves['constituencies'].has_key(ah_key):
         return already_haves['constituencies'][ah_key]
 
-    constituencies_xml = get_xml('CONSTITUENCIES_URL', parliament.parliament_num)
+    xml = get_xml('CONSTITUENCIES_URL', parliament.parliament_num).findall(u'kjördæmið')
 
     constituencies = []
-    for constituency_xml in constituencies_xml.getElementsByTagName(u'kjördæmin')[0].getElementsByTagName(u'kjördæmið'):
-        abbreviations_xml = constituency_xml.getElementsByTagName(u'skammstafanir')[0]
-        period_xml = constituency_xml.getElementsByTagName(u'tímabil')[0]
+    for constituency_xml in xml:
 
-        constituency_xml_id = int(constituency_xml.getAttribute(u'id'))
+        constituency_xml_id = int(constituency_xml.attrib[u'id'])
 
         if constituency_xml_id == 1: # Only there for ministers not in Parliament and is to be ignored.
             continue
 
-        name = constituency_xml.getElementsByTagName(u'heiti')[0].childNodes[1].nodeValue
+        name = constituency_xml.find(u'heiti').text.strip()
         try:
-            description = constituency_xml.getElementsByTagName(u'lýsing')[0].childNodes[1].nodeValue
-        except (AttributeError, IndexError):
+            description = constituency_xml.find(u'lýsing').text.strip()
+        except AttributeError:
             description = ''
-        abbreviation_short = abbreviations_xml.getElementsByTagName(u'stuttskammstöfun')[0].firstChild.nodeValue
+
+        abbreviation_short = constituency_xml.find(u'skammstafanir/stuttskammstöfun').text
+
         try:
-            abbreviation_long = abbreviations_xml.getElementsByTagName(u'löngskammstöfun')[0].firstChild.nodeValue
-        except (AttributeError, IndexError):
+            abbreviation_long = constituency_xml.find(u'skammstafanir/löngskammstöfun').text
+        except AttributeError:
             abbreviation_long = None
 
-        parliament_num_first = int(period_xml.getElementsByTagName(u'fyrstaþing')[0].firstChild.nodeValue)
+        parliament_num_first = int(constituency_xml.find(u'tímabil/fyrstaþing').text)
+
         try:
-            parliament_num_last = int(period_xml.getElementsByTagName(u'síðastaþing')[0].firstChild.nodeValue)
-        except (AttributeError, IndexError):
+            parliament_num_last = int(constituency_xml.find(u'tímabil/síðastaþing').text)
+        except AttributeError:
             parliament_num_last = None
 
         try:
@@ -1573,26 +1526,25 @@ def update_parties(parliament_num=None):
     if already_haves['parties'].has_key(ah_key):
         return already_haves['parties'][ah_key]
 
-    parties_xml = get_xml('PARTIES_URL', parliament.parliament_num)
+    xml = get_xml('PARTIES_URL', parliament.parliament_num).findall(u'þingflokkur')
 
     parties = []
-    for party_xml in parties_xml.getElementsByTagName(u'þingflokkar')[0].getElementsByTagName(u'þingflokkur'):
-        abbreviations_xml = party_xml.getElementsByTagName(u'skammstafanir')[0]
-        period_xml = party_xml.getElementsByTagName(u'tímabil')[0]
+    for party_xml in xml:
 
-        party_xml_id = party_xml.getAttribute(u'id')
-        name = party_xml.getElementsByTagName(u'heiti')[0].firstChild.nodeValue.strip()
+        party_xml_id = party_xml.attrib[u'id']
+
+        name = party_xml.find(u'heiti').text.strip()
 
         if name == '':
             continue
 
-        abbreviation_short = abbreviations_xml.getElementsByTagName(u'stuttskammstöfun')[0].firstChild.nodeValue
-        abbreviation_long = abbreviations_xml.getElementsByTagName(u'löngskammstöfun')[0].firstChild.nodeValue
+        abbreviation_short = party_xml.find(u'skammstafanir/stuttskammstöfun').text
+        abbreviation_long = party_xml.find(u'skammstafanir/löngskammstöfun').text
 
-        parliament_num_first = int(period_xml.getElementsByTagName(u'fyrstaþing')[0].firstChild.nodeValue)
+        parliament_num_first = int(party_xml.find(u'tímabil/fyrstaþing').text)
         try:
-            parliament_num_last = int(period_xml.getElementsByTagName(u'síðastaþing')[0].firstChild.nodeValue)
-        except (AttributeError, IndexError):
+            parliament_num_last = int(party_xml.find(u'tímabil/síðastaþing').text)
+        except AttributeError:
             parliament_num_last = None
 
         try:
@@ -1652,16 +1604,16 @@ def update_committee_agendas(parliament_num=None, date_limit=None):
     if date_limit is not None:
         date_limit = sensible_datetime(date_limit)
 
-    committee_agenda_list_xml = get_xml('COMMITTEE_AGENDA_LIST_URL', parliament.parliament_num)
-    committee_agenda_stubs_xml = committee_agenda_list_xml.getElementsByTagName(u'nefndarfundur')
-    committee_agendas = []
-    for committee_agenda_stub_xml in reversed(committee_agenda_stubs_xml):
+    xml = get_xml('COMMITTEE_AGENDA_LIST_URL', parliament.parliament_num).findall(u'nefndarfundur')
 
-        meeting_date = sensible_datetime(committee_agenda_stub_xml.getElementsByTagName(u'dagur')[0].firstChild.nodeValue)
+    committee_agendas = []
+    for committee_agenda_stub_xml in reversed(xml):
+
+        meeting_date = sensible_datetime(committee_agenda_stub_xml.find(u'hefst/dagur').text)
         if date_limit is not None and meeting_date < date_limit:
             break
 
-        committee_agenda_xml_id = int(committee_agenda_stub_xml.getAttribute(u'númer'))
+        committee_agenda_xml_id = int(committee_agenda_stub_xml.attrib[u'númer'])
         committee_agenda = update_committee_agenda(committee_agenda_xml_id, parliament.parliament_num)
 
         committee_agendas.append(committee_agenda)
@@ -1703,10 +1655,9 @@ def update_committee_agenda(committee_agenda_xml_id, parliament_num=None):
     if committee_agenda_xml_id is not None and not isinstance(committee_agenda_xml_id, (int, long)):
         raise TypeError('Parameter committee_agenda_xml_id must be a number')
 
-    committee_agenda_full_xml = get_xml('COMMITTEE_AGENDA_URL', committee_agenda_xml_id)
-    committee_agenda_xml = committee_agenda_full_xml.getElementsByTagName(u'nefndarfundur')[0]
+    xml = get_xml('COMMITTEE_AGENDA_URL', committee_agenda_xml_id)
 
-    if not committee_agenda_xml.getAttribute(u'númer'):
+    if not xml.attrib[u'númer']:
         try:
             # Committee agenda has been deleted in XML, meaning cancelled.
             CommitteeAgenda.objects.get(committee_agenda_xml_id=committee_agenda_xml_id).delete()
@@ -1719,7 +1670,7 @@ def update_committee_agenda(committee_agenda_xml_id, parliament_num=None):
                 parliament.parliament_num
             ))
 
-    elif int(committee_agenda_xml.getAttribute(u'þingnúmer')) != parliament.parliament_num:
+    elif int(xml.attrib[u'þingnúmer']) != parliament.parliament_num:
         # Committee agenda exists, but not in this parliament. (A corrected
         # mistake in the XML, most likely.)
         CommitteeAgenda.objects.get(
@@ -1732,48 +1683,47 @@ def update_committee_agenda(committee_agenda_xml_id, parliament_num=None):
         )
         return
 
-    return _process_committee_agenda_xml(committee_agenda_xml) # Returns CommitteeAgenda object
+    return _process_committee_agenda_xml(xml) # Returns CommitteeAgenda object
 
 
 # NOTE: To become a private function once we turn this into some sort of class
-def _process_committee_agenda_xml(committee_agenda_xml):
+def _process_committee_agenda_xml(xml):
 
-    parliament_num = int(committee_agenda_xml.getAttribute(u'þingnúmer'))
-    committee_agenda_xml_id = int(committee_agenda_xml.getAttribute(u'númer'))
-    committee_xml_id = int(committee_agenda_xml.getElementsByTagName(u'nefnd')[0].getAttribute('id'))
+    parliament_num = int(xml.attrib[u'þingnúmer'])
+    committee_agenda_xml_id = int(xml.attrib[u'númer'])
+    committee_xml_id = int(xml.find(u'nefnd').attrib['id'])
 
     parliament = update_parliament(parliament_num)
     committee = update_committee(committee_xml_id, parliament_num)
 
-    begins_xml = committee_agenda_xml.getElementsByTagName(u'hefst')[0]
-    begins_datetime_xml = begins_xml.getElementsByTagName(u'dagurtími')
-    begins_text_xml = begins_xml.getElementsByTagName(u'texti')
-    if len(begins_datetime_xml) == 0:
+    if xml.find(u'hefst/dagurtími') is None:
         # Sometimes only the date is known, not the datetime.
-        begins_date_xml = begins_xml.getElementsByTagName(u'dagur')
-        if len(begins_date_xml) == 0:
+        if xml.find(u'hefst/dagur') is None:
             timing_start_planned = None
         else:
-            timing_start_planned = sensible_datetime(begins_date_xml[0].firstChild.nodeValue)
+            timing_start_planned = sensible_datetime(xml.find(u'hefst/dagur').text)
     else:
-        timing_start_planned = sensible_datetime(begins_datetime_xml[0].firstChild.nodeValue)
+        timing_start_planned = sensible_datetime(xml.find(u'hefst/dagurtími').text)
 
-    if len(begins_text_xml) > 0:
-        timing_text = begins_text_xml[0].firstChild.nodeValue
+    if xml.find(u'hefst/texti') is not None:
+        timing_text = xml.find(u'hefst/texti').text
     else:
         timing_text = None
 
     try:
-        timing_start = sensible_datetime(committee_agenda_xml.getElementsByTagName(u'fundursettur')[0].firstChild.nodeValue)
-    except (AttributeError, IndexError):
+        timing_start = sensible_datetime(xml.find(u'fundursettur').text)
+    except AttributeError:
         timing_start = None
     try:
-        timing_end = sensible_datetime(committee_agenda_xml.getElementsByTagName(u'fuslit')[0].firstChild.nodeValue)
-    except (AttributeError, IndexError):
+        timing_end = sensible_datetime(xml.find(u'fuslit').text)
+    except AttributeError:
         timing_end = None
 
     try:
-        committee_agenda = CommitteeAgenda.objects.get(committee_agenda_xml_id=committee_agenda_xml_id, parliament=parliament)
+        committee_agenda = CommitteeAgenda.objects.get(
+            committee_agenda_xml_id=committee_agenda_xml_id,
+            parliament=parliament
+        )
 
         changed = False
         if committee_agenda.timing_start_planned != timing_start_planned:
@@ -1809,12 +1759,12 @@ def _process_committee_agenda_xml(committee_agenda_xml):
         print('Added committee agenda: %s' % committee_agenda)
 
     max_order = 0
-    items_xml = committee_agenda_xml.getElementsByTagName(u'dagskrárliður')
+    items_xml = xml.findall(u'dagskrá/dagskrárliðir/dagskrárliður')
     for item_xml in items_xml:
-        order = int(item_xml.getAttribute(u'númer'))
+        order = int(item_xml.attrib[u'númer'])
 
         try:
-            name = item_xml.getElementsByTagName(u'heiti')[0].firstChild.nodeValue
+            name = item_xml.find(u'heiti').text
         except AttributeError:
             name = '[ Missing name ]'
 
@@ -1823,12 +1773,11 @@ def _process_committee_agenda_xml(committee_agenda_xml):
         if order > max_order:
             max_order = order
 
-        issues_xml = item_xml.getElementsByTagName(u'mál')
-        if len(issues_xml) > 0:
+        issue_xml = item_xml.find(u'mál')
+        if issue_xml is not None:
             # There can only be one issue per agenda item. Right?
-            issue_xml = issues_xml[0]
-            issue_num = int(issue_xml.getAttribute(u'málsnúmer'))
-            issue_parliament_num = int(issue_xml.getAttribute(u'löggjafarþing'))
+            issue_num = int(issue_xml.attrib[u'málsnúmer'])
+            issue_parliament_num = int(issue_xml.attrib[u'löggjafarþing'])
 
             # It is assumed that issue_group will be 'A' (i.e. not 'B', which means an issue without documents)
             try:
@@ -1876,32 +1825,30 @@ def _process_committee_agenda_xml(committee_agenda_xml):
 # NOTE: To become a private function once we turn this into some sort of class
 def _process_session_agenda_xml(session_xml):
 
-    parliament_num = int(session_xml.getAttribute(u'þingnúmer'))
-    session_num = int(session_xml.getAttribute(u'númer'))
+    parliament_num = int(session_xml.attrib[u'þingnúmer'])
+    session_num = int(session_xml.attrib[u'númer'])
 
     parliament = update_parliament(parliament_num)
 
-    name = session_xml.getElementsByTagName(u'fundarheiti')[0].firstChild.nodeValue
+    name = session_xml.find(u'fundarheiti').text
 
-    begins_xml = session_xml.getElementsByTagName(u'hefst')[0]
-    timing_start_planned_xml = begins_xml.getElementsByTagName(u'dagurtími')
-    if len(timing_start_planned_xml) > 0:
-        timing_start_planned = sensible_datetime(timing_start_planned_xml[0].firstChild.nodeValue)
-    else:
+    try:
+        timing_start_planned = sensible_datetime(session_xml.find(u'hefst/dagurtími').text)
+    except AttributeError:
         timing_start_planned = None
 
-    timing_text_xml = begins_xml.getElementsByTagName(u'texti')
-    if len(timing_text_xml) > 0:
-        timing_text = timing_text_xml[0].firstChild.nodeValue
-    else:
+    try:
+        timing_text = session_xml.find(u'hefst/texti').text
+    except AttributeError:
         timing_text = None
 
     try:
-        timing_start = sensible_datetime(session_xml.getElementsByTagName(u'fundursettur')[0].firstChild.nodeValue)
+        timing_start = sensible_datetime(session_xml.find(u'fundursettur').text)
     except AttributeError:
         timing_start = None
+
     try:
-        timing_end = sensible_datetime(session_xml.getElementsByTagName(u'fuslit')[0].firstChild.nodeValue)
+        timing_end = sensible_datetime(session_xml.find(u'fuslit').text)
     except AttributeError:
         timing_end = None
 
@@ -1940,34 +1887,27 @@ def _process_session_agenda_xml(session_xml):
         session.save()
         print('Added session: %s' % session)
 
-    # Prepare for agenda processing.
-    session_agenda_full_xml = get_xml('SESSION_AGENDA_URL', parliament.parliament_num, session_num)
-    session_agenda_xml = session_agenda_full_xml.getElementsByTagName(u'dagskrá')[0]
-
     max_order = 0
-    for session_agenda_item_xml in session_agenda_xml.getElementsByTagName(u'dagskrárliður'):
-        issue_xml = session_agenda_item_xml.getElementsByTagName(u'mál')[0]
-        discussion_xml = session_agenda_item_xml.getElementsByTagName(u'umræða')[0]
-        comment_xml = session_agenda_item_xml.getElementsByTagName(u'athugasemd')
+    for session_agenda_item_xml in session_xml.findall(u'dagskrá/dagskrárliður'):
+        issue_xml = session_agenda_item_xml.find(u'mál')
+        comment_xml = session_agenda_item_xml.find(u'athugasemd')
 
-        order = int(session_agenda_item_xml.getAttribute(u'númer'))
+        order = int(session_agenda_item_xml.attrib[u'númer'])
 
-        discussion_type = discussion_xml.getAttribute(u'tegund')
-        discussion_continued = bool(discussion_xml.getAttribute(u'framhald'))
+        discussion_type = session_agenda_item_xml.find(u'umræða').attrib[u'tegund']
+        discussion_continued = bool(session_agenda_item_xml.find(u'umræða').attrib[u'framhald'])
 
-        if len(comment_xml) > 0:
-            comment_entity_xml = comment_xml[0]
-
-            comment_type = comment_entity_xml.getAttribute(u'tegund')
-            comment_text = comment_entity_xml.getElementsByTagName(u'dagskrártexti')[0].firstChild.nodeValue
-            comment_description = comment_entity_xml.getElementsByTagName(u'skýring')[0].firstChild.nodeValue
+        if comment_xml is not None:
+            comment_type = comment_xml.attrib[u'tegund']
+            comment_text = comment_xml.find(u'dagskrártexti').text
+            comment_description = comment_xml.find(u'skýring').text
         else:
             comment_type = None
             comment_text = None
             comment_description = None
 
-        issue_num = int(issue_xml.getAttribute(u'málsnúmer'))
-        issue_group = issue_xml.getAttribute(u'málsflokkur')
+        issue_num = int(issue_xml.attrib[u'málsnúmer'])
+        issue_group = issue_xml.attrib[u'málsflokkur']
 
         if issue_group == 'A':
             issue = update_issue(issue_num, parliament.parliament_num)

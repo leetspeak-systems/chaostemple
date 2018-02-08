@@ -6,7 +6,8 @@ import os
 import urllib2
 
 from sys import stderr
-from xml.dom import minidom
+
+from lxml import etree
 
 from althingi import althingi_settings
 
@@ -27,6 +28,7 @@ xml_urls = {
     'SESSION_LIST_URL': 'http://www.althingi.is/altext/xml/thingfundir/?lthing=%d',
     'SESSION_AGENDA_URL': 'http://www.althingi.is/altext/xml/dagskra/thingfundur/?lthing=%d&fundur=%d',
     'SESSION_NEXT_AGENDA_URL': 'http://www.althingi.is/altext/xml/dagskra/thingfundur/',
+    'SPEECHES_URL': 'http://www.althingi.is/altext/xml/raedulisti/?lthing=%d',
     'PERSONS_URL': 'http://www.althingi.is/altext/xml/thingmenn/?lthing=%d',
     'SEATS_URL': 'http://www.althingi.is/altext/xml/thingmenn/thingmadur/thingseta/?nr=%d',
     'VOTE_CASTING_URL': 'http://www.althingi.is/altext/xml/atkvaedagreidslur/atkvaedagreidsla/?numer=%d',
@@ -59,7 +61,6 @@ def get_xml(xml_url_name, *args):
             xml_content = f.read()
             f.close()
 
-        return minidom.parseString(xml_content)
     else:
         response = get_response(xml_urls[xml_url_name] % args)
         xml_content = response.read()
@@ -69,8 +70,8 @@ def get_xml(xml_url_name, *args):
             f.write(xml_content)
             f.close()
 
-        # Return the parsed XML.
-        return minidom.parseString(xml_content)
+    # Return the parsed XML.
+    return etree.fromstring(xml_content)
 
 
 # Clear XML cache.

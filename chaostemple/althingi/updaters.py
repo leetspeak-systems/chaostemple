@@ -379,7 +379,7 @@ def update_vote_casting(vote_casting_xml_id):
     if vote_casting_xml_id is not None and not isinstance(vote_casting_xml_id, (int, long)):
         raise TypeError('Parameter vote_casting_xml_id must be a number')
 
-    if already_haves['vote_castings'].has_key('vote_casting_xml_id'):
+    if already_haves['vote_castings'].has_key(vote_casting_xml_id):
         return already_haves['vote_castings'][vote_casting_xml_id]
 
     xml = get_xml('VOTE_CASTING_URL', vote_casting_xml_id)

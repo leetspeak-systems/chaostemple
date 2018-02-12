@@ -27,6 +27,7 @@ from althingi.models import Review
 from althingi.models import Seat
 from althingi.models import Session
 from althingi.models import SessionAgendaItem
+from althingi.models import Speech
 from althingi.models import Vote
 from althingi.models import VoteCasting
 
@@ -71,6 +72,7 @@ already_haves = {
     'constituencies': {},
     'issues': {},
     'sessions': {},
+    'speeches': {},
     'vote_castings': {},
 
     'xml': {},
@@ -1966,3 +1968,192 @@ def _process_session_agenda_xml(session_xml):
         print('Deleted session agenda item %s' % item)
 
     return session
+
+
+def update_speeches(parliament_num=None):
+
+    parliament = update_parliament(parliament_num)
+
+    if already_haves['speeches'].has_key(parliament.parliament_num):
+        return already_haves['speeches'][parliament.parliament_num]
+
+    xml = get_xml('SPEECHES_URL', parliament.parliament_num)
+
+    speeches = []
+    speech_orders = {}
+    for speech_xml in xml.findall(u'ræða'):
+
+        person_xml_id = int(speech_xml.find(u'ræðumaður').attrib['id'])
+        person = update_person(person_xml_id)
+
+        session_num = int(speech_xml.find(u'fundur').text)
+        session = update_session(session_num, parliament.parliament_num)
+
+        issue_group = speech_xml.find(u'mál/málsflokkur').text
+        if issue_group is None:
+            # Speech is not about an issue if issue group is not specified.
+            issue = None
+        else:
+            issue_num = int(speech_xml.find(u'mál/málsnúmer').text)
+            if issue_group == 'A':
+                issue = update_issue(issue_num, parliament.parliament_num)
+            elif issue_group == 'B':
+                # NOTE/TODO: We're skipping this for now, until the
+                # independent B-issue XML file is complete, which should be
+                # very soon since it's already almost complete. (2018-02-12)
+                issue = None
+            else:
+                # This should never happen.
+                raise AlthingiException(u'Issue group %s in remote XML unknown' % issue_group)
+
+        date = sensible_datetime(speech_xml.find(u'dagur').text)
+
+        timing_start = sensible_datetime(speech_xml.find(u'ræðahófst').text)
+        timing_end = sensible_datetime(speech_xml.find(u'ræðulauk').text)
+        seconds = (timing_end - timing_start).seconds
+
+        speech_type = speech_xml.find(u'tegundræðu').text
+
+        iteration = speech_xml.find(u'umræða').text
+
+        # In speeches in the 115th Parliament and older, the time of day is
+        # unknown. Since speeches don't have unique IDs either, it is
+        # effectively impossible to precisely identify speeches in those older
+        # Parliaments except according to their order in whatever issue is
+        # being discussed. That order is not provided either, however, so it
+        # must be figured out on the client side. This gives us a unique
+        # identifier from two variables, the issue's ID and the speech's order
+        # within it. If no issue is specified, we leave this field as null.
+        if issue is not None:
+            if not speech_orders.has_key(issue.id):
+                speech_orders[issue.id] = 0
+            speech_orders[issue.id] += 1
+            order_in_issue = speech_orders[issue.id]
+        else:
+            order_in_issue = None
+
+        try:
+            html_remote_path = speech_xml.find(u'slóðir/html').text
+        except AttributeError:
+            html_remote_path = None
+
+        try:
+            sgml_remote_path = speech_xml.find(u'slóðir/sgml').text
+        except AttributeError:
+            sgml_remote_path = None
+
+        try:
+            xml_remote_path = speech_xml.find(u'slóðir/xml').text
+        except AttributeError:
+            xml_remote_path = None
+
+        try:
+            text_remote_path = speech_xml.find(u'slóðir/text').text
+        except AttributeError:
+            text_remote_path = None
+
+        try:
+            sound_remote_path = speech_xml.find(u'slóðir/hljóð').text
+        except AttributeError:
+            sound_remote_path = None
+
+        try:
+            # Speeches don't have IDs, so we have to go by the only unique
+            # identifier, which is the moment they began. Note that this makes
+            # speeches from the 115th Parliament and older incompatible. There
+            # is no known solution until speeches get unique IDs in the XML.
+            speech = Speech.objects.get(timing_start=timing_start)
+
+            changed = False
+            if speech.person != person:
+                speech.person = person
+                changed = True
+
+            if speech.session != session:
+                speech.session = session
+                changed = True
+
+            if speech.issue != issue:
+                speech.issue = issue
+                changed = True
+
+            if speech.date != date:
+                speech.date = date
+                changed = True
+
+            if speech.timing_start != timing_start:
+                speech.timing_start = timing_start
+                changed = True
+
+            if speech.timing_end != timing_end:
+                speech.timing_end = timing_end
+                changed = True
+
+            if speech.seconds != seconds:
+                speech.seconds = seconds
+                changed = True
+
+            if speech.speech_type != speech_type:
+                speech.speech_type = speech_type
+                changed = True
+
+            if speech.iteration != iteration:
+                speech.iteration = iteration
+                changed = True
+
+            if speech.order_in_issue != order_in_issue:
+                speech.order_in_issue = order_in_issue
+                changed = True
+
+            if speech.html_remote_path != html_remote_path:
+                speech.html_remote_path = html_remote_path
+                changed = True
+
+            if speech.sgml_remote_path != sgml_remote_path:
+                speech.sgml_remote_path = sgml_remote_path
+                changed = True
+
+            if speech.xml_remote_path != xml_remote_path:
+                speech.xml_remote_path = xml_remote_path
+                changed = True
+
+            if speech.text_remote_path != text_remote_path:
+                speech.text_remote_path = text_remote_path
+                changed = True
+
+            if speech.sound_remote_path != sound_remote_path:
+                speech.sound_remote_path = sound_remote_path
+                changed = True
+
+            if changed:
+                speech.save()
+                print('Updated speech: %s' % speech)
+            else:
+                print('Already have speech: %s' % speech)
+
+        except Speech.DoesNotExist:
+            speech = Speech(timing_start=timing_start)
+            speech.person = person
+            speech.session = session
+            speech.issue = issue
+            speech.date = date
+            speech.timing_start = timing_start
+            speech.timing_end = timing_end
+            speech.seconds = seconds
+            speech.speech_type = speech_type
+            speech.iteration = iteration
+            speech.order_in_issue = order_in_issue
+            speech.html_remote_path = html_remote_path
+            speech.sgml_remote_path = sgml_remote_path
+            speech.xml_remote_path = xml_remote_path
+            speech.text_remote_path = text_remote_path
+            speech.sound_remote_path = sound_remote_path
+            speech.save()
+
+            print('Added speech: %s' % speech)
+
+        speeches.append(speech)
+
+    already_haves['speeches'][parliament.parliament_num] = speeches
+
+    return speeches

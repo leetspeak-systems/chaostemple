@@ -19,6 +19,7 @@ from althingi.updaters import update_persons
 from althingi.updaters import update_person
 from althingi.updaters import update_sessions
 from althingi.updaters import update_session
+from althingi.updaters import update_speeches
 from althingi.updaters import update_vote_casting
 from althingi.updaters import update_vote_castings
 from althingi.utils import get_last_parliament_num
@@ -48,6 +49,7 @@ class Command(BaseCommand):
         print '  constituencies                    Updates constituencies in default or specified parliament'
         print '  vote_castings                     Updates vote castings in default or specified parliament'
         print '  vote_casting=<casting_xml_id>     Updates vote casting by XML ID (see Althingi\'s XML)'
+        print '  speeches                          Updates speeches in default or specified parliament'
         print '  all                               Updates issues, sessions, persons, parties, constituencies and committee agendas in default or specified parliament'
         print
         print 'Options:'
@@ -203,6 +205,10 @@ class Command(BaseCommand):
                     self.error('Invalid vote casting XML-ID')
                 update_vote_casting(vote_casting_xml_id)
 
+            if 'speeches' in args:
+                has_run = True
+                update_speeches(parliament_num)
+
             if 'upcoming' in args:
                 has_run = True
                 update_next_sessions()
@@ -216,6 +222,7 @@ class Command(BaseCommand):
                 update_persons(parliament_num)
                 update_issues(parliament_num)
                 update_sessions(parliament_num)
+                update_speeches(parliament_num)
                 update_committee_agendas(parliament_num)
                 update_vote_castings(parliament_num)
 

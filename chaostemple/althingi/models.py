@@ -861,3 +861,32 @@ class Vote(models.Model):
 
     class Meta:
         unique_together = ('vote_casting', 'person')
+
+
+class Speech(models.Model):
+    person = models.ForeignKey('Person', related_name='speeches')
+    session = models.ForeignKey('Session', related_name='speeches')
+    issue = models.ForeignKey('Issue', null=True, related_name='speeches')
+
+    date = models.DateTimeField()
+    timing_start = models.DateTimeField()
+    timing_end = models.DateTimeField()
+    seconds = models.IntegerField()
+
+    speech_type = models.CharField(max_length=30)
+    iteration = models.CharField(max_length=3, null=True)
+
+    order_in_issue = models.IntegerField(null=True)
+
+    html_remote_path = models.CharField(max_length=500, null=True)
+    sgml_remote_path = models.CharField(max_length=500, null=True)
+    xml_remote_path = models.CharField(max_length=500, null=True)
+    text_remote_path = models.CharField(max_length=500, null=True)
+    sound_remote_path = models.CharField(max_length=500, null=True)
+
+    def __unicode__(self):
+        return u'%s @ %s' % (self.person, self.timing_start)
+
+    class Meta:
+        ordering = ['timing_start']
+        unique_together = ['order_in_issue', 'issue']

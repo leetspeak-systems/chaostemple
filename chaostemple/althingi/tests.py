@@ -27,6 +27,7 @@ from althingi.updaters import update_persons
 from althingi.updaters import update_seats
 from althingi.updaters import update_session
 from althingi.updaters import update_sessions
+from althingi.updaters import update_speeches
 from althingi.updaters import update_vote_casting
 from althingi.updaters import update_vote_castings
 from althingi.utils import get_last_parliament_num
@@ -311,3 +312,7 @@ class AlthingiUpdaterTest(TestCase):
         committee_agenda_xml_id, parliament_num, timing_text = test_dummy_committee_agenda
         committee_agenda = update_committee_agenda(committee_agenda_xml_id, parliament_num)
         self.assertEquals(committee_agenda.timing_text, timing_text)
+
+    @hidden_prints
+    def test_update_speeches(self):
+        update_speeches()

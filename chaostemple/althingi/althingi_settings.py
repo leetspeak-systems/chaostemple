@@ -16,6 +16,9 @@ DOWNLOAD_REVIEWS = False
 # For development purposes - to cache XML documents for development on a bad or no internet connection
 USE_XML_CACHE = False
 
+# Timeout in seconds for retrieving remote XML files
+REMOTE_CONTENT_TIMEOUT = 10
+
 ALTHINGI_ISSUE_URL = 'http://www.althingi.is/dba-bin/ferill.pl?ltg=%d&mnr=%d' # % (parliament_num, issue_num)
 ALTHINGI_PERSON_URL = 'http://www.althingi.is/altext/cv/is/?nfaerslunr=%d' # % person_xml_id
 

@@ -89,7 +89,7 @@ def get_response(web_url):
     success = False
     while not success and retry_count > -1:
         try:
-            response = urllib2.urlopen(web_url, timeout=5)
+            response = urllib2.urlopen(web_url, timeout=althingi_settings.REMOTE_CONTENT_TIMEOUT)
             success = True
         except IOError:
             print('Retrieving remote content failed, retries left: %s...' % retry_count)

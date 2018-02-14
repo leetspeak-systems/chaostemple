@@ -587,6 +587,9 @@ class IssueStep(models.Model):
     code = models.CharField(max_length=50)
     order = models.IntegerField()
 
+    def __unicode__(self):
+        return u'%d - %s' % (self.order, self.code)
+
     class Meta:
         ordering = ['order']
 

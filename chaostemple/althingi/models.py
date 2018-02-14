@@ -274,8 +274,14 @@ class Issue(models.Model):
         ('concluded', _(u'Issue concluded')),
     )
 
+    # Issue steps for written inquiries.
+    ISSUE_STEPS_Q = (
+        ('distributed', _(u'Distributed')),
+        ('answered', _(u'Answered')),
+    )
+
     # All issue step definitions combined for use with choices-attribute in fields.
-    ISSUE_STEPS = ISSUE_STEPS_L + ISSUE_STEPS_A
+    ISSUE_STEPS = ISSUE_STEPS_L + ISSUE_STEPS_A + ISSUE_STEPS_Q
 
     # Issue fates are only applicable when they are concluded.
     ISSUE_FATES = (
@@ -350,6 +356,7 @@ class Issue(models.Model):
         ISSUE_STEP_MAP = {
             'l': OrderedDict(self.ISSUE_STEPS_L),
             'a': OrderedDict(self.ISSUE_STEPS_A),
+            'q': OrderedDict(self.ISSUE_STEPS_Q),
         }
 
         # If we don't know the issue type, there is nothing we can do.
@@ -491,6 +498,14 @@ class Issue(models.Model):
             if steps['iteration-latter-finished']:
                 steps['iteration-latter-current'] = True
                 steps['concluded'] = True
+
+            return steps
+
+        elif self.issue_type == 'q':
+
+            steps['distributed'] = True
+
+            steps['answered'] = self.documents.filter(doc_type='svar').count() > 0
 
             return steps
 

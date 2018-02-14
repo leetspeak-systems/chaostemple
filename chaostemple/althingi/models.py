@@ -280,8 +280,16 @@ class Issue(models.Model):
         ('answered', _(u'Answered')),
     )
 
+    # Issue steps for requests for reports.
+    ISSUE_STEPS_B = (
+        ('distributed', _(u'Distributed')),
+        ('voted-on', _(u'Voted on')),
+        ('report-delivered', _(u'Report delieverd')),
+        ('concluded', _(u'Concluded')),
+    )
+
     # All issue step definitions combined for use with choices-attribute in fields.
-    ISSUE_STEPS = ISSUE_STEPS_L + ISSUE_STEPS_A + ISSUE_STEPS_Q
+    ISSUE_STEPS = ISSUE_STEPS_L + ISSUE_STEPS_A + ISSUE_STEPS_Q + ISSUE_STEPS_B
 
     # Issue fates are only applicable when they are concluded.
     ISSUE_FATES = (
@@ -357,6 +365,7 @@ class Issue(models.Model):
             'l': OrderedDict(self.ISSUE_STEPS_L),
             'a': OrderedDict(self.ISSUE_STEPS_A),
             'q': OrderedDict(self.ISSUE_STEPS_Q),
+            'b': OrderedDict(self.ISSUE_STEPS_B),
         }
 
         # If we don't know the issue type, there is nothing we can do.
@@ -502,10 +511,17 @@ class Issue(models.Model):
             return steps
 
         elif self.issue_type == 'q':
-
             steps['distributed'] = True
-
             steps['answered'] = self.documents.filter(doc_type='svar').count() > 0
+            return steps
+
+        elif self.issue_type == 'b':
+            steps['distributed'] = True
+            steps['voted-on'] = self.vote_castings.filter(vote_casting_type=u'bn').count() > 0
+            steps['report-delivered'] = self.documents.filter(doc_type=u'skýrsla (skv. beiðni)').count() > 0
+
+            if steps['report-delivered']:
+                steps['concluded'] = True
 
             return steps
 
@@ -565,6 +581,19 @@ class Issue(models.Model):
                     return 'limbo'
                 else:
                     return 'unknown'
+
+        elif self.issue_type == 'b':
+            # Check if the request for the report was accepted.
+            try:
+                vote_casting = self.vote_castings.get(vote_casting_type=u'bn')
+                if vote_casting.conclusion == u'samþykkt':
+                    return 'accepted'
+                elif vote_casting.conclusion == u'Fellt':
+                    return 'rejected'
+                else:
+                    return 'unknown'
+            except VoteCasting.DoesNotExist:
+                pass
 
         return None
 

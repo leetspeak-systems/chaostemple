@@ -11,7 +11,9 @@ from django.template.defaultfilters import capfirst
 from django.template.defaultfilters import slugify
 from django.templatetags.static import static
 from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
 
+from collections import OrderedDict
 from unidecode import unidecode
 import urllib
 
@@ -236,6 +238,52 @@ class Issue(models.Model):
         (u'B', u'þingmál án þingskjala'),
     )
 
+    # Issue steps for legal bills.
+    ISSUE_STEPS_L = (
+        ('distributed', _(u'Distributed')),
+        ('iteration-1-waiting', _(u'Awaiting 1st debate')),
+        ('iteration-1-current', _(u'Currently in 1st debate')),
+        ('iteration-1-finished', _(u'1st debate concluded')),
+        ('committee-1-waiting', _(u'Sent to committee')),
+        ('committee-1-current', _(u'Currently in committee')),
+        ('committee-1-finished', _('Considered by committee')),
+        ('iteration-2-waiting', _(u'Awaiting 2nd debate')),
+        ('iteration-2-current', _(u'Currently in 2nd debate')),
+        ('iteration-2-finished', _(u'2nd debate concluded')),
+        ('committee-2-waiting', _(u'Sent to committee (after 2nd debate)')), # Optional
+        ('committee-2-current', _(u'Currently in committee (after 2nd debate)')), # Optional
+        ('committee-2-finished', _(u'Considered by committee (after 2nd debate)')), # Optional
+        ('iteration-3-waiting', _(u'Awaiting 3rd debate')),
+        ('iteration-3-current', _(u'Currently in 3rd debate')),
+        ('iteration-3-finished', _(u'3rd debate concluded')),
+        ('concluded', _(u'Issue concluded')),
+    )
+
+    # Issue steps for motions.
+    ISSUE_STEPS_A = (
+        ('distributed', _(u'Distributed')),
+        ('iteration-former-waiting', _(u'Awaiting former debate')),
+        ('iteration-former-current', _(u'Currently in former debate')),
+        ('iteration-former-finished', _(u'Former debate concluded')),
+        ('committee-former-waiting', _(u'Sent to committee')),
+        ('committee-former-current', _(u'Currently in committee')),
+        ('committee-former-finished', _('Considered by committee')),
+        ('iteration-latter-waiting', _(u'Awaiting latter debate')),
+        ('iteration-latter-current', _(u'Currently in latter debate')),
+        ('iteration-latter-finished', _(u'Latter debate concluded')),
+        ('concluded', _(u'Issue concluded')),
+    )
+
+    # All issue step definitions combined for use with choices-attribute in fields.
+    ISSUE_STEPS = ISSUE_STEPS_L + ISSUE_STEPS_A
+
+    # Issue fates are only applicable when they are concluded.
+    ISSUE_FATES = (
+        ('rejected', _(u'rejected')),
+        ('accepted', _(u'accepted')),
+        ('sent-to-government', _(u'sent to government')),
+    )
+
     parliament = models.ForeignKey('Parliament')
 
     issue_num = models.IntegerField()  # IS: Málsnúmer
@@ -256,6 +304,9 @@ class Issue(models.Model):
     document_count = models.IntegerField(default=0) # Auto-populated by Document.save()
     review_count = models.IntegerField(default=0) # Auto-populated by Review.save()
 
+    current_step = models.CharField(max_length=40, choices=ISSUE_STEPS, null=True)
+    fate = models.CharField(max_length=40, choices=ISSUE_FATES, null=True)
+
     # Django does not appear to support a default order for ManyToMany fields. Thus this fucking shit.
     # (No, I'm not implementing a fucking through-model just to get ordering on ManyToMany fields.)
     def previous_issues_ordered(self):
@@ -265,6 +316,242 @@ class Issue(models.Model):
     # (No, I'm not implementing a fucking through-model just to get ordering on ManyToMany fields.)
     def future_issues_ordered(self):
         return self.future_issues.order_by('parliament__parliament_num')
+
+    def determine_status(self):
+        # The overall status of an issue is composed of a sequence of steps.
+        # Steps are booleans and a status is a sequential collection of
+        # steps.
+        #
+        # The ISSUE_STEP_MAP describes which steps are relevant to each issue
+        # type. An issue type is usually a single-letter code, for example 'l'
+        # for a legal bill and 'a' for a motion. Each issue type has a set of
+        # steps that describes its corresponding legislative procedure.
+        #
+        # The map contains ordered dictionaries of codes representing each
+        # step (for example, "iteration-1-finished") and a corresponding
+        # translatable and human-readable string for displaying in a user
+        # interface.
+        #
+        # In the determine_issue_status function, we find the status of the
+        # issue depending on its issue type. First, a clean OrderedDict is
+        # created containing all the steps applicable to the issue type, each
+        # step with the default value of False, meaning no steps in the
+        # legislative process have been taken. Then, an examination of
+        # relevant data is conducted, changing each step to True if evidence
+        # is found for that step having been taken. For example, a legal
+        # bill is in the 1st iteration of discussions ("iteration-1-current")
+        # if we find a speech where that issue was discussed and that speech
+        # is marked as being in the first iteration. When a final vote on a
+        # legal bill is found, the corresponding step ("concluded") has been
+        # taken and is therefore marked as True.
+        #
+        # When taken together, these steps and information on whether they
+        # have been taken or not, represent the overall status of the issue.
+        ISSUE_STEP_MAP = {
+            'l': OrderedDict(self.ISSUE_STEPS_L),
+            'a': OrderedDict(self.ISSUE_STEPS_A),
+        }
+
+        # If we don't know the issue type, there is nothing we can do.
+        if self.issue_type not in ISSUE_STEP_MAP:
+            return
+
+        # Establish a clean set of steps.
+        steps = OrderedDict([(x, False) for x in ISSUE_STEP_MAP[self.issue_type]])
+
+        # Check the steps of a legal bill.
+        if self.issue_type == 'l':
+
+            steps['distributed'] = True
+
+            steps['iteration-1-waiting'] = self.session_agenda_items.filter(discussion_type=u'1').count() > 0
+
+            steps['iteration-1-current'] = self.speeches.filter(iteration=u'1').count() > 0
+
+            steps['iteration-1-finished'] = self.vote_castings.filter(vote_casting_type=u'v2').count() > 0
+
+            steps['committee-1-waiting'] = self.vote_castings.filter(vote_casting_type=u'n2').count() > 0
+
+            steps['committee-1-current'] = self.committee_agenda_items.count() > 0
+
+            steps['committee-1-finished'] = self.documents.filter(doc_type__in=[
+                u'nál. með brtt.',
+                u'nál. með frávt.',
+                u'nál. með rökst.',
+                u'nefndarálit',
+            ]).count() > 0
+
+            steps['iteration-2-waiting'] = self.session_agenda_items.filter(discussion_type=u'2').count() > 0
+
+            steps['iteration-2-current'] = self.speeches.filter(iteration=u'2').count() > 0
+
+            steps['iteration-2-finished'] = self.vote_castings.filter(vote_casting_type=u'v3').count() > 0
+
+            try:
+                vc = self.vote_castings.get(vote_casting_type='n3')
+                steps['committee-2-waiting'] = True
+
+                steps['committee-2-current'] = self.committee_agenda_items.filter(
+                    committee_agenda__timing_start__gt=vc.timing
+                ).count() > 0
+
+                # NOTE/TODO:
+                # This cannot reliably be determined currently, but we try
+                # anyway, by checking whether a new committee opinion has been
+                # published since the issue was sent to that committee for the
+                # second time.
+                #
+                # Committee opinions are not always published after 2nd
+                # committee round. See issue 216/146. This code should be
+                # revisited once the XML starts displaying the timing of the
+                # committee returning an issue from its 2nd round to iteration
+                # 3 ("committee-2-finished"). Such indicators may still be
+                # unreliable, but they will still be better to have as well.
+                steps['committee-2-finished'] = self.documents.filter(
+                    doc_type__in=[
+                        u'framhaldsnefndarálit',
+                        u'frhnál. með brtt.',
+                        u'frhnál. með frávt.',
+                        u'frhnál. með rökst.',
+                        u'nál. með brtt.',
+                        u'nál. með frávt.',
+                        u'nál. með rökst.',
+                        u'nefndarálit',
+                    ],
+                    time_published__gte = vc.timing
+                ).count() > 0
+            except VoteCasting.DoesNotExist:
+                pass
+
+            steps['iteration-3-waiting'] = self.session_agenda_items.filter(discussion_type=u'3').count() > 0
+
+            steps['iteration-3-current'] = self.speeches.filter(iteration=u'3').count() > 0
+
+            steps['iteration-3-finished'] = self.vote_castings.filter(vote_casting_type=u'lg').count() > 0
+
+            # If no one spoke during the first iteration
+            # TODO: Check if this scenario is even possible.
+            if steps['iteration-1-finished']:
+                steps['iteration-1-current'] = True
+
+            # If iteration 2 finished without anyone speaking.
+            if steps['iteration-2-finished']:
+                steps['iteration-2-current'] = True
+
+            # If iteration 3 has started and the issue was directed to a
+            # committee after iteration 2, then the issue should have arrived
+            # out of the ocmmittee. Due to imperfect data entry, the data may
+            # not necessarily reflect this fact, so it is asserted here.
+            if (steps['iteration-3-current'] or steps['iteration-3-finished']) and steps['committee-2-waiting']:
+                steps['committee-2-current'] = True
+                steps['committee-2-finished'] = True
+
+            # When 3 iterations of a legal bill are complete, the issue is has
+            # been concluded on, and discussion ("current") is complete, even
+            # if no on ever spoke in iteration 3.
+            if steps['iteration-3-finished']:
+                steps['iteration-3-current'] = True
+                steps['concluded'] = True
+
+            return steps
+
+        elif self.issue_type == 'a':
+
+            steps['distributed'] = True
+
+            steps['iteration-former-waiting'] = self.session_agenda_items.filter(discussion_type=u'F').count() > 0
+
+            steps['iteration-former-current'] = self.speeches.filter(iteration=u'F').count() > 0
+
+            steps['iteration-former-finished'] = self.vote_castings.filter(vote_casting_type=u'vs').count() > 0
+
+            steps['committee-former-waiting'] = self.vote_castings.filter(vote_casting_type=u'ns').count() > 0
+
+            steps['committee-former-current'] = self.committee_agenda_items.count() > 0
+
+            steps['committee-former-finished'] = self.documents.filter(doc_type__in=[
+                u'nál. með brtt.',
+                u'nál. með frávt.',
+                u'nál. með rökst.',
+                u'nefndarálit',
+            ]).count() > 0
+
+            steps['iteration-latter-waiting'] = self.session_agenda_items.filter(discussion_type=u'S').count() > 0
+
+            steps['iteration-latter-current'] = self.speeches.filter(iteration=u'S').count() > 0
+
+            steps['iteration-latter-finished'] = self.vote_castings.filter(vote_casting_type=u'þa').count() > 0
+
+            # If no one spoke during the first iteration
+            # TODO: Check if this scenario is even possible.
+            if steps['iteration-former-finished']:
+                steps['iteration-former-current'] = True
+
+            # If iteration 2 finished without anyone speaking.
+            if steps['iteration-latter-finished']:
+                steps['iteration-latter-current'] = True
+                steps['concluded'] = True
+
+            return steps
+
+        # We return None to indicate that a status cannot be determined for
+        # this issue type yet.
+        return None
+
+    def determine_fate(self):
+
+        if self.issue_type in ['l', 'a']:
+
+            # Check if issue was sent to government.
+            try:
+                vote_casting = self.vote_castings.get(vote_casting_type=u'ft')
+                if vote_casting.conclusion == u'samþykkt':
+                    return 'sent-to-government'
+                # Else nothing. Life goes on.
+            except VoteCasting.DoesNotExist:
+                pass
+
+            if self.issue_type == 'l':
+                # Check if legal bill was accepted as law.
+                try:
+                    vote_casting = self.vote_castings.get(vote_casting_type=u'lg')
+                    if vote_casting.conclusion == u'samþykkt':
+                        return 'accepted'
+                    elif vote_casting.conclusion == u'Fellt':
+                        return 'rejected'
+                    else:
+                        return 'unknown'
+                except VoteCasting.DoesNotExist:
+                    pass
+
+            elif self.issue_type == 'a':
+                # Check if proposal for a motion was approved.
+
+                # A funny thing is that apparently separate articles of a
+                # motion can be voted on separately without a total vote on
+                # the motion in its entirety ever taking place. This happened
+                # in issue 692/145. In more technical terms, we might get more
+                # than one vote on the same motion. We'll check if votes on
+                # all articles agree, and if they do, we'll call it "accepted"
+                # and if they don't, we'll say it's "rejected", but if they
+                # differ, we'll return "limbo". This is not known to have
+                # happened and is extremely unlikely to ever do.
+
+                conclusions = set([vc.conclusion for vc in self.vote_castings.filter(vote_casting_type=u'þa')])
+                if len(conclusions) == 1:
+                    conclusion = conclusions.pop()
+                    if conclusion == u'samþykkt':
+                        return 'accepted'
+                    elif conclusion == u'Fellt':
+                        return 'rejected'
+                    else:
+                        return 'unknown'
+                elif len(conclusions) > 1:
+                    return 'limbo'
+                else:
+                    return 'unknown'
+
+        return None
 
     def detailed(self):
         if self.issue_group != 'A':
@@ -278,6 +565,15 @@ class Issue(models.Model):
     class Meta:
         ordering = ['issue_num']
         unique_together = ('parliament', 'issue_num', 'issue_group')
+
+
+class IssueStep(models.Model):
+    issue = models.ForeignKey('Issue', related_name='steps')
+    code = models.CharField(max_length=50)
+    order = models.IntegerField()
+
+    class Meta:
+        ordering = ['order']
 
 
 class IssueSummary(models.Model):

@@ -2,6 +2,7 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
+from collections import OrderedDict
 from datetime import datetime
 from django.db.models import Q
 from sys import stderr
@@ -18,6 +19,7 @@ from althingi.models import Constituency
 from althingi.models import Document
 from althingi.models import Issue
 from althingi.models import IssueSummary
+from althingi.models import IssueStep
 from althingi.models import Parliament
 from althingi.models import Party
 from althingi.models import Person
@@ -1272,6 +1274,70 @@ def update_issue(issue_num, parliament_num=None):
         print('Deleted non-existent review: %s' % review)
 
     already_haves['issues'][ah_key] = issue
+
+    # Figure out issue's status, if supported.
+    status = issue.determine_status()
+    if status is not None:
+
+        current_step_order_query = issue.steps.all() # Current according to database, that is.
+
+        # Map the current steps to their order according to database.
+        current_step_order_map = OrderedDict([(s.code, s.order) for s in current_step_order_query])
+
+        if len(current_step_order_query) != len(current_step_order_map):
+            # This means that there are duplicates of at least one step in the
+            # database, which makes no sense. This should not happen and is
+            # dealt with here as a precaution. We'll just delete all the rows
+            # and insert them all from scratch.
+            issue.steps.all().delete()
+            current_step_order_map.clear()
+
+        changed = False
+        last_step = None
+        order = 0
+        for step, taken in status.items():
+            # Has this step been taken in the issue type's legislative process?
+            if taken:
+                order += 1 # Must be the next step, then!
+
+                if not step in current_step_order_map:
+                    IssueStep(issue=issue, code=step, order=order).save()
+                    changed = True
+                elif step in current_step_order_map and current_step_order_map[step] != order:
+                    IssueStep.objects.filter(issue=issue, code=step).update(order=order)
+                    changed = True
+
+                # Record the last step known to be taken.
+                last_step = step
+
+            else:
+                if step in current_step_order_map:
+                    IssueStep.objects.get(issue=issue, code=step).delete()
+                    changed = True
+
+        # Set the last step as the new current one.
+        if issue.current_step != last_step:
+            issue.current_step = last_step
+            issue.save()
+            changed = True
+
+        # Remove steps that have nothing to do with this issue type (only as a precaution).
+        issue.steps.exclude(code__in=status.keys()).delete()
+
+        if changed:
+            print('Updated status of issue: %s' % issue)
+        else:
+            print('Already have status of issue: %s' % issue)
+
+    # Determine the issue's fate (if any).
+    # This is done so near the end of the processing of the issue because it
+    # relies on the status, which in turn relies on things processed after the
+    # issue's basic attributes have been figured out.
+    fate = issue.determine_fate()
+    if issue.fate != fate:
+        issue.fate = fate
+        issue.save()
+        print('Updated issue fate to "%s": %s' % (fate, issue))
 
     # Process previous publications of issue, if any
     for previous_issue_info in previously_published_as:

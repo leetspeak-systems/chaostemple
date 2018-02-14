@@ -298,7 +298,7 @@ class Issue(models.Model):
         ('sent-to-government', _(u'sent to government')),
     )
 
-    parliament = models.ForeignKey('Parliament')
+    parliament = models.ForeignKey('Parliament', related_name='issues')
 
     issue_num = models.IntegerField()  # IS: Málsnúmer
     issue_type = models.CharField(max_length=2, choices=ISSUE_TYPES)  # IS: Málstegund

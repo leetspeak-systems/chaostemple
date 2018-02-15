@@ -203,7 +203,7 @@ class Dossier(models.Model):
 
     @staticmethod
     def fieldstate_applicable(doc_type, fieldstate):
-        if doc_type and Dossier.DOC_TYPE_EXCLUSIONS.has_key(doc_type):
+        if doc_type in Dossier.DOC_TYPE_EXCLUSIONS:
             if fieldstate in Dossier.DOC_TYPE_EXCLUSIONS[doc_type]:
                 return False
 

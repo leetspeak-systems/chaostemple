@@ -138,6 +138,10 @@ def display_dossier_statistics(context, issue, size='normal'):
     return mark_safe(''.join(content))
 
 @register.filter
+def supports_dossier(doc_type):
+    return Dossier.supports_dossier(doc_type)
+
+@register.filter
 def fieldstate_applicable(doc_type, fieldstate):
     return Dossier.fieldstate_applicable(doc_type, fieldstate)
 

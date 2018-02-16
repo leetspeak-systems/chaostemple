@@ -68,7 +68,7 @@ class Dossier(models.Model):
         u'frumvarp nefndar': ['support', 'proposal'],
         u'fsp. til munnl. svars': ['support', 'proposal'],
         u'fsp. til skrifl. svars': ['support', 'proposal'],
-        u'lög (samhlj.)': ['support', 'proposal'],
+        u'lög (samhlj.)': ['memo', 'knowledge', 'attention', 'support', 'proposal'],
         u'lög í heild': ['support', 'proposal'],
         u'nál. með brtt.': [],
         u'nefndarálit': ['proposal'],
@@ -77,7 +77,7 @@ class Dossier(models.Model):
         u'stjórnarfrumvarp': ['support', 'proposal'],
         u'stjórnartillaga': ['support', 'proposal'],
         u'svar': ['support', 'proposal'],
-        u'þál. (samhlj.)': ['support', 'proposal'],
+        u'þál. (samhlj.)': ['memo', 'knowledge', 'attention', 'support', 'proposal'],
         u'þál. í heild': ['support', 'proposal'],
         u'þáltill.': ['support', 'proposal'],
         u'þáltill. n.': ['support', 'proposal'],
@@ -199,6 +199,18 @@ class Dossier(models.Model):
             self.update_memo_counts(statistic, dossier_type)
 
             statistic.save()
+
+
+    @staticmethod
+    def supports_dossier(doc_type):
+        # A document type doesn't have dossier support at all, if everything
+        # that you can do with a dossier is excluded from the document type.
+
+        if doc_type in Dossier.DOC_TYPE_EXCLUSIONS:
+            ex = Dossier.DOC_TYPE_EXCLUSIONS[doc_type]
+            if all([t[0] in ex for t in Dossier.STATUS_TYPES]) and 'memo' in ex:
+                return False
+        return True
 
 
     @staticmethod

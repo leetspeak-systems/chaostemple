@@ -1273,8 +1273,6 @@ def update_issue(issue_num, parliament_num=None):
         review.delete()
         print('Deleted non-existent review: %s' % review)
 
-    already_haves['issues'][ah_key] = issue
-
     # Figure out issue's status, if supported.
     status = issue.determine_status()
     if status is not None:
@@ -1338,6 +1336,8 @@ def update_issue(issue_num, parliament_num=None):
         issue.fate = fate
         issue.save()
         print('Updated issue fate to "%s": %s' % (fate, issue))
+
+    already_haves['issues'][ah_key] = issue
 
     # Process previous publications of issue, if any
     for previous_issue_info in previously_published_as:

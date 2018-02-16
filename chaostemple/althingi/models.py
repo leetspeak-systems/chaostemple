@@ -579,8 +579,6 @@ class Issue(models.Model):
                         return 'unknown'
                 elif len(conclusions) > 1:
                     return 'limbo'
-                else:
-                    return 'unknown'
 
         elif self.issue_type == 'b':
             # Check if the request for the report was accepted.

@@ -17,6 +17,8 @@ from althingi.updaters import update_committee_seats
 from althingi.updaters import update_committees
 from althingi.updaters import update_constituencies
 from althingi.updaters import update_issue
+from althingi.updaters import update_issue_status
+from althingi.updaters import update_issue_statuses
 from althingi.updaters import update_issues
 from althingi.updaters import update_next_committee_agendas
 from althingi.updaters import update_next_sessions
@@ -316,3 +318,20 @@ class AlthingiUpdaterTest(TestCase):
     @hidden_prints
     def test_update_speeches(self):
         update_speeches()
+
+    @hidden_prints
+    def test_update_issue_statuses(self):
+        update_issue_statuses()
+
+    @hidden_prints
+    def test_update_issue_status(self):
+
+        # Fail: Good number passed as something else than number.
+        issue_num, parliament_num, name = test_dummy_issue
+        with self.assertRaisesRegexp(TypeError, 'Parameter issue_num must be a number'):
+            update_issue_status(str(issue_num), parliament_num)
+
+        # Fail: Fetch issue that does not exist.
+        issue_num, parliament_num, name = broken_test_dummy_issue
+        with self.assertRaisesRegexp(AlthingiException, 'Issue \d+/\d+ does not exist and is not automatically fetched. Try first running "issue=\d+ parliament=\d+".'):
+            update_issue_status(issue_num, parliament_num)

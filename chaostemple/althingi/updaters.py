@@ -1273,70 +1273,6 @@ def update_issue(issue_num, parliament_num=None):
         review.delete()
         print('Deleted non-existent review: %s' % review)
 
-    # Figure out issue's status, if supported.
-    status = issue.determine_status()
-    if status is not None:
-
-        current_step_order_query = issue.steps.all() # Current according to database, that is.
-
-        # Map the current steps to their order according to database.
-        current_step_order_map = OrderedDict([(s.code, s.order) for s in current_step_order_query])
-
-        if len(current_step_order_query) != len(current_step_order_map):
-            # This means that there are duplicates of at least one step in the
-            # database, which makes no sense. This should not happen and is
-            # dealt with here as a precaution. We'll just delete all the rows
-            # and insert them all from scratch.
-            issue.steps.all().delete()
-            current_step_order_map.clear()
-
-        changed = False
-        last_step = None
-        order = 0
-        for step, taken in status.items():
-            # Has this step been taken in the issue type's legislative process?
-            if taken:
-                order += 1 # Must be the next step, then!
-
-                if not step in current_step_order_map:
-                    IssueStep(issue=issue, code=step, order=order).save()
-                    changed = True
-                elif step in current_step_order_map and current_step_order_map[step] != order:
-                    IssueStep.objects.filter(issue=issue, code=step).update(order=order)
-                    changed = True
-
-                # Record the last step known to be taken.
-                last_step = step
-
-            else:
-                if step in current_step_order_map:
-                    IssueStep.objects.get(issue=issue, code=step).delete()
-                    changed = True
-
-        # Set the last step as the new current one.
-        if issue.current_step != last_step:
-            issue.current_step = last_step
-            issue.save()
-            changed = True
-
-        # Remove steps that have nothing to do with this issue type (only as a precaution).
-        issue.steps.exclude(code__in=status.keys()).delete()
-
-        if changed:
-            print('Updated status of issue: %s' % issue)
-        else:
-            print('Already have status of issue: %s' % issue)
-
-    # Determine the issue's fate (if any).
-    # This is done so near the end of the processing of the issue because it
-    # relies on the status, which in turn relies on things processed after the
-    # issue's basic attributes have been figured out.
-    fate = issue.determine_fate()
-    if issue.fate != fate:
-        issue.fate = fate
-        issue.save()
-        print('Updated issue fate to "%s": %s' % (fate, issue))
-
     already_haves['issues'][ah_key] = issue
 
     # Process previous publications of issue, if any
@@ -2223,3 +2159,91 @@ def update_speeches(parliament_num=None):
     already_haves['speeches'][parliament.parliament_num] = speeches
 
     return speeches
+
+
+def update_issue_statuses(parliament_num=None):
+
+    parliament = update_parliament(parliament_num)
+
+    for issue_num in [i.issue_num for i in parliament.issues.filter(issue_group='A')]:
+        update_issue_status(issue_num, parliament.parliament_num)
+
+
+def update_issue_status(issue_num, parliament_num=None):
+
+    # Make sure that input makes sense
+    if issue_num is not None and not isinstance(issue_num, (int, long)):
+        raise TypeError('Parameter issue_num must be a number')
+
+    parliament = update_parliament(parliament_num)
+
+    try:
+        issue = parliament.issues.get(issue_num=issue_num, issue_group='A')
+    except Issue.DoesNotExist:
+        msg = 'Issue %d/%d does not exist and is not automatically fetched.' % (issue_num, parliament.parliament_num)
+        msg += ' Try first running "issue=%d parliament=%d".' % (issue_num, parliament.parliament_num)
+        raise AlthingiException(msg)
+
+    # Figure out issue's status, if supported.
+    status = issue.determine_status()
+    if status is not None:
+
+        current_step_order_query = issue.steps.all() # Current according to database, that is.
+
+        # Map the current steps to their order according to database.
+        current_step_order_map = OrderedDict([(s.code, s.order) for s in current_step_order_query])
+
+        if len(current_step_order_query) != len(current_step_order_map):
+            # This means that there are duplicates of at least one step in the
+            # database, which makes no sense. This should not happen and is
+            # dealt with here as a precaution. We'll just delete all the rows
+            # and insert them all from scratch.
+            issue.steps.all().delete()
+            current_step_order_map.clear()
+
+        changed = False
+        last_step = None
+        order = 0
+        for step, taken in status.items():
+            # Has this step been taken in the issue type's legislative process?
+            if taken:
+                order += 1 # Must be the next step, then!
+
+                if not step in current_step_order_map:
+                    IssueStep(issue=issue, code=step, order=order).save()
+                    changed = True
+                elif step in current_step_order_map and current_step_order_map[step] != order:
+                    IssueStep.objects.filter(issue=issue, code=step).update(order=order)
+                    changed = True
+
+                # Record the last step known to be taken.
+                last_step = step
+
+            else:
+                if step in current_step_order_map:
+                    IssueStep.objects.get(issue=issue, code=step).delete()
+                    changed = True
+
+        # Set the last step as the new current one.
+        if issue.current_step != last_step:
+            issue.current_step = last_step
+            issue.save()
+            changed = True
+
+        # Remove steps that have nothing to do with this issue type (only as a precaution).
+        issue.steps.exclude(code__in=status.keys()).delete()
+
+        if changed:
+            print('Updated status of issue: %s' % issue)
+        else:
+            print('Already have status of issue: %s' % issue)
+
+    # Determine the issue's fate (if any).
+    # This is done so near the end of the processing of the issue because it
+    # relies on the status, which in turn relies on things processed after the
+    # issue's basic attributes have been figured out.
+    fate = issue.determine_fate()
+    if issue.fate != fate:
+        issue.fate = fate
+        issue.save()
+        print('Updated issue fate to "%s": %s' % (fate, issue))

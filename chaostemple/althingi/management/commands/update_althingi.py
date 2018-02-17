@@ -11,6 +11,8 @@ from althingi.updaters import update_committees
 from althingi.updaters import update_constituencies
 from althingi.updaters import update_issues
 from althingi.updaters import update_issue
+from althingi.updaters import update_issue_status
+from althingi.updaters import update_issue_statuses
 from althingi.updaters import update_next_sessions
 from althingi.updaters import update_next_committee_agendas
 from althingi.updaters import update_parliament
@@ -37,6 +39,8 @@ class Command(BaseCommand):
         print '  upcoming                          Update upcoming committee agendas and parliamentary sessions'
         print '  issues                            Update issues in default or specified parliament'
         print '  issue=<issue_num>                 Updates an issue by issue number'
+        print '  issue_statuses=                   Updates issue statuses in default or specified parliament'
+        print '  issue_status=<issue_num>          Updates an issue status by issue number'
         print '  sessions                          Updates sessions in default or specified parliament'
         print '  session=<session_num>             Updates a particular session by session number'
         print '  persons                           Updates persons (MPs) in default or specified parliament'
@@ -214,6 +218,18 @@ class Command(BaseCommand):
                 update_next_sessions()
                 update_next_committee_agendas()
 
+            if 'issue_statuses' in args:
+                has_run = True
+                update_issue_statuses(parliament_num)
+
+            if 'issue_status' in args:
+                has_run = True
+                try:
+                    issue_num = int(args['issue_status'])
+                except (TypeError, ValueError):
+                    self.error('Invalid issue number')
+                update_issue_status(issue_num, parliament_num)
+
             if 'all' in args:
                 has_run = True
                 update_parties(parliament_num)
@@ -225,6 +241,9 @@ class Command(BaseCommand):
                 update_speeches(parliament_num)
                 update_committee_agendas(parliament_num)
                 update_vote_castings(parliament_num)
+
+                # This must happen last because it builds on prior data.
+                update_issue_statuses(parliament_num)
 
                 # Mark parliament as fully updated.
                 parliament = Parliament.objects.get(parliament_num=parliament_num)

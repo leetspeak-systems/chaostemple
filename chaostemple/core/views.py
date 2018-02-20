@@ -415,15 +415,38 @@ def parliament_persons(request, parliament_num, party_slug=None):
 
     if party_slug:
         party = get_object_or_404(Party, slug=party_slug)
-        q_persons = q_persons & Q(seats__party__slug=party_slug)
+
+        # Make this prettier. Make my day.
+        q_persons = Q(
+            Q(
+                seats__parliament__parliament_num=parliament_num
+            ) & Q(
+                seats__party__slug=party_slug
+            )
+        ) | Q(
+            Q(
+                minister_seats__parliament__parliament_num=parliament_num
+            ) & Q(
+                minister_seats__party__slug=party_slug
+            )
+        )
     else:
         party = None
+        q_persons = Q(
+            seats__parliament__parliament_num=parliament_num
+        ) | Q(
+            minister_seats__parliament__parliament_num=parliament_num
+        )
 
     persons = Person.objects.prefetch_latest_seats(
         parliament,
         'party',
         'constituency',
         'parliament'
+    ).prefetch_latest_minister_seats(
+        parliament,
+        'minister',
+        'party'
     ).filter(q_persons).distinct()
 
     ctx = {
@@ -459,6 +482,7 @@ def person(request, slug, subslug=None):
 
     seats = person.seats.select_related('parliament', 'party', 'constituency').all()
     committee_seats = person.committee_seats.select_related('parliament', 'committee').all()
+    minister_seats = person.minister_seats.select_related('parliament', 'minister', 'party').all()
 
     issues = Issue.objects.select_related('parliament').prefetch_related('proposers__person', 'proposers__committee').filter(
         documents__proposers__person_id=person.id,
@@ -474,10 +498,18 @@ def person(request, slug, subslug=None):
         special_inquisitor_id=person.id
     ).order_by('-parliament__parliament_num')
 
+    # Figure out party affiliation.
+    if len(minister_seats) > 0:
+        party = minister_seats.last().party
+    else:
+        party = seats.last().party
+
     ctx = {
         'person': person,
+        'party': party,
         'seats': seats,
         'committee_seats': committee_seats,
+        'minister_seats': minister_seats,
         'issues': issues,
         'special_discussions': special_discussions,
     }

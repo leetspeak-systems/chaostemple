@@ -20,6 +20,8 @@ from althingi.updaters import update_issue
 from althingi.updaters import update_issue_status
 from althingi.updaters import update_issue_statuses
 from althingi.updaters import update_issues
+from althingi.updaters import update_minister_seats
+from althingi.updaters import update_ministers
 from althingi.updaters import update_next_committee_agendas
 from althingi.updaters import update_next_sessions
 from althingi.updaters import update_parliament
@@ -335,3 +337,24 @@ class AlthingiUpdaterTest(TestCase):
         issue_num, parliament_num, name = broken_test_dummy_issue
         with self.assertRaisesRegexp(AlthingiException, 'Issue \d+/\d+ does not exist and is not automatically fetched. Try first running "issue=\d+ parliament=\d+".'):
             update_issue_status(issue_num, parliament_num)
+
+    @hidden_prints
+    def test_update_ministers(self):
+        update_ministers()
+
+    @hidden_prints
+    def test_update_minister_seats(self):
+
+        # Fail: Good number passed as something else than number.
+        person_xml_id, parliament_num, name = test_dummy
+        with self.assertRaisesRegexp(TypeError, 'Parameter person_xml_id must be a number'):
+            update_minister_seats(str(person_xml_id), parliament_num)
+
+        # Fail: Fetch minister seats for a person that does not exist.
+        person_xml_id, parliament_num, name = broken_test_dummy
+        with self.assertRaisesRegexp(AlthingiException, 'Person with XML-ID \d+ not found'):
+            update_minister_seats(person_xml_id, parliament_num)
+
+        # Pass: Fetch minister seats for a person known to be valid.
+        person_xml_id, parliament_num, name = test_dummy
+        update_minister_seats(person_xml_id, parliament_num)

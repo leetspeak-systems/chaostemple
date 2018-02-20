@@ -6,14 +6,23 @@
 <tr>
     <td>
         <a href="{% breadcrumb_url 'person' person.slug person.subslug %}">{{ person }}</a>
+        {% for lms in person.last_minister_seats %}<small><strong>{% if forloop.counter > 1 %}, {% endif %}{{ lms.minister }}</strong></small>{% endfor %}
         {% if tenure_ended_prematurely %}
             <small>({% trans 'tenure ended prematurely' %}: {{ seat.timing_out|date:'SHORT_DATE_FORMAT' }})</small>
         {% endif %}
     </td>
     <td {% if tenure_ended_prematurely %}class="faded-text"{% endif %}>
-        <a href="{% breadcrumb_url 'parliament_persons' parliament_num seat.party.slug %}">{{ seat.party }}</a>
+        {% if not seat and person.last_minister_seats %}
+            <a href="{% breadcrumb_url 'parliament_persons' parliament_num person.last_minister_seats.0.party.slug %}">{{ person.last_minister_seats.0.party }}</a>
+        {% else %}
+            <a href="{% breadcrumb_url 'parliament_persons' parliament_num seat.party.slug %}">{{ seat.party }}</a>
+        {% endif %}
     </td>
-    <td {% if tenure_ended_prematurely %}class="faded-text"{% endif %}>{{ seat.constituency_mp_num }}. {% trans 'parliamentarian' %}</td>
-    <td {% if tenure_ended_prematurely %}class="faded-text"{% endif %}>{{ seat.constituency.name }}</td>
+    {% if not seat and person.last_minister_seats %}
+        <td colspan="2"><em>{% trans 'Minister from outside of Parliament' %}</em></td>
+    {% else %}
+        <td {% if tenure_ended_prematurely %}class="faded-text"{% endif %}>{{ seat.constituency_mp_num }}. {% trans 'parliamentarian' %}</td>
+        <td {% if tenure_ended_prematurely %}class="faded-text"{% endif %}>{{ seat.constituency.name }}</td>
+    {% endif %}
 </tr>
 {% endwith %}

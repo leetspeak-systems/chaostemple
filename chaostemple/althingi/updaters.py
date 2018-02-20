@@ -20,6 +20,8 @@ from althingi.models import Document
 from althingi.models import Issue
 from althingi.models import IssueSummary
 from althingi.models import IssueStep
+from althingi.models import Minister
+from althingi.models import MinisterSeat
 from althingi.models import Parliament
 from althingi.models import Party
 from althingi.models import Person
@@ -68,6 +70,8 @@ already_haves = {
     'parliaments': {},
     'parties': {},
     'persons': {},
+    'ministers': {},
+    'minister_seats': {},
     'seats': {},
     'committees': {},
     'committee_seats': {},
@@ -157,11 +161,13 @@ def update_persons(parliament_num=None):
 
     parliament = update_parliament(parliament_num)
 
-    persons_xml = get_xml('PERSONS_URL', parliament.parliament_num).findall(u'þingmaður')
+    # We'll combine the lists of MPs and ministers.
+    xml_mp = get_xml('PERSONS_MPS_URL', parliament.parliament_num).findall(u'þingmaður')
+    xml_min = get_xml('PERSONS_MINISTERS_URL', parliament.parliament_num).findall(u'ráðherra')
 
-    for person_xml in persons_xml:
-        person_xml_id = int(person_xml.attrib[u'id'])
+    person_xml_ids = [int(a.attrib[u'id']) for a in xml_mp] + [int(a.attrib[u'id']) for a in xml_min]
 
+    for person_xml_id in person_xml_ids:
         update_person(person_xml_id, parliament.parliament_num)
 
 
@@ -280,6 +286,7 @@ def update_person(person_xml_id, parliament_num=None):
 
     update_seats(person_xml_id, parliament.parliament_num)
     update_committee_seats(person_xml_id, parliament.parliament_num)
+    update_minister_seats(person_xml_id, parliament.parliament_num)
 
     return person
 
@@ -2247,3 +2254,161 @@ def update_issue_status(issue_num, parliament_num=None):
         issue.fate = fate
         issue.save()
         print('Updated issue fate to "%s": %s' % (fate, issue))
+
+
+def update_ministers(parliament_num=None):
+
+    parliament = update_parliament(parliament_num)
+
+    if already_haves['ministers'].has_key(parliament.parliament_num):
+        return already_haves['ministers']
+
+
+    xml = get_xml('MINISTER_LIST_URL', parliament.parliament_num)
+
+    ministers = []
+    for minister_xml in xml.findall(u'ráðherraembætti'):
+
+        minister_xml_id = int(minister_xml.attrib[u'id'])
+
+        name = minister_xml.find(u'heiti').text.strip()
+
+        abbreviation_short = minister_xml.find(u'skammstafanir/stuttskammstöfun').text
+        abbreviation_long = minister_xml.find(u'skammstafanir/löngskammstöfun').text
+
+        parliament_num_first = int(minister_xml.find(u'tímabil/fyrstaþing').text)
+        try:
+            parliament_num_last = int(minister_xml.find(u'tímabil/síðastaþing').text)
+        except AttributeError:
+            parliament_num_last = None
+
+        try:
+            minister = Minister.objects.get(minister_xml_id=minister_xml_id)
+
+            changed = False
+            if minister.name != name:
+                minister.name = name
+                changed = True
+
+            if minister.abbreviation_short != abbreviation_short:
+                minister.abbreviation_short = abbreviation_short
+                changed = True
+
+            if minister.abbreviation_long != abbreviation_long:
+                minister.abbreviation_long = abbreviation_long
+                changed = True
+
+            if minister.parliament_num_first != parliament_num_first:
+                minister.parliament_num_first = parliament_num_first
+                changed = True
+
+            if minister.parliament_num_last != parliament_num_last:
+                minister.parliament_num_last = parliament_num_last
+                changed = True
+
+            if parliament not in minister.parliaments.all():
+                minister.parliaments.add(parliament)
+                changed = True
+
+            if changed:
+                minister.save()
+                print('Updated minister: %s' % minister)
+            else:
+                print('Already have minister: %s' % minister)
+
+        except Minister.DoesNotExist:
+            minister = Minister(minister_xml_id=minister_xml_id)
+            minister.name = name
+            minister.abbreviation_short = abbreviation_short
+            minister.abbreviation_long = abbreviation_long
+            minister.parliament_num_first = parliament_num_first
+            minister.parliament_num_last = parliament_num_last
+            minister.save()
+
+            minister.parliaments.add(parliament)
+
+            print('Added minister: %s' % minister)
+
+        ministers.append(minister)
+
+    already_haves['ministers'][parliament.parliament_num] = ministers
+
+    return ministers
+
+
+def update_minister_seats(person_xml_id, parliament_num=None):
+
+    parliament = update_parliament(parliament_num)
+    person = update_person(person_xml_id, parliament.parliament_num)
+
+    ah_key = '%d-%d' % (parliament.parliament_num, person_xml_id)
+    if already_haves['minister_seats'].has_key(ah_key):
+        return already_haves['minister_seats'][ah_key]
+
+    update_ministers(parliament.parliament_num)
+    update_parties(parliament.parliament_num)
+
+    xml = get_xml('MINISTER_SEATS_URL', person_xml_id).findall(u'ráðherrasetur/ráðherraseta')
+
+    minister_seats = []
+    for minister_seat_xml in xml:
+        minister_seat_parliament_num = int(minister_seat_xml.find(u'þing').text)
+
+        if minister_seat_parliament_num == parliament.parliament_num:
+
+            minister_xml_id = int(minister_seat_xml.find(u'embætti').attrib['id'])
+            minister = Minister.objects.get(minister_xml_id=minister_xml_id)
+
+            timing_in = sensible_datetime(minister_seat_xml.find(u'tímabil/inn').text)
+
+            try:
+                timing_out = sensible_datetime(minister_seat_xml.find(u'tímabil/út').text)
+            except AttributeError:
+                timing_out = None
+
+            try:
+                party_xml_id = int(minister_seat_xml.find(u'þingflokkur').attrib[u'id'])
+                party = Party.objects.get(party_xml_id=party_xml_id)
+            except AttributeError:
+                party = None
+
+            try:
+                minister_seat = MinisterSeat.objects.filter(
+                    person=person,
+                    minister=minister,
+                    parliament__parliament_num=parliament.parliament_num,
+                    timing_in=timing_in
+                ).get(Q(timing_out=timing_out) | Q(timing_out=None))
+
+                changed = False
+                if minister_seat.timing_out != timing_out:
+                    minister_seat.timing_out = timing_out
+                    changed = True
+
+                if minister_seat.party != party:
+                    minister_seat.party = party
+                    changed = True
+
+                if changed:
+                    minister_seat.save()
+                    print('Updated minister seat: %s' % minister_seat)
+                else:
+                    print('Already have minister seat: %s' % minister_seat)
+
+            except MinisterSeat.DoesNotExist:
+                minister_seat = MinisterSeat()
+                minister_seat.person = person
+                minister_seat.minister = minister
+                minister_seat.parliament = parliament
+                minister_seat.timing_in = timing_in
+                minister_seat.timing_out = timing_out
+                minister_seat.party = party
+
+                minister_seat.save()
+                print('Added minister seat: %s' % minister_seat)
+
+            minister_seats.append(minister_seat)
+
+    already_haves['minister_seats'][ah_key] = minister_seats
+
+    return minister_seats

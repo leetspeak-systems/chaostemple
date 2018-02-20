@@ -4,7 +4,7 @@
 
 {% block content %}
 
-    <h2>{% trans 'Parliamentarians' %}{% if party %} <small>({{ party }})</small>{% endif %}</h2>
+    <h2>{% trans 'Parliamentarians and ministers' %}{% if party %} <small>({{ party }})</small>{% endif %}</h2>
 
     <div class="row">
         <div class="col-md-12">
@@ -17,7 +17,7 @@
                 </tr>
                 {% for person in persons %}
                     {% with person.last_seat.0 as last_seat %}
-                    {% if last_seat.seat_type == 'þingmaður' or last_seat.seat_type == 'með varamann' %}
+                    {% if last_seat.seat_type == 'þingmaður' or last_seat.seat_type == 'með varamann' or person.last_minister_seats %}
                         {% include 'core/stub/small/person.html' with seat=person.last_seat.0 %}
                     {% endif %}
                     {% endwith %}

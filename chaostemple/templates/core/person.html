@@ -15,18 +15,24 @@
         <div class="col-md-6">
             <div class="panel panel-default">
                 <div class="panel-body">
-                    {% with seats.last as current_seat %}
-                        {% comment %}It's only current if this is true. {% endcomment %}
-                        {% if not current_seat.timing_out %}
-                            <p style="float: right; text-align: center;">
-                                <strong>{{ current_seat.party.name }}</strong><br />
-                                <em>
+                    <p style="float: right; text-align: center;">
+                        <strong>{{ party.name }}</strong><br />
+                        {% for ms in minister_seats %}
+                            {% comment %}It's only current if this is true.{% endcomment %}
+                            {% if not ms.timing_out %}
+                                <em>{{ ms.minister }}</em><br />
+                            {% endif %}
+                        {% endfor %}
+                        {% with seats.last as current_seat %}
+                            {% comment %}It's only current if this is true.{% endcomment %}
+                            {% if current_seat and not current_seat.timing_out %}
+                               <em>
                                 {{ current_seat.constituency_mp_num }}. {% trans 'parliamentarian' %}<br />
                                 {{ current_seat.constituency.name }}<br />
                                 </em>
-                            </p>
-                        {% endif %}
-                    {% endwith %}
+                            {% endif %}
+                        {% endwith %}
+                    </p>
                     <h4>
                         {% include 'core/stub/link_althingi_person.html' with person_xml_id=person.person_xml_id %}
                         <strong>{{ person }}</strong><br />
@@ -70,6 +76,32 @@
                     {% endif %}
                 </div>
             </div>
+
+            {% if minister_seats.count %}
+            <h3>{% trans 'Minister Seats' %}</h3>
+            <table class="table">
+                <tr>
+                    <th>{% trans 'Time period' %}</th>
+                    <th>{% trans 'Party' %}</th>
+                    <th>{% trans 'Minister' %}</th>
+                </tr>
+                {% for minister_seat in minister_seats reversed %}
+                    {% ifchanged minister_seat.parliament.parliament_num %}
+                        <tr><th colspan="3">{{ minister_seat.parliament.parliament_num }}. {% trans 'parliament' %}</th></tr>
+                    {% endifchanged %}
+                    <tr>
+                        <td class="nowrap">
+                            {{ minister_seat.timing_in|date:'SHORT_DATE_FORMAT' }}
+                            - {% if minister_seat.timing_out %}{{ minister_seat.timing_out|date:'SHORT_DATE_FORMAT' }}{% else %}...{% endif %}
+                        </td>
+                        <td>
+                            <a href="{% breadcrumb_url 'parliament_persons' parliament_num minister_seat.party.slug %}">{{ minister_seat.party.name }}</a>
+                        </td>
+                        <td>{{ minister_seat.minister|capfirst }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+            {% endif %}
 
             <h3>{% trans 'Seats' %}</h3>
             <table class="table">

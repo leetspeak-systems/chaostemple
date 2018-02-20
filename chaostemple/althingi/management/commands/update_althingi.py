@@ -13,6 +13,7 @@ from althingi.updaters import update_issues
 from althingi.updaters import update_issue
 from althingi.updaters import update_issue_status
 from althingi.updaters import update_issue_statuses
+from althingi.updaters import update_ministers
 from althingi.updaters import update_next_sessions
 from althingi.updaters import update_next_committee_agendas
 from althingi.updaters import update_parliament
@@ -45,6 +46,7 @@ class Command(BaseCommand):
         print '  session=<session_num>             Updates a particular session by session number'
         print '  persons                           Updates persons (MPs) in default or specified parliament'
         print '  person=<person_xml_id>            Updates person by XML ID (see Althingi\'s XML)'
+        print '  ministers                         Updates ministerial positions in default or specified parliament'
         print '  parties                           Updates parties in default or specified parliament'
         print '  committees                        Updates committees in default or specified parliament'
         print '  committee=<committee_xml_id>      Updates committee by XML ID (see Althingi\'s XML)'
@@ -149,6 +151,10 @@ class Command(BaseCommand):
                     self.error('Invalid person XML-ID')
                 update_person(person_xml_id, parliament_num)
 
+            if 'ministers' in args:
+                has_run = True
+                update_ministers(parliament_num)
+
             if 'issues' in args:
                 has_run = True
                 update_issues(parliament_num)
@@ -236,6 +242,7 @@ class Command(BaseCommand):
                 update_constituencies(parliament_num)
                 update_committees(parliament_num)
                 update_persons(parliament_num)
+                update_ministers(parliament_num)
                 update_issues(parliament_num)
                 update_sessions(parliament_num)
                 update_speeches(parliament_num)

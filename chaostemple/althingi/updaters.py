@@ -2442,6 +2442,15 @@ def update_presidents(parliament_num=None):
         abbreviation = node.find(u'embætti/skammstöfun').text
         president_type = node.find(u'embætti/embættisflokkur').attrib['flokkur']
 
+        # NOTE/TODO/HACK/TEMPORARY: The XML is broken in such a way that in
+        # the 146th Parliament, the presidential office with the name
+        # "starfsforseti" is incorrectly marked with the presidential type of
+        # "F" when it should in fact be "E". Until the XML is fixed, we're
+        # hard-coding this fix here. Check if this is still the case, and fix
+        # this code accordingly if 2018-02-22 was a long time ago.
+        if name == u'starfsforseti':
+            president_type = 'E'
+
         is_main = name == u'forseti' # No other way to detect this.
 
         # Record the order of succession if appropriate. Only president of

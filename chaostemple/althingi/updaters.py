@@ -1200,11 +1200,11 @@ def update_issue(issue_num, parliament_num=None):
 
         review_type = review_xml.find(u'tegunderindis').attrib['tegund']
         try:
-            date_arrived = review_xml.find(u'komudagur').text
+            date_arrived = sensible_datetime(review_xml.find(u'komudagur').text)
         except AttributeError:
             date_arrived = None
         try:
-            date_sent = review_xml.find(u'sendingadagur').text
+            date_sent = sensible_datetime(review_xml.find(u'sendingadagur').text)
         except AttributeError:
             date_sent = None
 
@@ -1242,11 +1242,11 @@ def update_issue(issue_num, parliament_num=None):
                 review.review_type = review_type
                 changed = True
 
-            if sensible_datetime(review.date_arrived) != sensible_datetime(date_arrived):
+            if sensible_datetime(review.date_arrived) != date_arrived:
                 review.date_arrived = date_arrived
                 changed = True
 
-            if sensible_datetime(review.date_sent) != sensible_datetime(date_sent):
+            if sensible_datetime(review.date_sent) != date_sent:
                 review.date_sent = date_sent
                 changed = True
 

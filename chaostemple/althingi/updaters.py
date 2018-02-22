@@ -2535,7 +2535,7 @@ def update_presidents(parliament_num=None):
             president_seat = PresidentSeat.objects.filter(
                 person=person,
                 president=president,
-                parliament__parliament_num=parliament.parliament_num,
+                parliament=parliament,
                 timing_in=timing_in
             ).get(Q(timing_out=timing_out) | Q(timing_out=None))
 

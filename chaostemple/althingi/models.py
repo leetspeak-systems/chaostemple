@@ -44,7 +44,7 @@ class PartyQuerySet(models.QuerySet):
 class PersonQuerySet(models.QuerySet):
     def prefetch_latest_seats(self, parliament=None, *args):
         if parliament is None:
-            parliament = Parliament.objects.get(CURRENT_PARLIAMENT_NUM)
+            parliament = Parliament.objects.get(parliament_num=CURRENT_PARLIAMENT_NUM)
 
         if parliament.timing_end is None:
             q_timing = Q(timing_out=None)
@@ -68,7 +68,7 @@ class PersonQuerySet(models.QuerySet):
 
     def prefetch_latest_minister_seats(self, parliament=None, *args):
         if parliament is None:
-            parliament = Parliament.objects.get(CURRENT_PARLIAMENT_NUM)
+            parliament = Parliament.objects.get(parliament_num=CURRENT_PARLIAMENT_NUM)
 
         if parliament.timing_end is None:
             q_timing = Q(timing_out=None)
@@ -92,7 +92,7 @@ class PersonQuerySet(models.QuerySet):
 
     def prefetch_latest_committee_seats(self, committee, parliament=None, *args):
         if parliament is None:
-            parliament = Parliament.objects.get(CURRENT_PARLIAMENT_NUM)
+            parliament = Parliament.objects.get(parliament_num=CURRENT_PARLIAMENT_NUM)
 
         if parliament.timing_end is None:
             q_timing = Q(timing_out=None)

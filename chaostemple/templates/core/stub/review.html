@@ -6,6 +6,9 @@
             {% if review.committee %}
                 <a class="label label-default" href="{% url 'parliament_committee' review.issue.parliament.parliament_num review.committee.id %}">{{ review.committee }}</a>
             {% endif %}
+            {% if review.president_seat %}
+                <span class="label label-default">{{ review.president_seat.president }}</span>
+            {% endif %}
             <span class="label label-default">{{ review.date_arrived|date:'SHORT_DATE_FORMAT' }}</span>
         </div>
         <div>

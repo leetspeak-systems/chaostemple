@@ -139,6 +139,27 @@ class PersonQuerySet(models.QuerySet):
         return self.prefetch_related(p)
 
 
+class PresidentSeatQuerySet(models.QuerySet):
+    def main_on_date(self, parliament, dt=None):
+        if dt is None:
+            dt = timezone.now()
+
+        # Only the main president if one has already been elected. There may
+        # be temporary presidential positions ("starfsforseti"), but due to
+        # imperfections in the data, this query will not find those. However,
+        # those positions should never be relevant to other data since those
+        # temporary positions are only active when Parliament has only
+        # recently been elected and hasn't started doing anything, so it
+        # shouldn't be a problem. Returns None if no president is found.
+        query = self.filter(
+            president__is_main=True,
+            timing_in__gte=parliament.timing_start,
+            timing_in__lte=dt
+        ).order_by('-timing_in').first()
+
+        return query
+
+
 class SessionQuerySet(models.QuerySet):
     '''
     ON CODE:
@@ -742,6 +763,7 @@ class Review(models.Model):
     sender_name = models.CharField(max_length=200)
     sender_name_description = models.CharField(max_length=200, default='')
     committee = models.ForeignKey('Committee', null=True)
+    president_seat = models.ForeignKey('PresidentSeat', null=True) # Unusual but possible recipient
     review_type = models.CharField(max_length=2, choices=REVIEW_TYPES)  #: Tegund erindis
     date_arrived = models.DateField(null=True)
     date_sent = models.DateField(null=True)
@@ -1050,13 +1072,15 @@ class President(models.Model):
     president_xml_id = models.IntegerField(unique=True)
 
     def __unicode__(self):
-        return u'%s' % self.name
+        return capfirst(self.name)
 
     class Meta:
         ordering = ['president_type', 'order']
 
 
 class PresidentSeat(models.Model):
+    objects = PresidentSeatQuerySet.as_manager()
+
     person = models.ForeignKey('Person', related_name='president_seats')
     president = models.ForeignKey('President', related_name='president_seats')
     parliament = models.ForeignKey('Parliament', related_name='president_seats')

@@ -1215,6 +1215,14 @@ def update_issue(issue_num, parliament_num=None):
         except AttributeError:
             committee_id = None
 
+        try:
+            president_person_xml_id = int(review_xml.find(u'viðtakandi/forsetiAlþingis/nafn').attrib[u'id'])
+            # We'll need the presidents if this is to work.
+            update_presidents(parliament.parliament_num)
+            president_seat = PresidentSeat.objects.main_on_date(parliament, date_sent)
+        except AttributeError:
+            president_seat = None
+
         # sender_name can contain a lot of baggage if it's old data (around 116th parliament and earlir)
         sender_name = sender_name.strip()
         while sender_name.find('  ') >= 0:
@@ -1236,6 +1244,10 @@ def update_issue(issue_num, parliament_num=None):
 
             if review.committee_id != committee_id:
                 review.committee_id = committee_id
+                changed = True
+
+            if review.president_seat != president_seat:
+                review.president_seat = president_seat
                 changed = True
 
             if review.review_type != review_type:
@@ -1270,6 +1282,7 @@ def update_issue(issue_num, parliament_num=None):
             review.sender_name = sender_name
             review.sender_name_description = sender_name_description
             review.committee_id = committee_id
+            review.president_seat = president_seat
             review.review_type = review_type
             review.date_arrived = date_arrived
             review.date_sent = date_sent

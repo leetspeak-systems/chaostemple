@@ -33,6 +33,7 @@ xml_urls = {
     'SPEECHES_URL': 'http://www.althingi.is/altext/xml/raedulisti/?lthing=%d',
     'PERSONS_MPS_URL': 'http://www.althingi.is/altext/xml/thingmenn/?lthing=%d',
     'PERSONS_MINISTERS_URL': 'http://www.althingi.is/altext/xml/radherrar/?lthing=%d',
+    'PRESIDENT_LIST_URL': 'http://www.althingi.is/altext/xml/forsetar/?lthing=%d',
     'SEATS_URL': 'http://www.althingi.is/altext/xml/thingmenn/thingmadur/thingseta/?nr=%d',
     'VOTE_CASTING_URL': 'http://www.althingi.is/altext/xml/atkvaedagreidslur/atkvaedagreidsla/?numer=%d',
     'VOTE_CASTINGS_URL': 'http://www.althingi.is/altext/xml/atkvaedagreidslur/?lthing=%d',

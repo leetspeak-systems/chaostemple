@@ -447,6 +447,9 @@ def parliament_persons(request, parliament_num, party_slug=None):
         parliament,
         'minister',
         'party'
+    ).prefetch_latest_president_seats(
+        parliament,
+        'president'
     ).filter(q_persons).distinct()
 
     ctx = {

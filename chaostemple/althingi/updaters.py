@@ -25,6 +25,8 @@ from althingi.models import MinisterSeat
 from althingi.models import Parliament
 from althingi.models import Party
 from althingi.models import Person
+from althingi.models import President
+from althingi.models import PresidentSeat
 from althingi.models import Proposer
 from althingi.models import Rapporteur
 from althingi.models import Review
@@ -72,6 +74,8 @@ already_haves = {
     'persons': {},
     'ministers': {},
     'minister_seats': {},
+    'presidents': {},
+    'president_seats': {},
     'seats': {},
     'committees': {},
     'committee_seats': {},
@@ -2412,3 +2416,153 @@ def update_minister_seats(person_xml_id, parliament_num=None):
     already_haves['minister_seats'][ah_key] = minister_seats
 
     return minister_seats
+
+
+# Returns two lists, of presidents and then president seats.
+def update_presidents(parliament_num=None):
+
+    parliament = update_parliament(parliament_num)
+
+    ah_key = parliament.parliament_num
+    if ah_key in already_haves['presidents'] and ah_key in already_haves['president_seats']:
+        return already_haves['presidents'][ah_key], already_haves['president_seats'][ah_key]
+
+    xml = get_xml('PRESIDENT_LIST_URL', parliament.parliament_num).findall(u'forseti')
+
+    # XML is assumed to list presidents of the same type in their correct
+    # order of succession. For example, the president of parliament should
+    # come before the first vice president, who should come before the second
+    # vice president and so forth.
+    orders_of_succession = {}
+
+    presidents = []
+    for node in xml:
+        president_xml_id = int(node.find(u'embætti').attrib['id'])
+        name = node.find(u'embætti/embættisheiti').text
+        abbreviation = node.find(u'embætti/skammstöfun').text
+        president_type = node.find(u'embætti/embættisflokkur').attrib['flokkur']
+
+        is_main = name == u'forseti' # No other way to detect this.
+
+        # Record the order of succession if appropriate. Only president of
+        # type 'F' currently have an order of succession, but this code is
+        # written so that the counting mechanism can easily be extended to
+        # other types by adding them to the list in the if-statement.
+        if president_type in ['F']:
+            if president_type not in orders_of_succession:
+                orders_of_succession[president_type] = []
+            if president_xml_id not in orders_of_succession[president_type]:
+                orders_of_succession[president_type].append(president_xml_id)
+            order = len(orders_of_succession[president_type])
+        else:
+            order = None
+
+        try:
+            president = President.objects.get(president_xml_id=president_xml_id)
+
+            changed = False
+            if president.name != name:
+                president.name = name
+                changed = True
+
+            if president.abbreviation != abbreviation:
+                president.abbreviation = abbreviation
+                changed = True
+
+            if president.president_type != president_type:
+                president.president_type = president_type
+                changed = True
+
+            if president.is_main != is_main:
+                president.is_main = is_main
+                changed = True
+
+            if president.order != order:
+                president.order = order
+                changed = True
+
+            if parliament not in president.parliaments.all():
+                president.parliaments.add(parliament)
+                changed = True
+
+            if changed:
+                president.save()
+                print('Updated president: %s' % president)
+            else:
+                print('Already have president: %s' % president)
+
+        except President.DoesNotExist:
+            president = President(president_xml_id=president_xml_id)
+            president.name = name
+            president.abbreviation = abbreviation
+            president.president_type = president_type
+            president.is_main = is_main
+            president.save()
+
+            president.parliaments.add(parliament)
+
+            print('Added president: %s' % president)
+
+        presidents.append(president)
+
+    already_haves['presidents'][ah_key] = presidents
+
+    # NOTE: Elsewhere in this script, for example when updating seats,
+    # ministerial seats and committee seats, they are updated per person, i.e.
+    # person_xml_id is passed as an input variable. Finding the presidential
+    # seats works differently because the data is presented differently in the
+    # XML. There is no page where we can see presidential seats with a person
+    # as input, only a list of all the persons that have served during the
+    # given parliament. We'll iterate the whole thing again though, just in
+    # case these sections get separated in the future.
+
+    president_seats = []
+    for node in xml:
+        person_xml_id = int(node.attrib[u'id'])
+        person = update_person(person_xml_id)
+
+        timing_in = sensible_datetime(node.find(u'inn').text)
+
+        try:
+            timing_out = sensible_datetime(node.find(u'út').text)
+        except AttributeError:
+            timing_out = None
+
+        president_xml_id = int(node.find(u'embætti').attrib[u'id'])
+        president = President.objects.get(president_xml_id=president_xml_id)
+
+        try:
+            president_seat = PresidentSeat.objects.filter(
+                person=person,
+                president=president,
+                parliament__parliament_num=parliament.parliament_num,
+                timing_in=timing_in
+            ).get(Q(timing_out=timing_out) | Q(timing_out=None))
+
+            changed = False
+            if president_seat.timing_out != timing_out:
+                president_seat.timing_out = timing_out
+                changed = True
+
+            if changed:
+                president.save()
+                print('Updated president seat: %s' % president_seat)
+            else:
+                print('Already have president seat: %s' % president_seat)
+
+        except PresidentSeat.DoesNotExist:
+            president_seat = PresidentSeat()
+            president_seat.person = person
+            president_seat.president = president
+            president_seat.parliament = parliament
+            president_seat.timing_in = timing_in
+            president_seat.timing_out = timing_out
+            president_seat.save()
+
+            print('Added president seat: %s' % president_seat)
+
+        president_seats.append(president_seat)
+
+    already_haves['president_seats'][ah_key] = president_seats
+
+    return presidents, president_seats

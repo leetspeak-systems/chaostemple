@@ -28,6 +28,7 @@ from althingi.updaters import update_parliament
 from althingi.updaters import update_parties
 from althingi.updaters import update_person
 from althingi.updaters import update_persons
+from althingi.updaters import update_presidents
 from althingi.updaters import update_seats
 from althingi.updaters import update_session
 from althingi.updaters import update_sessions
@@ -358,3 +359,7 @@ class AlthingiUpdaterTest(TestCase):
         # Pass: Fetch minister seats for a person known to be valid.
         person_xml_id, parliament_num, name = test_dummy
         update_minister_seats(person_xml_id, parliament_num)
+
+    @hidden_prints
+    def test_update_presidents(self):
+        update_presidents()

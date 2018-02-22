@@ -7,6 +7,7 @@
     <td>
         <a href="{% breadcrumb_url 'person' person.slug person.subslug %}">{{ person }}</a>
         {% for lms in person.last_minister_seats %}<small><strong>{% if forloop.counter > 1 %}, {% endif %}{{ lms.minister }}</strong></small>{% endfor %}
+        {% if person.last_president_seat %}<small><strong>{{ person.last_president_seat.0.president }}</strong></small>{% endif %}
         {% if tenure_ended_prematurely %}
             <small>({% trans 'tenure ended prematurely' %}: {{ seat.timing_out|date:'SHORT_DATE_FORMAT' }})</small>
         {% endif %}

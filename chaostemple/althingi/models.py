@@ -66,6 +66,30 @@ class PersonQuerySet(models.QuerySet):
 
         return self.prefetch_related(p)
 
+    def prefetch_latest_president_seats(self, parliament=None, *args):
+        if parliament is None:
+            parliament = Parliament.objects.get(parliament_num=CURRENT_PARLIAMENT_NUM)
+
+        if parliament.timing_end is None:
+            q_timing = Q(timing_out=None)
+        else:
+            # NOTE: One day given as wiggle-room due to imperfect data.
+            q_timing = Q(
+                timing_out__lte=parliament.timing_end + timezone.timedelta(days=1),
+                timing_out__gte=parliament.timing_end - timezone.timedelta(days=1)
+            )
+
+        p_filter = Q(q_timing, parliament__parliament_num=parliament.parliament_num)
+
+        if args:
+            p_queryset = PresidentSeat.objects.select_related(*args).filter(p_filter).order_by('-timing_out')
+        else:
+            p_queryset = PresidentSeat.objects.filter(p_filter).order_by('-timing_out')
+
+        p = Prefetch('president_seats', queryset=p_queryset, to_attr='last_president_seat')
+
+        return self.prefetch_related(p)
+
     def prefetch_latest_minister_seats(self, parliament=None, *args):
         if parliament is None:
             parliament = Parliament.objects.get(parliament_num=CURRENT_PARLIAMENT_NUM)
@@ -1010,6 +1034,49 @@ class MinisterSeat(models.Model):
 
     class Meta:
         ordering = ['timing_in', 'timing_out']
+
+
+class President(models.Model):
+    name = models.CharField(max_length=100)
+
+    abbreviation = models.CharField(max_length=30)
+    president_type = models.CharField(max_length=3)
+
+    is_main = models.BooleanField(default=False)
+    order = models.IntegerField(null=True) # Order of succession; not always relevant.
+
+    parliaments = models.ManyToManyField('Parliament', related_name='presidents')
+
+    president_xml_id = models.IntegerField(unique=True)
+
+    def __unicode__(self):
+        return u'%s' % self.name
+
+    class Meta:
+        ordering = ['president_type', 'order']
+
+
+class PresidentSeat(models.Model):
+    person = models.ForeignKey('Person', related_name='president_seats')
+    president = models.ForeignKey('President', related_name='president_seats')
+    parliament = models.ForeignKey('Parliament', related_name='president_seats')
+
+    timing_in = models.DateTimeField()
+    timing_out = models.DateTimeField(null=True)
+
+    def __unicode__(self):
+        if self.timing_out is None:
+            return u'%s (%s, %s : ...)' % (self.person, self.president, format_date(self.timing_in))
+        else:
+            # Short-hands
+            person = self.person
+            president = self.president
+            timing_in = self.timing_in
+            timing_out = self.timing_out
+            return u'%s (%s, %s : %s)' % (person, president, format_date(timing_in), format_date(timing_out))
+
+    class Meta:
+        ordering = ['president__order', 'timing_in']
 
 
 class Session(models.Model):

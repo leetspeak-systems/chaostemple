@@ -20,6 +20,7 @@ from althingi.updaters import update_parliament
 from althingi.updaters import update_parties
 from althingi.updaters import update_persons
 from althingi.updaters import update_person
+from althingi.updaters import update_presidents
 from althingi.updaters import update_sessions
 from althingi.updaters import update_session
 from althingi.updaters import update_speeches
@@ -47,6 +48,7 @@ class Command(BaseCommand):
         print '  persons                           Updates persons (MPs) in default or specified parliament'
         print '  person=<person_xml_id>            Updates person by XML ID (see Althingi\'s XML)'
         print '  ministers                         Updates ministerial positions in default or specified parliament'
+        print '  presidents                        Updates presidential positions in default or specified parliament'
         print '  parties                           Updates parties in default or specified parliament'
         print '  committees                        Updates committees in default or specified parliament'
         print '  committee=<committee_xml_id>      Updates committee by XML ID (see Althingi\'s XML)'
@@ -155,6 +157,10 @@ class Command(BaseCommand):
                 has_run = True
                 update_ministers(parliament_num)
 
+            if 'presidents' in args:
+                has_run = True
+                update_presidents(parliament_num)
+
             if 'issues' in args:
                 has_run = True
                 update_issues(parliament_num)
@@ -243,6 +249,7 @@ class Command(BaseCommand):
                 update_committees(parliament_num)
                 update_persons(parliament_num)
                 update_ministers(parliament_num)
+                update_presidents(parliament_num)
                 update_issues(parliament_num)
                 update_sessions(parliament_num)
                 update_speeches(parliament_num)

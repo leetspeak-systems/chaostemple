@@ -198,3 +198,12 @@
 
 1.3.9:
     * Useless dossiers automatically deleted when a review or document is deleted, for increased stability of data updating.
+
+1.3.10:
+    * Improvements in data gathering.
+    * Knowledge and attention markers removed from documents that are exact copies of others (icel. "samhljóða").
+    * UI fix: Date of reception was missing if recipient committee was unspecified.
+    * Ministers and their respective seats added.
+    * Presidents and their respective seats added.
+    * An issue's categories shown in issue view.
+    * Reviews sent to president (as opposed to a committee) marked so.

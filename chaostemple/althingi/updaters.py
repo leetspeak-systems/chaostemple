@@ -2442,11 +2442,18 @@ def update_presidents(parliament_num=None):
 
     xml = get_xml('PRESIDENT_LIST_URL', parliament.parliament_num).findall(u'forseti')
 
-    # XML is assumed to list presidents of the same type in their correct
-    # order of succession. For example, the president of parliament should
-    # come before the first vice president, who should come before the second
-    # vice president and so forth.
-    orders_of_succession = {}
+    # Certain presidential offices have a sequential order, hard-coded here
+    # since there is no more reasonable way to determine them, and they are
+    # not subject to change in the future.
+    orders_of_succession = {
+        u'forseti': 1,
+        u'1. varaforseti': 2,
+        u'2. varaforseti': 3,
+        u'3. varaforseti': 4,
+        u'4. varaforseti': 5,
+        u'5. varaforseti': 6,
+        u'6. varaforseti': 7,
+    }
 
     presidents = []
     for node in xml:
@@ -2455,27 +2462,10 @@ def update_presidents(parliament_num=None):
         abbreviation = node.find(u'embætti/skammstöfun').text
         president_type = node.find(u'embætti/embættisflokkur').attrib['flokkur']
 
-        # NOTE/TODO/HACK/TEMPORARY: The XML is broken in such a way that in
-        # the 146th Parliament, the presidential office with the name
-        # "starfsforseti" is incorrectly marked with the presidential type of
-        # "F" when it should in fact be "E". Until the XML is fixed, we're
-        # hard-coding this fix here. Check if this is still the case, and fix
-        # this code accordingly if 2018-02-22 was a long time ago.
-        if name == u'starfsforseti':
-            president_type = 'E'
-
         is_main = name == u'forseti' # No other way to detect this.
 
-        # Record the order of succession if appropriate. Only president of
-        # type 'F' currently have an order of succession, but this code is
-        # written so that the counting mechanism can easily be extended to
-        # other types by adding them to the list in the if-statement.
-        if president_type in ['F']:
-            if president_type not in orders_of_succession:
-                orders_of_succession[president_type] = []
-            if president_xml_id not in orders_of_succession[president_type]:
-                orders_of_succession[president_type].append(president_xml_id)
-            order = len(orders_of_succession[president_type])
+        if name in orders_of_succession:
+            order = orders_of_succession[name]
         else:
             order = None
 

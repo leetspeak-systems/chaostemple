@@ -105,7 +105,7 @@
         </div>
     </div>
 
-    {% if issue.summary %}
+    {% if issue.summary or issue.categories.count %}
         <div class="summary">
 
             <div class="panel panel-info">
@@ -135,6 +135,16 @@
                     {% if issue.summary.media_coverage %}
                         <p><strong>{% trans 'Media Coverage' %}</strong>: {{ issue.summary.media_coverage|safe }}</p>
                     {% endif %}
+
+                    {% if issue.categories.count %}
+                        <p><strong>{% trans 'Categories' %}</strong>:
+                        {% for category in issue.categories.all %}
+                            {% if forloop.counter0 %}&nbsp;|&nbsp;{% endif %}
+                            {{ category.group }}: <strong>{{ category }}</strong>
+                        {% endfor %}
+                        </p>
+                    {% endif %}
+
                 </div>
             </div>
 

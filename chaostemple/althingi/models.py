@@ -1396,8 +1396,13 @@ class Speech(models.Model):
 
 class CategoryGroup(models.Model):
     name = models.CharField(max_length=200)
+    slug = models.CharField(max_length=200)
 
     category_group_xml_id = models.IntegerField(unique=True)
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(unidecode(self.name))
+        super(CategoryGroup, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return self.name
@@ -1408,10 +1413,15 @@ class CategoryGroup(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=200)
+    slug = models.CharField(max_length=200)
     description = models.CharField(max_length=1000)
     group = models.ForeignKey('CategoryGroup')
 
     category_xml_id = models.IntegerField(unique=True)
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(unidecode(self.name))
+        super(Category, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return self.name

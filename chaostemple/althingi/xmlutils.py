@@ -12,6 +12,7 @@ from lxml import etree
 from althingi import althingi_settings
 
 xml_urls = {
+    'CATEGORIES_LIST_URL': 'http://www.althingi.is/altext/xml/efnisflokkar/',
     'DOCUMENT_URL': 'http://www.althingi.is/altext/xml/thingskjol/thingskjal/?lthing=%d&skjalnr=%d',
     'PARLIAMENT_URL': 'http://www.althingi.is/altext/xml/loggjafarthing/?lthing=%d',
     'ISSUE_LIST_URL': 'http://www.althingi.is/altext/xml/thingmalalisti/?lthing=%d',

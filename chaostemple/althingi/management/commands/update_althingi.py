@@ -4,6 +4,7 @@ from django.utils import timezone
 
 from althingi.models import Parliament
 
+from althingi.updaters import update_categories
 from althingi.updaters import update_committee
 from althingi.updaters import update_committee_agenda
 from althingi.updaters import update_committee_agendas
@@ -58,6 +59,7 @@ class Command(BaseCommand):
         print '  vote_castings                     Updates vote castings in default or specified parliament'
         print '  vote_casting=<casting_xml_id>     Updates vote casting by XML ID (see Althingi\'s XML)'
         print '  speeches                          Updates speeches in default or specified parliament'
+        print '  categories                        Updates issue categories and category groups'
         print '  all                               Updates issues, sessions, persons, parties, constituencies and committee agendas in default or specified parliament'
         print
         print 'Options:'
@@ -242,10 +244,15 @@ class Command(BaseCommand):
                     self.error('Invalid issue number')
                 update_issue_status(issue_num, parliament_num)
 
+            if 'categories' in args:
+                has_run = True
+                update_categories()
+
             if 'all' in args:
                 has_run = True
                 update_parties(parliament_num)
                 update_constituencies(parliament_num)
+                update_categories()
                 update_committees(parliament_num)
                 update_persons(parliament_num)
                 update_ministers(parliament_num)

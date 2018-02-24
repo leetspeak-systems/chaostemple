@@ -11,6 +11,8 @@ from xml.parsers.expat import ExpatError
 
 from althingi.althingi_settings import FIRST_PARLIAMENT_NUM
 
+from althingi.models import Category
+from althingi.models import CategoryGroup
 from althingi.models import Committee
 from althingi.models import CommitteeAgenda
 from althingi.models import CommitteeAgendaItem
@@ -69,6 +71,7 @@ the time it takes to run the import.
 
 '''
 already_haves = {
+    'category_grpups': {},
     'parliaments': {},
     'parties': {},
     'persons': {},
@@ -812,6 +815,8 @@ def update_issue(issue_num, parliament_num=None):
     if already_haves['issues'].has_key(ah_key):
         return already_haves['issues'][ah_key]
 
+    update_categories()
+
     # If issue has been published in an earlier parliament, we'll record it in this variable and deal with it afterwards
     # Contains a list of structs, for exmaple: {'parliament_num': 144, 'issue_num': 524 }
     previously_published_as = []
@@ -833,6 +838,12 @@ def update_issue(issue_num, parliament_num=None):
     description = issue_xml.find(u'efnisgreining').text
     description = '' if description is None else description.strip()
 
+
+    cat_xml_ids = []
+    for cgx in xml.findall(u'efnisflokkar/yfirflokkur'):
+        cat_xml_ids += [int(x.attrib[u'id']) for x in cgx.findall(u'efnisflokkur')]
+    cat_xml_ids.sort() # Order should match, but just in case.
+
     try:
         issue = Issue.objects.get(issue_num=issue_num, issue_group='A', parliament=parliament)
 
@@ -847,6 +858,12 @@ def update_issue(issue_num, parliament_num=None):
 
         if issue.description != description:
             issue.description = description
+            changed = True
+
+        if [c.category_xml_id for c in issue.categories.order_by('category_xml_id')] != cat_xml_ids:
+            issue.categories.clear()
+            for cat_xml_id in cat_xml_ids:
+                issue.categories.add(Category.objects.get(category_xml_id=cat_xml_id))
             changed = True
 
         if changed:
@@ -864,6 +881,9 @@ def update_issue(issue_num, parliament_num=None):
         issue.description = description
         issue.parliament = parliament
         issue.save()
+
+        for cat_xml_id in cat_xml_ids:
+            issue.categories.add(Category.objects.get(category_xml_id=cat_xml_id))
 
         print('Added issue: %s' % issue.detailed())
 
@@ -2578,3 +2598,83 @@ def update_presidents(parliament_num=None):
     already_haves['president_seats'][ah_key] = president_seats
 
     return presidents, president_seats
+
+
+def update_categories():
+    # Categories are currently not dependent on specific parliaments, which is
+    # unusual and may change in the future.
+
+    if 'category_groups' in already_haves:
+        return already_haves['category_groups']
+
+    xml = get_xml('CATEGORIES_LIST_URL').findall(u'yfirflokkur')
+
+    cat_groups = []
+    for node in xml:
+        category_group_xml_id = int(node.attrib[u'id'])
+        name = node.find(u'heiti').text
+
+        try:
+            cat_group = CategoryGroup.objects.get(category_group_xml_id=category_group_xml_id)
+
+            changed = False
+            if cat_group.name != name:
+                cat_group.name = name
+                changed = True
+
+            if changed:
+                cat_group.save()
+                print('Updated category group: %s' % cat_group)
+            else:
+                print('Already have category group: %s' % cat_group)
+
+        except CategoryGroup.DoesNotExist:
+            cat_group = CategoryGroup(category_group_xml_id=category_group_xml_id)
+            cat_group.name = name
+            cat_group.save()
+
+            print('Added category group: %s' % cat_group)
+
+        cat_groups.append(cat_group)
+
+        # Let's do the categories themselves!
+        for subnode in node.findall(u'efnisflokkur'):
+            category_xml_id = int(subnode.attrib[u'id'])
+            name = subnode.find(u'heiti').text
+            description = subnode.find(u'lýsing').text or ''
+            group = cat_group
+
+            try:
+                category = Category.objects.get(category_xml_id=category_xml_id)
+
+                changed = False
+                if category.name != name:
+                    category.name = name
+                    changed = True
+
+                if category.description != description:
+                    category.description = description
+                    changed = True
+
+                if category.group != group:
+                    category.group = group
+                    changed = True
+
+                if changed:
+                    category.save()
+                    print('Updated category: %s' % category)
+                else:
+                    print('Already have category: %s' % category)
+
+            except Category.DoesNotExist:
+                category = Category(category_xml_id=category_xml_id)
+                category.name = name
+                category.description = description
+                category.group = group
+                category.save()
+
+                print('Added category: %s' % category)
+
+    already_haves['category_groups'] = cat_groups
+
+    return cat_groups

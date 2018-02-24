@@ -374,6 +374,8 @@ class Issue(models.Model):
     issue_group = models.CharField(max_length=1, choices=ISSUE_GROUPS, default='A')  # IS: Málsflokkur
     name = models.CharField(max_length=500)
     description = models.TextField()
+    categories = models.ManyToManyField('Category', related_name='issues')
+
     time_published = models.DateTimeField(null=True)
     final_vote_complete = models.BooleanField(default=False)
 
@@ -1390,3 +1392,29 @@ class Speech(models.Model):
     class Meta:
         ordering = ['timing_start']
         unique_together = ['order_in_issue', 'issue']
+
+
+class CategoryGroup(models.Model):
+    name = models.CharField(max_length=200)
+
+    category_group_xml_id = models.IntegerField(unique=True)
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name']
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=200)
+    description = models.CharField(max_length=1000)
+    group = models.ForeignKey('CategoryGroup')
+
+    category_xml_id = models.IntegerField(unique=True)
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name']

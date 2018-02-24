@@ -10,6 +10,7 @@ from django.utils import timezone
 from althingi.althingi_settings import FIRST_PARLIAMENT_NUM
 from althingi.exceptions import AlthingiException
 from althingi.updaters import clear_already_haves
+from althingi.updaters import update_categories
 from althingi.updaters import update_committee
 from althingi.updaters import update_committee_agenda
 from althingi.updaters import update_committee_agendas
@@ -363,3 +364,7 @@ class AlthingiUpdaterTest(TestCase):
     @hidden_prints
     def test_update_presidents(self):
         update_presidents()
+
+    @hidden_prints
+    def test_update_categories(self):
+        update_categories()

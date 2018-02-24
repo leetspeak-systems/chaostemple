@@ -47,7 +47,7 @@ class PersonQuerySet(models.QuerySet):
             parliament = Parliament.objects.get(parliament_num=CURRENT_PARLIAMENT_NUM)
 
         if parliament.timing_end is None:
-            q_timing = Q(timing_out=None)
+            q_timing = Q(timing_out=None) | Q(timing_out__gte=parliament.timing_start, seat_type=u'varamaður')
         else:
             # NOTE: One day given as wiggle-room due to imperfect data.
             q_timing = Q(

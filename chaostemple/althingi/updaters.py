@@ -2200,6 +2200,15 @@ def update_speeches(parliament_num=None):
 
         speeches.append(speech)
 
+    deletable_speeches = Speech.objects.filter(
+        session__parliament=parliament
+    ).exclude(
+        timing_start__in=[s.timing_start for s in speeches]
+    )
+    for deletable_speech in deletable_speeches:
+        deletable_speech.delete()
+        print('Deleted non-existent speech: %s' % deletable_speech)
+
     already_haves['speeches'][parliament.parliament_num] = speeches
 
     return speeches

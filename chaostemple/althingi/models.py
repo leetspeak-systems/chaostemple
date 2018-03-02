@@ -1391,7 +1391,6 @@ class Speech(models.Model):
 
     class Meta:
         ordering = ['timing_start']
-        unique_together = ['order_in_issue', 'issue']
 
 
 class CategoryGroup(models.Model):

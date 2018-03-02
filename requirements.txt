@@ -4,3 +4,4 @@ django-model-utils
 unidecode
 dateutils
 markdown2
+lxml

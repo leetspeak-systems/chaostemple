@@ -25,6 +25,7 @@ urlpatterns = [
     url(r'^person/(?P<slug>[A-Za-z\-]+)/$', views.person, name='person'),
     url(r'^person/(?P<slug>[A-Za-z\-]+)/(?P<subslug>[A-Za-z0-9\-]+)/$', views.person, name='person'),
 
+    url(r'^user/home/(?P<username>[\w.%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4})/$', views.user_home, name='user_home'),
     url(r'^user/home/(?P<username>\w+)/$', views.user_home, name='user_home'),
     url(r'^user/access/$', views.user_access, name='user_access'),
     url(r'^parliament/(?P<parliament_num>\d+)/user/issues/bookmarked/$', views.user_issues_bookmarked, name='user_issues_bookmarked'),

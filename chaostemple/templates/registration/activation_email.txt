@@ -1,0 +1,8 @@
+{% load i18n %}
+{% blocktrans with site_name=site.name %}You (or someone on your behalf) have asked to register an account at {{ site_name }}.{% endblocktrans %}
+
+{% blocktrans %}To activate this account, please click the following link within the next {{ expiration_days }} days:{% endblocktrans %}
+
+https://{{site.domain}}{% url 'registration_activate' activation_key %}
+
+{% blocktrans with site_name=site.name %}Sincerely, {{ site_name }} Management{% endblocktrans %}

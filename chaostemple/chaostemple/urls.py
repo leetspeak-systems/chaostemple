@@ -9,8 +9,7 @@ urlpatterns = [
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^accounts/logout/$', views.logout, {'next_page': settings.LOGIN_URL}),
-    url(r'^accounts/', include('registration.backends.default.urls')),
+    url(r'^accounts/', include('customsignup.urls')),
     url(r'^', include('core.urls')),
 ]
 

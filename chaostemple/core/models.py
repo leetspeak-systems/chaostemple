@@ -124,6 +124,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='userprofile')
 
     name = models.CharField(max_length=100)
+    initials = models.CharField(max_length=10, null=True)
     person = models.ForeignKey(Person, null=True, related_name='userprofile')
 
 

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+
+<form method="post">
+    {% csrf_token %}
+
+    <div class="alert alert-info">{% blocktrans %}It wasn't possible to automatically determine your name and initials. Please provide them below. If your initials have already been taken, you may need to extend one of them a bit. For example, if your name is "Albert Bruce Charlemagne" and "ABC" is taken, you could try "AlbertBC" or "ABChar". The point is to conserve space, so please try to keep it short.{% endblocktrans %}</div>
+
+    {% include 'core/render_form_short.html' %}
+
+    <div>
+        <button class="btn btn-primary" type="submit">{% trans "Save" %}</button>
+        {% if userprofile.name and userprofile.initials %}
+            <a href="{% url 'user_home' userprofile.user.username %}" class="btn btn-default">{% trans 'Cancel' %}</a>
+        {% endif %}
+    </div>
+
+</form>
+
+{% endblock %}
+

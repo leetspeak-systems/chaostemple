@@ -1,0 +1,30 @@
+{% load i18n %}
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>{{ site.name }}: {% trans "registration" %}</title>
+</head>
+
+<body>
+
+<p>
+    {% blocktrans with site_name=site.name %}You (or someone on your behalf) have asked to register an account at {{ site_name }}.{% endblocktrans %}
+</p>
+
+<p>
+    {% blocktrans %}To activate this account, please click the following link within the next {{ expiration_days }} days:{% endblocktrans %}
+</p>
+
+<p>
+    <a href="https://{{site.domain}}{% url 'registration_activate' activation_key %}">
+        {{site.domain}}{% url 'registration_activate' activation_key %}
+    </a>
+</p>
+
+<p>
+    {% blocktrans with site_name=site.name %}Sincerely, {{ site_name }} Management{% endblocktrans %}
+</p>
+</body>
+
+</html>

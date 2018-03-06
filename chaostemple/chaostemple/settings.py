@@ -37,12 +37,13 @@ INSTALLED_APPS = (
     'dossier',
     'althingi',
     'jsonizer',
+    'customsignup',
 )
 
 # django_registration_redux settings
 ACCOUNT_ACTIVATION_DAYS = 1
 REGISTRATION_AUTO_LOGIN = True
-REGISTRATION_OPEN = False
+REGISTRATION_OPEN = True
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -53,6 +54,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'customsignup.middleware.EnsureProfileDataMiddleware',
 
     'core.middleware.AccessMiddleware',
     'core.middleware.ExtraVarsMiddleware',

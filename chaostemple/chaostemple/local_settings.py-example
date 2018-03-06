@@ -13,6 +13,9 @@ JSONIZER_DEBUG = True
 ALLOWED_HOSTS = ['localhost']
 INTERNAL_IPS = ('127.0.0.1',)
 
+# Email addresses from these domains can easily signup without admin
+# intervention. Basically, they're domains we trust to sign up.
+CUSTOM_SIGNUP_DOMAINS = ['example.com']
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases

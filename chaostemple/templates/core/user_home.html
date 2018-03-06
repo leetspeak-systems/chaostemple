@@ -9,10 +9,6 @@
         <div class="col-md-4">
             <table class="table">
                 <tr>
-                    <th>{% trans 'Username' %}</th>
-                    <td>{{ home_user.username }}</td>
-                </tr>
-                <tr>
                     <th>{% trans 'Email address' %}</th>
                     <td><a href="mailto:{{ home_user.email }}">{{ home_user.email }}</a></td>
                 </tr>
@@ -28,10 +24,17 @@
                         {% endif %}
                     </td>
                 </tr>
+                <tr>
+                    <th>{% trans 'Initials' %}</th>
+                    <td>{{ home_user.userprofile.initials }}</td>
+                </tr>
             </table>
         </div>
         <div class="col-md-4">
-            <a href="{% url 'auth_password_change' %}" class="btn btn-default">{% trans 'Change Password' %}</a>
+            <p><a href="{% url 'auth_password_change' %}" class="btn btn-default">{% trans 'Change Password' %}</a></p>
+            {% if not home_user.userprofile.person %}
+                <p><a href="{% url 'custom_profile_data' %}" class="btn btn-default">{% trans 'Change Profile' %}</a></p>
+            {% endif %}
         </div>
     </div>
 

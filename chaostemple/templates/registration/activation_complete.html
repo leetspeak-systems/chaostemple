@@ -1,0 +1,17 @@
+{% extends "registration/registration_base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Account Activated" %}{% endblock %}
+
+{% block content %}
+<h3 class="big-message">
+    {% trans "Your account is now activated." %}
+    {% if not user.is_authenticated %}
+    {% trans "You can log in." %}
+    {% endif %}
+</h3>
+
+<h3 class="big-message">
+    {% trans 'Feel free to mess around! A good place to start might be the "Upcoming" or "Lists" menu options above.' %}
+</h3>
+{% endblock %}

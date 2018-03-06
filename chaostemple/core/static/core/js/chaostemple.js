@@ -27,7 +27,7 @@ function reloadSortable() {
 
 $(document).ready(function() {
     // Set focus on first text field on page, if it exists
-    $("form input[type='text']").first().focus();
+    $("form input[type='text'],form input[type='email'],form input[type='password']").first().focus();
 
     // Automatically send CSRF token if needed
     $.ajaxSetup({

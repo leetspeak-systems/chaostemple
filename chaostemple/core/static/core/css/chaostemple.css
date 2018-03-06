@@ -21,6 +21,8 @@ h2 small { white-space: nowrap; }
 
 .user-link { font-weight: bold; }
 
+h3.big-message { width: 320px; text-align: center; margin-left: auto; margin-right: auto; }
+
 ul.header-controls { float: right; font-size: 10px; }
 ul.header-controls li { float: left; list-style: none; margin-left: 12px; }
 ul.header-controls div[control="date-picker-container"] { position: relative; }

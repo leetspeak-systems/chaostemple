@@ -74,7 +74,7 @@ def day(request, input_date=None):
         IssueUtilities.populate_dossier_statistics([i.issue for i in session.session_agenda_items_loaded])
 
     # Get committee agendas of specified day
-    committee_agendas = CommitteeAgenda.objects.select_related('committee').prefetch_related(
+    committee_agendas = CommitteeAgenda.objects.select_related('committee', 'parliament').prefetch_related(
         'committee_agenda_items'
     ).on_date(requested_date)
     for committee_agenda in committee_agendas:

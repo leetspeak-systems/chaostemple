@@ -2,6 +2,9 @@ from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
+from django.views.generic.base import TemplateView
+
+from termsandconditions.decorators import terms_required
 
 from customsignup.views import CustomLoginView
 from customsignup.views import CustomRegistrationView
@@ -13,6 +16,7 @@ urlpatterns = [
     url(r'^accounts/logout/$', auth_views.logout, {'next_page': settings.LOGIN_URL}),
     url(r'^register/$', CustomRegistrationView.as_view(), name='registration_register'),
     url(r'^custom-profile-data/$', custom_profile_data, name='custom_profile_data'),
+    url(r'^activate/complete/$', terms_required(TemplateView.as_view(template_name='registration/activation_complete.html')), name='registration_activation_complete'),
     url(r'^', include('registration.backends.default.urls')),
 
     url(r'^password_reset/$', auth_views.password_reset, name='password_reset'),

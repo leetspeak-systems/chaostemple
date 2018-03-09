@@ -10,6 +10,7 @@ urlpatterns = [
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/', include('customsignup.urls')),
+    url(r'^terms/', include('termsandconditions.urls')),
     url(r'^', include('core.urls')),
 ]
 

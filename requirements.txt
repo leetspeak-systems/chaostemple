@@ -5,3 +5,4 @@ unidecode
 dateutils
 markdown2
 lxml
+django-termsandconditions

@@ -32,6 +32,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
 
     'registration',
+    'termsandconditions',
 
     'core',
     'dossier',
@@ -54,6 +55,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'termsandconditions.middleware.TermsAndConditionsRedirectMiddleware',
 
     'customsignup.middleware.EnsureProfileDataMiddleware',
 
@@ -109,6 +112,9 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 LOGIN_REDIRECT_URL = '/'
+
+# Settings for Terms and Conditions
+TERMS_EXCLUDE_URL_PREFIX_LIST = ('/admin/', '/accounts/')
 
 from chaostemple.local_settings import *
 if DEBUG:

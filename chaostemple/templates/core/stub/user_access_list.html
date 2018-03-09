@@ -16,15 +16,15 @@
             <td style="width: 1px;">
                 <button control="revoke-access-user" class="btn btn-xs btn-danger"
                         data-friend-id="{{ access.friend_id }}"
-                        data-friend-name="{{ access.friend }}">
+                        data-friend-name="{{ access.friend.userprofile }}">
                     <span class="glyphicon glyphicon-remove"></span>
                 </button>
             </td>
-            <td><strong>{{ access.friend }}</strong></td>
+            <td><strong>{{ access.friend.userprofile }}</strong></td>
             <td>
                 <button control="grant-access-issue" class="btn btn-xs btn-default"
                         data-friend-id="{{ access.friend_id }}"
-                        data-friend-name="{{ access.friend }}">
+                        data-friend-name="{{ access.friend.userprofile }}">
                     <span class="glyphicon glyphicon-plus"></span>
                 </button>
 
@@ -40,7 +40,7 @@
                 <td style="width: 1px;">
                     <button control="revoke-access-issue" class="btn btn-xs btn-danger"
                             data-friend-id="{{ access.friend_id }}"
-                            data-friend-name="{{ access.friend }}"
+                            data-friend-name="{{ access.friend.userprofile }}"
                             data-issue-id="{{ issue.id }}"
                             data-issue-name="{{ issue }}{% if issue.description %} ({{ issue.description }}){% endif %}">
                         <span class="glyphicon glyphicon-remove"></span>

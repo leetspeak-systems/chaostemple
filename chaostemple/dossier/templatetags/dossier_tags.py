@@ -74,7 +74,7 @@ def display_dossier_statistics(context, issue, size='normal'):
 
             if (user_count > 1 or stat.user_id != request.user.id) and last_user_id != stat.user_id and template_user:
                 content.append(template_user.render({
-                    'statistic_user': stat.user
+                    'userprofile_initials': stat.user.userprofile.initials
                 }))
                 last_user_id = stat.user_id
 

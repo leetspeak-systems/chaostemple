@@ -533,11 +533,17 @@ def user_home(request, username):
 @login_required
 def user_access(request):
 
-    access_list = Access.objects.prefetch_related('issues__parliament').select_related('friend').filter(user_id=request.user.id)
+    access_list = Access.objects.prefetch_related(
+        'issues__parliament'
+    ).select_related(
+        'friend__userprofile'
+    ).filter(
+        user_id=request.user.id
+    )
 
     parliaments = Parliament.objects.all()
     issues = Issue.objects.filter(parliament__parliament_num=CURRENT_PARLIAMENT_NUM, issue_group='A')
-    users = User.objects.exclude(id=request.user.id)
+    users = User.objects.select_related('userprofile').exclude(id=request.user.id)
 
     ctx = {
         'access_list': access_list,

@@ -9,6 +9,7 @@ from django.db.models import IntegerField
 from django.db.models import OuterRef
 from django.db.models import Q
 from django.db.models import Subquery
+from django.utils.translation import ugettext as _
 
 from althingi.models import Issue as AlthingiIssue
 from althingi.models import Person
@@ -97,7 +98,7 @@ class IssueUtilities():
         visible_user_ids = [a.user_id for a in accesses['full']]
         access_filter = access_filter | Q(Q(user_id__in=visible_user_ids) | Q(user_id=user_id))
 
-        dossier_statistics = DossierStatistic.objects.select_related('user').filter(
+        dossier_statistics = DossierStatistic.objects.select_related('user__userprofile').filter(
             access_filter,
             issue__in=issues,
             has_useful_info=True
@@ -126,6 +127,9 @@ class UserProfile(models.Model):
     name = models.CharField(max_length=100)
     initials = models.CharField(max_length=10, null=True)
     person = models.ForeignKey(Person, null=True, related_name='userprofile')
+
+    def __unicode__(self):
+        return self.initials if self.initials else _(u'[ Missing initials ]')
 
 
 class IssueBookmark(models.Model):

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-06 15:20+0000\n"
+"POT-Creation-Date: 2018-03-09 19:15+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -222,6 +222,10 @@ msgstr "Þingmenn"
 #: templates/core/person_select_from_multiple.html:10
 msgid "b."
 msgstr "f."
+
+#: core/models.py:132
+msgid "[ Missing initials ]"
+msgstr "[ Vantar upphafsstafi ]"
 
 #: customsignup/forms.py:17 templates/core/user_home.html:16
 msgid "Name"
@@ -1073,8 +1077,8 @@ msgstr "Staðfestingarpóstur sendur"
 #: templates/registration/registration_complete.html:9
 msgid "Please check your email to complete the registration process."
 msgstr ""
-"Til að klára skráninguna þarftu einungis að smella á staðfestingartengil í "
-"tölvupósti sem þér var sendur."
+"Vinsamlegast staðfestu netfang þitt með því að kíkja í tölvupóst sem þér "
+"hefur verið sendur."
 
 #~ msgid "Proposal"
 #~ msgstr "Tillaga"

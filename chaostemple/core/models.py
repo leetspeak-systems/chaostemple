@@ -57,18 +57,23 @@ class IssueQuerySet(models.QuerySet):
 # Model utilities
 
 class AccessUtilities():
-    cached_access = {}
-    user_id = 0
+
+    cache = {}
 
     @staticmethod
     def get_access():
-        return AccessUtilities.cached_access[currentThread()]
+        return AccessUtilities.cache[currentThread()]['access']
+
+    @staticmethod
+    def get_user_id():
+        return AccessUtilities.cache[currentThread()]['user_id']
 
     @staticmethod
     def cache_access(user_id):
-        AccessUtilities.cached_access[currentThread()] = Access.objects.filter(friend_id=user_id)
-        AccessUtilities.user_id = user_id
-
+        AccessUtilities.cache[currentThread()] = {
+            'access': Access.objects.filter(friend_id=user_id),
+            'user_id': user_id,
+        }
 
 class IssueUtilities():
 
@@ -76,7 +81,7 @@ class IssueUtilities():
     def populate_dossier_statistics(issues):
 
         # Get currently logged in user ID
-        user_id = AccessUtilities.user_id
+        user_id = AccessUtilities.get_user_id()
 
         access_filter = Q()
 

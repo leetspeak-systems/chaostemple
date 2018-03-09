@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-09 19:15+0000\n"
+"POT-Creation-Date: 2018-03-09 20:26+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -1079,6 +1079,38 @@ msgid "Please check your email to complete the registration process."
 msgstr ""
 "Vinsamlegast staðfestu netfang þitt með því að kíkja í tölvupóst sem þér "
 "hefur verið sendur."
+
+#: templates/termsandconditions/snippets/termsandconditions.html:16
+msgid "Close"
+msgstr ""
+
+#: templates/termsandconditions/snippets/termsandconditions.html:29
+msgid "ACCEPT ALL"
+msgstr ""
+
+#: templates/termsandconditions/tc_accept_terms.html:14
+msgid "Terms and Conditions"
+msgstr "Notkunarskilmálar"
+
+#: templates/termsandconditions/tc_accept_terms.html:15
+msgid "version"
+msgstr "útgáfa"
+
+#: templates/termsandconditions/tc_accept_terms.html:18
+msgid ""
+"In order to use this software, you must accept the following terms and "
+"conditions."
+msgstr ""
+"Til þess að nota þennan hugbúnað verður þú að samþykkja eftirfarandi "
+"skilmála."
+
+#: templates/termsandconditions/tc_accept_terms.html:51
+msgid "Accept all"
+msgstr "Samþykkja alla"
+
+#: templates/termsandconditions/tc_accept_terms.html:53
+msgid "Accept"
+msgstr "Samþykkja"
 
 #~ msgid "Proposal"
 #~ msgstr "Tillaga"

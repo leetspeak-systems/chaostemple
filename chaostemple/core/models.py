@@ -134,7 +134,7 @@ class UserProfile(models.Model):
     person = models.ForeignKey(Person, null=True, related_name='userprofile')
 
     def __unicode__(self):
-        return self.initials if self.initials else _(u'[ Missing initials ]')
+        return self.initials if self.initials else self.user.email
 
 
 class IssueBookmark(models.Model):

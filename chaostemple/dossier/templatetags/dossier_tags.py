@@ -48,7 +48,7 @@ def display_dossier_statistics(context, issue, size='normal'):
 
     request = context['request']
 
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         return ''
 
     content = []

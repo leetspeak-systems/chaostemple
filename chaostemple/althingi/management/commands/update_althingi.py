@@ -36,40 +36,40 @@ class Command(BaseCommand):
     help = 'Retrieves and saves parliamentary data from Althingi\'s XML feed.'
 
     def print_help(self):
-        print 'Usage: python manage.py update_althingi <command> [options]'
+        print('Usage: python manage.py update_althingi <command> [options]')
+        print()
+        print('Commands:')
+        print('  upcoming                          Update upcoming committee agendas and parliamentary sessions')
+        print('  issues                            Update issues in default or specified parliament')
+        print('  issue=<issue_num>                 Updates an issue by issue number')
+        print('  issue_statuses=                   Updates issue statuses in default or specified parliament')
+        print('  issue_status=<issue_num>          Updates an issue status by issue number')
+        print('  sessions                          Updates sessions in default or specified parliament')
+        print('  session=<session_num>             Updates a particular session by session number')
+        print('  persons                           Updates persons (MPs) in default or specified parliament')
+        print('  person=<person_xml_id>            Updates person by XML ID (see Althingi\'s XML)')
+        print('  ministers                         Updates ministerial positions in default or specified parliament')
+        print('  presidents                        Updates presidential positions in default or specified parliament')
+        print('  parties                           Updates parties in default or specified parliament')
+        print('  committees                        Updates committees in default or specified parliament')
+        print('  committee=<committee_xml_id>      Updates committee by XML ID (see Althingi\'s XML)')
+        print('  committee_agendas                 Updates committee agendas in default or specified parliament')
+        print('  committee_agenda=<agenda_xml_id>  Updates committee agenda by XML ID (see Althingi\'s XML)')
+        print('  constituencies                    Updates constituencies in default or specified parliament')
+        print('  vote_castings                     Updates vote castings in default or specified parliament')
+        print('  vote_casting=<casting_xml_id>     Updates vote casting by XML ID (see Althingi\'s XML)')
+        print('  speeches                          Updates speeches in default or specified parliament')
+        print('  categories                        Updates issue categories and category groups')
+        print('  all                               Updates issues, sessions, persons, parties, constituencies and committee agendas in default or specified parliament')
         print
-        print 'Commands:'
-        print '  upcoming                          Update upcoming committee agendas and parliamentary sessions'
-        print '  issues                            Update issues in default or specified parliament'
-        print '  issue=<issue_num>                 Updates an issue by issue number'
-        print '  issue_statuses=                   Updates issue statuses in default or specified parliament'
-        print '  issue_status=<issue_num>          Updates an issue status by issue number'
-        print '  sessions                          Updates sessions in default or specified parliament'
-        print '  session=<session_num>             Updates a particular session by session number'
-        print '  persons                           Updates persons (MPs) in default or specified parliament'
-        print '  person=<person_xml_id>            Updates person by XML ID (see Althingi\'s XML)'
-        print '  ministers                         Updates ministerial positions in default or specified parliament'
-        print '  presidents                        Updates presidential positions in default or specified parliament'
-        print '  parties                           Updates parties in default or specified parliament'
-        print '  committees                        Updates committees in default or specified parliament'
-        print '  committee=<committee_xml_id>      Updates committee by XML ID (see Althingi\'s XML)'
-        print '  committee_agendas                 Updates committee agendas in default or specified parliament'
-        print '  committee_agenda=<agenda_xml_id>  Updates committee agenda by XML ID (see Althingi\'s XML)'
-        print '  constituencies                    Updates constituencies in default or specified parliament'
-        print '  vote_castings                     Updates vote castings in default or specified parliament'
-        print '  vote_casting=<casting_xml_id>     Updates vote casting by XML ID (see Althingi\'s XML)'
-        print '  speeches                          Updates speeches in default or specified parliament'
-        print '  categories                        Updates issue categories and category groups'
-        print '  all                               Updates issues, sessions, persons, parties, constituencies and committee agendas in default or specified parliament'
-        print
-        print 'Options:'
-        print '  parliament=<parliament_num>       Specify parliament number (defaults to current)'
-        print '                                    Must be integer or range of integers, for example 130-140'
-        print
+        print('Options:')
+        print('  parliament=<parliament_num>       Specify parliament number (defaults to current)')
+        print('                                    Must be integer or range of integers, for example 130-140')
+        print()
 
     def error(self, msg, show_help=True):
-        print u'Error: %s' % msg
-        print
+        print('Error: %s' % msg)
+        print()
         if show_help:
             self.print_help()
         quit(2)
@@ -115,9 +115,9 @@ class Command(BaseCommand):
 
             # Determine order of iteration
             if parliament_from > parliament_to:
-                iterator = reversed(xrange(parliament_to, parliament_from + 1))
+                iterator = reversed(range(parliament_to, parliament_from + 1))
             else:
-                iterator = xrange(parliament_from, parliament_to + 1)
+                iterator = range(parliament_from, parliament_to + 1)
 
             for parliament_num in iterator:
                 self.update_data(parliament_num, processed_args)
@@ -127,7 +127,7 @@ class Command(BaseCommand):
 
     def update_data(self, parliament_num, args):
 
-        print 'Processing parliament %d with args: %s' % (parliament_num, args)
+        print('Processing parliament %d with args: %s' % (parliament_num, args))
 
         try:
             has_run = False

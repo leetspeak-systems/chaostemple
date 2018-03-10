@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db.models import F
 from django.db.models import Q
 from django.http import Http404
@@ -18,11 +18,23 @@ from core.models import Issue
 from core.models import IssueUtilities
 
 class AccessMiddleware():
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        return self.get_response(request)
+
     def process_view(self, request, view_func, view_args, view_kwargs):
         AccessUtilities.cache_access(request.user.id)
 
 
 class ExtraVarsMiddleware():
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        return self.get_response(request)
+
     # For handing certain variables over to the context processor for global display.
     def process_view(self, request, view_func, view_args, view_kwargs):
 
@@ -44,7 +56,7 @@ class ExtraVarsMiddleware():
         # Stuff for logged in users
         bookmarked_issues = None
         incoming_issues = None
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             # Bookmarks
             bookmarked_issues = Issue.objects.select_related('parliament').filter(
                 issue_bookmarks__user_id=request.user.id,
@@ -76,6 +88,6 @@ class ExtraVarsMiddleware():
             'next_committee_agendas': next_committee_agendas,
             'bookmarked_issues': bookmarked_issues,
             'incoming_issues': incoming_issues,
-            'view_func_name': view_func.func_name,
+            'view_name': request.resolver_match.view_name,
         }
 

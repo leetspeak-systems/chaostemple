@@ -1,5 +1,5 @@
-from django.core.urlresolvers import resolve
-from django.core.urlresolvers import reverse
+from django.urls import resolve
+from django.urls import reverse
 from django.shortcuts import get_object_or_404
 from django.template.defaultfilters import date
 from django.utils import dateparse
@@ -19,7 +19,7 @@ from althingi.templatetags.committee import fancy_committee_agenda_timing
 
 # Utility function to add an URL to the crumbs in a crumb string.
 def append_to_crumb_string(input_path, input_crumb_string):
-    crumb_string = urlsafe_base64_encode(input_path)
+    crumb_string = urlsafe_base64_encode(input_path.encode()).decode()
     if input_crumb_string:
         crumb_string = crumb_string + ',' + input_crumb_string
 
@@ -33,7 +33,7 @@ def leave_breadcrumb(breadcrumbs, view, caption):
     for breadcrumb in breadcrumbs:
         last_view = view_data = breadcrumb['view']
         path = reverse(view_data[0], args=view_data[1:])
-        crumb_string = urlsafe_base64_encode(path)
+        crumb_string = urlsafe_base64_encode(path.encode()).decode()
         prior_crumb_strings.append(crumb_string)
 
     if view != last_view: # Each breadcrumb only once at a time.
@@ -60,7 +60,7 @@ def make_breadcrumbs(request, parliament):
     # Prepend breadcrumbs from crumb string
     crumb_string = request.GET.get('from', '')
     for part in reversed(crumb_string.split(',') if crumb_string else []):
-        path = urlsafe_base64_decode(part)
+        path = urlsafe_base64_decode(part).decode()
         breadcrumbs = process_breadcrumbs(breadcrumbs, resolve(path))
 
     breadcrumbs = process_breadcrumbs(breadcrumbs, request.resolver_match)
@@ -202,7 +202,7 @@ def process_breadcrumbs(breadcrumbs, view):
         )
 
     if view_name == 'parliament_persons':
-        if view_kwargs.has_key('party_slug'):
+        if 'party_slug' in view_kwargs:
             party = Party.objects.get(slug=view_kwargs.get('party_slug'))
         else:
             party = None

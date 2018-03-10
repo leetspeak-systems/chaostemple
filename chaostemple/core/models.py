@@ -1,9 +1,9 @@
-# -*- coding: utf-8
 import operator
 from threading import currentThread
 
 from django.conf import settings
 from django.db import models
+from django.db.models import CASCADE
 from django.db.models import F
 from django.db.models import IntegerField
 from django.db.models import OuterRef
@@ -127,19 +127,19 @@ class IssueUtilities():
 ### Models
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='userprofile')
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='userprofile', on_delete=CASCADE)
 
     name = models.CharField(max_length=100)
     initials = models.CharField(max_length=10, null=True)
-    person = models.ForeignKey(Person, null=True, related_name='userprofile')
+    person = models.ForeignKey(Person, null=True, related_name='userprofile', on_delete=CASCADE)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.initials if self.initials else self.user.email
 
 
 class IssueBookmark(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='issue_bookmarks')
-    issue = models.ForeignKey(AlthingiIssue, related_name='issue_bookmarks')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='issue_bookmarks', on_delete=CASCADE)
+    issue = models.ForeignKey(AlthingiIssue, related_name='issue_bookmarks', on_delete=CASCADE)
 
 
 class Issue(AlthingiIssue):
@@ -150,8 +150,8 @@ class Issue(AlthingiIssue):
 
 
 class Access(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='access')
-    friend = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='friend_access')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='access', on_delete=CASCADE)
+    friend = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='friend_access', on_delete=CASCADE)
 
     full_access = models.BooleanField(default=False)
     issues = models.ManyToManyField('Issue')

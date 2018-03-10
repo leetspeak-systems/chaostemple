@@ -155,8 +155,8 @@
                                 </ul>
                             </li>
                         {% else %}
-                            <li {% if view_func_name == 'CustomRegistrationView' %}class="active"{% endif %}><a href="{% url 'registration_register' %}">{% trans "Sign up" %}</a></li>
-                            <li {% if view_func_name == 'CustomLoginView' %}class="active"{% endif %}><a href="{% url 'auth_login' %}">{% trans "Login" %}</a></li>
+                            <li {% if view_name == 'registration_register' %}class="active"{% endif %}><a href="{% url 'registration_register' %}">{% trans "Sign up" %}</a></li>
+                            <li {% if view_name == 'login' %}class="active"{% endif %}><a href="{% url 'auth_login' %}">{% trans "Login" %}</a></li>
                         {% endif %}
                     </ul>
 

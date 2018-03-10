@@ -1,5 +1,5 @@
 from django.contrib import admin
-from models import Parliament, Issue, Document
+from althingi.models import Parliament, Issue, Document
 
 
 class ParliamentAdmin(admin.ModelAdmin):

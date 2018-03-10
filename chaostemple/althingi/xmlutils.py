@@ -1,11 +1,7 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from __future__ import print_function
-
 import os
-import urllib2
 
 from sys import stderr
+from urllib.request import urlopen
 
 from lxml import etree
 
@@ -62,7 +58,7 @@ def get_xml(xml_url_name, *args):
         os.makedirs(althingi_settings.XML_CACHE_DIR)
 
     if althingi_settings.USE_XML_CACHE and os.path.isfile(cache_filename):
-        with open(cache_filename, 'r') as f:
+        with open(cache_filename, 'rb') as f:
             xml_content = f.read()
             f.close()
 
@@ -71,7 +67,7 @@ def get_xml(xml_url_name, *args):
         xml_content = response.read()
 
         # Write the XML contents to cache file.
-        with open(cache_filename, 'w') as f:
+        with open(cache_filename, 'wb') as f:
             f.write(xml_content)
             f.close()
 
@@ -94,7 +90,7 @@ def get_response(web_url):
     success = False
     while not success and retry_count > -1:
         try:
-            response = urllib2.urlopen(web_url, timeout=althingi_settings.REMOTE_CONTENT_TIMEOUT)
+            response = urlopen(web_url, timeout=althingi_settings.REMOTE_CONTENT_TIMEOUT)
             success = True
         except IOError:
             print('Retrieving remote content failed, retries left: %s...' % retry_count)

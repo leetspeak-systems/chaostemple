@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db.utils import IntegrityError
 from django.template.loader import render_to_string
 
@@ -95,7 +95,7 @@ def user_access_grant(request, friend_id, issue_id=None):
     except Access.DoesNotExist:
         access = Access(user_id=request.user.id, friend_id=friend_id)
 
-    if request.GET.has_key('full_access'):
+    if 'full_access' in request.GET:
         access.full_access = request.GET.get('full_access', False) == 'true'
 
     access.save()

@@ -1,11 +1,12 @@
-# -*- coding: utf-8
 from django.db import models
+from django.db.models import CASCADE
 from django.db.models import Case
 from django.db.models import Count
 from django.db.models import F
 from django.db.models import IntegerField
 from django.db.models import Prefetch
 from django.db.models import Q
+from django.db.models import SET_NULL
 from django.db.models import When
 from django.template.defaultfilters import capfirst
 from django.template.defaultfilters import slugify
@@ -17,7 +18,7 @@ from collections import OrderedDict
 from unidecode import unidecode
 import urllib
 
-from althingi_settings import CURRENT_PARLIAMENT_NUM
+from althingi.althingi_settings import CURRENT_PARLIAMENT_NUM
 from althingi.exceptions import DataIntegrityException
 from althingi.utils import format_date
 
@@ -30,7 +31,7 @@ class PartyQuerySet(models.QuerySet):
                         Q(
                             Q(seats__timing_out__gte=timing) | Q(seats__timing_out=None),
                             seats__timing_in__lte=timing,
-                            seats__seat_type__in=[u'þingmaður', u'varamaður'],
+                            seats__seat_type__in=['þingmaður', 'varamaður'],
                             seats__party_id=F('id')
                         ),
                         then='seats__person_id'
@@ -47,7 +48,7 @@ class PersonQuerySet(models.QuerySet):
             parliament = Parliament.objects.get(parliament_num=CURRENT_PARLIAMENT_NUM)
 
         if parliament.timing_end is None:
-            q_timing = Q(timing_out=None) | Q(timing_out__gte=parliament.timing_start, seat_type=u'varamaður')
+            q_timing = Q(timing_out=None) | Q(timing_out__gte=parliament.timing_start, seat_type='varamaður')
         else:
             # NOTE: One day given as wiggle-room due to imperfect data.
             q_timing = Q(
@@ -264,8 +265,8 @@ class Parliament(models.Model):
 
     last_full_update = models.DateTimeField(default=None, null=True)
 
-    def __unicode__(self):
-        return u'Parliament %d' % self.parliament_num
+    def __str__(self):
+        return 'Parliament %d' % self.parliament_num
 
     class Meta:
         ordering = ['-parliament_num']
@@ -273,88 +274,88 @@ class Parliament(models.Model):
 
 class Issue(models.Model):
     ISSUE_TYPES = (
-        (u'l', u'lagafrumvarp'),
-        (u'a', u'þingsályktunartillaga'),
-        (u'm', u'fyrirspurn'),
-        (u'q', u'fyrirspurn til skriflegs svars'),
-        (u's', u'skýrsla'),
-        (u'b', u'beiðni um skýrslu'),
-        (u'f', u'frestun á fundum Alþingis'),
-        (u'n', u'álit'),
-        (u'v', u'vantrauststillaga'),
+        ('l', 'lagafrumvarp'),
+        ('a', 'þingsályktunartillaga'),
+        ('m', 'fyrirspurn'),
+        ('q', 'fyrirspurn til skriflegs svars'),
+        ('s', 'skýrsla'),
+        ('b', 'beiðni um skýrslu'),
+        ('f', 'frestun á fundum Alþingis'),
+        ('n', 'álit'),
+        ('v', 'vantrauststillaga'),
 
-        (u'al', u'almennar stjórnmálaumræður'),
-        (u'av', u'ávarp'),
-        (u'dr', u'drengskaparheit'),
-        (u'fh', u'framhaldsfundir Alþingis'),
-        (u'ft', u'óundirbúinn fyrirspurnatími'),
-        (u'kb', u'rannsókn kjörbréfs'),
-        (u'ko', u'kosningar'),
-        (u'mi', u'minning'),
-        (u'ra', u'stefnuræða forsætisráðherra'),
-        (u'sr', u'skýrsla ráðherra'),
-        (u'st', u'störf þingsins'),
-        (u'sþ', u'munnleg skýrsla þingmanns'),
-        (u'tk', u'tilkynningar forseta'),
-        (u'tr', u'tilkynning frá ríkisstjórninni'),
-        (u'um', u'sérstök umræða'),
-        (u'yf', u'yfirlýsing forseta'),
-        (u'þi', u'þingsetning'),
+        ('al', 'almennar stjórnmálaumræður'),
+        ('av', 'ávarp'),
+        ('dr', 'drengskaparheit'),
+        ('fh', 'framhaldsfundir Alþingis'),
+        ('ft', 'óundirbúinn fyrirspurnatími'),
+        ('kb', 'rannsókn kjörbréfs'),
+        ('ko', 'kosningar'),
+        ('mi', 'minning'),
+        ('ra', 'stefnuræða forsætisráðherra'),
+        ('sr', 'skýrsla ráðherra'),
+        ('st', 'störf þingsins'),
+        ('sþ', 'munnleg skýrsla þingmanns'),
+        ('tk', 'tilkynningar forseta'),
+        ('tr', 'tilkynning frá ríkisstjórninni'),
+        ('um', 'sérstök umræða'),
+        ('yf', 'yfirlýsing forseta'),
+        ('þi', 'þingsetning'),
     )
 
     ISSUE_GROUPS = (
-        (u'A', u'þingmál með þingskjölum'),
-        (u'B', u'þingmál án þingskjala'),
+        ('A', 'þingmál með þingskjölum'),
+        ('B', 'þingmál án þingskjala'),
     )
 
     # Issue steps for legal bills.
     ISSUE_STEPS_L = (
-        ('distributed', _(u'Distributed')),
-        ('iteration-1-waiting', _(u'Awaiting 1st debate')),
-        ('iteration-1-current', _(u'Currently in 1st debate')),
-        ('iteration-1-finished', _(u'1st debate concluded')),
-        ('committee-1-waiting', _(u'Sent to committee')),
-        ('committee-1-current', _(u'Currently in committee')),
+        ('distributed', _('Distributed')),
+        ('iteration-1-waiting', _('Awaiting 1st debate')),
+        ('iteration-1-current', _('Currently in 1st debate')),
+        ('iteration-1-finished', _('1st debate concluded')),
+        ('committee-1-waiting', _('Sent to committee')),
+        ('committee-1-current', _('Currently in committee')),
         ('committee-1-finished', _('Considered by committee')),
-        ('iteration-2-waiting', _(u'Awaiting 2nd debate')),
-        ('iteration-2-current', _(u'Currently in 2nd debate')),
-        ('iteration-2-finished', _(u'2nd debate concluded')),
-        ('committee-2-waiting', _(u'Sent to committee (after 2nd debate)')), # Optional
-        ('committee-2-current', _(u'Currently in committee (after 2nd debate)')), # Optional
-        ('committee-2-finished', _(u'Considered by committee (after 2nd debate)')), # Optional
-        ('iteration-3-waiting', _(u'Awaiting 3rd debate')),
-        ('iteration-3-current', _(u'Currently in 3rd debate')),
-        ('iteration-3-finished', _(u'3rd debate concluded')),
-        ('concluded', _(u'Issue concluded')),
+        ('iteration-2-waiting', _('Awaiting 2nd debate')),
+        ('iteration-2-current', _('Currently in 2nd debate')),
+        ('iteration-2-finished', _('2nd debate concluded')),
+        ('committee-2-waiting', _('Sent to committee (after 2nd debate)')), # Optional
+        ('committee-2-current', _('Currently in committee (after 2nd debate)')), # Optional
+        ('committee-2-finished', _('Considered by committee (after 2nd debate)')), # Optional
+        ('iteration-3-waiting', _('Awaiting 3rd debate')),
+        ('iteration-3-current', _('Currently in 3rd debate')),
+        ('iteration-3-finished', _('3rd debate concluded')),
+        ('concluded', _('Issue concluded')),
     )
 
     # Issue steps for motions.
     ISSUE_STEPS_A = (
-        ('distributed', _(u'Distributed')),
-        ('iteration-former-waiting', _(u'Awaiting former debate')),
-        ('iteration-former-current', _(u'Currently in former debate')),
-        ('iteration-former-finished', _(u'Former debate concluded')),
-        ('committee-former-waiting', _(u'Sent to committee')),
-        ('committee-former-current', _(u'Currently in committee')),
+        ('distributed', _('Distributed')),
+        ('iteration-former-waiting', _('Awaiting former debate')),
+        ('iteration-former-current', _('Currently in former debate')),
+        ('iteration-former-finished', _('Former debate concluded')),
+        ('committee-former-waiting', _('Sent to committee')),
+        ('committee-former-current', _('Currently in committee')),
         ('committee-former-finished', _('Considered by committee')),
-        ('iteration-latter-waiting', _(u'Awaiting latter debate')),
-        ('iteration-latter-current', _(u'Currently in latter debate')),
-        ('iteration-latter-finished', _(u'Latter debate concluded')),
-        ('concluded', _(u'Issue concluded')),
+        ('iteration-latter-waiting', _('Awaiting latter debate')),
+        ('iteration-latter-current', _('Currently in latter debate')),
+        ('iteration-latter-finished', _('Latter debate concluded')),
+        ('concluded', _('Issue concluded')),
     )
 
     # Issue steps for written inquiries.
     ISSUE_STEPS_Q = (
-        ('distributed', _(u'Distributed')),
-        ('answered', _(u'Answered')),
+        ('distributed', _('Distributed')),
+        ('answered', _('Answered')),
     )
 
     # Issue steps for requests for reports.
     ISSUE_STEPS_B = (
-        ('distributed', _(u'Distributed')),
-        ('voted-on', _(u'Voted on')),
-        ('report-delivered', _(u'Report delieverd')),
-        ('concluded', _(u'Concluded')),
+        ('distributed', _('Distributed')),
+        ('voted-on', _('Voted on')),
+        ('report-delivered', _('Report delieverd')),
+        ('concluded', _('Concluded')),
     )
 
     # All issue step definitions combined for use with choices-attribute in fields.
@@ -362,12 +363,12 @@ class Issue(models.Model):
 
     # Issue fates are only applicable when they are concluded.
     ISSUE_FATES = (
-        ('rejected', _(u'rejected')),
-        ('accepted', _(u'accepted')),
-        ('sent-to-government', _(u'sent to government')),
+        ('rejected', _('rejected')),
+        ('accepted', _('accepted')),
+        ('sent-to-government', _('sent to government')),
     )
 
-    parliament = models.ForeignKey('Parliament', related_name='issues')
+    parliament = models.ForeignKey('Parliament', related_name='issues', on_delete=CASCADE)
 
     issue_num = models.IntegerField()  # IS: Málsnúmer
     issue_type = models.CharField(max_length=2, choices=ISSUE_TYPES)  # IS: Málstegund
@@ -379,9 +380,19 @@ class Issue(models.Model):
     time_published = models.DateTimeField(null=True)
     final_vote_complete = models.BooleanField(default=False)
 
-    special_inquisitor = models.ForeignKey('Person', null=True, related_name='issues_special_inquisited')
+    special_inquisitor = models.ForeignKey(
+        'Person',
+        null=True,
+        related_name='issues_special_inquisited',
+        on_delete=CASCADE
+    )
     special_inquisitor_description = models.CharField(max_length=50, null=True)
-    special_responder = models.ForeignKey('Person', null=True, related_name='issues_special_responded')
+    special_responder = models.ForeignKey(
+        'Person',
+        null=True,
+        related_name='issues_special_responded',
+        on_delete=CASCADE
+    )
     special_responder_description = models.CharField(max_length=50, null=True)
 
     previous_issues = models.ManyToManyField('Issue', related_name='future_issues')
@@ -451,28 +462,28 @@ class Issue(models.Model):
 
             steps['distributed'] = True
 
-            steps['iteration-1-waiting'] = self.session_agenda_items.filter(discussion_type=u'1').count() > 0
+            steps['iteration-1-waiting'] = self.session_agenda_items.filter(discussion_type='1').count() > 0
 
-            steps['iteration-1-current'] = self.speeches.filter(iteration=u'1').count() > 0
+            steps['iteration-1-current'] = self.speeches.filter(iteration='1').count() > 0
 
-            steps['iteration-1-finished'] = self.vote_castings.filter(vote_casting_type=u'v2').count() > 0
+            steps['iteration-1-finished'] = self.vote_castings.filter(vote_casting_type='v2').count() > 0
 
-            steps['committee-1-waiting'] = self.vote_castings.filter(vote_casting_type=u'n2').count() > 0
+            steps['committee-1-waiting'] = self.vote_castings.filter(vote_casting_type='n2').count() > 0
 
             steps['committee-1-current'] = self.committee_agenda_items.count() > 0
 
             steps['committee-1-finished'] = self.documents.filter(doc_type__in=[
-                u'nál. með brtt.',
-                u'nál. með frávt.',
-                u'nál. með rökst.',
-                u'nefndarálit',
+                'nál. með brtt.',
+                'nál. með frávt.',
+                'nál. með rökst.',
+                'nefndarálit',
             ]).count() > 0
 
-            steps['iteration-2-waiting'] = self.session_agenda_items.filter(discussion_type=u'2').count() > 0
+            steps['iteration-2-waiting'] = self.session_agenda_items.filter(discussion_type='2').count() > 0
 
-            steps['iteration-2-current'] = self.speeches.filter(iteration=u'2').count() > 0
+            steps['iteration-2-current'] = self.speeches.filter(iteration='2').count() > 0
 
-            steps['iteration-2-finished'] = self.vote_castings.filter(vote_casting_type=u'v3').count() > 0
+            steps['iteration-2-finished'] = self.vote_castings.filter(vote_casting_type='v3').count() > 0
 
             try:
                 vc = self.vote_castings.get(vote_casting_type='n3')
@@ -496,25 +507,25 @@ class Issue(models.Model):
                 # unreliable, but they will still be better to have as well.
                 steps['committee-2-finished'] = self.documents.filter(
                     doc_type__in=[
-                        u'framhaldsnefndarálit',
-                        u'frhnál. með brtt.',
-                        u'frhnál. með frávt.',
-                        u'frhnál. með rökst.',
-                        u'nál. með brtt.',
-                        u'nál. með frávt.',
-                        u'nál. með rökst.',
-                        u'nefndarálit',
+                        'framhaldsnefndarálit',
+                        'frhnál. með brtt.',
+                        'frhnál. með frávt.',
+                        'frhnál. með rökst.',
+                        'nál. með brtt.',
+                        'nál. með frávt.',
+                        'nál. með rökst.',
+                        'nefndarálit',
                     ],
                     time_published__gte = vc.timing
                 ).count() > 0
             except VoteCasting.DoesNotExist:
                 pass
 
-            steps['iteration-3-waiting'] = self.session_agenda_items.filter(discussion_type=u'3').count() > 0
+            steps['iteration-3-waiting'] = self.session_agenda_items.filter(discussion_type='3').count() > 0
 
-            steps['iteration-3-current'] = self.speeches.filter(iteration=u'3').count() > 0
+            steps['iteration-3-current'] = self.speeches.filter(iteration='3').count() > 0
 
-            steps['iteration-3-finished'] = self.vote_castings.filter(vote_casting_type=u'lg').count() > 0
+            steps['iteration-3-finished'] = self.vote_castings.filter(vote_casting_type='lg').count() > 0
 
             # If no one spoke during the first iteration
             # TODO: Check if this scenario is even possible.
@@ -546,28 +557,28 @@ class Issue(models.Model):
 
             steps['distributed'] = True
 
-            steps['iteration-former-waiting'] = self.session_agenda_items.filter(discussion_type=u'F').count() > 0
+            steps['iteration-former-waiting'] = self.session_agenda_items.filter(discussion_type='F').count() > 0
 
-            steps['iteration-former-current'] = self.speeches.filter(iteration=u'F').count() > 0
+            steps['iteration-former-current'] = self.speeches.filter(iteration='F').count() > 0
 
-            steps['iteration-former-finished'] = self.vote_castings.filter(vote_casting_type=u'vs').count() > 0
+            steps['iteration-former-finished'] = self.vote_castings.filter(vote_casting_type='vs').count() > 0
 
-            steps['committee-former-waiting'] = self.vote_castings.filter(vote_casting_type=u'ns').count() > 0
+            steps['committee-former-waiting'] = self.vote_castings.filter(vote_casting_type='ns').count() > 0
 
             steps['committee-former-current'] = self.committee_agenda_items.count() > 0
 
             steps['committee-former-finished'] = self.documents.filter(doc_type__in=[
-                u'nál. með brtt.',
-                u'nál. með frávt.',
-                u'nál. með rökst.',
-                u'nefndarálit',
+                'nál. með brtt.',
+                'nál. með frávt.',
+                'nál. með rökst.',
+                'nefndarálit',
             ]).count() > 0
 
-            steps['iteration-latter-waiting'] = self.session_agenda_items.filter(discussion_type=u'S').count() > 0
+            steps['iteration-latter-waiting'] = self.session_agenda_items.filter(discussion_type='S').count() > 0
 
-            steps['iteration-latter-current'] = self.speeches.filter(iteration=u'S').count() > 0
+            steps['iteration-latter-current'] = self.speeches.filter(iteration='S').count() > 0
 
-            steps['iteration-latter-finished'] = self.vote_castings.filter(vote_casting_type=u'þa').count() > 0
+            steps['iteration-latter-finished'] = self.vote_castings.filter(vote_casting_type='þa').count() > 0
 
             # If no one spoke during the first iteration
             # TODO: Check if this scenario is even possible.
@@ -588,8 +599,8 @@ class Issue(models.Model):
 
         elif self.issue_type == 'b':
             steps['distributed'] = True
-            steps['voted-on'] = self.vote_castings.filter(vote_casting_type=u'bn').count() > 0
-            steps['report-delivered'] = self.documents.filter(doc_type=u'skýrsla (skv. beiðni)').count() > 0
+            steps['voted-on'] = self.vote_castings.filter(vote_casting_type='bn').count() > 0
+            steps['report-delivered'] = self.documents.filter(doc_type='skýrsla (skv. beiðni)').count() > 0
 
             if steps['report-delivered']:
                 steps['concluded'] = True
@@ -606,8 +617,8 @@ class Issue(models.Model):
 
             # Check if issue was sent to government.
             try:
-                vote_casting = self.vote_castings.get(vote_casting_type=u'ft')
-                if vote_casting.conclusion == u'samþykkt':
+                vote_casting = self.vote_castings.get(vote_casting_type='ft')
+                if vote_casting.conclusion == 'samþykkt':
                     return 'sent-to-government'
                 # Else nothing. Life goes on.
             except VoteCasting.DoesNotExist:
@@ -616,10 +627,10 @@ class Issue(models.Model):
             if self.issue_type == 'l':
                 # Check if legal bill was accepted as law.
                 try:
-                    vote_casting = self.vote_castings.get(vote_casting_type=u'lg')
-                    if vote_casting.conclusion == u'samþykkt':
+                    vote_casting = self.vote_castings.get(vote_casting_type='lg')
+                    if vote_casting.conclusion == 'samþykkt':
                         return 'accepted'
-                    elif vote_casting.conclusion == u'Fellt':
+                    elif vote_casting.conclusion == 'Fellt':
                         return 'rejected'
                     else:
                         return 'unknown'
@@ -639,12 +650,12 @@ class Issue(models.Model):
                 # differ, we'll return "limbo". This is not known to have
                 # happened and is extremely unlikely to ever do.
 
-                conclusions = set([vc.conclusion for vc in self.vote_castings.filter(vote_casting_type=u'þa')])
+                conclusions = set([vc.conclusion for vc in self.vote_castings.filter(vote_casting_type='þa')])
                 if len(conclusions) == 1:
                     conclusion = conclusions.pop()
-                    if conclusion == u'samþykkt':
+                    if conclusion == 'samþykkt':
                         return 'accepted'
-                    elif conclusion == u'Fellt':
+                    elif conclusion == 'Fellt':
                         return 'rejected'
                     else:
                         return 'unknown'
@@ -654,10 +665,10 @@ class Issue(models.Model):
         elif self.issue_type == 'b':
             # Check if the request for the report was accepted.
             try:
-                vote_casting = self.vote_castings.get(vote_casting_type=u'bn')
-                if vote_casting.conclusion == u'samþykkt':
+                vote_casting = self.vote_castings.get(vote_casting_type='bn')
+                if vote_casting.conclusion == 'samþykkt':
                     return 'accepted'
-                elif vote_casting.conclusion == u'Fellt':
+                elif vote_casting.conclusion == 'Fellt':
                     return 'rejected'
                 else:
                     return 'unknown'
@@ -668,12 +679,12 @@ class Issue(models.Model):
 
     def detailed(self):
         if self.issue_group != 'A':
-            return u'%s (%d, %s)' % (self, self.issue_num, self.issue_group)
+            return '%s (%d, %s)' % (self, self.issue_num, self.issue_group)
         else:
-            return u'%s (%d)' % (self, self.issue_num)
+            return '%s (%d)' % (self, self.issue_num)
 
-    def __unicode__(self):
-        return u'%s' % capfirst(self.name)
+    def __str__(self):
+        return '%s' % capfirst(self.name)
 
     class Meta:
         ordering = ['issue_num']
@@ -681,19 +692,19 @@ class Issue(models.Model):
 
 
 class IssueStep(models.Model):
-    issue = models.ForeignKey('Issue', related_name='steps')
+    issue = models.ForeignKey('Issue', related_name='steps', on_delete=CASCADE)
     code = models.CharField(max_length=50)
     order = models.IntegerField()
 
-    def __unicode__(self):
-        return u'%d - %s' % (self.order, self.code)
+    def __str__(self):
+        return '%d - %s' % (self.order, self.code)
 
     class Meta:
         ordering = ['order']
 
 
 class IssueSummary(models.Model):
-    issue = models.OneToOneField('Issue', related_name='summary')
+    issue = models.OneToOneField('Issue', related_name='summary', on_delete=CASCADE)
 
     purpose = models.TextField()
     change_description = models.TextField()
@@ -706,11 +717,11 @@ class IssueSummary(models.Model):
 
 
 class Rapporteur(models.Model):
-    issue = models.ForeignKey('Issue', related_name='rapporteurs')
-    person = models.ForeignKey('Person', related_name='rapporteurs')
+    issue = models.ForeignKey('Issue', related_name='rapporteurs', on_delete=CASCADE)
+    person = models.ForeignKey('Person', related_name='rapporteurs', on_delete=CASCADE)
 
-    def __unicode__(self):
-        return u'%s (%s)' % (self.person, self.issue)
+    def __str__(self):
+        return '%s (%s)' % (self.person, self.issue)
 
     class Meta:
         unique_together = ('issue', 'person')
@@ -718,54 +729,54 @@ class Rapporteur(models.Model):
 
 class Review(models.Model):
     REVIEW_TYPES = (
-        (u'aa', u'áætlun'),
-        (u'ab', u'afrit bréfs'),
-        (u'ak', u'ályktun'),
-        (u'al', u'álit'),
-        (u'am', u'almennt'),
-        (u'as', u'áskorun'),
-        (u'at', u'athugasemd'),
-        (u'áu', u'ábending til umfjöllunar'),
-        (u'be', u'beiðni'),
-        (u'bk', u'bókun'),
-        (u'fr', u'frestun á umsögn'),
-        (u'fs', u'fyrirspurn'),
-        (u'ft', u'fréttatilkynning'),
-        (u'fu', u'fundargerð'),
-        (u'gg', u'greinargerð'),
-        (u'it', u'ítrekun'),
-        (u'ka', u'kostnaðaráætlun'),
-        (u'lf', u'lagt fram á fundi'),
-        (u'lr', u'leiðrétting'),
-        (u'mb', u'minnisblað'),
-        (u'mm', u'mótmæli'),
-        (u'mt', u'mat'),
-        (u'na', u'nefndarálit'),
-        (u'sa', u'samþykkt'),
-        (u'se', u'stuðningserindi'),
-        (u'sk', u'skýrsla'),
-        (u'su', u'skýrsla til umfjöllunar'),
-        (u'tk', u'tilkynning'),
-        (u'tl', u'tillaga'),
-        (u'tm', u'tilmæli'),
-        (u'ub', u'umsögn'),
-        (u'uk', u'umsókn'),
-        (u'up', u'upplýsingar'),
-        (u'vb', u'viðbótarumsögn'),
-        (u'vi', u'viðauki'),
-        (u'vs', u'vinnuskjal'),
-        (u'xx', u'x'),
-        (u'yf', u'yfirlit'),
-        (u'yg', u'ýmis gögn'),
-        (u'ys', u'yfirlýsing'),
+        ('aa', 'áætlun'),
+        ('ab', 'afrit bréfs'),
+        ('ak', 'ályktun'),
+        ('al', 'álit'),
+        ('am', 'almennt'),
+        ('as', 'áskorun'),
+        ('at', 'athugasemd'),
+        ('áu', 'ábending til umfjöllunar'),
+        ('be', 'beiðni'),
+        ('bk', 'bókun'),
+        ('fr', 'frestun á umsögn'),
+        ('fs', 'fyrirspurn'),
+        ('ft', 'fréttatilkynning'),
+        ('fu', 'fundargerð'),
+        ('gg', 'greinargerð'),
+        ('it', 'ítrekun'),
+        ('ka', 'kostnaðaráætlun'),
+        ('lf', 'lagt fram á fundi'),
+        ('lr', 'leiðrétting'),
+        ('mb', 'minnisblað'),
+        ('mm', 'mótmæli'),
+        ('mt', 'mat'),
+        ('na', 'nefndarálit'),
+        ('sa', 'samþykkt'),
+        ('se', 'stuðningserindi'),
+        ('sk', 'skýrsla'),
+        ('su', 'skýrsla til umfjöllunar'),
+        ('tk', 'tilkynning'),
+        ('tl', 'tillaga'),
+        ('tm', 'tilmæli'),
+        ('ub', 'umsögn'),
+        ('uk', 'umsókn'),
+        ('up', 'upplýsingar'),
+        ('vb', 'viðbótarumsögn'),
+        ('vi', 'viðauki'),
+        ('vs', 'vinnuskjal'),
+        ('xx', 'x'),
+        ('yf', 'yfirlit'),
+        ('yg', 'ýmis gögn'),
+        ('ys', 'yfirlýsing'),
     )
 
-    issue = models.ForeignKey('Issue', related_name='reviews')
+    issue = models.ForeignKey('Issue', related_name='reviews', on_delete=CASCADE)
     log_num = models.IntegerField()  # IS: Dagbókarnúmer
     sender_name = models.CharField(max_length=200)
     sender_name_description = models.CharField(max_length=200, default='')
-    committee = models.ForeignKey('Committee', null=True)
-    president_seat = models.ForeignKey('PresidentSeat', null=True) # Unusual but possible recipient
+    committee = models.ForeignKey('Committee', null=True, on_delete=SET_NULL)
+    president_seat = models.ForeignKey('PresidentSeat', null=True, on_delete=SET_NULL) # Unusual but possible
     review_type = models.CharField(max_length=2, choices=REVIEW_TYPES)  #: Tegund erindis
     date_arrived = models.DateField(null=True)
     date_sent = models.DateField(null=True)
@@ -804,12 +815,12 @@ class Review(models.Model):
             super(Review, self).delete()
         except models.deletion.ProtectedError:
 
-            msg = u'Attempted to remove a review with referenced data:'
-            msg += u' issue_id = %d' % self.issue_id
-            msg += u', review_id = %d' % self.id
-            msg += u', issue_name = "%s"' % self.issue.name
-            msg += u', review_sender_name = "%s"' % self.sender_name
-            msg += u', review_log_num = %d' % self.log_num
+            msg = 'Attempted to remove a review with referenced data:'
+            msg += ' issue_id = %d' % self.issue_id
+            msg += ', review_id = %d' % self.id
+            msg += ', issue_name = "%s"' % self.issue.name
+            msg += ', review_sender_name = "%s"' % self.sender_name
+            msg += ', review_log_num = %d' % self.log_num
 
             raise DataIntegrityException(msg.encode('utf-8'))
 
@@ -817,7 +828,7 @@ class Review(models.Model):
         self.issue.review_count = Review.objects.filter(issue=self.issue).count()
         self.issue.save()
 
-    def __unicode__(self):
+    def __str__(self):
         return u"%s (%s)" % (self.sender_name, self.date_arrived)
 
     class Meta:
@@ -827,44 +838,44 @@ class Review(models.Model):
 
 class Document(models.Model):
     DOCUMENT_TYPES = (
-        (u'álit nefndar um skýrslu', 'álit nefndar um skýrslu'),
-        (u'beiðni um skýrslu', u'beiðni um skýrslu'),
-        (u'breytingartillaga', u'breytingartillaga'),
-        (u'framhaldsnefndarálit', u'framhaldsnefndarálit'),
-        (u'frávísunartilllaga', u'frávísunartilllaga'),
-        (u'frestun funda', u'frestun funda'),
-        (u'frumvarp', u'frumvarp'),
-        (u'frhnál. með brtt.', u'framhaldsnefndarálit með breytingartillögu'),
-        (u'frhnál. með frávt.', u'framhaldsnefndarálit með frávísunartillögu'),
-        (u'frhnál. með rökst.', u'framhaldsnefndarálit með rökstuðningi'),
-        (u'frumvarp eftir 2. umræðu', u'frumvarp eftir 2. umræðu'),
-        (u'frumvarp nefndar', u'frumvarp nefndar'),
-        (u'frv. til. stjórnarsk.', u'frumvarp til stjórnarskrár'),
-        (u'fsp. til munnl. svars', u'fyrirspurn til munnlegs svars'),
-        (u'fsp. til skrifl. svars', u'fyrirspurn til skriflegs svars'),
-        (u'lög (m.áo.br.)', u'lög (með áorðnum breytingum'),
-        (u'lög (samhlj.)', u'lög (samhljóða)'),
-        (u'lög í heild', u'lög í heild'),
-        (u'nál. með brtt.', u'nefndarálit með breytingartillögu'),
-        (u'nál. með frávt.', u'nefndarálit með frávísunartillögu'),
-        (u'nál. með rökst.', u'nefndarálit með rökstuðningi'),
-        (u'nefndarálit', u'nefndarálit'),
-        (u'rökstudd dagskrá', u'rökstudd dagskrá'),
-        (u'skýrsla (skv. beiðni)', u'skýrsla (samkvæmt beiðni)'),
-        (u'skýrsla n.', u'skýrsla nefndar'),
-        (u'skýrsla n. (frumskjal)', u'skýrsla nefndar (frumskjal)'),
-        (u'skýrsla rh. (frumskjal)', u'skýrsla ráðherra (frumskjal)'),
-        (u'stjórnarfrumvarp', u'stjórnarfrumvarp'),
-        (u'stjórnartillaga', u'stjórnartillaga'),
-        (u'svar', u'svar'),
-        (u'vantraust', u'vantraust'),
-        (u'þál. (samhlj.)', u'þingsályktunartillaga (samhljóða)'),
-        (u'þál. í heild', u'þingsályktunartillaga í heild'),
-        (u'þáltill.', u'þingsályktunartillaga'),
-        (u'þáltill. n.', u'þingsályktunartillaga nefndar'),
+        ('álit nefndar um skýrslu', 'álit nefndar um skýrslu'),
+        ('beiðni um skýrslu', 'beiðni um skýrslu'),
+        ('breytingartillaga', 'breytingartillaga'),
+        ('framhaldsnefndarálit', 'framhaldsnefndarálit'),
+        ('frávísunartilllaga', 'frávísunartilllaga'),
+        ('frestun funda', 'frestun funda'),
+        ('frumvarp', 'frumvarp'),
+        ('frhnál. með brtt.', 'framhaldsnefndarálit með breytingartillögu'),
+        ('frhnál. með frávt.', 'framhaldsnefndarálit með frávísunartillögu'),
+        ('frhnál. með rökst.', 'framhaldsnefndarálit með rökstuðningi'),
+        ('frumvarp eftir 2. umræðu', 'frumvarp eftir 2. umræðu'),
+        ('frumvarp nefndar', 'frumvarp nefndar'),
+        ('frv. til. stjórnarsk.', 'frumvarp til stjórnarskrár'),
+        ('fsp. til munnl. svars', 'fyrirspurn til munnlegs svars'),
+        ('fsp. til skrifl. svars', 'fyrirspurn til skriflegs svars'),
+        ('lög (m.áo.br.)', 'lög (með áorðnum breytingum'),
+        ('lög (samhlj.)', 'lög (samhljóða)'),
+        ('lög í heild', 'lög í heild'),
+        ('nál. með brtt.', 'nefndarálit með breytingartillögu'),
+        ('nál. með frávt.', 'nefndarálit með frávísunartillögu'),
+        ('nál. með rökst.', 'nefndarálit með rökstuðningi'),
+        ('nefndarálit', 'nefndarálit'),
+        ('rökstudd dagskrá', 'rökstudd dagskrá'),
+        ('skýrsla (skv. beiðni)', 'skýrsla (samkvæmt beiðni)'),
+        ('skýrsla n.', 'skýrsla nefndar'),
+        ('skýrsla n. (frumskjal)', 'skýrsla nefndar (frumskjal)'),
+        ('skýrsla rh. (frumskjal)', 'skýrsla ráðherra (frumskjal)'),
+        ('stjórnarfrumvarp', 'stjórnarfrumvarp'),
+        ('stjórnartillaga', 'stjórnartillaga'),
+        ('svar', 'svar'),
+        ('vantraust', 'vantraust'),
+        ('þál. (samhlj.)', 'þingsályktunartillaga (samhljóða)'),
+        ('þál. í heild', 'þingsályktunartillaga í heild'),
+        ('þáltill.', 'þingsályktunartillaga'),
+        ('þáltill. n.', 'þingsályktunartillaga nefndar'),
     )
 
-    issue = models.ForeignKey('Issue', related_name='documents')
+    issue = models.ForeignKey('Issue', related_name='documents', on_delete=CASCADE)
 
     doc_num = models.IntegerField()
     doc_type = models.CharField(max_length=50, choices=DOCUMENT_TYPES)
@@ -917,8 +928,8 @@ class Document(models.Model):
         self.issue.document_count = Document.objects.filter(issue=self.issue).count()
         self.issue.save()
 
-    def __unicode__(self):
-        return u'%d (%s)' % (self.doc_num, self.doc_type)
+    def __str__(self):
+        return '%d (%s)' % (self.doc_num, self.doc_type)
 
     class Meta:
         ordering = ['doc_num']
@@ -926,13 +937,13 @@ class Document(models.Model):
 
 
 class Proposer(models.Model):
-    issue = models.ForeignKey('Issue', null=True, related_name='proposers')
-    document = models.ForeignKey('Document', null=True, related_name='proposers')
+    issue = models.ForeignKey('Issue', null=True, related_name='proposers', on_delete=CASCADE)
+    document = models.ForeignKey('Document', null=True, related_name='proposers', on_delete=CASCADE)
     order = models.IntegerField(null=True)
-    person = models.ForeignKey('Person', null=True)
-    committee = models.ForeignKey('Committee', null=True)
+    person = models.ForeignKey('Person', null=True, on_delete=CASCADE)
+    committee = models.ForeignKey('Committee', null=True, on_delete=CASCADE)
     committee_partname = models.CharField(max_length=50, null=True) # Only non-None if committee is non-None
-    parent = models.ForeignKey('Proposer', null=True, related_name='subproposers')
+    parent = models.ForeignKey('Proposer', null=True, related_name='subproposers', on_delete=CASCADE)
 
     def save(self, *args, **kwargs):
         if self.document_id and self.document.is_main:
@@ -942,14 +953,14 @@ class Proposer(models.Model):
 
         super(Proposer, self).save(*args, **kwargs)
 
-    def __unicode__(self):
+    def __str__(self):
         if self.person_id is not None:
-            return self.person.__unicode__()
+            return self.person.__str__()
         elif self.committee_id is not None:
             if self.committee_partname:
-                return "%s (%s)" % (self.committee.__unicode__(), self.committee_partname)
+                return "%s (%s)" % (self.committee.__str__(), self.committee_partname)
             else:
-                return self.committee.__unicode__()
+                return self.committee.__str__()
         else:
             return 'N/A'
 
@@ -977,7 +988,7 @@ class Committee(models.Model):
             parliament__parliament_num=parliament_num
         ).distinct()
 
-    def __unicode__(self):
+    def __str__(self):
         return capfirst(self.name)
 
     class Meta:
@@ -1009,8 +1020,8 @@ class Person(models.Model):
 
         super(Person, self).save(*args, **kwargs)
 
-    def __unicode__(self):
-        return u'%s' % self.name
+    def __str__(self):
+        return '%s' % self.name
 
     class Meta:
         ordering = ['name']
@@ -1028,33 +1039,33 @@ class Minister(models.Model):
 
     minister_xml_id = models.IntegerField(unique=True)
 
-    def __unicode__(self):
-        return u'%s' % self.name
+    def __str__(self):
+        return '%s' % self.name
 
     class Meta:
         ordering = ['name']
 
 
 class MinisterSeat(models.Model):
-    person = models.ForeignKey('Person', related_name='minister_seats')
-    minister = models.ForeignKey('Minister', related_name='minister_seats')
-    parliament = models.ForeignKey('Parliament', related_name='minister_seats')
+    person = models.ForeignKey('Person', related_name='minister_seats', on_delete=CASCADE)
+    minister = models.ForeignKey('Minister', related_name='minister_seats', on_delete=CASCADE)
+    parliament = models.ForeignKey('Parliament', related_name='minister_seats', on_delete=CASCADE)
 
     timing_in = models.DateTimeField()
     timing_out = models.DateTimeField(null=True)
 
-    party = models.ForeignKey('Party', null=True, related_name='minister_seats')
+    party = models.ForeignKey('Party', null=True, related_name='minister_seats', on_delete=CASCADE)
 
-    def __unicode__(self):
+    def __str__(self):
         if self.timing_out is None:
-            return u'%s (%s, %s : ...)' % (self.person, self.minister, format_date(self.timing_in))
+            return '%s (%s, %s : ...)' % (self.person, self.minister, format_date(self.timing_in))
         else:
             # Short-hands
             person = self.person
             minister = self.minister
             timing_in = self.timing_in
             timing_out = self.timing_out
-            return u'%s (%s, %s : %s)' % (person, minister, format_date(timing_in), format_date(timing_out))
+            return '%s (%s, %s : %s)' % (person, minister, format_date(timing_in), format_date(timing_out))
 
     class Meta:
         ordering = ['timing_in', 'timing_out']
@@ -1073,7 +1084,7 @@ class President(models.Model):
 
     president_xml_id = models.IntegerField(unique=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return capfirst(self.name)
 
     class Meta:
@@ -1083,23 +1094,23 @@ class President(models.Model):
 class PresidentSeat(models.Model):
     objects = PresidentSeatQuerySet.as_manager()
 
-    person = models.ForeignKey('Person', related_name='president_seats')
-    president = models.ForeignKey('President', related_name='president_seats')
-    parliament = models.ForeignKey('Parliament', related_name='president_seats')
+    person = models.ForeignKey('Person', related_name='president_seats', on_delete=CASCADE)
+    president = models.ForeignKey('President', related_name='president_seats', on_delete=CASCADE)
+    parliament = models.ForeignKey('Parliament', related_name='president_seats', on_delete=CASCADE)
 
     timing_in = models.DateTimeField()
     timing_out = models.DateTimeField(null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         if self.timing_out is None:
-            return u'%s (%s, %s : ...)' % (self.person, self.president, format_date(self.timing_in))
+            return '%s (%s, %s : ...)' % (self.person, self.president, format_date(self.timing_in))
         else:
             # Short-hands
             person = self.person
             president = self.president
             timing_in = self.timing_in
             timing_out = self.timing_out
-            return u'%s (%s, %s : %s)' % (person, president, format_date(timing_in), format_date(timing_out))
+            return '%s (%s, %s : %s)' % (person, president, format_date(timing_in), format_date(timing_out))
 
     class Meta:
         ordering = ['president__order', 'timing_in']
@@ -1108,7 +1119,7 @@ class PresidentSeat(models.Model):
 class Session(models.Model):
     objects = SessionQuerySet.as_manager()
 
-    parliament = models.ForeignKey('Parliament', related_name='sessions')
+    parliament = models.ForeignKey('Parliament', related_name='sessions', on_delete=CASCADE)
     session_num = models.IntegerField()
     name = models.CharField(max_length=30)
     timing_start_planned = models.DateTimeField(null=True)
@@ -1116,8 +1127,8 @@ class Session(models.Model):
     timing_end = models.DateTimeField(null=True)
     timing_text = models.CharField(max_length=200, null=True)
 
-    def __unicode__(self):
-        return u'%s' % self.name
+    def __str__(self):
+        return '%s' % self.name
 
     class Meta:
         ordering = ['session_num']
@@ -1126,27 +1137,27 @@ class Session(models.Model):
 
 class SessionAgendaItem(models.Model):
     DISCUSSION_TYPES = (
-        ('*', u''),
-        ('0', u''),
-        ('1', u'1. umræða'),
-        ('2', u'2. umræða'),
-        ('3', u'3. umræða'),
-        ('E', u'ein umræða'),
-        ('F', u'fyrri umræða'),
-        ('S', u'síðari umræða'),
+        ('*', ''),
+        ('0', ''),
+        ('1', '1. umræða'),
+        ('2', '2. umræða'),
+        ('3', '3. umræða'),
+        ('E', 'ein umræða'),
+        ('F', 'fyrri umræða'),
+        ('S', 'síðari umræða'),
     )
 
-    session = models.ForeignKey('Session', related_name='session_agenda_items')
+    session = models.ForeignKey('Session', related_name='session_agenda_items', on_delete=CASCADE)
     order = models.IntegerField()
     discussion_type = models.CharField(max_length=1, choices=DISCUSSION_TYPES)
     discussion_continued = models.BooleanField(default=False)
     comment_type = models.CharField(max_length=1, null=True)
     comment_text = models.CharField(max_length=100, null=True)
     comment_description = models.CharField(max_length=100, null=True)
-    issue = models.ForeignKey('Issue', null=True, related_name='session_agenda_items')
+    issue = models.ForeignKey('Issue', null=True, related_name='session_agenda_items', on_delete=CASCADE)
 
-    def __unicode__(self):
-        return u'%d. %s' % (self.order, self.issue.detailed())
+    def __str__(self):
+        return '%d. %s' % (self.order, self.issue.detailed())
 
     class Meta:
         ordering = ['order']
@@ -1156,8 +1167,8 @@ class SessionAgendaItem(models.Model):
 class CommitteeAgenda(models.Model):
     objects = CommitteeAgendaQuerySet.as_manager()
 
-    parliament = models.ForeignKey('Parliament', related_name='committee_agendas')
-    committee = models.ForeignKey('Committee', related_name='committee_agendas')
+    parliament = models.ForeignKey('Parliament', related_name='committee_agendas', on_delete=CASCADE)
+    committee = models.ForeignKey('Committee', related_name='committee_agendas', on_delete=CASCADE)
     timing_start_planned = models.DateTimeField(null=True)
     timing_start = models.DateTimeField(null=True)
     timing_end = models.DateTimeField(null=True)
@@ -1165,24 +1176,24 @@ class CommitteeAgenda(models.Model):
 
     committee_agenda_xml_id = models.IntegerField(unique=True)
 
-    def __unicode__(self):
-        return u'%s @ %s' % (self.committee, self.timing_start_planned)
+    def __str__(self):
+        return '%s @ %s' % (self.committee, self.timing_start_planned)
 
     class Meta:
         ordering = ['timing_start_planned', 'committee__name']
 
 
 class CommitteeAgendaItem(models.Model):
-    committee_agenda = models.ForeignKey('CommitteeAgenda', related_name='committee_agenda_items')
+    committee_agenda = models.ForeignKey('CommitteeAgenda', related_name='committee_agenda_items', on_delete=CASCADE)
     order = models.IntegerField()
     name = models.CharField(max_length=300)
-    issue = models.ForeignKey('Issue', null=True, related_name='committee_agenda_items')
+    issue = models.ForeignKey('Issue', null=True, related_name='committee_agenda_items', on_delete=CASCADE)
 
-    def __unicode__(self):
+    def __str__(self):
         if self.issue is not None:
-            return u'%d. %s' % (self.order, self.issue.detailed())
+            return '%d. %s' % (self.order, self.issue.detailed())
         else:
-            return u'%d. %s' % (self.order, self.name)
+            return '%d. %s' % (self.order, self.name)
 
     class Meta:
         ordering = ['order']
@@ -1210,12 +1221,12 @@ class Party(models.Model):
         self.slug = slugify(unidecode(self.name))
 
         # Special parties are party-type containers rather than actual parties.
-        if self.name == u'Utan þingflokka':
+        if self.name == 'Utan þingflokka':
             self.special = True
 
         super(Party, self).save(*args, **kwargs)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     class Meta:
@@ -1234,7 +1245,7 @@ class Constituency(models.Model):
 
     constituency_xml_id = models.IntegerField(unique=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     class Meta:
@@ -1243,13 +1254,13 @@ class Constituency(models.Model):
 
 class Seat(models.Model):
     SEAT_TYPES = (
-        (u'þingmaður', u'þingmaður'),
-        (u'varamaður', u'varamaður'),
-        (u'með varamann', u'með varamann'),
+        ('þingmaður', 'þingmaður'),
+        ('varamaður', 'varamaður'),
+        ('með varamann', 'með varamann'),
     )
 
-    person = models.ForeignKey('Person', related_name='seats')
-    parliament = models.ForeignKey('Parliament', related_name='seats')
+    person = models.ForeignKey('Person', related_name='seats', on_delete=CASCADE)
+    parliament = models.ForeignKey('Parliament', related_name='seats', on_delete=CASCADE)
     seat_type = models.CharField(max_length=20, choices=SEAT_TYPES)
 
     name_abbreviation = models.CharField(max_length=15, default="") # abbreviations may change by term
@@ -1258,23 +1269,23 @@ class Seat(models.Model):
     timing_in = models.DateTimeField()
     timing_out = models.DateTimeField(null=True)
 
-    constituency = models.ForeignKey('Constituency', related_name='seats')
+    constituency = models.ForeignKey('Constituency', related_name='seats', on_delete=CASCADE)
     constituency_mp_num = models.PositiveSmallIntegerField()
 
-    party = models.ForeignKey('Party', related_name='seats')
+    party = models.ForeignKey('Party', related_name='seats', on_delete=CASCADE)
 
     def tenure_ended_prematurely(self):
         p = self.parliament # Short-hand
-        return self.seat_type in (u'þingmaður', u'með varamann') and (
+        return self.seat_type in ('þingmaður', 'með varamann') and (
             (self.timing_out is not None and p.timing_end is None)
             or (p.timing_end is not None and self.timing_out < p.timing_end - timezone.timedelta(days=1))
         )
 
-    def __unicode__(self):
+    def __str__(self):
         if self.timing_out is None:
-            return u'%s (%s : ...)' % (self.person, format_date(self.timing_in))
+            return '%s (%s : ...)' % (self.person, format_date(self.timing_in))
         else:
-            return u'%s (%s : %s)' % (self.person, format_date(self.timing_in), format_date(self.timing_out))
+            return '%s (%s : %s)' % (self.person, format_date(self.timing_in), format_date(self.timing_out))
 
     class Meta:
         ordering = ['timing_in', 'timing_out']
@@ -1282,34 +1293,34 @@ class Seat(models.Model):
 
 class CommitteeSeat(models.Model):
     COMMITTEE_SEAT_TYPES = (
-        (u'nefndarmaður', u'nefndarmaður'),
-        (u'varamaður', u'varamaður'),
-        (u'kjörinn varamaður', u'kjörinn varamaður'),
-        (u'formaður', u'formaður'),
-        (u'1. varaformaður', u'1. varaformaður'),
-        (u'2. varaformaður', u'2. varaformaður'),
-        (u'áheyrnarfulltrúi', u'áheyrnarfulltrúi'),
+        ('nefndarmaður', 'nefndarmaður'),
+        ('varamaður', 'varamaður'),
+        ('kjörinn varamaður', 'kjörinn varamaður'),
+        ('formaður', 'formaður'),
+        ('1. varaformaður', '1. varaformaður'),
+        ('2. varaformaður', '2. varaformaður'),
+        ('áheyrnarfulltrúi', 'áheyrnarfulltrúi'),
     )
 
-    person = models.ForeignKey('Person', related_name='committee_seats')
-    committee = models.ForeignKey('Committee', related_name='committee_seats')
-    parliament = models.ForeignKey('Parliament', related_name='committee_seats')
+    person = models.ForeignKey('Person', related_name='committee_seats', on_delete=CASCADE)
+    committee = models.ForeignKey('Committee', related_name='committee_seats', on_delete=CASCADE)
+    parliament = models.ForeignKey('Parliament', related_name='committee_seats', on_delete=CASCADE)
     committee_seat_type = models.CharField(max_length=20, choices=COMMITTEE_SEAT_TYPES)
     order = models.IntegerField()
 
     timing_in = models.DateTimeField()
     timing_out = models.DateTimeField(null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         if self.timing_out is None:
-            return u'%s (%s, %s : ...)' % (self.person, self.committee, format_date(self.timing_in))
+            return '%s (%s, %s : ...)' % (self.person, self.committee, format_date(self.timing_in))
         else:
             # Short-hands
             person = self.person
             committee = self.committee
             timing_in = self.timing_in
             timing_out = self.timing_out
-            return u'%s (%s, %s : %s)' % (person, committee, format_date(timing_in), format_date(timing_out))
+            return '%s (%s, %s : %s)' % (person, committee, format_date(timing_in), format_date(timing_out))
 
     class Meta:
         ordering = ['timing_in', 'timing_out']
@@ -1327,19 +1338,19 @@ class VoteCasting(models.Model):
     count_abstain = models.IntegerField(null=True)
     conclusion = models.CharField(max_length=100, null=True)
 
-    issue = models.ForeignKey('Issue', null=True, related_name='vote_castings')
-    document = models.ForeignKey('Document', null=True, related_name='vote_castings')
-    session = models.ForeignKey('Session', related_name='vote_castings')
+    issue = models.ForeignKey('Issue', null=True, related_name='vote_castings', on_delete=CASCADE)
+    document = models.ForeignKey('Document', null=True, related_name='vote_castings', on_delete=CASCADE)
+    session = models.ForeignKey('Session', related_name='vote_castings', on_delete=CASCADE)
 
-    to_committee = models.ForeignKey('Committee', null=True, related_name='vote_castings')
+    to_committee = models.ForeignKey('Committee', null=True, related_name='vote_castings', on_delete=CASCADE)
 
     vote_casting_xml_id = models.IntegerField(unique=True)
 
-    def __unicode__(self):
+    def __str__(self):
         if self.specifics:
-            return u'%s (%s), %s @ %s' % (self.vote_casting_type_text, self.specifics, self.method, self.timing)
+            return '%s (%s), %s @ %s' % (self.vote_casting_type_text, self.specifics, self.method, self.timing)
         else:
-            return u'%s, %s @ %s' % (self.vote_casting_type_text, self.method, self.timing)
+            return '%s, %s @ %s' % (self.vote_casting_type_text, self.method, self.timing)
 
     class Meta:
         ordering = ['timing']
@@ -1347,28 +1358,28 @@ class VoteCasting(models.Model):
 
 class Vote(models.Model):
     VOTE_RESPONSES = (
-        (u'já', u'já'),
-        (u'nei', u'nei'),
-        (u'fjarverandi', u'fjarverandi'),
-        (u'boðaði fjarvist', u'boðaði fjarvist'),
-        (u'greiðir ekki atkvæði', u'greiðir ekki atkvæði'),
+        ('já', 'já'),
+        ('nei', 'nei'),
+        ('fjarverandi', 'fjarverandi'),
+        ('boðaði fjarvist', 'boðaði fjarvist'),
+        ('greiðir ekki atkvæði', 'greiðir ekki atkvæði'),
     )
 
-    vote_casting = models.ForeignKey('VoteCasting', related_name='votes')
+    vote_casting = models.ForeignKey('VoteCasting', related_name='votes', on_delete=CASCADE)
     vote_response = models.CharField(max_length=20, choices=VOTE_RESPONSES)
-    person = models.ForeignKey('Person', related_name='votes')
+    person = models.ForeignKey('Person', related_name='votes', on_delete=CASCADE)
 
-    def __unicode__(self):
-        return u'%s: %s' % (self.person, self.vote_response)
+    def __str__(self):
+        return '%s: %s' % (self.person, self.vote_response)
 
     class Meta:
         unique_together = ('vote_casting', 'person')
 
 
 class Speech(models.Model):
-    person = models.ForeignKey('Person', related_name='speeches')
-    session = models.ForeignKey('Session', related_name='speeches')
-    issue = models.ForeignKey('Issue', null=True, related_name='speeches')
+    person = models.ForeignKey('Person', related_name='speeches', on_delete=CASCADE)
+    session = models.ForeignKey('Session', related_name='speeches', on_delete=CASCADE)
+    issue = models.ForeignKey('Issue', null=True, related_name='speeches', on_delete=CASCADE)
 
     date = models.DateTimeField()
     timing_start = models.DateTimeField()
@@ -1386,8 +1397,8 @@ class Speech(models.Model):
     text_remote_path = models.CharField(max_length=500, null=True)
     sound_remote_path = models.CharField(max_length=500, null=True)
 
-    def __unicode__(self):
-        return u'%s @ %s' % (self.person, self.timing_start)
+    def __str__(self):
+        return '%s @ %s' % (self.person, self.timing_start)
 
     class Meta:
         ordering = ['timing_start']
@@ -1403,7 +1414,7 @@ class CategoryGroup(models.Model):
         self.slug = slugify(unidecode(self.name))
         super(CategoryGroup, self).save(*args, **kwargs)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     class Meta:
@@ -1414,7 +1425,7 @@ class Category(models.Model):
     name = models.CharField(max_length=200)
     slug = models.CharField(max_length=200)
     description = models.CharField(max_length=1000)
-    group = models.ForeignKey('CategoryGroup')
+    group = models.ForeignKey('CategoryGroup', on_delete=CASCADE)
 
     category_xml_id = models.IntegerField(unique=True)
 
@@ -1422,7 +1433,7 @@ class Category(models.Model):
         self.slug = slugify(unidecode(self.name))
         super(Category, self).save(*args, **kwargs)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     class Meta:

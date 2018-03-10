@@ -3,7 +3,7 @@
 {% load smart_urls %}
 
 <h2>
-    {% if view_func_name != 'parliament_session' %}
+    {% if view_name != 'parliament_session' %}
         <a href="{% breadcrumb_url 'parliament_session' session.parliament.parliament_num session.session_num %}"><span class="glyphicon glyphicon-resize-full"></span></a>
     {% endif %}
     {{ session.name }}

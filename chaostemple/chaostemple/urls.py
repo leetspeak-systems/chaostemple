@@ -1,17 +1,14 @@
 from django.conf import settings
-from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.auth import views
+from django.urls import include
+from django.urls import path
 
 urlpatterns = [
-    # Examples:
-    # url(r'^$', 'chaostemple.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
-
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^accounts/', include('customsignup.urls')),
-    url(r'^terms/', include('termsandconditions.urls')),
-    url(r'^', include('core.urls')),
+    path('admin/', admin.site.urls),
+    path('accounts/', include('customsignup.urls')),
+    path('terms/', include('termsandconditions.urls')),
+    path('', include('core.urls')),
 ]
 
 
@@ -19,5 +16,5 @@ urlpatterns = [
 if settings.DEBUG and 'debug_toolbar.apps.DebugToolbarConfig' in settings.INSTALLED_APPS:
     import debug_toolbar
     urlpatterns += [
-        url(r'^__debug__/', include(debug_toolbar.urls)),
+        path('__debug__/', include(debug_toolbar.urls)),
     ]

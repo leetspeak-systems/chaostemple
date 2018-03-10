@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os
 import sys
 
@@ -40,7 +39,7 @@ from althingi.utils import get_last_parliament_num
 
 
 # Test dummies.
-test_dummy = (1166, 148, u'Helgi Hrafn Gunnarsson')
+test_dummy = (1166, 148, 'Helgi Hrafn Gunnarsson')
 broken_test_dummy = (3, 148, 'Broken Test Dummy')
 
 # Test dummy vote castings.
@@ -48,19 +47,19 @@ test_dummy_vote_casting = (54805, 148)
 broken_test_dummy_vote_casting = (1, 148)
 
 # Test dummy committee.
-test_dummy_committee = (201, 148, u'allsherjar- og menntamálanefnd')
-broken_test_dummy_committee = (1, 148, u'broken test dummy committee')
+test_dummy_committee = (201, 148, 'allsherjar- og menntamálanefnd')
+broken_test_dummy_committee = (1, 148, 'broken test dummy committee')
 
 # Test dummy issue.
-test_dummy_issue = (1, 148, u'fjárlög 2018')
-broken_test_dummy_issue = (139, 147, u'Broken Test Dummy Issue')
+test_dummy_issue = (1, 148, 'fjárlög 2018')
+broken_test_dummy_issue = (139, 147, 'Broken Test Dummy Issue')
 
 # Test dummy sessions
-test_dummy_session = (3, 148, u'3. fundur')
-broken_test_dummy_session = (9, 147, u'Broken Test Dummy Session')
+test_dummy_session = (3, 148, '3. fundur')
+broken_test_dummy_session = (9, 147, 'Broken Test Dummy Session')
 
 # Test dummy committee agenda.
-test_dummy_committee_agenda = (18462, 148, u'21. desember 17, kl. 10:00 árdegis')
+test_dummy_committee_agenda = (18462, 148, '21. desember 17, kl. 10:00 árdegis')
 broken_test_dummy_committee_agenda = (1, 148, 'Broken Test Dummy Committee Agenda')
 
 

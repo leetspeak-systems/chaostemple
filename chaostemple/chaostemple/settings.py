@@ -46,13 +46,12 @@ ACCOUNT_ACTIVATION_DAYS = 1
 REGISTRATION_AUTO_LOGIN = True
 REGISTRATION_OPEN = True
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
@@ -62,7 +61,7 @@ MIDDLEWARE_CLASSES = (
 
     'core.middleware.AccessMiddleware',
     'core.middleware.ExtraVarsMiddleware',
-)
+]
 
 TEMPLATES = [
     {
@@ -123,7 +122,7 @@ if DEBUG:
         imp.find_module('debug_toolbar')
 
         INSTALLED_APPS += ('debug_toolbar.apps.DebugToolbarConfig',)
-        MIDDLEWARE_CLASSES += ('debug_toolbar.middleware.DebugToolbarMiddleware',)
+        MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']
         DEBUG_TOOLBAR_CONFIG = {
             'JQUERY_URL': ''
         }

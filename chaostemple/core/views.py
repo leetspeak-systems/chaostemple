@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
 import operator
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db.models import Case
 from django.db.models import Count
 from django.db.models import Prefetch
@@ -256,7 +255,7 @@ def parliament_issue(request, parliament_num, issue_num):
         'committee'
     ).filter(committee_agenda_items__issue_id=issue.id)
 
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         statistic, c = DossierStatistic.objects.get_or_create(issue_id=issue.id, user_id=request.user.id)
 
         stats_updated = False
@@ -378,7 +377,7 @@ def parliament_committee_agenda(request, parliament_num, committee_id, agenda_id
         'issue__proposers__person', 'issue__proposers__committee'
     ).all()
 
-    IssueUtilities.populate_dossier_statistics(filter(None, [i.issue for i in committee_agenda_items]))
+    IssueUtilities.populate_dossier_statistics([i.issue for i in committee_agenda_items])
 
     ctx = {
         'committee': committee,

@@ -1,9 +1,8 @@
-# -*- coding: utf-8
-from __future__ import unicode_literals
-
 from django.conf import settings
 from django.db import models
+from django.db.models import CASCADE
 from django.db.models import F
+from django.db.models import PROTECT
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
@@ -61,35 +60,35 @@ class Dossier(models.Model):
     )
 
     DOC_TYPE_EXCLUSIONS = {
-        u'beiðni um skýrslu': ['support', 'proposal'],
-        u'breytingartillaga': ['support'],
-        u'frumvarp': ['support', 'proposal'],
-        u'frumvarp eftir 2. umræðu': ['support', 'proposal'],
-        u'frumvarp nefndar': ['support', 'proposal'],
-        u'fsp. til munnl. svars': ['support', 'proposal'],
-        u'fsp. til skrifl. svars': ['support', 'proposal'],
-        u'lög (samhlj.)': ['memo', 'knowledge', 'attention', 'support', 'proposal'],
-        u'lög í heild': ['support', 'proposal'],
-        u'nál. með brtt.': [],
-        u'nefndarálit': ['proposal'],
-        u'skýrsla n. (frumskjal)': ['support', 'proposal'],
-        u'skýrsla rh. (frumskjal)': ['support', 'proposal'],
-        u'stjórnarfrumvarp': ['support', 'proposal'],
-        u'stjórnartillaga': ['support', 'proposal'],
-        u'svar': ['support', 'proposal'],
-        u'þál. (samhlj.)': ['memo', 'knowledge', 'attention', 'support', 'proposal'],
-        u'þál. í heild': ['support', 'proposal'],
-        u'þáltill.': ['support', 'proposal'],
-        u'þáltill. n.': ['support', 'proposal'],
+        'beiðni um skýrslu': ['support', 'proposal'],
+        'breytingartillaga': ['support'],
+        'frumvarp': ['support', 'proposal'],
+        'frumvarp eftir 2. umræðu': ['support', 'proposal'],
+        'frumvarp nefndar': ['support', 'proposal'],
+        'fsp. til munnl. svars': ['support', 'proposal'],
+        'fsp. til skrifl. svars': ['support', 'proposal'],
+        'lög (samhlj.)': ['memo', 'knowledge', 'attention', 'support', 'proposal'],
+        'lög í heild': ['support', 'proposal'],
+        'nál. með brtt.': [],
+        'nefndarálit': ['proposal'],
+        'skýrsla n. (frumskjal)': ['support', 'proposal'],
+        'skýrsla rh. (frumskjal)': ['support', 'proposal'],
+        'stjórnarfrumvarp': ['support', 'proposal'],
+        'stjórnartillaga': ['support', 'proposal'],
+        'svar': ['support', 'proposal'],
+        'þál. (samhlj.)': ['memo', 'knowledge', 'attention', 'support', 'proposal'],
+        'þál. í heild': ['support', 'proposal'],
+        'þáltill.': ['support', 'proposal'],
+        'þáltill. n.': ['support', 'proposal'],
     }
 
-    issue = models.ForeignKey(Issue, related_name='dossiers')
+    issue = models.ForeignKey(Issue, related_name='dossiers', on_delete=CASCADE)
     dossier_type = models.CharField(max_length=10, choices=DOSSIER_TYPES)
 
-    document = models.ForeignKey(Document, null=True, related_name='dossiers', on_delete=models.PROTECT)
-    review = models.ForeignKey(Review, null=True, related_name='dossiers', on_delete=models.PROTECT)
+    document = models.ForeignKey(Document, null=True, related_name='dossiers', on_delete=PROTECT)
+    review = models.ForeignKey(Review, null=True, related_name='dossiers', on_delete=PROTECT)
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='dossiers')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='dossiers', on_delete=CASCADE)
     attention = models.CharField(max_length=20, default='none', choices=ATTENTION_STATES)
     knowledge = models.IntegerField(default=0, choices=KNOWLEDGE_STATES)
     support = models.CharField(max_length=20, default='undefined', choices=SUPPORT_STATES)
@@ -223,8 +222,8 @@ class Dossier(models.Model):
 
 
 class DossierStatistic(models.Model):
-    issue = models.ForeignKey(Issue)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='dossier_statistics')
+    issue = models.ForeignKey(Issue, on_delete=CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='dossier_statistics', on_delete=CASCADE)
     has_useful_info = models.BooleanField(default=False)
 
     document_attention_exclamation = models.IntegerField(default=0)
@@ -331,7 +330,7 @@ class DossierStatistic(models.Model):
                         }
                         count = Dossier.objects.filter(**kwargs).exclude(**exclude_kwargs).count()
                         if getattr(self, stat_field_name) != count:
-                            print "(%s, %s) %s: %d" % (self.user, self.issue, stat_field_name, count)
+                            print("(%s, %s) %s: %d" % (self.user, self.issue, stat_field_name, count))
                         setattr(self, stat_field_name, count)
 
             count_fieldname = '%s_count' % dossier_type
@@ -341,7 +340,7 @@ class DossierStatistic(models.Model):
                 dossier_type=dossier_type
             ).count()
             if getattr(self, count_fieldname) != count:
-                print '(%s, %s) %s: %d' % (self.user, self.issue, count_fieldname, count)
+                print('(%s, %s) %s: %d' % (self.user, self.issue, count_fieldname, count))
             setattr(self, count_fieldname, count)
 
             memo_count_fieldname = '%s_memo_count' % dossier_type
@@ -351,15 +350,15 @@ class DossierStatistic(models.Model):
                 dossier__dossier_type=dossier_type
             ).count()
             if getattr(self, memo_count_fieldname) != memo_count:
-                print '(%s, %s) %s: %d' % (self.user, self.issue, memo_count_fieldname, memo_count)
+                print('(%s, %s) %s: %d' % (self.user, self.issue, memo_count_fieldname, memo_count))
             setattr(self, memo_count_fieldname, memo_count)
 
         self.save()
 
 
 class Memo(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='memos')
-    dossier = models.ForeignKey('Dossier', related_name='memos')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='memos', on_delete=CASCADE)
+    dossier = models.ForeignKey('Dossier', related_name='memos', on_delete=CASCADE)
     content = models.CharField(max_length=2000)
     order = models.IntegerField()
 

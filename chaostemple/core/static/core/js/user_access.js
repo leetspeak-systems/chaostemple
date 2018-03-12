@@ -95,7 +95,7 @@ $(document).ready(function() {
             message: {
                 'transit': 'Granting access...',
                 'success': 'Access granted.',
-                'failure': 'Failred to grant access.'
+                'failure': 'Failed to grant access.'
             },
             url: url,
             data: {

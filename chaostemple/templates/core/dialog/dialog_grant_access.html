@@ -1,21 +1,34 @@
 {% load i18n %}
 
-<div class="modal fade" control="grant-access-issue-dialog" role="dialog">
+<div class="modal fade" control="grant-access-dialog" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-body">
                 <p>{% trans 'Grant Access' %}:</p>
+                <span control="friend-selection">
+                    <p style="float: left;">
+                        <label><input type="radio" name="friend-type" value="group" /> {% trans 'Group' %}:</label>
+                        <select control="friend-group-id" class="form-control" style="width: 200px;">
+                            <option value=""></option>
+                            {% for group in groups %}
+                                <option value="{{ group.id }}">{{ group }}</option>
+                            {% endfor %}
+                        </select>
+                    </p>
+                    <p style="float: right;">
+                        <label><input type="radio" name="friend-type" value="user" /> {% trans 'User' %}:</label>
+                        <select control="friend-id" class="form-control" style="width: 200px;">
+                            <option value=""></option>
+                            {% for user in users %}
+                                <option value="{{ user.id }}">{{ user.userprofile }}</option>
+                            {% endfor %}
+                        </select>
+                    </p>
+                </span>
                 <p>
-                    {% trans 'User' %}:
-                    <select control="grant-access-friend-id" class="form-control">
-                        <option value=""></option>
-                        {% for user in users %}
-                            <option value="{{ user.id }}">{{ user.userprofile }}</option>
-                        {% endfor %}
-                    </select>
                     <span style="float: right;">
                         {% trans 'Full Access' %}:
-                        <input type="checkbox" control="grant-access-full-access" value="" />
+                        <input type="checkbox" control="full-access" value="" />
                     </span>
                 </p>
                 <p>
@@ -26,14 +39,14 @@
                         </tr>
                         <tr>
                             <td style="width: 1px;">
-                                <select control="grant-access-parliament-num">
+                                <select control="parliament-num">
                                     {% for parliament in parliaments %}
                                         <option value="{{ parliament.parliament_num }}">{{ parliament.parliament_num }}</option>
                                     {% endfor %}
                                 </select>
                             </td>
                             <td>
-                                <select control="grant-access-issue-id" class="form-control" style="width: 100%;">
+                                <select control="issue-id" class="form-control" style="width: 100%;">
                                     <option value=""></option>
                                     {% for issue in issues %}
                                         <option value="{{ issue.id }}">{{ issue.detailed }}</option>
@@ -46,7 +59,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Cancel' %}</button>
-                <button type="button" class="btn btn-primary" control="grant-access-issue-confirmed" data-id="0" data-dismiss="modal">{% trans 'Grant Access' %}</button>
+                <button type="button" class="btn btn-primary" control="grant-access-confirmed" data-id="0" data-dismiss="modal">{% trans 'Grant Access' %}</button>
             </div>
         </div>
     </div>

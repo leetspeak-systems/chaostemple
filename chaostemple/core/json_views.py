@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.http import Http404
 from django.urls import reverse
 from django.db.utils import IntegrityError
 from django.template.loader import render_to_string
@@ -88,25 +89,38 @@ def issue_bookmark_menu(request, parliament_num):
 
 @login_required
 @jsonize
-def user_access_grant(request, friend_id, issue_id=None):
+def access_grant(request, friend_group_id=None, friend_id=None, issue_id=None):
+
+    lookup_kwargs = { 'user_id': request.user.id }
+
+    if friend_group_id:
+        lookup_kwargs['friend_group_id'] = friend_group_id
+    elif friend_id:
+        lookup_kwargs['friend_id'] = friend_id
+    else:
+        raise Http404
 
     try:
-        access = Access.objects.get(user_id=request.user.id, friend_id=friend_id)
+        access = Access.objects.get(**lookup_kwargs)
     except Access.DoesNotExist:
-        access = Access(user_id=request.user.id, friend_id=friend_id)
+        access = Access(**lookup_kwargs)
 
     if 'full_access' in request.GET:
         access.full_access = request.GET.get('full_access', False) == 'true'
 
     access.save()
 
-    try:
-        if issue_id is not None and not access.full_access:
-            access.issues.add(issue_id)
-    except IntegrityError:
-        pass
+    if issue_id is not None and not access.full_access:
+        access.issues.add(issue_id)
 
-    access_list = Access.objects.prefetch_related('issues__parliament').select_related('friend').filter(user_id=request.user.id)
+    access_list = Access.objects.prefetch_related(
+        'issues__parliament'
+    ).select_related(
+        'friend__userprofile',
+        'friend_group'
+    ).filter(
+        user_id=request.user.id
+    )
 
     html_content = render_to_string('core/stub/user_access_list.html', { 'access_list': access_list })
 
@@ -118,9 +132,21 @@ def user_access_grant(request, friend_id, issue_id=None):
 
 @login_required
 @jsonize
-def user_access_revoke(request, friend_id, issue_id=None):
+def access_revoke(request, friend_group_id=None, friend_id=None, issue_id=None):
 
-    access = Access.objects.get(user_id=request.user.id, friend_id=friend_id)
+    lookup_kwargs = { 'user_id': request.user.id }
+
+    if friend_group_id:
+        lookup_kwargs['friend_group_id'] = friend_group_id
+    elif friend_id:
+        lookup_kwargs['friend_id'] = friend_id
+    else:
+        raise Http404
+
+    try:
+        access = Access.objects.get(**lookup_kwargs)
+    except Access.DoesNotExist:
+        access = Access(**lookup_kwargs)
 
     if issue_id is None:
         access.delete()
@@ -128,7 +154,14 @@ def user_access_revoke(request, friend_id, issue_id=None):
         issue_id = int(issue_id) # This should work or we should fail
         access.issues.remove(issue_id)
 
-    access_list = Access.objects.prefetch_related('issues__parliament').select_related('friend').filter(user_id=request.user.id)
+    access_list = Access.objects.prefetch_related(
+        'issues__parliament'
+    ).select_related(
+        'friend__userprofile',
+        'friend_group'
+    ).filter(
+        user_id=request.user.id
+    )
 
     html_content = render_to_string('core/stub/user_access_list.html', { 'access_list': access_list })
 

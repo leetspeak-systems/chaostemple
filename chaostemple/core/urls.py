@@ -1,4 +1,5 @@
 from django.conf.urls import include, url
+from django.urls import path
 
 from core import views
 from core import json_views
@@ -38,10 +39,14 @@ urlpatterns = [
     url(r'^json/bookmark/issue/toggle/(?P<issue_id>\d+)/$', json_views.issue_bookmark_toggle, name='json_issue_bookmark_toggle'),
     url(r'^json/bookmark/issue/menu/(?P<parliament_num>\d+)$', json_views.issue_bookmark_menu, name='json_issue_bookmark_menu'),
 
-    url(r'^json/user/access/grant/(?P<friend_id>\d+)/$', json_views.user_access_grant),
-    url(r'^json/user/access/grant/(?P<friend_id>\d+)/issue/(?P<issue_id>\d+)$', json_views.user_access_grant),
-    url(r'^json/user/access/revoke/(?P<friend_id>\d+)/$', json_views.user_access_revoke),
-    url(r'^json/user/access/revoke/(?P<friend_id>\d+)/issue/(?P<issue_id>\d+)/$', json_views.user_access_revoke),
+    path('json/access/grant/group/<int:friend_group_id>/', json_views.access_grant),
+    path('json/access/grant/group/<int:friend_group_id>/issue/<int:issue_id>/', json_views.access_grant),
+    path('json/access/grant/user/<int:friend_id>/', json_views.access_grant),
+    path('json/access/grant/user/<int:friend_id>/issue/<int:issue_id>/', json_views.access_grant),
+    path('json/access/revoke/group/<int:friend_group_id>/', json_views.access_revoke),
+    path('json/access/revoke/group/<int:friend_group_id>/issue/<int:issue_id>/', json_views.access_revoke),
+    path('json/access/revoke/user/<int:friend_id>/', json_views.access_revoke),
+    path('json/access/revoke/user/<int:friend_id>/issue/<int:issue_id>/', json_views.access_revoke),
 
     url(r'^dossier/', include('dossier.urls')),
 ]

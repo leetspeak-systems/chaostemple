@@ -1,58 +1,76 @@
 $(document).ready(function() {
 
-    $(document).on('click', 'button[control="revoke-access-user"]', function() {
-        var $this = $(this);
-        var friend_id = $this.attr('data-friend-id');
-        var friend_name = $this.attr('data-friend-name');
-
-        var $dialog = $('div[control="revoke-access-user-dialog"]');
-        $dialog.find('input#revoke-access-user-friend-id').val(friend_id);
-        $dialog.find('span[control="revoke-access-user-friend-name"]').html(friend_name);
-        $dialog.modal();
-    });
-
-    $(document).on('click', 'button[control="revoke-access-user-confirmed"]', function() {
-        var friend_id = $('input#revoke-access-user-friend-id').val();
-
-        $.jsonize({
-            message: {
-                'transit': 'Removing friend from access...',
-                'success': 'Friend removed from access.',
-                'failure': 'Failed to remove friend from access!',
-            },
-            url: '/json/user/access/revoke/' + friend_id + '/',
-            done: function(data, textStatus) {
-                $('div[control="access-list"]').html(data.html_content);
-                $('input[type="checkbox"]').bootstrapSwitch();
-            }
-        });
-    });
-
-    $(document).on('click', 'button[control="revoke-access-issue"]', function() {
+    $(document).on('click', 'button[control="revoke-access"]', function() {
+        // Gather data.
+        var friend_group_id = $(this).attr('data-friend-group-id');
+        var friend_group_name = $(this).attr('data-friend-group-name');
         var friend_id = $(this).attr('data-friend-id');
         var friend_name = $(this).attr('data-friend-name');
         var issue_id = $(this).attr('data-issue-id');
         var issue_name = $(this).attr('data-issue-name');
 
-        var $dialog = $('div[control="revoke-access-issue-dialog"]');
-        $dialog.find('input#revoke-access-issue-friend-id').val(friend_id);
-        $dialog.find('span[control="revoke-access-issue-friend-name"]').html(friend_name);
-        $dialog.find('input#revoke-access-issue-id').val(issue_id);
-        $dialog.find('span[control="revoke-access-issue-name"]').html(issue_name);
+        // Gather controls.
+        var $dialog = $('div[control="revoke-access-dialog"]');
+
+        // Set variables that need to be passed on.
+        $dialog.find('input#friend-group-id').val(friend_group_id);
+        $dialog.find('input#friend-id').val(friend_id);
+        $dialog.find('input#issue-id').val(issue_id);
+
+        // Configure display fields.
+        $dialog.find('span[control="friend-group-name"]').html(friend_group_name || '');
+        $dialog.find('span[control="friend-name"]').html(friend_name || '');
+        $dialog.find('span[control="issue-name"]').html(issue_name || '');
+
+        // Show user or group portion, depending on which one we want.
+        if (friend_group_id) {
+            $dialog.find('p[control="group-display"]').show();
+            $dialog.find('p[control="user-display"]').hide();
+        }
+        else if (friend_id) {
+            $dialog.find('p[control="group-display"]').hide();
+            $dialog.find('p[control="user-display"]').show();
+        }
+
+        // Show or hide issue portion, depending on whether revoking access to issue or altogether.
+        if (issue_id) {
+            $dialog.find('p[control="issue-display"]').show();
+        }
+        else {
+            $dialog.find('p[control="issue-display"]').hide();
+        }
+
+        // Display the dialog.
         $dialog.modal();
     });
 
-    $(document).on('click', 'button[control="revoke-access-issue-confirmed"]', function() {
-        var friend_id = $('input#revoke-access-issue-friend-id').val();
-        var issue_id = $('input#revoke-access-issue-id').val();
+    $(document).on('click', 'button[control="revoke-access-confirmed"]', function() {
+        var friend_group_id = $('input#friend-group-id').val();
+        var friend_id = $('input#friend-id').val();
+        var issue_id = $('input#issue-id').val();
+
+        url = '/json/access/revoke/';
+
+        // Select URL according to whether we're adding a group or an individual user.
+        if (friend_group_id) {
+            url += 'group/' + friend_group_id + '/';
+        }
+        else if (friend_id) {
+            url += 'user/' + friend_id + '/';
+        }
+
+        // Append the issue ID if only adding access to one issue.
+        if (issue_id) {
+            url += 'issue/' + issue_id + '/';
+        }
 
         $.jsonize({
             message: {
-                'transit': 'Revoking access to issue...',
-                'success': 'Access to issue revoked',
-                'failure': 'Failed to revoke access to issue!',
+                'transit': 'Revoking access...',
+                'success': 'Access revoked',
+                'failure': 'Failed to revoke access!',
             },
-            url: '/json/user/access/revoke/' + friend_id + '/issue/' + issue_id + '/',
+            url: url,
             done: function(data, textStatus) {
                 $('div[control="access-list"]').html(data.html_content);
                 $('input[type="checkbox"]').bootstrapSwitch();
@@ -60,35 +78,103 @@ $(document).ready(function() {
         });
     });
 
-    $(document).on('click', 'button[control="grant-access-issue"]', function() {
+    $(document).on('change', 'span[control="friend-selection"] select', function() {
         var $this = $(this);
-        var friend_id = $this.attr('data-friend-id');
-        var full_access = true;
 
-        if (friend_id) {
-            full_access = $('input[control="toggle-full-access"][data-friend-id=' + friend_id + ']').bootstrapSwitch('state');
-        }
-
-        var $dialog = $('div[control="grant-access-issue-dialog"]');
-        $dialog.find('select[control="grant-access-friend-id"]').val(friend_id).select2();
-        $dialog.find('input[control="grant-access-full-access"]').bootstrapSwitch('state', full_access);
-        $dialog.modal();
-    });
-
-    $(document).on('click', 'button[control="grant-access-issue-confirmed"]', function() {
-        var friend_id = $('select[control="grant-access-friend-id"]').val();
-        var issue_id = $('select[control="grant-access-issue-id"]').val();
-        var full_access = $('input[control="grant-access-full-access"]').is(':checked');
-
-        if (!friend_id) {
+        if ($this.val() == '') {
             return;
         }
 
-        if (issue_id) {
-            url = '/json/user/access/grant/' + friend_id + '/issue/' + issue_id;
+        var $radio_group = $('input[type="radio"][value="group"]');
+        var $radio_user = $('input[type="radio"][value="user"]');
+        var $dropdown_group = $('select[control="friend-group-id"]');
+        var $dropdown_user = $('select[control="friend-id"]');
+
+        var control_name = $this.attr('control');
+
+        if (control_name == 'friend-group-id') {
+            $radio_user.prop('checked', false);
+            $radio_group.prop('checked', true);
+            $dropdown_user.val('').trigger('change');
+        }
+        else if (control_name == 'friend-id') {
+            $radio_group.prop('checked', false);
+            $radio_user.prop('checked', true);
+            $dropdown_group.val('').trigger('change');
+        }
+    });
+
+    $(document).on('click', 'button[control="grant-access"]', function() {
+        // Gather data.
+        var $this = $(this);
+        var friend_group_id = $this.attr('data-friend-group-id');
+        var friend_id = $this.attr('data-friend-id');
+        var full_access = true;
+        if (friend_group_id) {
+            full_access = $(
+                'input[control="toggle-full-access"][data-friend-group-id=' + friend_group_id + ']'
+            ).bootstrapSwitch('state');
+        }
+        else if (friend_id) {
+            full_access = $(
+                'input[control="toggle-full-access"][data-friend-id=' + friend_id + ']'
+            ).bootstrapSwitch('state');
+        }
+
+        // Gather controls.
+        var $dialog = $('div[control="grant-access-dialog"]');
+        var $radio_group = $dialog.find('input[type="radio"][value="group"]');
+        var $radio_user = $dialog.find('input[type="radio"][value="user"]');
+        var $friend_group_id = $dialog.find('select[control="friend-group-id"]');
+        var $friend_id = $dialog.find('select[control="friend-id"]');
+
+        // Configure display and input controls.
+        if (friend_group_id) {
+            $radio_user.prop('checked', false);
+            $radio_group.prop('checked', true);
+            $friend_group_id.val(friend_group_id).select2();
+            $friend_id.val('').select2();
+        }
+        else if (friend_id) {
+            $radio_group.prop('checked', false);
+            $radio_user.prop('checked', true);
+            $friend_group_id.val('').select2();
+            $friend_id.val(friend_id).select2();
         }
         else {
-            url = '/json/user/access/grant/' + friend_id + '/';
+            $radio_group.prop('checked', false);
+            $radio_user.prop('checked', false);
+            $friend_group_id.val('').select2();
+            $friend_id.val('').select2();
+        }
+        $dialog.find('input[control="full-access"]').bootstrapSwitch('state', full_access);
+
+        // Show the dialog.
+        $dialog.modal();
+    });
+
+    $(document).on('click', 'button[control="grant-access-confirmed"]', function() {
+        var friend_group_id = $('select[control="friend-group-id"]').val();
+        var friend_id = $('select[control="friend-id"]').val();
+        var issue_id = $('select[control="issue-id"]').val();
+        var full_access = $('input[control="full-access"]').is(':checked');
+
+        if (!friend_id && !friend_group_id) {
+            return;
+        }
+
+        url = '/json/access/grant/';
+
+        if (friend_group_id) {
+            url += 'group/' + friend_group_id + '/';
+        }
+        else if (friend_id) {
+            url += 'user/' + friend_id + '/';
+        }
+
+        // Append the issue ID if only adding access to one issue.
+        if (issue_id) {
+            url += 'issue/' + issue_id + '/';
         }
 
         $.jsonize({
@@ -104,23 +190,23 @@ $(document).ready(function() {
             done: function(data, textStatus) {
                 $('div[control="access-list"]').html(data.html_content);
                 $('input[type="checkbox"]').bootstrapSwitch();
-                $('select[control="grant-access-issue-id"]').select2('val', '');
+                $('select[control="issue-id"]').select2('val', '');
             }
         });
     });
 
-    $(document).on('switchChange.bootstrapSwitch', 'input[control="grant-access-full-access"]', function(event, state) {
-        var $parliament_id = $('select[control="grant-access-parliament-id"]');
-        var $issue_id = $('select[control="grant-access-issue-id"]');
+    $(document).on('switchChange.bootstrapSwitch', 'input[control="full-access"]', function(event, state) {
+        var $parliament_id = $('select[control="parliament-id"]');
+        var $issue_id = $('select[control="issue-id"]');
 
         $parliament_id.prop('disabled', state);
         $issue_id.prop('disabled', state);
     });
 
-    $(document).on('change', 'select[control="grant-access-parliament-num"]', function() {
+    $(document).on('change', 'select[control="parliament-num"]', function() {
         var $this = $(this);
         var parliament_num = $this.val();
-        var $grant_access_issue = $('select[control="grant-access-issue-id"]');
+        var $grant_access_issue = $('select[control="issue-id"]');
 
         $grant_access_issue.select2('val', '');
 
@@ -156,7 +242,16 @@ $(document).ready(function() {
             msg_failure = 'Failed to revoke full access!';
         }
 
+        var friend_group_id = $(this).attr('data-friend-group-id');
         var friend_id = $(this).attr('data-friend-id');
+
+        var url = '/json/access/grant/';
+        if (friend_group_id) {
+            url += 'group/' + friend_group_id + '/';
+        }
+        else if (friend_id) {
+            url += 'user/' + friend_id + '/';
+        }
 
         $.jsonize({
             message: {
@@ -164,19 +259,18 @@ $(document).ready(function() {
                 'success': msg_success,
                 'failure': msg_failure
             },
-            url: '/json/user/access/grant/' + friend_id + '/',
+            url: url,
             data: {
                 'full_access': state
             },
             done: function(data, textStatus) {
                 if (state != data.full_access) {
                     alert("An unexpected error occurred!");
-                    $('input[control="toggle-full-access"][data-friend-id=' + friend_id + ']').bootstrapSwitch('state', data.full_access, true);
                 }
             },
             error: function(data, textStatus) {
                 // Revert state to whatever it was before.
-                $('input[control="toggle-full-access"][data-friend-id="' + friend_id + '"]').bootstrapSwitch('state', !state, true);
+                $(this).bootstrapSwitch('state', !state, true);
             }
         });
     });

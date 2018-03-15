@@ -3,7 +3,7 @@
 <table class="table">
     <tr>
         <th>
-            <button control="grant-access-issue" class="btn btn-xs btn-default">
+            <button control="grant-access" class="btn btn-xs btn-default">
                 <span class="glyphicon glyphicon-plus"></span>
             </button>
         </th>
@@ -13,34 +13,55 @@
     </tr>
     {% for access in access_list %}
         <tr>
+
             <td style="width: 1px;">
-                <button control="revoke-access-user" class="btn btn-xs btn-danger"
-                        data-friend-id="{{ access.friend_id }}"
-                        data-friend-name="{{ access.friend.userprofile }}">
+                <button control="revoke-access" class="btn btn-xs btn-danger"
+                        data-friend-group-id="{{ access.friend_group_id|default:'' }}"
+                        data-friend-group-name="{{ access.friend_group|default:'' }}"
+                        data-friend-id="{{ access.friend_id|default:'' }}"
+                        data-friend-name="{{ access.friend.userprofile|default:'' }}">
                     <span class="glyphicon glyphicon-remove"></span>
                 </button>
             </td>
-            <td><strong>{{ access.friend.userprofile }}</strong></td>
+
+            {% if access.friend_group_id %}
+                <td>
+                    <i class="glyphicon glyphicon-tent"></i>
+                    <strong>{{ access.friend_group }}</strong>
+                </td>
+            {% elif access.friend_id %}
+                <td>
+                    <i class="glyphicon glyphicon-user"></i>
+                    <strong>{{ access.friend.userprofile }}</strong>
+                </td>
+            {% endif %}
+
             <td>
-                <button control="grant-access-issue" class="btn btn-xs btn-default"
-                        data-friend-id="{{ access.friend_id }}"
-                        data-friend-name="{{ access.friend.userprofile }}">
+                <button control="grant-access" class="btn btn-xs btn-default"
+                        data-friend-group-id="{{ access.friend_group_id|default:'' }}"
+                        data-friend-group-name="{{ access.friend_group|default:'' }}"
+                        data-friend-id="{{ access.friend_id|default:'' }}"
+                        data-friend-name="{{ access.friend.userprofile|default:'' }}">
                     <span class="glyphicon glyphicon-plus"></span>
                 </button>
 
                 {{ access.issues.count }}
             </td>
             <td style="text-align: right;">
-                <input type="checkbox" control="toggle-full-access" {% if access.full_access %}checked="checked"{% endif %}
-                        data-friend-id="{{ access.friend_id }}"  />
+                <input type="checkbox" control="toggle-full-access"
+                        {% if access.full_access %}checked="checked"{% endif %}
+                        data-friend-group-id="{{ access.friend_group_id|default:'' }}"
+                        data-friend-id="{{ access.friend_id|default:'' }}" />
             </td>
         </tr>
         {% for issue in access.issues.all %}
             <tr>
                 <td style="width: 1px;">
-                    <button control="revoke-access-issue" class="btn btn-xs btn-danger"
-                            data-friend-id="{{ access.friend_id }}"
-                            data-friend-name="{{ access.friend.userprofile }}"
+                    <button control="revoke-access" class="btn btn-xs btn-danger"
+                            data-friend-group-id="{{ access.friend_group_id|default:'' }}"
+                            data-friend-group-name="{{ access.friend_group|default:'' }}"
+                            data-friend-id="{{ access.friend_id|default:'' }}"
+                            data-friend-name="{{ access.friend.userprofile|default:'' }}"
                             data-issue-id="{{ issue.id }}"
                             data-issue-name="{{ issue }}{% if issue.description %} ({{ issue.description }}){% endif %}">
                         <span class="glyphicon glyphicon-remove"></span>

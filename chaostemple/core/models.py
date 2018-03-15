@@ -151,10 +151,11 @@ class Issue(AlthingiIssue):
 
 class Access(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='access', on_delete=CASCADE)
-    friend = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='friend_access', on_delete=CASCADE)
+    friend = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, related_name='friend_access', on_delete=CASCADE)
+    friend_group = models.ForeignKey('auth.Group', null=True, related_name='friend_group_access', on_delete=CASCADE)
 
     full_access = models.BooleanField(default=False)
     issues = models.ManyToManyField('Issue')
 
     class Meta:
-        ordering = ['friend__username']
+        ordering = ['friend__userprofile__initials', 'friend_group__name']

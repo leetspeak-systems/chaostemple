@@ -1,0 +1,31 @@
+{% load i18n %}
+
+<div class="modal fade" control="revoke-access-dialog" role="dialog">
+    <input type="hidden" id="friend-group-id" value="" />
+    <input type="hidden" id="friend-id" value="" />
+    <input type="hidden" id="issue-id" value="" />
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p>{% blocktrans %}Are you sure you want to revoke this access?{% endblocktrans %}</p>
+                <p control="group-display">
+                    {% trans 'Group' %}:
+                    <em><span control="friend-group-name">[friend-group]</span></em>
+                </p>
+                <p control="user-display">
+                    {% trans 'User' %}:
+                    <em><span control="friend-name">[friend]</span></em>
+                </p>
+                <p control="issue-display">
+                    {% trans 'Issue' %}:
+                    <em><span control="issue-name">[issue]</span></em>
+                </p>
+                <p><strong>{% trans 'This action cannot be undone.' %}</strong></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Cancel' %}</button>
+                <button type="button" class="btn btn-danger" control="revoke-access-confirmed" data-id="0" data-dismiss="modal">{% trans 'Delete' %}</button>
+            </div>
+        </div>
+    </div>
+</div>

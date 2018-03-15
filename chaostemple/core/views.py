@@ -1,6 +1,7 @@
 import operator
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import Group
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.db.models import Case
@@ -535,7 +536,8 @@ def user_access(request):
     access_list = Access.objects.prefetch_related(
         'issues__parliament'
     ).select_related(
-        'friend__userprofile'
+        'friend__userprofile',
+        'friend_group'
     ).filter(
         user_id=request.user.id
     )
@@ -543,11 +545,13 @@ def user_access(request):
     parliaments = Parliament.objects.all()
     issues = Issue.objects.filter(parliament__parliament_num=CURRENT_PARLIAMENT_NUM, issue_group='A')
     users = User.objects.select_related('userprofile').exclude(id=request.user.id)
+    groups = Group.objects.all()
 
     ctx = {
         'access_list': access_list,
         'parliaments': parliaments,
         'users': users,
+        'groups': groups,
         'issues': issues,
     }
     return render(request, 'core/user_access.html', ctx)

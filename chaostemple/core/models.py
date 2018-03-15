@@ -70,10 +70,12 @@ class AccessUtilities():
         return AccessUtilities.cache[currentThread()]['user_id']
 
     @staticmethod
-    def cache_access(user_id):
+    def cache_access(user):
+        group_ids = [g.id for g in user.groups.all()]
+
         AccessUtilities.cache[currentThread()] = {
-            'access': Access.objects.filter(friend_id=user_id),
-            'user_id': user_id,
+            'access': Access.objects.filter(Q(friend_id=user.id) | Q(friend_group_id__in=group_ids)),
+            'user_id': user.id,
         }
 
 class IssueUtilities():

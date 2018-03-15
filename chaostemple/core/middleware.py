@@ -25,7 +25,7 @@ class AccessMiddleware():
         return self.get_response(request)
 
     def process_view(self, request, view_func, view_args, view_kwargs):
-        AccessUtilities.cache_access(request.user.id)
+        AccessUtilities.cache_access(request.user)
 
 
 class ExtraVarsMiddleware():

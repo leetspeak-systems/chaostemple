@@ -1,4 +1,5 @@
 import operator
+from functools import reduce
 from threading import currentThread
 
 from django.conf import settings

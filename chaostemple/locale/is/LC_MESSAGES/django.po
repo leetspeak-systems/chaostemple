@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-09 20:26+0000\n"
+"POT-Creation-Date: 2018-03-15 18:29+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -18,124 +18,124 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: althingi/models.py:312 althingi/models.py:333 althingi/models.py:348
-#: althingi/models.py:354
+#: althingi/models.py:313 althingi/models.py:334 althingi/models.py:349
+#: althingi/models.py:355
 msgid "Distributed"
 msgstr "Dreift"
 
-#: althingi/models.py:313
+#: althingi/models.py:314
 msgid "Awaiting 1st debate"
 msgstr "Bíður 1. umræðu"
 
-#: althingi/models.py:314
+#: althingi/models.py:315
 msgid "Currently in 1st debate"
 msgstr "Í 1. umræðu"
 
-#: althingi/models.py:315
+#: althingi/models.py:316
 msgid "1st debate concluded"
 msgstr "1. umræðu lokið"
 
-#: althingi/models.py:316 althingi/models.py:337
+#: althingi/models.py:317 althingi/models.py:338
 msgid "Sent to committee"
 msgstr "Sent til nefndar"
 
-#: althingi/models.py:317 althingi/models.py:338
+#: althingi/models.py:318 althingi/models.py:339
 msgid "Currently in committee"
 msgstr "Í nefnd"
 
-#: althingi/models.py:318 althingi/models.py:339
+#: althingi/models.py:319 althingi/models.py:340
 msgid "Considered by committee"
 msgstr "Úr nefnd"
 
-#: althingi/models.py:319
+#: althingi/models.py:320
 msgid "Awaiting 2nd debate"
 msgstr "Bíður 2. umræðu"
 
-#: althingi/models.py:320
+#: althingi/models.py:321
 msgid "Currently in 2nd debate"
 msgstr "Í 2. umræðu"
 
-#: althingi/models.py:321
+#: althingi/models.py:322
 msgid "2nd debate concluded"
 msgstr "2. umræðu lokið"
 
-#: althingi/models.py:322
+#: althingi/models.py:323
 msgid "Sent to committee (after 2nd debate)"
 msgstr "Sent til nefndar (eftir 2. umræðu)"
 
-#: althingi/models.py:323
+#: althingi/models.py:324
 msgid "Currently in committee (after 2nd debate)"
 msgstr "Í nefnd (eftir 2. umræðu)"
 
-#: althingi/models.py:324
+#: althingi/models.py:325
 msgid "Considered by committee (after 2nd debate)"
 msgstr "Úr nefnd (eftir 2. umræðu)"
 
-#: althingi/models.py:325
+#: althingi/models.py:326
 msgid "Awaiting 3rd debate"
 msgstr "Bíður 3. umræðu"
 
-#: althingi/models.py:326
+#: althingi/models.py:327
 msgid "Currently in 3rd debate"
 msgstr "Í 3. umræðu"
 
-#: althingi/models.py:327
+#: althingi/models.py:328
 msgid "3rd debate concluded"
 msgstr "3. umræðu lokið"
 
-#: althingi/models.py:328 althingi/models.py:343
+#: althingi/models.py:329 althingi/models.py:344
 msgid "Issue concluded"
 msgstr "Máli lokið"
 
-#: althingi/models.py:334
+#: althingi/models.py:335
 msgid "Awaiting former debate"
 msgstr "Bíður fyrri umræðu"
 
-#: althingi/models.py:335
+#: althingi/models.py:336
 msgid "Currently in former debate"
 msgstr "Í fyrri umræðu"
 
-#: althingi/models.py:336
+#: althingi/models.py:337
 msgid "Former debate concluded"
 msgstr "Fyrri umræðu lokið"
 
-#: althingi/models.py:340
+#: althingi/models.py:341
 msgid "Awaiting latter debate"
 msgstr "Bíður seinni umræðu"
 
-#: althingi/models.py:341
+#: althingi/models.py:342
 msgid "Currently in latter debate"
 msgstr "Í seinni umræðu"
 
-#: althingi/models.py:342
+#: althingi/models.py:343
 msgid "Latter debate concluded"
 msgstr "Seinni umræðu lokið"
 
-#: althingi/models.py:349
+#: althingi/models.py:350
 msgid "Answered"
 msgstr "Svarað"
 
-#: althingi/models.py:355
+#: althingi/models.py:356
 msgid "Voted on"
 msgstr "Atkvæði greidd"
 
-#: althingi/models.py:356
+#: althingi/models.py:357
 msgid "Report delieverd"
 msgstr "Skýrslu skilað"
 
-#: althingi/models.py:357
+#: althingi/models.py:358
 msgid "Concluded"
 msgstr "Lokið"
 
-#: althingi/models.py:365
+#: althingi/models.py:366
 msgid "rejected"
 msgstr "hafnað"
 
-#: althingi/models.py:366
+#: althingi/models.py:367
 msgid "accepted"
 msgstr "samþykkt"
 
-#: althingi/models.py:367
+#: althingi/models.py:368
 msgid "sent to government"
 msgstr "sent til ríkisstjórnar"
 
@@ -223,10 +223,6 @@ msgstr "Þingmenn"
 msgid "b."
 msgstr "f."
 
-#: core/models.py:132
-msgid "[ Missing initials ]"
-msgstr "[ Vantar upphafsstafi ]"
-
 #: customsignup/forms.py:17 templates/core/user_home.html:16
 msgid "Name"
 msgstr "Nafn"
@@ -275,98 +271,98 @@ msgstr ""
 msgid "The two password fields didn't match."
 msgstr ""
 
-#: dossier/models.py:21 templates/core/parliament_issue.html:154
+#: dossier/models.py:20 templates/core/parliament_issue.html:154
 #: templates/core/stub/issue.html:27
 msgid "Parliamentary Documents"
 msgstr "Þingskjöl"
 
-#: dossier/models.py:22 templates/core/parliament_issue.html:162
+#: dossier/models.py:21 templates/core/parliament_issue.html:162
 #: templates/core/stub/issue.html:26
 msgid "Reviews"
 msgstr "Umsagnir"
 
-#: dossier/models.py:26 templates/core/stub/dossier.html:41
+#: dossier/models.py:25 templates/core/stub/dossier.html:41
 msgid "Attention"
 msgstr "Aðvörun"
 
-#: dossier/models.py:27 templates/core/stub/dossier.html:21
+#: dossier/models.py:26 templates/core/stub/dossier.html:21
 msgid "Knowledge"
 msgstr "Þekking"
 
-#: dossier/models.py:28 dossier/models.py:50
+#: dossier/models.py:27 dossier/models.py:49
 #: templates/core/stub/dossier.html:61
 msgid "Support"
 msgstr "Stuðningur"
 
-#: dossier/models.py:29 templates/core/stub/dossier.html:81
+#: dossier/models.py:28 templates/core/stub/dossier.html:81
 msgid "Proposals"
 msgstr "Tillögur"
 
-#: dossier/models.py:33 dossier/models.py:57
+#: dossier/models.py:32 dossier/models.py:56
 msgid "None"
 msgstr "Engin"
 
-#: dossier/models.py:34
+#: dossier/models.py:33
 msgid "Question"
 msgstr "Spurning"
 
-#: dossier/models.py:35
+#: dossier/models.py:34
 msgid "Exclamation"
 msgstr "Upphrópun"
 
-#: dossier/models.py:39
+#: dossier/models.py:38
 msgid "Unread"
 msgstr "Ólesið"
 
-#: dossier/models.py:40
+#: dossier/models.py:39
 msgid "Briefly examined"
 msgstr "Lauslega skoðað"
 
-#: dossier/models.py:41
+#: dossier/models.py:40
 msgid "Examined"
 msgstr "Skoðað"
 
-#: dossier/models.py:42
+#: dossier/models.py:41
 msgid "Thoroughly examined"
 msgstr "Vel skoðað"
 
-#: dossier/models.py:46
+#: dossier/models.py:45
 msgid "Undefined"
 msgstr "Ótilgreint"
 
-#: dossier/models.py:47
+#: dossier/models.py:46
 msgid "Strong Opposition"
 msgstr "Eindregin andstaða"
 
-#: dossier/models.py:48
+#: dossier/models.py:47
 msgid "Oppose"
 msgstr "Andstaða"
 
-#: dossier/models.py:49
+#: dossier/models.py:48
 msgid "Neutral"
 msgstr "Hlutleysi"
 
-#: dossier/models.py:51
+#: dossier/models.py:50
 msgid "Strong Support"
 msgstr "Eindreginn stuðningur"
 
-#: dossier/models.py:52
+#: dossier/models.py:51
 msgid "Referral"
 msgstr "Tilvísun"
 
-#: dossier/models.py:53
+#: dossier/models.py:52
 msgid "Other"
 msgstr "Annað"
 
-#: dossier/models.py:58
+#: dossier/models.py:57
 msgid "Minor"
 msgstr "Minniháttar"
 
-#: dossier/models.py:59
+#: dossier/models.py:58
 msgid "Some"
 msgstr "Einhverjar"
 
-#: dossier/models.py:60
+#: dossier/models.py:59
 msgid "Major"
 msgstr "Meiriháttar"
 
@@ -419,7 +415,7 @@ msgstr "Þingmenn og ráðherrar"
 msgid "User Home"
 msgstr "Heimasvæði"
 
-#: templates/base.html:152 templates/core/user_access.html:15
+#: templates/base.html:152 templates/core/user_access.html:14
 msgid "Access"
 msgstr "Aðgangur"
 
@@ -481,17 +477,15 @@ msgstr ""
 #: templates/core/dialog/dialog_delete_dossier.html:10
 #: templates/core/dialog/dialog_delete_issue_dossiers.html:11
 #: templates/core/dialog/dialog_delete_memo.html:10
-#: templates/core/dialog/dialog_revoke_access_issue.html:12
-#: templates/core/dialog/dialog_revoke_access_user.html:10
+#: templates/core/dialog/dialog_revoke_access.html:23
 msgid "This action cannot be undone."
 msgstr "Þessa aðgerð er ekki hægt að taka til baka."
 
 #: templates/core/dialog/dialog_delete_dossier.html:13
 #: templates/core/dialog/dialog_delete_issue_dossiers.html:14
 #: templates/core/dialog/dialog_delete_memo.html:13
-#: templates/core/dialog/dialog_grant_access_issue.html:48
-#: templates/core/dialog/dialog_revoke_access_issue.html:15
-#: templates/core/dialog/dialog_revoke_access_user.html:13
+#: templates/core/dialog/dialog_grant_access.html:61
+#: templates/core/dialog/dialog_revoke_access.html:26
 #: templates/registration/custom_profile_data.html:16
 #: templates/registration/password_change_form.html:13
 #: templates/registration/password_reset_form.html:15
@@ -501,8 +495,7 @@ msgstr "Hætta við"
 #: templates/core/dialog/dialog_delete_dossier.html:14
 #: templates/core/dialog/dialog_delete_issue_dossiers.html:15
 #: templates/core/dialog/dialog_delete_memo.html:14
-#: templates/core/dialog/dialog_revoke_access_issue.html:16
-#: templates/core/dialog/dialog_revoke_access_user.html:14
+#: templates/core/dialog/dialog_revoke_access.html:27
 msgid "Delete"
 msgstr "Eyða"
 
@@ -526,42 +519,40 @@ msgstr ""
 msgid "Are you sure you want to delete this memo?"
 msgstr "Ertu viss um að þú viljir eyða þessum minnispunkti?"
 
-#: templates/core/dialog/dialog_grant_access_issue.html:7
-#: templates/core/dialog/dialog_grant_access_issue.html:49
+#: templates/core/dialog/dialog_grant_access.html:7
+#: templates/core/dialog/dialog_grant_access.html:62
 msgid "Grant Access"
 msgstr "Veita aðgang"
 
-#: templates/core/dialog/dialog_grant_access_issue.html:9
-#: templates/core/dialog/dialog_revoke_access_issue.html:10
+#: templates/core/dialog/dialog_grant_access.html:10
+#: templates/core/dialog/dialog_revoke_access.html:12
+msgid "Group"
+msgstr "Hópur"
+
+#: templates/core/dialog/dialog_grant_access.html:19
+#: templates/core/dialog/dialog_revoke_access.html:16
 #: templates/core/stub/user_access_list.html:10
 msgid "User"
 msgstr "Notandi"
 
-#: templates/core/dialog/dialog_grant_access_issue.html:17
+#: templates/core/dialog/dialog_grant_access.html:30
 #: templates/core/stub/user_access_list.html:12
 msgid "Full Access"
 msgstr "Fullur aðgangur"
 
-#: templates/core/dialog/dialog_grant_access_issue.html:24
+#: templates/core/dialog/dialog_grant_access.html:37
 msgid "Parliament"
 msgstr "Þing"
 
-#: templates/core/dialog/dialog_grant_access_issue.html:25
-#: templates/core/dialog/dialog_revoke_access_issue.html:11
+#: templates/core/dialog/dialog_grant_access.html:38
+#: templates/core/dialog/dialog_revoke_access.html:20
 #: templates/core/parliament_documents_new.html:17
 msgid "Issue"
 msgstr "Þingmál"
 
-#: templates/core/dialog/dialog_revoke_access_issue.html:9
-msgid ""
-"Are you sure you want to revoke this user's access to the corresponding "
-"issue?"
-msgstr ""
-"Ertu viss um að þú viljir svipta þennan notanda aðgangi að þessu þingmáli?"
-
-#: templates/core/dialog/dialog_revoke_access_user.html:8
-msgid "Are you sure you want to revoke all access from this user?"
-msgstr "Ertu viss um að þú viljir svipta þennan notanda öllum aðgangi?"
+#: templates/core/dialog/dialog_revoke_access.html:10
+msgid "Are you sure you want to revoke this access?"
+msgstr "Ertu viss um að þú viljir eyða þessum aðgangi?"
 
 #: templates/core/parliament_committee.html:17
 #: templates/core/parliament_committees.html:14

@@ -182,8 +182,14 @@ def membership_request(request, group_id):
         status='pending'
     )
 
-    groups = Group.objects.exclude(membership_requests__user=request.user.id).exclude(user__id=request.user.id)
-    membership_requests = MembershipRequest.objects.select_related('group').filter(user_id=request.user.id)
+    groups = Group.objects.exclude(
+        membership_requests__user=request.user.id,
+        membership_requests__status='pending'
+    ).exclude(user__id=request.user.id)
+    membership_requests = MembershipRequest.objects.select_related('group').filter(
+        user_id=request.user.id,
+        status='pending'
+    )
 
     html_content = render_to_string('core/stub/membership_requests.html', {
         'groups': groups,
@@ -201,8 +207,14 @@ def membership_request(request, group_id):
 def membership_request_withdraw(request, group_id):
     MembershipRequest.objects.get(user_id=request.user.id, group_id=group_id).delete()
 
-    groups = Group.objects.exclude(membership_requests__user=request.user.id).exclude(user__id=request.user.id)
-    membership_requests = MembershipRequest.objects.select_related('group').filter(user_id=request.user.id)
+    groups = Group.objects.exclude(
+        membership_requests__user=request.user.id,
+        membership_requests__status='pending'
+    ).exclude(user__id=request.user.id)
+    membership_requests = MembershipRequest.objects.select_related('group').filter(
+        user_id=request.user.id,
+        status='pending'
+    )
 
     html_content = render_to_string('core/stub/membership_requests.html', {
         'groups': groups,

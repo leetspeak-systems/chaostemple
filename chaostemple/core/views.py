@@ -549,8 +549,14 @@ def user_access(request):
     users = User.objects.select_related('userprofile').exclude(id=request.user.id)
     user_groups = request.user.groups.prefetch_related('user_set__userprofile').all()
 
-    groups = Group.objects.exclude(membership_requests__user=request.user.id).exclude(user__id=request.user.id)
-    membership_requests = MembershipRequest.objects.select_related('group').filter(user_id=request.user.id)
+    groups = Group.objects.exclude(
+        membership_requests__user=request.user.id,
+        membership_requests__status='pending'
+    ).exclude(user__id=request.user.id)
+    membership_requests = MembershipRequest.objects.select_related('group').filter(
+        user_id=request.user.id,
+        status='pending'
+    )
 
     # We want ordered users in the group listing, and no, I'm not implementing
     # a through-model in order to get ordering on ManyToMany fields.

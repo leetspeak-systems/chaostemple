@@ -47,8 +47,11 @@ urlpatterns = [
     path('json/access/revoke/group/<int:friend_group_id>/issue/<int:issue_id>/', json_views.access_revoke),
     path('json/access/revoke/user/<int:friend_id>/', json_views.access_revoke),
     path('json/access/revoke/user/<int:friend_id>/issue/<int:issue_id>/', json_views.access_revoke),
-    path('json/access/request/membership/<int:group_id>/', json_views.membership_request),
-    path('json/access/withdraw/membership-request/<int:group_id>/', json_views.membership_request_withdraw),
+    path('json/access/request/membership/<int:group_id>/', json_views.membership_request, { 'action': 'request' }),
+    path('json/access/withdraw/membership-request/<int:group_id>/',
+        json_views.membership_request,
+        { 'action': 'withdraw' }
+    ),
 
     url(r'^dossier/', include('dossier.urls')),
 ]

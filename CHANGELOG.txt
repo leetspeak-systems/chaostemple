@@ -211,3 +211,13 @@
 1.3.11:
     * Bugfix in data gathering.
     * Bugfix: Deputies were not properly shown on MP listing page.
+
+1.4:
+    * Upgraded from Python 2.7.x to Python 3.x and from Django 1.11.x to Django 2.0.x.
+    * Domain-selective registration implemented.
+    * Email addresses used for for registration and login instead of username.
+    * Initials from user profile used to display users of username.
+    * Users required to provide name and initials if they cannot be automatically determined.
+    * MPs automatically added to groups reflecting their party. Groups are created as needed and given full access.
+    * Users able to request membership of a group. Any user already in group may accept or reject request.
+    * Support for terms and conditions added.

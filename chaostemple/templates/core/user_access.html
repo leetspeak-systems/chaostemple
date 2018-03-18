@@ -40,9 +40,7 @@
                         <h5>{% trans 'Members' %}</h5>
                         <ul>
                         {% for member in user_group.ordered_users %}
-                            <li>
-                                {{ member.userprofile.name }} ({{ member.userprofile.initials }})<br />
-                            </li>
+                            <li>{{ member.userprofile.display_full }}</li>
                         {% endfor %}
                         </ul>
                     {% endfor %}

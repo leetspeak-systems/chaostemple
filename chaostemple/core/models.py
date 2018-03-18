@@ -10,6 +10,7 @@ from django.db.models import IntegerField
 from django.db.models import OuterRef
 from django.db.models import Q
 from django.db.models import Subquery
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 
 from althingi.models import Issue as AlthingiIssue
@@ -135,6 +136,9 @@ class UserProfile(models.Model):
     name = models.CharField(max_length=100)
     initials = models.CharField(max_length=10, null=True)
     person = models.ForeignKey(Person, null=True, related_name='userprofile', on_delete=CASCADE)
+
+    def display_full(self):
+        return mark_safe('<a href="mailto: %s">%s</a> (%s)' % (self.user.email, self.name, self.initials))
 
     def __str__(self):
         return self.initials if self.initials else self.user.email

@@ -308,4 +308,27 @@ $(document).ready(function() {
             }
         });
     });
+
+    $(document).on('click', 'button[control="process-membership-request"]', function() {
+        var $this = $(this);
+        var membership_request_id = $this.attr('data-membership-request-id');
+        var mr_status = $this.attr('data-status');
+
+        $.jsonize({
+            type: 'POST',
+            message: {
+                'transit': 'Processing membership request...',
+                'success': 'Membership request processed.',
+                'failure': 'Failed to process membership request!'
+            },
+            url: '/json/access/process/membership-request/',
+            data: {
+                'membership_request_id': membership_request_id,
+                'status': mr_status
+            },
+            done: function(data, textStatus) {
+                $('div[control="incoming-membership-requests"]').html(data.html_content);
+            }
+        });
+    });
 });

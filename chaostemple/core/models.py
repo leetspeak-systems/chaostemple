@@ -11,6 +11,7 @@ from django.db.models import OuterRef
 from django.db.models import Q
 from django.db.models import Subquery
 from django.utils.safestring import mark_safe
+from django.utils import timezone
 from django.utils.translation import ugettext as _
 
 from althingi.models import Issue as AlthingiIssue
@@ -188,6 +189,19 @@ class MembershipRequest(models.Model):
 
     timing_requested = models.DateTimeField(auto_now_add=True)
     timing_decided = models.DateTimeField(null=True)
+
+    # To not only set the status, but take appropriate actions.
+    def set_status(self, status, decided_by):
+        if not status in dict(self.STATUS_CHOICES):
+            return None
+
+        if status == 'accepted':
+            self.group.user_set.add(self.user)
+
+        self.status = status
+        self.decided_by = decided_by
+        self.timing_decided = timezone.now()
+        self.save()
 
     def __str__(self):
         return '%s (%s)' % (self.group, self.get_status_display())

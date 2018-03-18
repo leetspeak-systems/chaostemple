@@ -1,0 +1,35 @@
+{% load i18n %}
+
+{% if incoming_membership_requests %}
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <p class="alert alert-info">
+                    {% blocktrans %}The following group membership requests need processing. If you are absolutely certain that a user belongs to the group that they're asking for access to, you may accept it. If you're certain that they shouldn't belong to the group they're requesting access to, you may reject it. If in doubt, leave the decision to someone else.{% endblocktrans %}
+                </p>
+
+                {% for imr in incoming_membership_requests %}
+                    <p>
+                        {{ imr.user.userprofile.display_full }}
+                        {% trans 'wants access to group' %}
+                        "{{ imr.group }}".
+                        <button type="button"
+                                class="btn btn-xs btn-primary"
+                                control="process-membership-request"
+                                data-status="accepted"
+                                data-membership-request-id="{{ imr.id }}">
+                            {% trans 'Accept' %}
+                        </button>
+                        <button type="button"
+                                class="btn btn-xs btn-danger"
+                                control="process-membership-request"
+                                data-status="rejected"
+                                data-membership-request-id="{{ imr.id }}">
+                            {% trans 'Reject' %}
+                        </button>
+                    </p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endif %}

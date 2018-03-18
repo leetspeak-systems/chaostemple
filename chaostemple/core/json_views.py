@@ -3,6 +3,7 @@ from django.contrib.auth.models import Group
 from django.http import Http404
 from django.urls import reverse
 from django.db.utils import IntegrityError
+from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 
 from althingi.models import Proposer
@@ -199,6 +200,37 @@ def membership_request(request, group_id, action):
     html_content = render_to_string('core/stub/membership_requests.html', {
         'groups': groups,
         'membership_requests': membership_requests,
+    })
+
+    ctx = {
+        'html_content': html_content,
+    }
+    return ctx
+
+
+@login_required
+@jsonize
+def process_membership_request(request):
+    membership_request_id = int(request.POST.get('membership_request_id'))
+    status = request.POST.get('status')
+
+    if status not in ['accepted', 'rejected']:
+        raise Http404
+
+    membership_request = get_object_or_404(
+        MembershipRequest,
+        id=membership_request_id,
+        group__user__id=request.user.id
+    )
+
+    membership_request.set_status(status, request.user)
+
+    incoming_membership_requests = MembershipRequest.objects.select_related('user__userprofile', 'group').exclude(
+        user_id=request.user.id
+    ).filter(group__user__id=request.user.id, status='pending')
+
+    html_content = render_to_string('core/stub/incoming_membership_requests.html', {
+        'incoming_membership_requests': incoming_membership_requests
     })
 
     ctx = {

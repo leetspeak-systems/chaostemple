@@ -558,6 +558,10 @@ def user_access(request):
         status='pending'
     )
 
+    incoming_membership_requests = MembershipRequest.objects.select_related('user__userprofile', 'group').exclude(
+        user_id=request.user.id
+    ).filter(group__user__id=request.user.id, status='pending')
+
     # We want ordered users in the group listing, and no, I'm not implementing
     # a through-model in order to get ordering on ManyToMany fields.
     for user_group in user_groups:
@@ -571,6 +575,7 @@ def user_access(request):
         'issues': issues,
         'user_groups': user_groups,
         'membership_requests': membership_requests,
+        'incoming_membership_requests': incoming_membership_requests,
     }
     return render(request, 'core/user_access.html', ctx)
 

@@ -52,6 +52,7 @@ urlpatterns = [
         json_views.membership_request,
         { 'action': 'withdraw' }
     ),
+    path('json/access/process/membership-request/', json_views.process_membership_request),
 
     url(r'^dossier/', include('dossier.urls')),
 ]

@@ -11,15 +11,60 @@
     {% include 'core/dialog/dialog_revoke_access.html' %}
     {% include 'core/dialog/dialog_grant_access.html' %}
 
-    <h2>{% trans 'Access' %}</h2>
-
     <div class="col-md-8">
+        <h2>{% trans 'Access' %}</h2>
         <div class="panel panel-default">
-            <div class="panel-body" control="access-list">
-                {% include 'core/stub/user_access_list.html' %}
+            <div class="panel-body">
+                <p class="alert alert-info">
+                    {% blocktrans %}Here you can give others access to your data. Users and groups that you add here have access to the data that you specify. You may either specify individual issues, in which case they can only see data for those issues, or you can give them full access, in which case they can see data regarding any issue.{% endblocktrans %}
+                </p>
+
+                <div control="access-list">
+                    {% include 'core/stub/user_access_list.html' %}
+                </div>
             </div>
         </div>
     </div>
+
+    <div class="col-md-4">
+        <h2>{% trans 'Groups' %}</h2>
+        <div class="panel panel-default">
+            <div class="panel-body">
+
+                {% if user_groups %}
+
+                    <p class="alert alert-info">{% trans 'Following are the groups that you are currently a member of and a list of all their members.' %}</p>
+
+                    {% for user_group in user_groups %}
+                        <h3>{{ user_group }}</h3>
+                        <h5>{% trans 'Members' %}</h5>
+                        <ul>
+                        {% for member in user_group.ordered_users %}
+                            <li>
+                                {{ member.userprofile.name }} ({{ member.userprofile.initials }})<br />
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    {% endfor %}
+
+                    <hr />
+
+                {% else %}
+
+                    <p class="alert alert-danger">
+                        {% trans 'Currently, you do not belong to any group.' %}
+                    </p>
+
+                {% endif %}
+
+                <div control="membership-requests">
+                    {% include 'core/stub/membership_requests.html' %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+
 
 {% endblock %}
 

@@ -274,4 +274,38 @@ $(document).ready(function() {
             }
         });
     });
+
+    $(document).on('click', 'button[control="request-membership"]', function() {
+        var group_id = $('select[control="membership-request-group-id"]').val();
+
+        $.jsonize({
+            message: {
+                'transit': 'Requesting group membership...',
+                'success': 'Group membership requested.',
+                'failure': 'Failed to request group membership!'
+            },
+            url: '/json/access/request/membership/' + group_id + '/',
+            done: function(data, textStatus) {
+                $('div[control="membership-requests"]').html(data.html_content);
+                $('select[control="membership-request-group-id"]').select2();
+            }
+        });
+    });
+
+    $(document).on('click', 'button[control="withdraw-membership-request"]', function() {
+        var group_id = $(this).attr('data-group-id');
+
+        $.jsonize({
+            message: {
+                'transit': 'Withdrawing membership request...',
+                'success': 'Membership request withdrawn.',
+                'failure': 'Failed to withdraw membership request!'
+            },
+            url: '/json/access/withdraw/membership-request/' + group_id + '/',
+            done: function(data, textStatus) {
+                $('div[control="membership-requests"]').html(data.html_content);
+                $('select[control="membership-request-group-id"]').select2();
+            }
+        });
+    });
 });

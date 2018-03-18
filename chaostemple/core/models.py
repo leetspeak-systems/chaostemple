@@ -162,3 +162,31 @@ class Access(models.Model):
 
     class Meta:
         ordering = ['friend__userprofile__initials', 'friend_group__name']
+
+
+class MembershipRequest(models.Model):
+    STATUS_CHOICES = (
+        ('pending', _('pending')),
+        ('rejected', _('rejected')),
+        ('accepted', _('accepted')),
+    )
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='membership_requests', on_delete=CASCADE)
+    group = models.ForeignKey('auth.Group', related_name='membership_requests', on_delete=CASCADE)
+
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    decided_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        related_name='decided_membership_requests',
+        on_delete=CASCADE
+    )
+
+    timing_requested = models.DateTimeField(auto_now_add=True)
+    timing_decided = models.DateTimeField(null=True)
+
+    def __str__(self):
+        return '%s (%s)' % (self.group, self.get_status_display())
+
+    class Meta:
+        ordering = ['group__name', 'status']

@@ -24,6 +24,7 @@ from core.models import AccessUtilities
 from core.models import Issue
 from core.models import IssueBookmark
 from core.models import IssueUtilities
+from core.models import MembershipRequest
 
 from dossier.models import Dossier
 from dossier.models import DossierStatistic
@@ -546,7 +547,15 @@ def user_access(request):
     parliaments = Parliament.objects.all()
     issues = Issue.objects.filter(parliament__parliament_num=CURRENT_PARLIAMENT_NUM, issue_group='A')
     users = User.objects.select_related('userprofile').exclude(id=request.user.id)
-    groups = Group.objects.all()
+    user_groups = request.user.groups.prefetch_related('user_set__userprofile').all()
+
+    groups = Group.objects.exclude(membership_requests__user=request.user.id).exclude(user__id=request.user.id)
+    membership_requests = MembershipRequest.objects.select_related('group').filter(user_id=request.user.id)
+
+    # We want ordered users in the group listing, and no, I'm not implementing
+    # a through-model in order to get ordering on ManyToMany fields.
+    for user_group in user_groups:
+        user_group.ordered_users = user_group.user_set.select_related('userprofile').order_by('userprofile__name')
 
     ctx = {
         'access_list': access_list,
@@ -554,6 +563,8 @@ def user_access(request):
         'users': users,
         'groups': groups,
         'issues': issues,
+        'user_groups': user_groups,
+        'membership_requests': membership_requests,
     }
     return render(request, 'core/user_access.html', ctx)
 

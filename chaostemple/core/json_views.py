@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import Group
 from django.http import Http404
 from django.urls import reverse
 from django.db.utils import IntegrityError
@@ -11,6 +12,7 @@ from core.breadcrumbs import append_to_crumb_string
 from core.models import Access
 from core.models import Issue
 from core.models import IssueBookmark
+from core.models import MembershipRequest
 
 from jsonizer.utils import jsonize
 
@@ -170,3 +172,44 @@ def access_revoke(request, friend_group_id=None, friend_id=None, issue_id=None):
     }
     return ctx
 
+
+@login_required
+@jsonize
+def membership_request(request, group_id):
+    mr, created = MembershipRequest.objects.get_or_create(
+        user_id=request.user.id,
+        group_id=group_id,
+        status='pending'
+    )
+
+    groups = Group.objects.exclude(membership_requests__user=request.user.id).exclude(user__id=request.user.id)
+    membership_requests = MembershipRequest.objects.select_related('group').filter(user_id=request.user.id)
+
+    html_content = render_to_string('core/stub/membership_requests.html', {
+        'groups': groups,
+        'membership_requests': membership_requests,
+    })
+
+    ctx = {
+        'html_content': html_content,
+    }
+    return ctx
+
+
+@login_required
+@jsonize
+def membership_request_withdraw(request, group_id):
+    MembershipRequest.objects.get(user_id=request.user.id, group_id=group_id).delete()
+
+    groups = Group.objects.exclude(membership_requests__user=request.user.id).exclude(user__id=request.user.id)
+    membership_requests = MembershipRequest.objects.select_related('group').filter(user_id=request.user.id)
+
+    html_content = render_to_string('core/stub/membership_requests.html', {
+        'groups': groups,
+        'membership_requests': membership_requests,
+    })
+
+    ctx = {
+        'html_content': html_content,
+    }
+    return ctx

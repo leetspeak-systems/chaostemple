@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-19 00:09+0000\n"
+"POT-Creation-Date: 2018-03-19 20:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -18,8 +18,8 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: althingi/models.py:313 althingi/models.py:334 althingi/models.py:349
-#: althingi/models.py:355
+#: althingi/models.py:313 althingi/models.py:336 althingi/models.py:353
+#: althingi/models.py:359
 msgid "Distributed"
 msgstr "Dreift"
 
@@ -35,107 +35,115 @@ msgstr "Í 1. umræðu"
 msgid "1st debate concluded"
 msgstr "1. umræðu lokið"
 
-#: althingi/models.py:317 althingi/models.py:338
+#: althingi/models.py:317 althingi/models.py:340
 msgid "Sent to committee"
 msgstr "Sent til nefndar"
 
-#: althingi/models.py:318 althingi/models.py:339
+#: althingi/models.py:318 althingi/models.py:341
 msgid "Currently in committee"
 msgstr "Í nefnd"
 
-#: althingi/models.py:319 althingi/models.py:340
+#: althingi/models.py:319 althingi/models.py:342
+msgid "Reviews requested"
+msgstr "Í umsagnarferli"
+
+#: althingi/models.py:320 althingi/models.py:343
+msgid "Reviews deadline expired"
+msgstr "Umsagnarfrestur liðinn"
+
+#: althingi/models.py:321 althingi/models.py:344
 msgid "Considered by committee"
 msgstr "Úr nefnd"
 
-#: althingi/models.py:320
+#: althingi/models.py:322
 msgid "Awaiting 2nd debate"
 msgstr "Bíður 2. umræðu"
 
-#: althingi/models.py:321
+#: althingi/models.py:323
 msgid "Currently in 2nd debate"
 msgstr "Í 2. umræðu"
 
-#: althingi/models.py:322
+#: althingi/models.py:324
 msgid "2nd debate concluded"
 msgstr "2. umræðu lokið"
 
-#: althingi/models.py:323
+#: althingi/models.py:325
 msgid "Sent to committee (after 2nd debate)"
 msgstr "Sent til nefndar (eftir 2. umræðu)"
 
-#: althingi/models.py:324
+#: althingi/models.py:326
 msgid "Currently in committee (after 2nd debate)"
 msgstr "Í nefnd (eftir 2. umræðu)"
 
-#: althingi/models.py:325
+#: althingi/models.py:327
 msgid "Considered by committee (after 2nd debate)"
 msgstr "Úr nefnd (eftir 2. umræðu)"
 
-#: althingi/models.py:326
+#: althingi/models.py:328
 msgid "Awaiting 3rd debate"
 msgstr "Bíður 3. umræðu"
 
-#: althingi/models.py:327
+#: althingi/models.py:329
 msgid "Currently in 3rd debate"
 msgstr "Í 3. umræðu"
 
-#: althingi/models.py:328
+#: althingi/models.py:330
 msgid "3rd debate concluded"
 msgstr "3. umræðu lokið"
 
-#: althingi/models.py:329 althingi/models.py:344
+#: althingi/models.py:331 althingi/models.py:348
 msgid "Issue concluded"
 msgstr "Máli lokið"
 
-#: althingi/models.py:335
+#: althingi/models.py:337
 msgid "Awaiting former debate"
 msgstr "Bíður fyrri umræðu"
 
-#: althingi/models.py:336
+#: althingi/models.py:338
 msgid "Currently in former debate"
 msgstr "Í fyrri umræðu"
 
-#: althingi/models.py:337
+#: althingi/models.py:339
 msgid "Former debate concluded"
 msgstr "Fyrri umræðu lokið"
 
-#: althingi/models.py:341
+#: althingi/models.py:345
 msgid "Awaiting latter debate"
 msgstr "Bíður seinni umræðu"
 
-#: althingi/models.py:342
+#: althingi/models.py:346
 msgid "Currently in latter debate"
 msgstr "Í seinni umræðu"
 
-#: althingi/models.py:343
+#: althingi/models.py:347
 msgid "Latter debate concluded"
 msgstr "Seinni umræðu lokið"
 
-#: althingi/models.py:350
+#: althingi/models.py:354
 msgid "Answered"
 msgstr "Svarað"
 
-#: althingi/models.py:356
+#: althingi/models.py:360
 msgid "Voted on"
 msgstr "Atkvæði greidd"
 
-#: althingi/models.py:357
+#: althingi/models.py:361
 msgid "Report delieverd"
 msgstr "Skýrslu skilað"
 
-#: althingi/models.py:358
+#: althingi/models.py:362
 msgid "Concluded"
 msgstr "Lokið"
 
-#: althingi/models.py:366 core/models.py:175
+#: althingi/models.py:370 core/models.py:178
 msgid "rejected"
 msgstr "hafnað"
 
-#: althingi/models.py:367 core/models.py:176
+#: althingi/models.py:371 core/models.py:179
 msgid "accepted"
 msgstr "samþykkt"
 
-#: althingi/models.py:368
+#: althingi/models.py:372
 msgid "sent to government"
 msgstr "sent til ríkisstjórnar"
 
@@ -223,7 +231,7 @@ msgstr "Þingmenn"
 msgid "b."
 msgstr "f."
 
-#: core/models.py:174
+#: core/models.py:177
 msgid "pending"
 msgstr ""
 

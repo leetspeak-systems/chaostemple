@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-15 18:29+0000\n"
+"POT-Creation-Date: 2018-03-19 00:09+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -127,11 +127,11 @@ msgstr "Skýrslu skilað"
 msgid "Concluded"
 msgstr "Lokið"
 
-#: althingi/models.py:366
+#: althingi/models.py:366 core/models.py:175
 msgid "rejected"
 msgstr "hafnað"
 
-#: althingi/models.py:367
+#: althingi/models.py:367 core/models.py:176
 msgid "accepted"
 msgstr "samþykkt"
 
@@ -222,6 +222,10 @@ msgstr "Þingmenn"
 #: templates/core/person_select_from_multiple.html:10
 msgid "b."
 msgstr "f."
+
+#: core/models.py:174
+msgid "pending"
+msgstr ""
 
 #: customsignup/forms.py:17 templates/core/user_home.html:16
 msgid "Name"
@@ -415,7 +419,7 @@ msgstr "Þingmenn og ráðherrar"
 msgid "User Home"
 msgstr "Heimasvæði"
 
-#: templates/base.html:152 templates/core/user_access.html:14
+#: templates/base.html:152 templates/core/user_access.html:19
 msgid "Access"
 msgstr "Aðgangur"
 
@@ -811,6 +815,32 @@ msgstr "Flutningsmenn"
 msgid "Mark as New"
 msgstr "Merkja sem nýtt"
 
+#: templates/core/stub/incoming_membership_requests.html:8
+msgid ""
+"The following group membership requests need processing. If you are "
+"absolutely certain that a user belongs to the group that they're asking for "
+"access to, you may accept it. If you're certain that they shouldn't belong "
+"to the group they're requesting access to, you may reject it. If in doubt, "
+"leave the decision to someone else."
+msgstr ""
+"Eftirfarandi eru óafgreiddar umsóknir um aðild að hópum. Ef þú ert "
+"algjörlega viss um að notandi tilheyri hópi geturðu samþykkt umsóknina. Ef "
+"þú ert viss um að hann eigi ekki að tilheyra hópnum geturðu hafnað henni. Ef "
+"þú ert ekki viss skaltu láta einhvern annan um ákvörðunina."
+
+#: templates/core/stub/incoming_membership_requests.html:14
+msgid "wants access to group"
+msgstr "vill aðgang að hópnum"
+
+#: templates/core/stub/incoming_membership_requests.html:21
+#: templates/termsandconditions/tc_accept_terms.html:53
+msgid "Accept"
+msgstr "Samþykkja"
+
+#: templates/core/stub/incoming_membership_requests.html:28
+msgid "Reject"
+msgstr "Hafna"
+
 #: templates/core/stub/issue.html:60
 msgid "Mark as Unopened"
 msgstr "Merkja sem óopnað"
@@ -868,6 +898,22 @@ msgstr "ný þingskjöl"
 msgid "new reviews"
 msgstr "nýjar umsagnir"
 
+#: templates/core/stub/membership_requests.html:5
+msgid ""
+"You may request membership of a group below. Any user in that group may "
+"approve or reject your request."
+msgstr ""
+"Þú getur sótt um aðild að hópi hér fyrir neðan. Allir meðlimir hópsins geta "
+"samþykkt umsókn þína eða hafnað henni."
+
+#: templates/core/stub/membership_requests.html:16
+msgid "Apply"
+msgstr "Sækja um"
+
+#: templates/core/stub/membership_requests.html:21
+msgid "Pending membership requests"
+msgstr "Óafgreiddar umsóknir"
+
 #: templates/core/stub/session_agenda_item_header.html:10
 msgid "continued"
 msgstr "framhaldið"
@@ -895,6 +941,39 @@ msgstr "Á komandi þingfundum"
 #: templates/core/upcoming.html:27
 msgid "In Upcoming Committees"
 msgstr "Á komandi nefndarfundum"
+
+#: templates/core/user_access.html:23
+msgid ""
+"Here you can give others access to your data. Users and groups that you add "
+"here have access to the data that you specify. You may either specify "
+"individual issues, in which case they can only see data for those issues, or "
+"you can give them full access, in which case they can see data regarding any "
+"issue."
+msgstr ""
+"Hér geturðu gefið öðrum aðgang að gögnum þínum. Notendur og hópar sem þú "
+"bætir hér við hafa þann aðgang sem þú veitir þeim. Þú getur veitt aðgang að "
+"tilteknum málum og þá sér notandinn/hópurinn einungis gögn um þau mál, eða "
+"þú getur veitt fullan aðgang, sem veitir heimild til að sjá gögn um öll mál."
+
+#: templates/core/user_access.html:34
+msgid "Groups"
+msgstr "Hópar"
+
+#: templates/core/user_access.html:40
+msgid ""
+"Following are the groups that you are currently a member of and a list of "
+"all their members."
+msgstr ""
+"Eftirfarandi eru þeir hópar sem þú ert meðlimur í, ásamt listi yfir aðra "
+"meðlimi þeirra."
+
+#: templates/core/user_access.html:44
+msgid "Members"
+msgstr "Meðlimir"
+
+#: templates/core/user_access.html:57
+msgid "Currently, you do not belong to any group."
+msgstr "Þú ert ekki í neinum hópi eins og er."
 
 #: templates/core/user_home.html:34
 msgid "Change Password"
@@ -1073,7 +1152,7 @@ msgstr ""
 
 #: templates/termsandconditions/snippets/termsandconditions.html:16
 msgid "Close"
-msgstr ""
+msgstr "Loka"
 
 #: templates/termsandconditions/snippets/termsandconditions.html:29
 msgid "ACCEPT ALL"
@@ -1098,10 +1177,6 @@ msgstr ""
 #: templates/termsandconditions/tc_accept_terms.html:51
 msgid "Accept all"
 msgstr "Samþykkja alla"
-
-#: templates/termsandconditions/tc_accept_terms.html:53
-msgid "Accept"
-msgstr "Samþykkja"
 
 #~ msgid "Proposal"
 #~ msgstr "Tillaga"

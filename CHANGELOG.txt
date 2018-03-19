@@ -225,3 +225,6 @@
 1.4.1:
     * Minor UI problem fixed for Icelandic.
     * Missing translations for Icelandic added.
+
+1.4.2:
+    * Security problem introduced with the advent of group access fixed.

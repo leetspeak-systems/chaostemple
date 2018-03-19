@@ -228,3 +228,6 @@
 
 1.4.2:
     * Security problem introduced with the advent of group access fixed.
+
+1.4.3:
+    * Bugfix: Data gathering problems fixed.

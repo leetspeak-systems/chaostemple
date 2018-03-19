@@ -1,6 +1,10 @@
 {% load i18n %}
 {% load dossier_tags %}
 
+<div control="dossier-memos" data-id="{{ dossier.id }}" data-user-id="{{ dossier.user_id }}">
+    {% include 'core/stub/dossier_memos.html' with memos=dossier.memos.all dossier_id=dossier.id %}
+</div>
+
 <div control="dossier" data-id="{{ dossier.id }}" data-user-id="{{ dossier.user_id }}">
 
     {% if dossier.document.doc_type|fieldstate_applicable:'memo' %}
@@ -102,8 +106,4 @@
     {% else %}
         <span class="label label-default pull-right">{{ dossier.user }}</span>
     {% endif %}
-</div>
-
-<div control="dossier-memos" data-id="{{ dossier.id }}" data-user-id="{{ dossier.user_id }}">
-    {% include 'core/stub/dossier_memos.html' with memos=dossier.memos.all dossier_id=dossier.id %}
 </div>

@@ -28,15 +28,15 @@ ul.header-controls li { float: left; list-style: none; margin-left: 12px; }
 ul.header-controls div[control="date-picker-container"] { position: relative; }
 ul.header-controls div[control="date-picker-container"] .bootstrap-datetimepicker-widget.dropdown-menu.bottom { top: 44px !important; right: 0px !important; }
 
-div[control="dossier"] { margin-top: 10px; }
-div[control="dossier"]:first-child { margin-top: 0px; }
+div[control="dossier"] { margin-bottom: 10px; }
+div[control="dossier"]:last-child { margin-bottom: 0px; }
 div[control="dossier"] label { font-weight: normal; width: 60px; margin-right: 8px; }
 div[control="dossier"] label.fieldname { display: inline; margin: 0px 12px 0px 12px; font-size: small; }
 div[control="dossier"] .badge { font-size: xx-small; }
 
-div[control="dossier-memos"] ul { margin: 10px 0px 0px 0px; padding: 10px 0px 0px 18px; border-top: 1px solid #e0e0e0; font-size: small; }
-div[control="dossier-memos"] ul li { list-style: none; margin-top: 4px; margin-left: -18px; }
-div[control="dossier-memos"] ul li:first-child { margin-top: 0px; }
+div[control="dossier-memos"] ul { margin: 0px 0px 10px 0px; padding: 0px 0px 0px 18px; font-size: small; }
+div[control="dossier-memos"] ul li { list-style: none; margin-bottom: 4px; margin-left: -18px; }
+div[control="dossier-memos"] ul li:last-child { margin-bottom: 0px; }
 div[control="dossier-memos"] ul li input[type="text"] { border: 1px solid #808080; margin: 0px 2px 0px 2px; padding: 0px 6px 0px 6px; width: 100%; }
 div[control="dossier-memos"] span[control="sort-memo"] { cursor: move; }
 div[control="dossier-memos"] div[control="edit-memo-controls"] { display: inline; margin-right: 6px; }
@@ -47,7 +47,7 @@ div[control="dossier-memos"] span[control="memo-content"] { margin: 1px 12px 0px
 div[control="dossier-memos"] span[control="memo-content"] p { margin: 0px; }
 div[control="dossier-memos"] textarea[control="edit-memo-content"] { display: none; height: 1px /* is set by JavaScript. */; width: 100%; padding: 0px 0px 0px 1px; }
 div[control="dossier-memos"] td[control="edit-memo-counter"] { text-align: right; vertical-align: top; display: none; width: 1px; padding-left: 6px; }
-div[control="dossier-memos"] li[control="add-memo-line"] textarea[control="edit-memo-content"] { margin: 1px 0px 5px 0px; }
+div[control="dossier-memos"] li[control="add-memo-line"] textarea[control="edit-memo-content"] { margin: 1px 0px 4px 0px; }
 
 ul[control="memo-list"] table { width: 100%; border-spacing: 0px; }
 ul[control="memo-list"] table td:first-child { width: 1px; white-space: nowrap; vertical-align: top; }

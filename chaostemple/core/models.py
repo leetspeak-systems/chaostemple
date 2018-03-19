@@ -76,7 +76,10 @@ class AccessUtilities():
         group_ids = [g.id for g in user.groups.all()]
 
         AccessUtilities.cache[currentThread()] = {
-            'access': Access.objects.filter(Q(friend_id=user.id) | Q(friend_group_id__in=group_ids)),
+            'access': Access.objects.filter(
+                Q(friend_id=user.id, friend_group_id=None)
+                | Q(friend_group_id__in=group_ids, friend_id=None)
+            ),
             'user_id': user.id,
         }
 

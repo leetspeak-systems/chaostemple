@@ -78,4 +78,4 @@ td[control="issue-small"] div:first-child { min-height: 24px; }
 
 div[control="statistic-container"].small-issues { border-top: 1px dotted #b8b8b8; padding: 6px 0px 0px 0px; margin: 8px 0px 0px 0px; }
 
-select[control="membership-request-group-id"] { min-width: 220px; }
+select[control="membership-request-group-id"] { width: 220px; }

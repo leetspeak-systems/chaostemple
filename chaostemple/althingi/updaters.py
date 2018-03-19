@@ -393,7 +393,7 @@ def update_vote_casting(vote_casting_xml_id):
     if vote_casting_xml_id is not None and not isinstance(vote_casting_xml_id, int):
         raise TypeError('Parameter vote_casting_xml_id must be a number')
 
-    if ah_key in already_haves['vote_castings']:
+    if vote_casting_xml_id in already_haves['vote_castings']:
         return already_haves['vote_castings'][vote_casting_xml_id]
 
     xml = get_xml('VOTE_CASTING_URL', vote_casting_xml_id)
@@ -1701,7 +1701,7 @@ def update_committee_agenda(committee_agenda_xml_id, parliament_num=None):
 
     xml = get_xml('COMMITTEE_AGENDA_URL', committee_agenda_xml_id)
 
-    if not xml.attrib['númer']:
+    if not 'númer' in xml.attrib:
         try:
             # Committee agenda has been deleted in XML, meaning cancelled.
             CommitteeAgenda.objects.get(committee_agenda_xml_id=committee_agenda_xml_id).delete()

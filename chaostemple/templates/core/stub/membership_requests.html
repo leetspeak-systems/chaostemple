@@ -6,7 +6,7 @@
 </p>
 
 <p>
-    <select control="membership-request-group-id" style="min-width: 250px;" {% if not groups %}disabled="1"{% endif %}>
+    <select control="membership-request-group-id" {% if not groups %}disabled="1"{% endif %}>
     {% for group in groups %}
         <option value="{{ group.id }}">{{ group }}</option>
     {% endfor %}

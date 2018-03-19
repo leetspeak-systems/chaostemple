@@ -221,3 +221,7 @@
     * MPs automatically added to groups reflecting their party. Groups are created as needed and given full access.
     * Users able to request membership of a group. Any user already in group may accept or reject request.
     * Support for terms and conditions added.
+
+1.4.1:
+    * Minor UI problem fixed for Icelandic.
+    * Missing translations for Icelandic added.

@@ -316,6 +316,8 @@ class Issue(models.Model):
         ('iteration-1-finished', _('1st debate concluded')),
         ('committee-1-waiting', _('Sent to committee')),
         ('committee-1-current', _('Currently in committee')),
+        ('committee-1-reviews-requested', _('Reviews requested')),
+        ('committee-1-reviews-arrived', _('Reviews deadline expired')),
         ('committee-1-finished', _('Considered by committee')),
         ('iteration-2-waiting', _('Awaiting 2nd debate')),
         ('iteration-2-current', _('Currently in 2nd debate')),
@@ -337,6 +339,8 @@ class Issue(models.Model):
         ('iteration-former-finished', _('Former debate concluded')),
         ('committee-former-waiting', _('Sent to committee')),
         ('committee-former-current', _('Currently in committee')),
+        ('committee-former-reviews-requested', _('Reviews requested')),
+        ('committee-former-reviews-arrived', _('Reviews deadline expired')),
         ('committee-former-finished', _('Considered by committee')),
         ('iteration-latter-waiting', _('Awaiting latter debate')),
         ('iteration-latter-current', _('Currently in latter debate')),
@@ -378,6 +382,7 @@ class Issue(models.Model):
     categories = models.ManyToManyField('Category', related_name='issues')
 
     time_published = models.DateTimeField(null=True)
+    review_deadline = models.DateTimeField(null=True)
     final_vote_complete = models.BooleanField(default=False)
 
     special_inquisitor = models.ForeignKey(
@@ -450,6 +455,9 @@ class Issue(models.Model):
             'b': OrderedDict(self.ISSUE_STEPS_B),
         }
 
+        # Short-hand.
+        now = timezone.now()
+
         # If we don't know the issue type, there is nothing we can do.
         if self.issue_type not in ISSUE_STEP_MAP:
             return
@@ -471,6 +479,10 @@ class Issue(models.Model):
             steps['committee-1-waiting'] = self.vote_castings.filter(vote_casting_type='n2').count() > 0
 
             steps['committee-1-current'] = self.committee_agenda_items.count() > 0
+
+            steps['committee-1-reviews-requested'] = self.review_deadline and self.review_deadline > now
+
+            steps['committee-1-reviews-arrived'] = self.review_deadline and self.review_deadline < now
 
             steps['committee-1-finished'] = self.documents.filter(doc_type__in=[
                 'nál. með brtt.',
@@ -566,6 +578,10 @@ class Issue(models.Model):
             steps['committee-former-waiting'] = self.vote_castings.filter(vote_casting_type='ns').count() > 0
 
             steps['committee-former-current'] = self.committee_agenda_items.count() > 0
+
+            steps['committee-former-reviews-requested'] = self.review_deadline and self.review_deadline > now
+
+            steps['committee-former-reviews-arrived'] = self.review_deadline and self.review_deadline < now
 
             steps['committee-former-finished'] = self.documents.filter(doc_type__in=[
                 'nál. með brtt.',

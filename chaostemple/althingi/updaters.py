@@ -834,6 +834,10 @@ def update_issue(issue_num, parliament_num=None):
     description = issue_xml.find('efnisgreining').text
     description = '' if description is None else description.strip()
 
+    try:
+        review_deadline = sensible_datetime(xml.find('umsagnabeiðnir').attrib['frestur'])
+    except ValueError:
+        review_deadline = None
 
     cat_xml_ids = []
     for cgx in xml.findall('efnisflokkar/yfirflokkur'):
@@ -856,6 +860,10 @@ def update_issue(issue_num, parliament_num=None):
             issue.description = description
             changed = True
 
+        if issue.review_deadline != review_deadline:
+            issue.review_deadline = review_deadline
+            changed = True
+
         if [c.category_xml_id for c in issue.categories.order_by('category_xml_id')] != cat_xml_ids:
             issue.categories.clear()
             for cat_xml_id in cat_xml_ids:
@@ -875,6 +883,7 @@ def update_issue(issue_num, parliament_num=None):
         issue.issue_group = 'A'
         issue.name = name
         issue.description = description
+        issue.review_deadline = review_deadline
         issue.parliament = parliament
         issue.save()
 

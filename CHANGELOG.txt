@@ -231,3 +231,7 @@
 
 1.4.3:
     * Bugfix: Data gathering problems fixed.
+
+1.4.4:
+    * UI: Dossier memos put above controls, to ease massive commenting documents at the bottom of the screen.
+    * UI: Minor tweaks.

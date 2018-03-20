@@ -320,7 +320,8 @@ def parliament_session(request, parliament_num, session_num):
 def parliament_committees(request, parliament_num):
 
     committees = Committee.objects.filter(
-        parliaments__parliament_num=parliament_num
+        parliaments__parliament_num=parliament_num,
+        is_standing=True
     ).annotate(agenda_count=Count(
         Case(
             When(committee_agendas__parliament__parliament_num=parliament_num, then=1)

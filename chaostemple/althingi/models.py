@@ -986,6 +986,28 @@ class Proposer(models.Model):
 
 
 class Committee(models.Model):
+
+    NON_STANDING_COMMITTIES = (
+        'forsætisnefnd',
+        'Íslandsdeild Alþjóðaþingmannasambandsins',
+        'Íslandsdeild Evrópuráðsþingsins',
+        'Íslandsdeild NATO-þingsins',
+        'Íslandsdeild Norðurlandaráðs',
+        'Íslandsdeild Vestnorræna ráðsins',
+        'Íslandsdeild Vestur-Evrópusambandsins',
+        'Íslandsdeild þingmannanefnda EFTA og EES',
+        'Íslandsdeild þingmannanefndar EFTA',
+        'Íslandsdeild þingmannaráðstefnunnar um norðurskautsmál',
+        'Íslandsdeild þings Öryggis- og samvinnustofnunar Evrópu',
+        'kjörbréfanefnd',
+        'sérnefnd um stjórnarskrármál',
+        'sérnefnd um stjórnarskrármál (385. mál á 136. þingi)',
+        'starfshópur utanríkismálanefndar um Evrópumál',
+        'Þingmannanefnd Íslands og Evrópusambandsins af hálfu Alþingis',
+        'þingmannanefnd til að fjalla um skýrslu rannsóknarnefndar Alþingis',
+        'þingskapanefnd',
+    )
+
     name = models.CharField(max_length=100)
     abbreviation_short = models.CharField(max_length=20)
     abbreviation_long = models.CharField(max_length=30)
@@ -995,6 +1017,8 @@ class Committee(models.Model):
     parliaments = models.ManyToManyField('Parliament', related_name='committees')
 
     committee_xml_id = models.IntegerField(unique=True)
+
+    is_standing = models.BooleanField(default=True)
 
     def issues(self, parliament_num=None):
         if parliament_num is None:
@@ -1006,6 +1030,10 @@ class Committee(models.Model):
 
     def __str__(self):
         return capfirst(self.name)
+
+    def save(self, *args, **kwargs):
+        self.is_standing = self.name not in Committee.NON_STANDING_COMMITTIES
+        super(Committee, self).save(*args, **kwargs)
 
     class Meta:
         ordering = ['name']

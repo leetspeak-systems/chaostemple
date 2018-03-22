@@ -45,7 +45,9 @@
             {% if issue.proposers.all.1 %}<a href="#" control="expand-proposer" data-id="{{ issue.proposers.all.0.id }}">{% trans 'and others' %}</a>{% endif %}
             </span>
             <span style="float: right;">
-                {{ issue.time_published|date:'SHORT_DATE_FORMAT' }}
+                {% if issue.current_step %}
+                    {{ issue.get_current_step_display }}
+                {% endif %}
             </span>
             </small>
             </div>

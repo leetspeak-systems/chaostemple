@@ -19,32 +19,43 @@
                     {% if issue.time_published %}
                         <span class="label label-default">{{ issue.time_published|date:'SHORT_DATE_FORMAT' }}</span>
                     {% endif %}
-                    <span class="label label-default">{{ issue.issue_num }}. {% trans 'parliamentary issue' %}</span>
                     <span class="label label-default">{{ issue.get_issue_type_display|capfirst }}</span>
-                </p>
-                <p class="pull-right" style="clear: right;">
-                    <span class="label label-default">{% trans 'Reviews' %}: {{ issue.review_count }}</span>
-                    <span class="label label-default">{% trans "Parliamentary Documents" %}: {{ issue.document_count }}</span>
+                    {% if issue.fate %}
+                        <span class="label label-{% if issue.fate == 'accepted' %}success{% elif issue.fate == 'rejected' %}danger{% elif issue.fate == 'sent-to-government' %}info{% else %}primary{% endif %}">
+                            {{ issue.get_fate_display|capfirst }}
+                        </span>
+                    {% endif %}
                 </p>
                 <p>
-                    <a href="{% breadcrumb_url 'parliament_issue' issue.parliament.parliament_num issue.issue_num %}">
+                    {{ issue.issue_num }}
+                    | <a href="{% breadcrumb_url 'parliament_issue' issue.parliament.parliament_num issue.issue_num %}">
                         <strong><span control="issue-name" data-id="{{ issue.id }}">{{ issue }}</span></strong>
                     </a>
                     {% if issue.description %}
                         <small>(<span control="issue-description" data-id="{{ issue.id }}">{{ issue.description }}</span>)</small>
                     {% endif %}
                 </p>
+                <p class="pull-right" style="clear: right;">
+                    <small>
+                    {% trans 'Reviews' %}: <strong>{{ issue.review_count }}</strong>
+                    | {% trans 'Parliamentary Documents' %}: <strong>{{ issue.document_count }}</strong>
+                    {% if issue.current_step %}
+                        | {% trans 'Status' %}: <strong>{{ issue.get_current_step_display }}</strong>
+                    {% endif %}
+                    </small>
+                </p>
                 <p>
                     <small>
                     <strong>{% trans "Proposers" %}:</strong>
                         <span>
-                        {% for proposer in issue.proposers.all %}
+                        {% with issue.proposers.all.0 as proposer %}
                             {% if proposer.person %}
-                                <a href="{% breadcrumb_url 'person' proposer.person.slug proposer.person.subslug %}">{{ proposer }}</a>{% if not forloop.last %}, {% endif %}
+                                <a href="{% breadcrumb_url 'person' proposer.person.slug proposer.person.subslug %}">{{ proposer }}</a>
                             {% else %}
-                                <a href="#" control="expand-proposer" data-id="{{ proposer.id }}">{{ proposer }}</a>{% if not forloop.last %}, {% endif %}
+                                <a href="#" control="expand-proposer" data-id="{{ proposer.id }}">{{ proposer }}</a>
                             {% endif %}
-                        {% endfor %}
+                        {% endwith %}
+                        {% if issue.proposers.all.1 %}<a href="#" control="expand-proposer" data-id="{{ issue.proposers.all.0.id }}">{% trans 'and others' %}</a>{% endif %}
                         </span>
                     </small>
                 </p>

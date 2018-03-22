@@ -32,7 +32,10 @@
         </div>
 
         <div class="col-md-8">
-            <h3>{% trans 'Issues' %}</h3>
+            <h3>
+                <a href="{% url 'parliament_committee_issues' parliament_num committee.id %}"><i class="glyphicon glyphicon-resize-full"></i></a>
+                {% trans 'Issues' %}
+            </h3>
             <table class="table">
                 {% for issue in issues reversed %}
                     {% include 'core/stub/small/issue.html' %}

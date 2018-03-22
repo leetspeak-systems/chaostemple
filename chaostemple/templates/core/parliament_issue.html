@@ -21,7 +21,7 @@
     {% include 'core/dialog/dialog_delete_memo.html' %}
 
     <h2>
-        {{ issue }}
+        {{ issue.issue_num }} | {{ issue }}
         {% if issue.description %}
             <small>({{ issue.description }})</small>
         {% endif %}
@@ -29,8 +29,28 @@
 
     <div>
         {% include 'core/stub/link_althingi_issue.html' with parliament_num=parliament_num issue_num=issue.issue_num %}
-        <span class="label label-primary">{{ issue.issue_num }}. {% trans 'parliamentary issue' %}</span>
-        <span class="label label-primary">{{ issue.parliament.parliament_num }}. {% trans 'parliament' %}</span>
+        <span class="label label-default">{{ issue.parliament.parliament_num }}. {% trans 'parliament' %}</span>
+
+        {% if issue.time_published %}
+            <span class="label label-default">{{ issue.time_published|date:'SHORT_DATE_FORMAT' }}</span>
+        {% endif %}
+        <span class="label label-default">{{ issue.get_issue_type_display|capfirst }}</span>
+        {% if issue.fate %}
+            <span class="label label-{% if issue.fate == 'accepted' %}success{% elif issue.fate == 'rejected' %}danger{% elif issue.fate == 'sent-to-government' %}info{% else %}primary{% endif %}">
+                {{ issue.get_fate_display|capfirst }}
+            </span>
+        {% endif %}
+
+        <p class="pull-right" style="clear: right;">
+            <small>
+            {% trans 'Reviews' %}: <strong>{{ issue.review_count }}</strong>
+            | {% trans 'Parliamentary Documents' %}: <strong>{{ issue.document_count }}</strong>
+            {% if issue.current_step %}
+                | {% trans 'Status' %}: <strong>{{ issue.get_current_step_display }}</strong>
+            {% endif %}
+            </small>
+        </p>
+
     </div>
 
     <div control="issue-view-controls" class="navbar navbar-default">

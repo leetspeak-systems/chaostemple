@@ -373,6 +373,28 @@ def parliament_committee(request, parliament_num, committee_id):
     return render(request, 'core/parliament_committee.html', ctx)
 
 
+def parliament_committee_issues(request, parliament_num, committee_id):
+
+    committee = Committee.objects.get(id=committee_id)
+    issues = committee.issues(
+        parliament_num
+    ).prefetch_related(
+        'proposers__person'
+    ).select_related(
+        'parliament'
+    ).order_by(
+        '-issue_num'
+    )
+
+    IssueUtilities.populate_dossier_statistics(issues)
+
+    ctx = {
+        'committee': committee,
+        'issues': issues,
+    }
+    return render(request, 'core/parliament_committee_issues.html', ctx)
+
+
 def parliament_committee_agenda(request, parliament_num, committee_id, agenda_id):
 
     committee = Committee.objects.get(id=committee_id)

@@ -2030,32 +2030,44 @@ def update_speeches(parliament_num=None):
 
     xml = get_xml('SPEECHES_URL', parliament.parliament_num)
 
+    pref_persons = dict((p.person_xml_id, p) for p in Person.objects.all())
+    pref_sessions = dict((s.session_num, s) for s in Session.objects.filter(parliament_id=parliament.id))
+    pref_issues = dict((i.issue_num, i) for i in Issue.objects.filter(
+        issue_group='A',
+        parliament_id=parliament.id,
+    ))
+    pref_speeches = dict((s.timing_start, s) for s in Speech.objects.filter(session__parliament_id=parliament.id))
+
     speeches = []
     speech_orders = {}
     for speech_xml in xml.findall('ræða'):
 
         person_xml_id = int(speech_xml.find('ræðumaður').attrib['id'])
-        person = update_person(person_xml_id)
+        try:
+            person = pref_persons[person_xml_id]
+        except KeyError:
+            person = update_person(person_xml_id)
 
         session_num = int(speech_xml.find('fundur').text)
-        session = update_session(session_num, parliament.parliament_num)
+        try:
+            session = pref_sessions[session_num]
+        except KeyError:
+            session = update_session(session_num, parliament.parliament_num)
 
-        issue_group = speech_xml.find('mál/málsflokkur').text
-        if issue_group is None:
-            # Speech is not about an issue if issue group is not specified.
+        issue_group = issue_group = speech_xml.find('mál/málsflokkur').text
+        if issue_group == 'A':
+            issue_num = int(speech_xml.find('mál/málsnúmer').text)
+            try:
+                issue = pref_issues[issue_num]
+            except KeyError:
+                issue = update_issue(issue_num, parliament.parliament_num)
+        elif issue_group == 'B':
+            # NOTE/TODO: We're skipping this for now, until the
+            # independent B-issue XML file is complete, which should be
+            # very soon since it's already almost complete. (2018-02-12)
             issue = None
         else:
-            issue_num = int(speech_xml.find('mál/málsnúmer').text)
-            if issue_group == 'A':
-                issue = update_issue(issue_num, parliament.parliament_num)
-            elif issue_group == 'B':
-                # NOTE/TODO: We're skipping this for now, until the
-                # independent B-issue XML file is complete, which should be
-                # very soon since it's already almost complete. (2018-02-12)
-                issue = None
-            else:
-                # This should never happen.
-                raise AlthingiException('Issue group %s in remote XML unknown' % issue_group)
+            issue = None
 
         date = sensible_datetime(speech_xml.find('dagur').text)
 
@@ -2108,12 +2120,12 @@ def update_speeches(parliament_num=None):
         except AttributeError:
             sound_remote_path = None
 
-        try:
+        if timing_start in pref_speeches:
             # Speeches don't have IDs, so we have to go by the only unique
             # identifier, which is the moment they began. Note that this makes
             # speeches from the 115th Parliament and older incompatible. There
             # is no known solution until speeches get unique IDs in the XML.
-            speech = Speech.objects.get(timing_start=timing_start)
+            speech = pref_speeches[timing_start]
 
             changed = False
             if speech.person != person:
@@ -2182,7 +2194,7 @@ def update_speeches(parliament_num=None):
             else:
                 print('Already have speech: %s' % speech)
 
-        except Speech.DoesNotExist:
+        else:
             speech = Speech(timing_start=timing_start)
             speech.person = person
             speech.session = session

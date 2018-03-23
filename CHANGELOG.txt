@@ -235,3 +235,9 @@
 1.4.4:
     * UI: Dossier memos put above controls, to ease massive commenting documents at the bottom of the screen.
     * UI: Minor tweaks.
+
+1.4.5:
+    * Distinction made between committees and standing committees. Only standing committees displayed in interface.
+    * Status of issues shown in their listings and view. Minor cosmetic changes to the displaying of issues.
+    * Dedicated view for issues in committee added.
+    * Althingi module: Performance of speech gathering massively improved.

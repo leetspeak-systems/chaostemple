@@ -441,19 +441,12 @@ def parliament_persons(request, parliament_num, party_slug=None):
     if party_slug:
         party = get_object_or_404(Party, slug=party_slug)
 
-        # Make this prettier. Make my day.
         q_persons = Q(
-            Q(
-                seats__parliament__parliament_num=parliament_num
-            ) & Q(
-                seats__party__slug=party_slug
-            )
+            seats__parliament__parliament_num=parliament_num,
+            seats__party__slug=party_slug
         ) | Q(
-            Q(
-                minister_seats__parliament__parliament_num=parliament_num
-            ) & Q(
-                minister_seats__party__slug=party_slug
-            )
+            minister_seats__parliament__parliament_num=parliament_num,
+            minister_seats__party__slug=party_slug
         )
     else:
         party = None

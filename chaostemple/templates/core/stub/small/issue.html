@@ -45,7 +45,11 @@
             {% if issue.proposers.all.1 %}<a href="#" control="expand-proposer" data-id="{{ issue.proposers.all.0.id }}">{% trans 'and others' %}</a>{% endif %}
             </span>
             <span style="float: right;">
-                {% if issue.current_step %}
+                {% if issue.fate %}
+                    <span class="text-{% if issue.fate == 'accepted' %}success{% elif issue.fate == 'rejected' %}danger{% elif issue.fate == 'sent-to-government' %}info{% else %}primary{% endif %}">
+                        <strong>{{ issue.get_fate_display|capfirst }}</strong>
+                    </span>
+                {% elif issue.current_step %}
                     {{ issue.get_current_step_display }}
                 {% endif %}
             </span>

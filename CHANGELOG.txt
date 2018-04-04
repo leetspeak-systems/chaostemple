@@ -241,3 +241,8 @@
     * Status of issues shown in their listings and view. Minor cosmetic changes to the displaying of issues.
     * Dedicated view for issues in committee added.
     * Althingi module: Performance of speech gathering massively improved.
+
+1.4.6:
+    * UI: Fate of issue shown on small issue view when concluded (accepted/rejected).
+    * Dedicated view for political groups, showing their issues.
+    * Issues organized by type and ordered by status in party view.

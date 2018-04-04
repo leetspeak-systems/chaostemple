@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-23 16:35+0000\n"
+"POT-Creation-Date: 2018-04-01 15:41+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -154,7 +154,8 @@ msgstr "Musteri Glundroðans"
 #: core/breadcrumbs.py:57 templates/base.html:51 templates/base.html:54
 #: templates/core/parliament_issue.html:32
 #: templates/core/parliament_issue.html:96
-#: templates/core/parliament_issue.html:111 templates/core/person.html:92
+#: templates/core/parliament_issue.html:111
+#: templates/core/parliament_party.html:7 templates/core/person.html:92
 #: templates/core/person.html:117 templates/core/person.html:139
 #: templates/core/person.html:163 templates/core/person.html:175
 #: templates/core/stub/parliament_selection.html:5
@@ -221,6 +222,7 @@ msgstr "Þingflokkar"
 
 #: core/breadcrumbs.py:213 templates/core/parliament.html:11
 #: templates/core/parliament_parties.html:14
+#: templates/core/parliament_party.html:13
 msgid "Parliamentarians"
 msgstr "Þingmenn"
 
@@ -420,7 +422,7 @@ msgstr "Listar"
 msgid "Standing Committees"
 msgstr "Fastanefndir"
 
-#: templates/base.html:143 templates/core/parliament_persons.html:7
+#: templates/base.html:143 templates/core/parliament_persons.html:39
 msgid "Parliamentarians and ministers"
 msgstr "Þingmenn og ráðherrar"
 
@@ -708,26 +710,34 @@ msgstr "Engin þing hafa enn verið sett inn."
 msgid "Parliamentary Party"
 msgstr "Þingflokkur"
 
-#: templates/core/parliament_persons.html:13
+#: templates/core/parliament_party.html:23
+msgid "Deputy Parliamentarians"
+msgstr "Varaþingmenn"
+
+#: templates/core/parliament_persons.html:32
+msgid "All parties"
+msgstr "Allir flokkar"
+
+#: templates/core/parliament_persons.html:45
 msgid "Parliamentarian"
 msgstr "Þingmaður"
 
-#: templates/core/parliament_persons.html:14
-#: templates/core/parliament_persons.html:34
+#: templates/core/parliament_persons.html:46
+#: templates/core/parliament_persons.html:66
 msgid "Party at end of parliament"
 msgstr "Flokkur við þinglok"
 
-#: templates/core/parliament_persons.html:15
-#: templates/core/parliament_persons.html:35
+#: templates/core/parliament_persons.html:47
+#: templates/core/parliament_persons.html:67
 msgid "Parliamentary Seat"
 msgstr "Þingsæti"
 
-#: templates/core/parliament_persons.html:16
-#: templates/core/parliament_persons.html:36 templates/core/person.html:113
+#: templates/core/parliament_persons.html:48
+#: templates/core/parliament_persons.html:68 templates/core/person.html:113
 msgid "Constituency"
 msgstr "Kjördæmi"
 
-#: templates/core/parliament_persons.html:33
+#: templates/core/parliament_persons.html:65
 msgid "Deputy Parliamentarian"
 msgstr "Varaþingmaður"
 
@@ -941,6 +951,7 @@ msgid "Special discussion"
 msgstr "Sérstök umræða"
 
 #: templates/core/stub/small/person.html:12
+#: templates/core/stub/tiny/person.html:24
 msgid "tenure ended prematurely"
 msgstr "þingstörfum lauk fyrir þinglok"
 

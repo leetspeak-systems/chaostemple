@@ -2,7 +2,7 @@
 {% load dossier_tags %}
 {% load smart_urls %}
 
-<tr control="issue-container" data-id="{{ issue.id }}">
+<tr control="issue-container" data-id="{{ issue.id }}" data-issue-type="{{ issue.issue_type }}" {% if start_hidden %}style="display: none;" {% endif %}>
     <td control="issue-small">
         {% if issue.issue_group == 'A' %}
 

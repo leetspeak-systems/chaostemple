@@ -432,11 +432,63 @@ def parliament_parties(request, parliament_num):
     return render(request,'core/parliament_parties.html', ctx)
 
 
-def parliament_persons(request, parliament_num, party_slug=None):
+def parliament_party(request, parliament_num, party_slug):
 
     parliament = request.extravars['parliament']
 
-    q_persons = Q(seats__parliament__parliament_num=parliament_num)
+    party = get_object_or_404(Party, slug=party_slug)
+
+    persons = Person.objects.prefetch_latest_seats(
+        parliament,
+        'party',
+        'constituency',
+        'parliament'
+    ).prefetch_latest_minister_seats(
+        parliament,
+        'minister',
+        'party'
+    ).prefetch_latest_president_seats(
+        parliament,
+        'president'
+    ).filter(
+        Q(
+            seats__parliament__parliament_num=parliament_num,
+            seats__party__slug=party_slug
+        ) | Q(
+            minister_seats__parliament__parliament_num=parliament_num,
+            minister_seats__party__slug=party_slug
+        )
+    ).distinct()
+
+    issues = Issue.objects.select_related(
+        'parliament'
+    ).prefetch_related(
+        'proposers__person'
+    ).from_party(
+        party
+    ).filter(
+        parliament_id=parliament.id,
+        issue_group='A'
+    )
+
+    IssueUtilities.populate_dossier_statistics(issues)
+
+    ctx = {
+        'party': party,
+        'persons': persons,
+        'issues': issues,
+    }
+    return render(request, 'core/parliament_party.html', ctx)
+
+
+
+def parliament_persons(request, parliament_num, party_slug=None):
+
+    parliament = request.extravars['parliament']
+    parties = Party.objects.filter(
+        Q(parliament_num_last__gte=parliament_num) | Q(parliament_num_last=None),
+        parliament_num_first__lte=parliament_num
+    )
 
     if party_slug:
         party = get_object_or_404(Party, slug=party_slug)
@@ -473,6 +525,7 @@ def parliament_persons(request, parliament_num, party_slug=None):
     ctx = {
         'parliament': parliament,
         'persons': persons,
+        'parties': parties,
         'party': party,
     }
     return render(request, 'core/parliament_persons.html', ctx)

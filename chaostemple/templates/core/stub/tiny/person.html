@@ -1,0 +1,30 @@
+{% load i18n %}
+{% load smart_urls %}
+{% load person %}
+
+{% with seat|tenure_ended_prematurely as tenure_ended_prematurely %}
+<tr>
+    <td {% if tenure_ended_prematurely %}class="faded-text"{% endif %}>
+        <a href="{% breadcrumb_url 'person' person.slug person.subslug %}">{{ person }}</a>
+
+        {% if seat %}
+            <small>({{ seat.constituency_mp_num }}. {{ seat.constituency.abbreviation_short }})</small><br />
+        {% endif %}
+
+        {% for lms in person.last_minister_seats %}
+            <small>{{ lms.minister|capfirst }}</small><br />
+        {% endfor %}
+
+        {% if person.last_president_seat %}
+            <small>{{ person.last_president_seat.0.president }}</small><br />
+        {% endif %}
+
+        {% if tenure_ended_prematurely %}
+            <small>
+                ({% trans 'tenure ended prematurely' %}:
+                {{ seat.timing_out|date:'SHORT_DATE_FORMAT' }})
+            </small>
+        {% endif %}
+    </td>
+</tr>
+{% endwith %}

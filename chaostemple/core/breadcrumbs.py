@@ -202,15 +202,26 @@ def process_breadcrumbs(breadcrumbs, view):
         )
 
     if view_name == 'parliament_persons':
+        caption = _('Parliamentarians')
+
         if 'party_slug' in view_kwargs:
             party = Party.objects.get(slug=view_kwargs.get('party_slug'))
+            caption += ' (%s)' % party.name
         else:
             party = None
 
         breadcrumbs = leave_breadcrumb(
             breadcrumbs,
             ('parliament_persons', parliament_num, party.slug) if party else ('parliament_persons', parliament_num),
-            party if party else _('Parliamentarians')
+            caption
+        )
+
+    if view_name == 'parliament_party':
+        party = Party.objects.get(slug=view_kwargs.get('party_slug'))
+        breadcrumbs = leave_breadcrumb(
+            breadcrumbs,
+            ('parliament_party', parliament_num, party.slug),
+            party
         )
 
     if view_name == 'person':

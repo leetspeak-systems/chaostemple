@@ -22,6 +22,18 @@ from althingi.althingi_settings import CURRENT_PARLIAMENT_NUM
 from althingi.exceptions import DataIntegrityException
 from althingi.utils import format_date
 
+
+class IssueQuerySet(models.QuerySet):
+    def from_party(self, party):
+        return self.filter(
+            Q(proposers__person__seats__timing_out__gte=F('time_published'))
+            | Q(proposers__person__seats__timing_out=None),
+            proposers__person__seats__timing_in__lte=F('time_published'),
+            proposers__person__seats__party=party,
+            proposers__order=1
+        )
+
+
 class PartyQuerySet(models.QuerySet):
     def annotate_mp_counts(self, timing):
         return self.annotate(
@@ -273,16 +285,18 @@ class Parliament(models.Model):
 
 
 class Issue(models.Model):
+    objects = IssueQuerySet.as_manager()
+
     ISSUE_TYPES = (
         ('l', 'lagafrumvarp'),
         ('a', 'þingsályktunartillaga'),
-        ('m', 'fyrirspurn'),
         ('q', 'fyrirspurn til skriflegs svars'),
-        ('s', 'skýrsla'),
+        ('m', 'fyrirspurn'),
         ('b', 'beiðni um skýrslu'),
-        ('f', 'frestun á fundum Alþingis'),
+        ('s', 'skýrsla'),
         ('n', 'álit'),
         ('v', 'vantrauststillaga'),
+        ('f', 'frestun á fundum Alþingis'),
 
         ('al', 'almennar stjórnmálaumræður'),
         ('av', 'ávarp'),

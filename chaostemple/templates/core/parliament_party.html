@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+{% load issue %}
+
+{% block javascript %}
+    <script language="javascript" type="text/javascript" src="{% static 'core/js/issue_control.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+    <h2>{{ party }} <small>{{ parliament.parliament_num }}. {% trans 'parliament' %}</small></h2>
+
+    <div class="row">
+
+        <div class="col-md-3">
+            <h3>{% trans 'Parliamentarians' %}</h3>
+            <table class="table">
+                {% for person in persons %}
+                    {% with person.last_seat.0 as last_seat %}
+                    {% if last_seat.seat_type == 'þingmaður' or last_seat.seat_type == 'með varamann' or person.last_minister_seats %}
+                        {% include 'core/stub/tiny/person.html' with seat=person.last_seat.0 %}
+                    {% endif %}
+                    {% endwith %}
+                {% endfor %}
+                <tr>
+                    <th>{% trans 'Deputy Parliamentarians' %}</th>
+                </tr>
+                {% for person in persons %}
+                    {% with person.last_seat.0 as last_seat %}
+                    {% if last_seat.seat_type == 'varamaður' %}
+                        {% include 'core/stub/tiny/person.html' with seat=person.last_seat.0 %}
+                    {% endif %}
+                    {% endwith %}
+                {% endfor %}
+            </table>
+        </div>
+
+        <div class="col-md-9">
+            <h3>{% trans 'Issues' %}</h3>
+
+            <ul class="nav nav-tabs" control="issue-type-selector">
+                {% for issue_type, issue_type_display in issues|issue_types %}
+                    <li role="presentation">
+                        <a data-issue-type="{{ issue_type }}">
+                            {{ issue_type_display|capfirst }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+
+            <table class="table">
+                {% for issue in issues|order_by_type_and_current_step reversed %}
+                    {% include 'core/stub/small/issue.html' with start_hidden=True %}
+                {% endfor %}
+            </table>
+        </div>
+
+    </div>
+
+{% endblock %}

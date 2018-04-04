@@ -2,7 +2,39 @@
 {% load i18n %}
 {% load smart_urls %}
 
+{% block javascript %}
+<script language="javascript" type="text/javascript">
+
+var PARLIAMENT_NUM = {{ parliament.parliament_num }};
+
+$(document).ready(function() {
+
+    $('select#persons-party').on('change', function() {
+        var party_slug = $(this).val();
+        var url = '/parliament/' + PARLIAMENT_NUM + '/persons/';
+
+        if (party_slug) {
+            url += 'party/' + party_slug + '/';
+        }
+
+        location.href = url;
+    });
+
+});
+
+</script>
+{% endblock %}
+
 {% block content %}
+
+    <div style="float: right;">
+    <select id="persons-party" style="min-width: 200px;">
+        <option value="">{% trans 'All parties' %}</option>
+        {% for it_party in parties %}
+            <option value="{{ it_party.slug }}" {% if it_party.slug == party.slug %}selected="yeah"{% endif %}>{{ it_party }}</option>
+        {% endfor %}
+    </select>
+    </div>
 
     <h2>{% trans 'Parliamentarians and ministers' %}{% if party %} <small>({{ party }})</small>{% endif %}</h2>
 

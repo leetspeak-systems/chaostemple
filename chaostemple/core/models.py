@@ -15,13 +15,14 @@ from django.utils import timezone
 from django.utils.translation import ugettext as _
 
 from althingi.models import Issue as AlthingiIssue
+from althingi.models import IssueQuerySet as AlthingiIssueQuerySet
 from althingi.models import Person
 
 from dossier.models import DossierStatistic
 
 # Custom query sets and model managers
 
-class IssueQuerySet(models.QuerySet):
+class IssueQuerySet(AlthingiIssueQuerySet):
 
     def annotate_news(self, user_id):
         '''

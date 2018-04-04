@@ -17,12 +17,14 @@
                     <tr>
                         <td>
                             {% if party.special %}
-                                <em><a href="{% breadcrumb_url 'parliament_persons' parliament_num party.slug %}">{{ party.name }}</a></em>
+                                <em><a href="{% breadcrumb_url 'parliament_party' parliament_num party.slug %}">{{ party.name }}</a></em>
                             {% else %}
-                                <a href="{% breadcrumb_url 'parliament_persons' parliament_num party.slug %}">{{ party.name }}</a>
+                                <a href="{% breadcrumb_url 'parliament_party' parliament_num party.slug %}">{{ party.name }}</a>
                            {% endif %}
                         </td>
-                        <td style="text-align: right;">{{ party.mp_count }}</td>
+                        <td style="text-align: right;">
+                            <a href="{% breadcrumb_url 'parliament_persons' parliament_num party.slug %}">{{ party.mp_count }}</a>
+                        </td>
                     </tr>
                 {% endfor %}
             </table>

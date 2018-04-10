@@ -1401,6 +1401,7 @@ class VoteCasting(models.Model):
     session = models.ForeignKey('Session', related_name='vote_castings', on_delete=CASCADE)
 
     to_committee = models.ForeignKey('Committee', null=True, related_name='vote_castings', on_delete=CASCADE)
+    to_minister = models.ForeignKey('Minister', null=True, related_name='vote_castings', on_delete=CASCADE)
 
     vote_casting_xml_id = models.IntegerField(unique=True)
 

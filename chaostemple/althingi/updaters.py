@@ -379,6 +379,9 @@ def update_vote_castings(parliament_num=None):
 
     parliament = update_parliament(parliament_num)
 
+    # Needed for some vote castings that cannot update individual ministers.
+    update_ministers(parliament.parliament_num)
+
     xml = get_xml('VOTE_CASTINGS_URL', parliament.parliament_num).findall('atkvæðagreiðsla')
 
     for vote_casting_xml in xml:
@@ -438,6 +441,12 @@ def update_vote_casting(vote_casting_xml_id):
         to_committee = update_committee(committee_xml_id, parliament.parliament_num)
     except AttributeError:
         to_committee = None
+
+    try:
+        minister_xml_id = int(xml.find('tilráðherra').attrib['id'])
+        to_minister = Minister.objects.get(minister_xml_id=minister_xml_id)
+    except AttributeError:
+        to_minister = None
 
     try:
         method = xml.find('niðurstaða/aðferð').text
@@ -520,6 +529,10 @@ def update_vote_casting(vote_casting_xml_id):
             vote_casting.to_committee = to_committee
             changed = True
 
+        if vote_casting.to_minister != to_minister:
+            vote_casting.to_minister = to_minister
+            changed = True
+
         if changed:
             vote_casting.save()
             print('Updated vote casting: %s' % vote_casting)
@@ -542,6 +555,7 @@ def update_vote_casting(vote_casting_xml_id):
         vote_casting.document = document
         vote_casting.session = session
         vote_casting.to_committee = to_committee
+        vote_casting.to_minister = to_minister
         vote_casting.vote_casting_xml_id = vote_casting_xml_id
 
         vote_casting.save()

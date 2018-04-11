@@ -381,224 +381,280 @@ def update_vote_castings(parliament_num=None):
 
     # Needed for some vote castings that cannot update individual ministers.
     update_ministers(parliament.parliament_num)
+    update_committees(parliament.parliament_num)
 
-    xml = get_xml('VOTE_CASTINGS_URL', parliament.parliament_num).findall('atkvæðagreiðsla')
+    pref_persons = {p.person_xml_id: p for p in Person.objects.all()}
+    pref_sessions = {s.session_num: s for s in Session.objects.filter(parliament_id=parliament.id)}
+    pref_issues = {i.issue_num: i for i in Issue.objects.prefetch_related('documents').filter(
+        issue_group='A',
+        parliament_id=parliament.id,
+    )}
+    # We need names as keys because of weird XML explained below.
+    pref_committees = {c.name: c for c in parliament.committees.all()}
+    pref_ministers = {m.name: m for m in parliament.ministers.all()}
+    pref_vote_castings = {vc.vote_casting_xml_id: vc for vc in VoteCasting.objects.filter(
+        session__parliament__parliament_num=parliament.parliament_num
+    )}
+    pref_votes = {
+        '%d-%d' % (
+            v.vote_casting.vote_casting_xml_id,
+            v.person.person_xml_id
+        ): v for v in Vote.objects.select_related('vote_casting','person').filter(
+            vote_casting__session__parliament_id=parliament.id
+        )
+    }
 
-    for vote_casting_xml in xml:
-        vote_casting_xml_id = int(vote_casting_xml.attrib['atkvæðagreiðslunúmer'])
+    for xml in get_xml('VOTE_CASTINGS_URL', parliament.parliament_num).findall('atkvæðagreiðsla'):
+        vote_casting_xml_id = int(xml.attrib['atkvæðagreiðslunúmer'])
 
-        update_vote_casting(vote_casting_xml_id)
-
-
-def update_vote_casting(vote_casting_xml_id):
-
-    # Make sure that input makes sense
-    if vote_casting_xml_id is not None and not isinstance(vote_casting_xml_id, int):
-        raise TypeError('Parameter vote_casting_xml_id must be a number')
-
-    if vote_casting_xml_id in already_haves['vote_castings']:
-        return already_haves['vote_castings'][vote_casting_xml_id]
-
-    xml = get_xml('VOTE_CASTING_URL', vote_casting_xml_id)
-
-    try:
         issue_num = int(xml.attrib['málsnúmer'])
         issue_group = xml.attrib['málsflokkur']
 
-        parliament_num = int(xml.attrib['þingnúmer'])
-        parliament = update_parliament(parliament_num)
-    except KeyError:
-        # This is currently the only way of seeing if the vote casting exists.
-        raise AlthingiException('Vote casting %d does not exist' % vote_casting_xml_id)
+        if issue_group == 'A':
+            try:
+                issue = pref_issues[issue_num]
+            except KeyError:
+                issue = update_issue(issue_num, parliament.parliament_num)
 
-    if issue_group == 'A':
-        issue = update_issue(issue_num, parliament.parliament_num)
-
-        doc_num = int(xml.find('þingskjal').attrib['skjalsnúmer'])
-        document = issue.documents.get(doc_num=doc_num)
-    # NOTE / TODO: Waiting for B-issue types to appear in XML for vote castings.
-    #elif issue_group == 'B':
-    #    docless_issue_xml = vote_casting_xml.find('mál')
-    #    issue = _process_docless_issue(docless_issue_xml)
-    #    document = None
-    else:
-        issue = None
-        document = None
-
-    timing = sensible_datetime(xml.find('tími').text)
-    vote_casting_type = xml.find('tegund').attrib['tegund']
-    vote_casting_type_text = xml.find('tegund').text
-    try:
-        specifics = xml.find('nánar').text.strip()
-    except AttributeError:
-        specifics = ''
-
-    session_num = int(xml.find('fundur').text)
-    session = update_session(session_num, parliament.parliament_num)
-
-    try:
-        committee_xml_id = int(xml.find('til').attrib['id'])
-        to_committee = update_committee(committee_xml_id, parliament.parliament_num)
-    except AttributeError:
-        to_committee = None
-
-    try:
-        minister_xml_id = int(xml.find('tilráðherra').attrib['id'])
-        to_minister = Minister.objects.get(minister_xml_id=minister_xml_id)
-    except AttributeError:
-        to_minister = None
-
-    try:
-        method = xml.find('niðurstaða/aðferð').text
-    except AttributeError:
-        method = None
-
-    try:
-        count_yes = int(xml.find('niðurstaða/já/fjöldi').text)
-    except (AttributeError, TypeError):
-        count_yes = None
-
-    try:
-        count_no = int(xml.find('niðurstaða/nei/fjöldi').text)
-    except (AttributeError, TypeError):
-        count_no = None
-
-    try:
-        count_abstain = int(xml.find('niðurstaða/greiðirekkiatkvæði/fjöldi').text)
-    except (AttributeError, TypeError):
-        count_abstain = None
-
-    try:
-        conclusion = xml.find('niðurstaða/niðurstaða').text
-    except AttributeError:
-        conclusion = None
-
-    try:
-        vote_casting = VoteCasting.objects.get(vote_casting_xml_id=vote_casting_xml_id)
-
-        changed = False
-        if sensible_datetime(vote_casting.timing) != sensible_datetime(timing):
-            vote_casting.timing = sensible_datetime(timing)
-            changed = True
-
-        if vote_casting.vote_casting_type != vote_casting_type:
-            vote_casting.vote_casting_type = vote_casting_type
-            changed = True
-
-        if vote_casting.vote_casting_type_text != vote_casting_type_text:
-            vote_casting.vote_casting_type_text = vote_casting_type_text
-            changed = True
-
-        if vote_casting.specifics != specifics:
-            vote_casting.specifics = specifics
-            changed = True
-
-        if vote_casting.method != method:
-            vote_casting.method = method
-            changed = True
-
-        if vote_casting.count_yes != count_yes:
-            vote_casting.count_yes = count_yes
-            changed = True
-
-        if vote_casting.count_no != count_no:
-            vote_casting.count_no = count_no
-            changed = True
-
-        if vote_casting.count_abstain != count_abstain:
-            vote_casting.count_abstain = count_abstain
-            changed = True
-
-        if vote_casting.conclusion != conclusion:
-            vote_casting.conclusion = conclusion
-            changed = True
-
-        if vote_casting.issue != issue:
-            vote_casting.issue = issue
-            changed = True
-
-        if vote_casting.document != document:
-            vote_casting.document = document
-            changed = True
-
-        if vote_casting.session != session:
-            vote_casting.session = session
-            changed = True
-
-        if vote_casting.to_committee != to_committee:
-            vote_casting.to_committee = to_committee
-            changed = True
-
-        if vote_casting.to_minister != to_minister:
-            vote_casting.to_minister = to_minister
-            changed = True
-
-        if changed:
-            vote_casting.save()
-            print('Updated vote casting: %s' % vote_casting)
+            doc_num = int(xml.find('þingskjal').attrib['skjalsnúmer'])
+            document = issue.documents.get(doc_num=doc_num)
+        # NOTE / TODO: Waiting for B-issue types to appear in XML for vote castings.
+        #elif issue_group == 'B':
+        #    docless_issue_xml = vote_casting_xml.find('mál')
+        #    issue = _process_docless_issue(docless_issue_xml)
+        #    document = None
         else:
-            print('Already have vote casting: %s' % vote_casting)
+            issue = None
+            document = None
 
-    except VoteCasting.DoesNotExist:
-        vote_casting = VoteCasting()
+        timing = sensible_datetime(xml.find('tími').text)
+        vote_casting_type = xml.find('tegund').attrib['tegund']
+        vote_casting_type_text = xml.find('tegund').text
+        try:
+            specifics = xml.find('nánar').text.strip()
+        except AttributeError:
+            specifics = ''
 
-        vote_casting.timing = timing
-        vote_casting.vote_casting_type = vote_casting_type
-        vote_casting.vote_casting_type_text = vote_casting_type_text
-        vote_casting.specifics = specifics
-        vote_casting.method = method
-        vote_casting.count_yes = count_yes
-        vote_casting.count_no = count_no
-        vote_casting.count_abstain = count_abstain
-        vote_casting.conclusion = conclusion
-        vote_casting.issue = issue
-        vote_casting.document = document
-        vote_casting.session = session
-        vote_casting.to_committee = to_committee
-        vote_casting.to_minister = to_minister
-        vote_casting.vote_casting_xml_id = vote_casting_xml_id
-
-        vote_casting.save()
-
-        print('Added vote casting: %s' % vote_casting)
-
-    # Process actual votes, if they exist.
-    for vote_xml in xml.findall('atkvæðaskrá/þingmaður'):
-        person_xml_id = int(vote_xml.attrib['id'])
-        vote_response = vote_xml.find('atkvæði').text
-
-        # NOTE: To be removed when XML is fixed.
-        if vote_response == 'f: óþekktur kóði':
-            vote_response = 'boðaði fjarvist'
-
-        person = update_person(person_xml_id, parliament.parliament_num)
+        session_num = int(xml.find('fundur').text)
+        try:
+            session = pref_sessions[session_num]
+        except KeyError:
+            session = update_session(session_num, parliament.parliament_num)
 
         try:
-            vote = vote_casting.votes.get(vote_casting_id=vote_casting.id, person_id=person.id)
+            # NOTE/TODO: The XML is a bit buggy at the moment (2018-04-11). If
+            # individual vote castings are looked up in the XML, then we see
+            # clearly whether the vote is sending something to a committee or
+            # a minister. We also receive the ID, like so:
+            #
+            #     <til id="[xml-id-of-committee]">
+            #         [name-of-committee]
+            #     </til>
+            #     <tilráðherra id="[xml-id-of-minister]">
+            #         [name-of-minister]
+            #     </tilráðherra>
+            #
+            # However, this distinction is not made in the total listing of
+            # vote castings. For performance reasons, we wish to process the
+            # total listing information instead of looking up every single
+            # vote casting, every single time. Since we only have the name to
+            # go by under the <til> tag, without an ID, we need to use the
+            # name of whatever we find in the tag, and check locally if it's a
+            # committee or a minister. We assume that they exist locally
+            # because we've updated both early in this function.
+            #
+            # One day this will presumably be fixed, in which case this code
+            # should be updated to something like:
+            #
+            #     try:
+            #         committee_xml_id = int(xml.find('til').attrib['id'])
+            #         to_committee = update_committee(committee_xml_id, parliament.parliament_num)
+            #     except AttributeError:
+            #         to_committee = None
+            #
+            #     try:
+            #         minister_xml_id = int(xml.find('tilráðherra').attrib['id'])
+            #         to_minister = Minister.objects.get(minister_xml_id=minister_xml_id)
+            #     except AttributeError:
+            #         to_minister = None
+
+            to_mystery = xml.find('til').text
+
+            if to_mystery in pref_committees:
+                # It's a committee!
+                to_committee = pref_committees[to_mystery]
+                to_minister = None
+
+            elif to_mystery in pref_ministers:
+                # It's a minister!
+                to_committee = None
+                to_minister = pref_ministers[to_mystery]
+
+            else:
+                # We have no clue of what this thing is. We'll forget about it
+                # and act as if nothing happened. It's probably some entity
+                # outside of Parliament and government.
+                to_committee = None
+                to_minister = None
+
+        except AttributeError:
+            to_committee = None
+            to_minister = None
+
+        try:
+            method = xml.find('samantekt/aðferð').text
+        except AttributeError:
+            method = None
+
+        try:
+            count_yes = int(xml.find('samantekt/já/fjöldi').text)
+        except (AttributeError, TypeError):
+            count_yes = None
+
+        try:
+            count_no = int(xml.find('samantekt/nei/fjöldi').text)
+        except (AttributeError, TypeError):
+            count_no = None
+
+        try:
+            count_abstain = int(xml.find('samantekt/greiðirekkiatkvæði/fjöldi').text)
+        except (AttributeError, TypeError):
+            count_abstain = None
+
+        try:
+            conclusion = xml.find('samantekt/afgreiðsla').text
+        except AttributeError:
+            conclusion = None
+
+        if vote_casting_xml_id in pref_vote_castings:
+            vote_casting = pref_vote_castings[vote_casting_xml_id]
 
             changed = False
-            if vote.vote_response != vote_response:
-                vote.vote_response = vote_response
+            if sensible_datetime(vote_casting.timing) != sensible_datetime(timing):
+                vote_casting.timing = sensible_datetime(timing)
+                changed = True
+
+            if vote_casting.vote_casting_type != vote_casting_type:
+                vote_casting.vote_casting_type = vote_casting_type
+                changed = True
+
+            if vote_casting.vote_casting_type_text != vote_casting_type_text:
+                vote_casting.vote_casting_type_text = vote_casting_type_text
+                changed = True
+
+            if vote_casting.specifics != specifics:
+                vote_casting.specifics = specifics
+                changed = True
+
+            if vote_casting.method != method:
+                vote_casting.method = method
+                changed = True
+
+            if vote_casting.count_yes != count_yes:
+                vote_casting.count_yes = count_yes
+                changed = True
+
+            if vote_casting.count_no != count_no:
+                vote_casting.count_no = count_no
+                changed = True
+
+            if vote_casting.count_abstain != count_abstain:
+                vote_casting.count_abstain = count_abstain
+                changed = True
+
+            if vote_casting.conclusion != conclusion:
+                vote_casting.conclusion = conclusion
+                changed = True
+
+            if vote_casting.issue != issue:
+                vote_casting.issue = issue
+                changed = True
+
+            if vote_casting.document != document:
+                vote_casting.document = document
+                changed = True
+
+            if vote_casting.session != session:
+                vote_casting.session = session
+                changed = True
+
+            if vote_casting.to_committee != to_committee:
+                vote_casting.to_committee = to_committee
+                changed = True
+
+            if vote_casting.to_minister != to_minister:
+                vote_casting.to_minister = to_minister
                 changed = True
 
             if changed:
-                vote.save()
-                print('Updated vote: %s' % vote)
+                vote_casting.save()
+                print('Updated vote casting: %s' % vote_casting)
             else:
-                print('Already have vote: %s' % vote)
-        except Vote.DoesNotExist:
-            vote = Vote()
-            vote.vote_casting_id = vote_casting.id
-            vote.person_id = person.id
-            vote.vote_response = vote_response
+                print('Already have vote casting: %s' % vote_casting)
 
-            vote.save()
+        else:
+            vote_casting = VoteCasting()
 
-            print('Added vote: %s' % vote)
+            vote_casting.timing = timing
+            vote_casting.vote_casting_type = vote_casting_type
+            vote_casting.vote_casting_type_text = vote_casting_type_text
+            vote_casting.specifics = specifics
+            vote_casting.method = method
+            vote_casting.count_yes = count_yes
+            vote_casting.count_no = count_no
+            vote_casting.count_abstain = count_abstain
+            vote_casting.conclusion = conclusion
+            vote_casting.issue = issue
+            vote_casting.document = document
+            vote_casting.session = session
+            vote_casting.to_committee = to_committee
+            vote_casting.to_minister = to_minister
+            vote_casting.vote_casting_xml_id = vote_casting_xml_id
 
-    already_haves['vote_castings'][vote_casting_xml_id] = vote_casting
+            vote_casting.save()
 
-    return vote_casting
+            print('Added vote casting: %s' % vote_casting)
+
+        if method != 'yfirlýsing forseta/mál gengur':
+
+            xml = get_xml('VOTE_CASTING_URL', vote_casting_xml_id)
+
+            # Process actual votes, if they exist.
+            for vote_xml in xml.findall('atkvæðaskrá/þingmaður'):
+                person_xml_id = int(vote_xml.attrib['id'])
+                vote_response = vote_xml.find('atkvæði').text
+
+                # NOTE: To be removed when XML is fixed.
+                if vote_response == 'f: óþekktur kóði':
+                    vote_response = 'boðaði fjarvist'
+
+                try:
+                    person = pref_persons[person_xml_id]
+                except KeyError:
+                    person = update_person(person_xml_id, parliament.parliament_num)
+
+                if '%s-%s' % (vote_casting_xml_id, person_xml_id) in pref_votes:
+                    vote = pref_votes['%s-%s' % (vote_casting_xml_id, person_xml_id)]
+
+                    changed = False
+                    if vote.vote_response != vote_response:
+                        vote.vote_response = vote_response
+                        changed = True
+
+                    if changed:
+                        vote.save()
+                        print('Updated vote: %s' % vote)
+                    else:
+                        print('Already have vote: %s' % vote)
+                else:
+                    vote = Vote()
+                    vote.vote_casting_id = vote_casting.id
+                    vote.person_id = person.id
+                    vote.vote_response = vote_response
+
+                    vote.save()
+
+                    print('Added vote: %s' % vote)
 
 
 def update_committee_seats(person_xml_id, parliament_num=None):

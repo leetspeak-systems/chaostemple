@@ -33,7 +33,6 @@ from althingi.updaters import update_seats
 from althingi.updaters import update_session
 from althingi.updaters import update_sessions
 from althingi.updaters import update_speeches
-from althingi.updaters import update_vote_casting
 from althingi.updaters import update_vote_castings
 from althingi.utils import get_last_parliament_num
 
@@ -168,23 +167,6 @@ class AlthingiUpdaterTest(TestCase):
     @hidden_prints
     def test_update_vote_castings(self):
         update_vote_castings()
-
-    @hidden_prints
-    def test_update_vote_casting(self):
-
-        # Fail: Good number passed as something else than number.
-        vote_casting_xml_id, parliament_num = test_dummy_vote_casting
-        with self.assertRaisesRegexp(TypeError, 'Parameter vote_casting_xml_id must be a number'):
-            update_vote_casting(str(vote_casting_xml_id), parliament_num)
-
-        # Fail: Fetch vote casting that does not exist.
-        vote_casting_xml_id, parliament_num = broken_test_dummy_vote_casting
-        with self.assertRaisesRegexp(AlthingiException, 'Vote casting \d+ does not exist'):
-            update_vote_casting(vote_casting_xml_id, parliament_num)
-
-        # Pass: Fetch a vote casting known to be valid.
-        vote_casting_xml_id, parliament_num = test_dummy_vote_casting
-        update_vote_casting(vote_casting_xml_id, parliament_num)
 
     @hidden_prints
     def test_update_committee_seats(self):

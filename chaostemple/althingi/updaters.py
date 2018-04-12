@@ -375,9 +375,10 @@ def update_seats(person_xml_id, parliament_num=None):
     return seats
 
 
-def update_vote_castings(parliament_num=None):
+def update_vote_castings(parliament_num=None, since=None):
 
     parliament = update_parliament(parliament_num)
+    since = sensible_datetime(since)
 
     # Needed for some vote castings that cannot update individual ministers.
     update_ministers(parliament.parliament_num)
@@ -405,9 +406,16 @@ def update_vote_castings(parliament_num=None):
     }
 
     for xml in get_xml('VOTE_CASTINGS_URL', parliament.parliament_num).findall('atkvæðagreiðsla'):
+
+        # We get the timing first to see if we we to process this any further.
+        timing = sensible_datetime(xml.find('tími').text)
+        if since and timing < since:
+            continue
+
         vote_casting_xml_id = int(xml.attrib['atkvæðagreiðslunúmer'])
 
         issue_num = int(xml.attrib['málsnúmer'])
+
         issue_group = xml.attrib['málsflokkur']
 
         if issue_group == 'A':
@@ -427,9 +435,10 @@ def update_vote_castings(parliament_num=None):
             issue = None
             document = None
 
-        timing = sensible_datetime(xml.find('tími').text)
         vote_casting_type = xml.find('tegund').attrib['tegund']
+
         vote_casting_type_text = xml.find('tegund').text
+
         try:
             specifics = xml.find('nánar').text.strip()
         except AttributeError:
@@ -2091,9 +2100,10 @@ def _process_session_agenda_xml(session_xml):
     return session
 
 
-def update_speeches(parliament_num=None):
+def update_speeches(parliament_num=None, since=None):
 
     parliament = update_parliament(parliament_num)
+    since = sensible_datetime(since)
 
     if parliament.parliament_num in already_haves['speeches']:
         return already_haves['speeches'][parliament.parliament_num]
@@ -2111,6 +2121,15 @@ def update_speeches(parliament_num=None):
     speeches = []
     speech_orders = {}
     for speech_xml in xml.findall('ræða'):
+
+        # Timing found first to check if we need to process any further.
+        timing_start = sensible_datetime(speech_xml.find('ræðahófst').text)
+        if since and timing_start < since:
+            continue
+
+        timing_end = sensible_datetime(speech_xml.find('ræðulauk').text)
+
+        seconds = (timing_end - timing_start).seconds
 
         person_xml_id = int(speech_xml.find('ræðumaður').attrib['id'])
         try:
@@ -2140,10 +2159,6 @@ def update_speeches(parliament_num=None):
             issue = None
 
         date = sensible_datetime(speech_xml.find('dagur').text)
-
-        timing_start = sensible_datetime(speech_xml.find('ræðahófst').text)
-        timing_end = sensible_datetime(speech_xml.find('ræðulauk').text)
-        seconds = (timing_end - timing_start).seconds
 
         speech_type = speech_xml.find('tegundræðu').text
 
@@ -2288,9 +2303,10 @@ def update_speeches(parliament_num=None):
         speeches.append(speech)
 
     deletable_speeches = Speech.objects.filter(
-        session__parliament=parliament
+        session__parliament=parliament,
+        timing_start__gte=since
     ).exclude(
-        timing_start__in=[s.timing_start for s in speeches]
+        timing_start__in=[s.timing_start for s in speeches],
     )
     for deletable_speech in deletable_speeches:
         deletable_speech.delete()

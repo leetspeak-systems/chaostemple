@@ -27,6 +27,7 @@ from althingi.updaters import update_session
 from althingi.updaters import update_speeches
 from althingi.updaters import update_vote_castings
 from althingi.utils import get_last_parliament_num
+from althingi.utils import sensible_datetime
 
 from althingi.exceptions import AlthingiException
 
@@ -63,6 +64,8 @@ class Command(BaseCommand):
         print('Options:')
         print('  parliament=<parliament_num>       Specify parliament number (defaults to current)')
         print('                                    Must be integer or range of integers, for example 130-140')
+        print('  since=<datetime>                  Skip things from before given datetime when processing supported commands')
+        print('                                    Supported commands: vote_castings, speeches')
         print()
 
     def error(self, msg, show_help=True):
@@ -95,6 +98,8 @@ class Command(BaseCommand):
         try:
             processed_args = self.process_args(options['arguments'])
 
+
+            # Handle the "parliament" option.
             if 'parliament' in processed_args:
                 # If parliament is specified...
                 try:
@@ -117,13 +122,22 @@ class Command(BaseCommand):
             else:
                 iterator = range(parliament_from, parliament_to + 1)
 
+
+            # Handle the "since" option.
+            if 'since' in processed_args:
+                since = sensible_datetime(processed_args['since'])
+            else:
+                since = None
+
+            # Update data according to options.
             for parliament_num in iterator:
-                self.update_data(parliament_num, processed_args)
+                self.update_data(parliament_num, since, processed_args)
+
 
         except KeyboardInterrupt:
             quit(1)
 
-    def update_data(self, parliament_num, args):
+    def update_data(self, parliament_num, since, args):
 
         print('Processing parliament %d with args: %s' % (parliament_num, args))
 
@@ -211,11 +225,11 @@ class Command(BaseCommand):
 
             if 'vote_castings' in args:
                 has_run = True
-                update_vote_castings(parliament_num)
+                update_vote_castings(parliament_num, since)
 
             if 'speeches' in args:
                 has_run = True
-                update_speeches(parliament_num)
+                update_speeches(parliament_num, since)
 
             if 'upcoming' in args:
                 has_run = True

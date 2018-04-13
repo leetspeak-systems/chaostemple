@@ -492,7 +492,9 @@ class Issue(models.Model):
 
             steps['committee-1-waiting'] = self.vote_castings.filter(vote_casting_type='n2').count() > 0
 
-            steps['committee-1-current'] = self.committee_agenda_items.count() > 0
+            steps['committee-1-current'] = self.committee_agenda_items.filter(
+                committee_agenda__timing_start_planned__lt=now
+            ).count() > 0
 
             steps['committee-1-reviews-requested'] = self.review_deadline and self.review_deadline > now
 
@@ -591,7 +593,9 @@ class Issue(models.Model):
 
             steps['committee-former-waiting'] = self.vote_castings.filter(vote_casting_type='ns').count() > 0
 
-            steps['committee-former-current'] = self.committee_agenda_items.count() > 0
+            steps['committee-former-current'] = self.committee_agenda_items.filter(
+                committee_agenda__timing_start_planned__lt=now
+            ).count() > 0
 
             steps['committee-former-reviews-requested'] = self.review_deadline and self.review_deadline > now
 

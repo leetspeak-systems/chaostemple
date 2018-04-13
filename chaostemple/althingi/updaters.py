@@ -405,6 +405,7 @@ def update_vote_castings(parliament_num=None, since=None):
         )
     }
 
+    vote_casting_ids = []
     for xml in get_xml('VOTE_CASTINGS_URL', parliament.parliament_num).findall('atkvæðagreiðsla'):
 
         # We get the timing first to see if we we to process this any further.
@@ -664,6 +665,19 @@ def update_vote_castings(parliament_num=None, since=None):
                     vote.save()
 
                     print('Added vote: %s' % vote)
+
+        vote_casting_ids.append(vote_casting.id)
+
+    deletable_vote_castings = VoteCasting.objects.filter(
+        session__parliament_id=parliament.id
+    ).exclude(
+        id__in=vote_casting_ids
+    )
+    if since:
+        deletable_vote_castings = deletable_vote_castings.filter(timing__gte=since)
+    for deletable_vote_casting in deletable_vote_castings:
+        deletable_vote_casting.delete()
+        print('Deleted non-existent vote casting: %s' % deletable_vote_casting)
 
 
 def update_committee_seats(person_xml_id, parliament_num=None):

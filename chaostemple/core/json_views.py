@@ -188,7 +188,7 @@ def membership_request(request, group_id, action):
     else:
         raise Http404
 
-    groups = Group.objects.exclude(
+    requestable_groups = Group.objects.exclude(
         membership_requests__user=request.user.id,
         membership_requests__status='pending'
     ).exclude(user__id=request.user.id)
@@ -198,7 +198,7 @@ def membership_request(request, group_id, action):
     )
 
     html_content = render_to_string('core/stub/membership_requests.html', {
-        'groups': groups,
+        'requestable_groups': requestable_groups,
         'membership_requests': membership_requests,
     })
 

@@ -20,7 +20,7 @@ def issue_types(issues):
 
 
 @register.filter
-def order_by_type_and_current_step(issues):
+def order_by_progression(issues):
     '''
     Sorts the given issues according to their type and step (status). First
     they are ordered according to whether they are bill, motions, inquiries
@@ -29,17 +29,18 @@ def order_by_type_and_current_step(issues):
     '''
 
     def checker(i):
-        # This is the first sort order key.
-        former = ISSUE_TYPE_ORDER.index(i.issue_type)
-
         # Does this issue type even have defined steps?
         if hasattr(Issue, 'ISSUE_STEPS_%s' % i.issue_type.upper()):
             # If so, we'll figure out how to sort according to those.
             ISSUE_STEP_ORDER = [s[0] for s in getattr(Issue, 'ISSUE_STEPS_%s' % i.issue_type.upper())]
-            latter = ISSUE_STEP_ORDER.index(i.current_step)
+            former = ISSUE_STEP_ORDER.index(i.current_step)
         else:
             # Order is indeterminate. Let's go with zero. Zero is cool.
-            latter = 0
+            former = 0
+
+        # Lower issue numbers means published earlier, meaning they should be
+        # ahead in the progression (all things considered).
+        latter = 0 - i.issue_num
 
         return former, latter
 

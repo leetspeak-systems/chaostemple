@@ -50,7 +50,7 @@
             </ul>
 
             <table class="table">
-                {% for issue in issues|order_by_type_and_current_step reversed %}
+                {% for issue in issues|order_by_progression reversed %}
                     {% include 'core/stub/small/issue.html' with start_hidden=True %}
                 {% endfor %}
             </table>

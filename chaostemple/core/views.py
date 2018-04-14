@@ -617,8 +617,8 @@ def user_access(request):
     issues = Issue.objects.filter(parliament__parliament_num=CURRENT_PARLIAMENT_NUM, issue_group='A')
     users = User.objects.select_related('userprofile').exclude(id=request.user.id)
     user_groups = request.user.groups.prefetch_related('user_set__userprofile').all()
-
-    groups = Group.objects.exclude(
+    groups = Group.objects.all()
+    requestable_groups = Group.objects.exclude(
         membership_requests__user=request.user.id,
         membership_requests__status='pending'
     ).exclude(user__id=request.user.id)
@@ -641,6 +641,7 @@ def user_access(request):
         'parliaments': parliaments,
         'users': users,
         'groups': groups,
+        'requestable_groups': requestable_groups,
         'issues': issues,
         'user_groups': user_groups,
         'membership_requests': membership_requests,

@@ -6,13 +6,13 @@
 </p>
 
 <p>
-    <select control="membership-request-group-id" {% if not groups %}disabled="1"{% endif %}>
-    {% for group in groups %}
+    <select control="membership-request-group-id" {% if not requestable_groups %}disabled="1"{% endif %}>
+    {% for group in requestable_groups %}
         <option value="{{ group.id }}">{{ group }}</option>
     {% endfor %}
     </select>
 
-    <button type="submit" class="btn btn-primary" control="request-membership" {% if not groups %}disabled="1"{% endif %}>
+    <button type="submit" class="btn btn-primary" control="request-membership" {% if not requestable_groups %}disabled="1"{% endif %}>
         {% trans 'Apply' %}
     </button>
 </p>

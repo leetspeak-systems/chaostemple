@@ -201,6 +201,11 @@ class MembershipRequest(models.Model):
 
         if status == 'accepted':
             self.group.user_set.add(self.user)
+            access, created = Access.objects.get_or_create(
+                user=self.user,
+                friend_group=self.group,
+                full_access=True
+            )
 
         self.status = status
         self.decided_by = decided_by

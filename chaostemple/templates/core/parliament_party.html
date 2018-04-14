@@ -39,15 +39,7 @@
         <div class="col-md-9">
             <h3>{% trans 'Issues' %}</h3>
 
-            <ul class="nav nav-tabs" control="issue-type-selector">
-                {% for issue_type, issue_type_display in issues|issue_types %}
-                    <li role="presentation">
-                        <a data-issue-type="{{ issue_type }}">
-                            {{ issue_type_display|capfirst }}
-                        </a>
-                    </li>
-                {% endfor %}
-            </ul>
+            {% include 'core/stub/issue_type_selector.html' %}
 
             <table class="table">
                 {% for issue in issues|order_by_progression reversed %}

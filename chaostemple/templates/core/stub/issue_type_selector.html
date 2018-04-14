@@ -1,0 +1,13 @@
+{% load issue %}
+{% comment %}
+Requires 'issue_control.js' JavaScript to work, which should be included in all issue listings anyway.
+{% endcomment %}
+<ul class="nav nav-tabs" control="issue-type-selector">
+    {% for issue_type, issue_type_display in issues|issue_types %}
+        <li role="presentation">
+            <a data-issue-type="{{ issue_type }}">
+                {{ issue_type_display|capfirst }}
+            </a>
+        </li>
+    {% endfor %}
+</ul>

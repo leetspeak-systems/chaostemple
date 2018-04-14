@@ -3,6 +3,7 @@
 {% load i18n %}
 {% load committee %}
 {% load smart_urls %}
+{% load issue %}
 
 {% block javascript %}
     <script language="javascript" type="text/javascript" src="{% static 'core/js/issue_control.js' %}"></script>
@@ -36,9 +37,12 @@
                 <a href="{% url 'parliament_committee_issues' parliament_num committee.id %}"><i class="glyphicon glyphicon-resize-full"></i></a>
                 {% trans 'Issues' %}
             </h3>
+
+            {% include 'core/stub/issue_type_selector.html' %}
+
             <table class="table">
-                {% for issue in issues reversed %}
-                    {% include 'core/stub/small/issue.html' %}
+                {% for issue in issues|order_by_progression reversed %}
+                    {% include 'core/stub/small/issue.html' with start_hidden=True %}
                 {% endfor %}
             </table>
         </div>

@@ -660,16 +660,24 @@ class Issue(models.Model):
 
             if self.issue_type == 'l':
                 # Check if legal bill was accepted as law.
-                try:
-                    vote_casting = self.vote_castings.get(vote_casting_type='lg')
+                # NOTE/TODO: Parliament 135 fails if we use a simple .get
+                # here, because of a mistaken duplicate of the final vote in
+                # issue nr. 90 in the XML. Vote casting nr. 37680 is the
+                # problem and should not exist, but because it does, it
+                # results in a MltipleObjectsReturned exception. In principle
+                # this should be a try/except with a .get function instead of
+                # a .filter and .first, but we're taking this route for now to
+                # make it compatible with XML that's broken in this way. Note
+                # that we assume that the first such vote is the correct one,
+                # then. Revisit this if 2018-04-14 was a long time ago.
+                vote_casting = self.vote_castings.filter(vote_casting_type='lg').first()
+                if vote_casting:
                     if vote_casting.conclusion == 'samþykkt':
                         return 'accepted'
                     elif vote_casting.conclusion == 'Fellt':
                         return 'rejected'
                     else:
                         return 'unknown'
-                except VoteCasting.DoesNotExist:
-                    pass
 
             elif self.issue_type == 'a':
                 # Check if proposal for a motion was approved.

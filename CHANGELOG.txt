@@ -246,3 +246,13 @@
     * UI: Fate of issue shown on small issue view when concluded (accepted/rejected).
     * Dedicated view for political groups, showing their issues.
     * Issues organized by type and ordered by status in party view.
+
+1.4.7:
+    * Data retrieval saves minister when vote castings send something their way.
+    * Data retrieval of vote castings and votes massively improved.
+    * Data retrieval able to retrieve vote castings and speeches from specified date onward.
+    * Fixed bug in mechanism for determining issue status.
+    * Slight improvements to ordering of issues by progression.
+    * Issue type selector and progression ordering applied to committee issue listing.
+    * Bugfix: Interface prevented user from giving group access if user was a member of it.
+    * When user is accepted into a group, group automatically gets full access to info of user.

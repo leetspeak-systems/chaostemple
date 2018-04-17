@@ -99,7 +99,7 @@ $(document).ready(function() {
                     args.error(data, textStatus);
                 }
             }
-        }).error(function(data, textStatus) {
+        }).fail(function(data, textStatus) {
             $.jsonizerStatus(args, 'failure', 'Data transmission failed', row_number);
             if (args.error != null) {
                 args.error(data, textStatus);

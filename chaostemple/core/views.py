@@ -66,6 +66,7 @@ def day(request, input_date=None):
     sessions = Session.objects.select_related('parliament').prefetch_related('session_agenda_items').on_date(requested_date)
     for session in sessions:
         session.session_agenda_items_loaded = session.session_agenda_items.select_related(
+            'issue__to_committee',
             'issue__parliament'
         ).prefetch_related(
             'issue__proposers__person',
@@ -81,6 +82,7 @@ def day(request, input_date=None):
     ).on_date(requested_date)
     for committee_agenda in committee_agendas:
         committee_agenda.committee_agenda_items_loaded = committee_agenda.committee_agenda_items.select_related(
+            'issue__to_committee',
             'issue__parliament'
         ).prefetch_related(
             'issue__proposers__person'
@@ -106,7 +108,7 @@ def upcoming(request):
 
     # Get issues that are upcoming in sessions
     # They are prepended with "garbled_" because we know in advance that they may contain duplicates.
-    garbled_session_issues = Issue.objects.select_related('parliament').prefetch_related(
+    garbled_session_issues = Issue.objects.select_related('parliament', 'to_committee').prefetch_related(
         'proposers__person',
         'session_agenda_items__session'
     ).filter(
@@ -116,7 +118,7 @@ def upcoming(request):
 
     # Get issues that are upcoming in committee agendas
     # They are prepended with "garbled_" because we know in advance that they may contain duplicates.
-    garbled_committee_issues = Issue.objects.select_related('parliament').prefetch_related(
+    garbled_committee_issues = Issue.objects.select_related('parliament', 'to_committee').prefetch_related(
         'proposers__person',
         'committee_agenda_items__committee_agenda',
     ).filter(committee_agenda_items__committee_agenda__in=next_committee_agendas).order_by(
@@ -169,7 +171,12 @@ def parliament(request, parliament_num):
 def parliament_documents_new(request, parliament_num):
     today = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
     a_while_ago = today - MEANING_OF_RECENT
-    documents = Document.objects.select_related('issue__parliament').prefetch_related('issue__proposers__person').filter(
+    documents = Document.objects.select_related(
+        'issue__parliament',
+        'issue__to_committee'
+    ).prefetch_related(
+        'issue__proposers__person'
+    ).filter(
         time_published__gte=a_while_ago
     ).order_by('-time_published')
 
@@ -184,7 +191,11 @@ def parliament_documents_new(request, parliament_num):
 
 def parliament_issues(request, parliament_num):
 
-    issues = Issue.objects.select_related('parliament').prefetch_related('proposers__person', 'proposers__committee').filter(
+    issues = Issue.objects.select_related('parliament').prefetch_related(
+        'proposers__person',
+        'proposers__committee',
+        'to_committee'
+    ).filter(
         issue_group='A',
         parliament__parliament_num=parliament_num,
         document_count__gt=0
@@ -208,7 +219,7 @@ def parliament_issues(request, parliament_num):
 
 def parliament_issue(request, parliament_num, issue_num):
 
-    issue = Issue.objects.select_related('parliament').get(
+    issue = Issue.objects.select_related('parliament').prefetch_related('categories__group').get(
         parliament__parliament_num=parliament_num,
         issue_group='A',
         issue_num=issue_num
@@ -304,8 +315,12 @@ def parliament_sessions(request, parliament_num):
 def parliament_session(request, parliament_num, session_num):
 
     session = get_object_or_404(Session, parliament__parliament_num=parliament_num, session_num=session_num)
-    session_agenda_items = session.session_agenda_items.select_related('issue__parliament').prefetch_related(
-        'issue__proposers__person', 'issue__proposers__committee'
+    session_agenda_items = session.session_agenda_items.select_related(
+        'issue__parliament',
+        'issue__to_committee'
+    ).prefetch_related(
+        'issue__proposers__person',
+        'issue__proposers__committee'
     ).all()
 
     IssueUtilities.populate_dossier_statistics([i.issue for i in session_agenda_items])
@@ -560,7 +575,11 @@ def person(request, slug, subslug=None):
     committee_seats = person.committee_seats.select_related('parliament', 'committee').all()
     minister_seats = person.minister_seats.select_related('parliament', 'minister', 'party').all()
 
-    issues = Issue.objects.select_related('parliament').prefetch_related('proposers__person', 'proposers__committee').filter(
+    issues = Issue.objects.select_related('parliament').prefetch_related(
+        'proposers__person',
+        'proposers__committee',
+        'to_committee'
+    ).filter(
         documents__proposers__person_id=person.id,
         documents__proposers__order=1,
         documents__is_main=True
@@ -655,7 +674,13 @@ def user_access(request):
 @login_required
 def user_issues_bookmarked(request, parliament_num):
 
-    issues = Issue.objects.select_related('parliament').prefetch_related('proposers__person', 'proposers__committee').filter(
+    issues = Issue.objects.select_related(
+        'parliament',
+        'to_committee'
+    ).prefetch_related(
+        'proposers__person',
+        'proposers__committee'
+    ).filter(
         issue_bookmarks__user_id=request.user.id,
         parliament__parliament_num=parliament_num
     ).order_by('-issue_num')
@@ -685,7 +710,7 @@ def user_issues_incoming(request):
 @login_required
 def user_issues_open(request, parliament_num):
 
-    issues = Issue.objects.select_related('parliament').prefetch_related('proposers__person', 'proposers__committee').filter(
+    issues = Issue.objects.select_related('parliament', 'to_committee').prefetch_related('proposers__person', 'proposers__committee').filter(
         dossierstatistic__user_id=request.user.id,
         dossierstatistic__has_useful_info=True,
         parliament__parliament_num=parliament_num

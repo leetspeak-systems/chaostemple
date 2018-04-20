@@ -64,7 +64,7 @@ class ExtraVarsMiddleware():
             ).annotate_news(request.user.id).order_by('issue_num')
 
             # Get incoming things that the user has not yet seen
-            incoming_issues = Issue.objects.select_related('parliament').filter(
+            incoming_issues = Issue.objects.select_related('parliament', 'to_committee').filter(
                 parliament__parliament_num=parliament_num
             ).incoming(request.user.id).order_by('-issue_num')
 

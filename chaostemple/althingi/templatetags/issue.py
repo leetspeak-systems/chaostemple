@@ -6,6 +6,8 @@ from django.template.defaultfilters import date
 from django.utils import timezone
 from django.utils.translation import gettext as _
 
+from time import mktime
+
 register = template.Library()
 
 
@@ -37,16 +39,22 @@ def order_by_progression(issues):
         if hasattr(Issue, 'ISSUE_STEPS_%s' % i.issue_type.upper()):
             # If so, we'll figure out how to sort according to those.
             ISSUE_STEP_ORDER = [s[0] for s in getattr(Issue, 'ISSUE_STEPS_%s' % i.issue_type.upper())]
-            former = ISSUE_STEP_ORDER.index(i.current_step)
+            primary = ISSUE_STEP_ORDER.index(i.current_step)
         else:
             # Order is indeterminate. Let's go with zero. Zero is cool.
-            former = 0
+            primary = 0
+
+        if i.review_deadline:
+            unix_time = mktime(i.review_deadline.timetuple())
+            secondary = 0 - unix_time
+        else:
+            secondary = 0
 
         # Lower issue numbers means published earlier, meaning they should be
         # ahead in the progression (all things considered).
-        latter = 0 - i.issue_num
+        tertiary = 0 - i.issue_num
 
-        return former, latter
+        return primary, secondary, tertiary
 
     return sorted(issues, key=checker)
 

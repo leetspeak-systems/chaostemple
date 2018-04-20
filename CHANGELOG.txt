@@ -256,3 +256,12 @@
     * Issue type selector and progression ordering applied to committee issue listing.
     * Bugfix: Interface prevented user from giving group access if user was a member of it.
     * When user is accepted into a group, group automatically gets full access to info of user.
+
+1.4.8:
+    * Internal library update: jQuery 2.1.1 -> 3.3.1.
+    * Internal library update: jQuery-UI 1.11.2 -> 1.12.1.
+    * Issue status order takes review deadline into account.
+    * Breadcrumbs added to committee issue listing.
+    * Review deadline shown in issue listings.
+    * Issues in committee issue listing ordered by status.
+    * Issue's current committee shown in issue listing.

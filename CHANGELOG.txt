@@ -265,3 +265,7 @@
     * Review deadline shown in issue listings.
     * Issues in committee issue listing ordered by status.
     * Issue's current committee shown in issue listing.
+
+1.4.9:
+    * Database optimizations.
+    * Issue view showing committee and review deadline, like in issue listing.

@@ -219,7 +219,7 @@ def parliament_issues(request, parliament_num):
 
 def parliament_issue(request, parliament_num, issue_num):
 
-    issue = Issue.objects.select_related('parliament').prefetch_related('categories__group').get(
+    issue = Issue.objects.select_related('parliament', 'to_committee').prefetch_related('categories__group').get(
         parliament__parliament_num=parliament_num,
         issue_group='A',
         issue_num=issue_num

@@ -3,6 +3,7 @@
 {% load static %}
 {% load dossier_tags %}
 {% load smart_urls %}
+{% load issue %}
 
 {% block javascript %}
     <script language="javascript" type="text/javascript">
@@ -45,8 +46,24 @@
             <small>
             {% trans 'Reviews' %}: <strong>{{ issue.review_count }}</strong>
             | {% trans 'Parliamentary Documents' %}: <strong>{{ issue.document_count }}</strong>
+            {% with issue|committee as issue_committee %}
+                {% if issue_committee %}
+                    | {% trans 'Committee' %}:
+                    <strong>
+                        <a href="{% breadcrumb_url 'parliament_committee' issue.parliament.parliament_num issue_committee.id %}">{{ issue_committee.abbreviation_short|upper }}</a>
+                    </strong>
+                {% endif %}
+            {% endwith %}
             {% if issue.current_step %}
-                | {% trans 'Status' %}: <strong>{{ issue.get_current_step_display }}</strong>
+                | {% trans 'Status' %}:
+                <strong>
+                    {{ issue.get_current_step_display }}
+                    {% with issue|review_deadline:True as deadline %}
+                        {% if deadline %}
+                            ({{ deadline }})
+                        {% endif %}
+                    {% endwith %}
+                </strong>
             {% endif %}
             </small>
         </p>

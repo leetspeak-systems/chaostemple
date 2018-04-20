@@ -397,7 +397,6 @@ class Issue(models.Model):
 
     time_published = models.DateTimeField(null=True)
     review_deadline = models.DateTimeField(null=True)
-    final_vote_complete = models.BooleanField(default=False)
 
     special_inquisitor = models.ForeignKey(
         'Person',

@@ -171,14 +171,14 @@ def process_breadcrumbs(breadcrumbs, view):
             '%d. %s' % (session_num, _('parliamentary session'))
         )
 
-    if view_name == 'parliament_committees':
+    if view_name in ('parliament_committees', 'parliament_committee_issues'):
         breadcrumbs = leave_breadcrumb(
             breadcrumbs,
             ('parliament_committees', parliament_num),
             _('Committees')
         )
 
-    if view_name in ('parliament_committee', 'parliament_committee_agenda'):
+    if view_name in ('parliament_committee', 'parliament_committee_agenda', 'parliament_committee_issues'):
         committee = Committee.objects.get(id=committee_id)
         breadcrumbs = leave_breadcrumb(
             breadcrumbs,
@@ -192,6 +192,13 @@ def process_breadcrumbs(breadcrumbs, view):
             breadcrumbs,
             ('parliament_committee_agenda', parliament_num, committee_id, agenda_id),
             fancy_committee_agenda_timing(committee_agenda)
+        )
+
+    if view_name == 'parliament_committee_issues':
+        breadcrumbs = leave_breadcrumb(
+            breadcrumbs,
+            ('parliament_committee_issues', parliament_num, committee_id),
+            _('Issues')
         )
 
     if view_name == 'parliament_parties':

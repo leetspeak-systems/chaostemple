@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-14 15:35+0000\n"
+"POT-Creation-Date: 2018-04-20 22:25+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -18,134 +18,156 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: althingi/models.py:327 althingi/models.py:350 althingi/models.py:367
-#: althingi/models.py:373
+#: althingi/models.py:328 althingi/models.py:351 althingi/models.py:368
+#: althingi/models.py:374
 msgid "Distributed"
 msgstr "Dreift"
 
-#: althingi/models.py:328
+#: althingi/models.py:329
 msgid "Awaiting 1st debate"
 msgstr "Bíður 1. umræðu"
 
-#: althingi/models.py:329
+#: althingi/models.py:330
 msgid "Currently in 1st debate"
 msgstr "Í 1. umræðu"
 
-#: althingi/models.py:330
+#: althingi/models.py:331
 msgid "1st debate concluded"
 msgstr "1. umræðu lokið"
 
-#: althingi/models.py:331 althingi/models.py:354
+#: althingi/models.py:332 althingi/models.py:355
 msgid "Sent to committee"
 msgstr "Sent til nefndar"
 
-#: althingi/models.py:332 althingi/models.py:355
+#: althingi/models.py:333 althingi/models.py:356
 msgid "Currently in committee"
 msgstr "Í nefnd"
 
-#: althingi/models.py:333 althingi/models.py:356
+#: althingi/models.py:334 althingi/models.py:357
 msgid "Reviews requested"
 msgstr "Í umsagnarferli"
 
-#: althingi/models.py:334 althingi/models.py:357
+#: althingi/models.py:335 althingi/models.py:358
 msgid "Reviews deadline expired"
 msgstr "Umsagnarfrestur liðinn"
 
-#: althingi/models.py:335 althingi/models.py:358
+#: althingi/models.py:336 althingi/models.py:359
 msgid "Considered by committee"
 msgstr "Úr nefnd"
 
-#: althingi/models.py:336
+#: althingi/models.py:337
 msgid "Awaiting 2nd debate"
 msgstr "Bíður 2. umræðu"
 
-#: althingi/models.py:337
+#: althingi/models.py:338
 msgid "Currently in 2nd debate"
 msgstr "Í 2. umræðu"
 
-#: althingi/models.py:338
+#: althingi/models.py:339
 msgid "2nd debate concluded"
 msgstr "2. umræðu lokið"
 
-#: althingi/models.py:339
+#: althingi/models.py:340
 msgid "Sent to committee (after 2nd debate)"
 msgstr "Sent til nefndar (eftir 2. umræðu)"
 
-#: althingi/models.py:340
+#: althingi/models.py:341
 msgid "Currently in committee (after 2nd debate)"
 msgstr "Í nefnd (eftir 2. umræðu)"
 
-#: althingi/models.py:341
+#: althingi/models.py:342
 msgid "Considered by committee (after 2nd debate)"
 msgstr "Úr nefnd (eftir 2. umræðu)"
 
-#: althingi/models.py:342
+#: althingi/models.py:343
 msgid "Awaiting 3rd debate"
 msgstr "Bíður 3. umræðu"
 
-#: althingi/models.py:343
+#: althingi/models.py:344
 msgid "Currently in 3rd debate"
 msgstr "Í 3. umræðu"
 
-#: althingi/models.py:344
+#: althingi/models.py:345
 msgid "3rd debate concluded"
 msgstr "3. umræðu lokið"
 
-#: althingi/models.py:345 althingi/models.py:362
+#: althingi/models.py:346 althingi/models.py:363
 msgid "Issue concluded"
 msgstr "Máli lokið"
 
-#: althingi/models.py:351
+#: althingi/models.py:352
 msgid "Awaiting former debate"
 msgstr "Bíður fyrri umræðu"
 
-#: althingi/models.py:352
+#: althingi/models.py:353
 msgid "Currently in former debate"
 msgstr "Í fyrri umræðu"
 
-#: althingi/models.py:353
+#: althingi/models.py:354
 msgid "Former debate concluded"
 msgstr "Fyrri umræðu lokið"
 
-#: althingi/models.py:359
+#: althingi/models.py:360
 msgid "Awaiting latter debate"
 msgstr "Bíður seinni umræðu"
 
-#: althingi/models.py:360
+#: althingi/models.py:361
 msgid "Currently in latter debate"
 msgstr "Í seinni umræðu"
 
-#: althingi/models.py:361
+#: althingi/models.py:362
 msgid "Latter debate concluded"
 msgstr "Seinni umræðu lokið"
 
-#: althingi/models.py:368
+#: althingi/models.py:369
 msgid "Answered"
 msgstr "Svarað"
 
-#: althingi/models.py:374
+#: althingi/models.py:375
 msgid "Voted on"
 msgstr "Atkvæði greidd"
 
-#: althingi/models.py:375
+#: althingi/models.py:376
 msgid "Report delieverd"
 msgstr "Skýrslu skilað"
 
-#: althingi/models.py:376
+#: althingi/models.py:377
 msgid "Concluded"
 msgstr "Lokið"
 
-#: althingi/models.py:384 core/models.py:179
+#: althingi/models.py:385 core/models.py:179
 msgid "rejected"
 msgstr "hafnað"
 
-#: althingi/models.py:385 core/models.py:180
+#: althingi/models.py:386 core/models.py:180
 msgid "accepted"
 msgstr "samþykkt"
 
-#: althingi/models.py:386
+#: althingi/models.py:387
 msgid "sent to government"
 msgstr "sent til ríkisstjórnar"
+
+#: althingi/templatetags/issue.py:81
+msgid "today"
+msgstr "í dag"
+
+#: althingi/templatetags/issue.py:83
+msgid "yesterday"
+msgstr "í gær"
+
+#: althingi/templatetags/issue.py:83
+#, python-format
+msgid "%d days ago"
+msgstr "fyrir %d dögum"
+
+#: althingi/templatetags/issue.py:86
+msgid "tomorrow"
+msgstr "á morgun"
+
+#: althingi/templatetags/issue.py:86
+#, python-format
+msgid "in %d days"
+msgstr "eftir %d daga"
 
 #: chaostemple/constants.py:3
 msgid "Temple of Chaos"
@@ -191,7 +213,7 @@ msgstr "Mál með nýjum gögnum"
 msgid "New Parliamentary Documents"
 msgstr "Ný þingskjöl"
 
-#: core/breadcrumbs.py:150 templates/base.html:138
+#: core/breadcrumbs.py:150 core/breadcrumbs.py:201 templates/base.html:138
 #: templates/core/parliament.html:8 templates/core/parliament_committee.html:38
 #: templates/core/parliament_party.html:40 templates/core/person.html:159
 #: templates/core/stub/user_access_list.html:11
@@ -216,18 +238,18 @@ msgstr "þingfundur"
 msgid "Committees"
 msgstr "Nefndir"
 
-#: core/breadcrumbs.py:201 templates/base.html:144
+#: core/breadcrumbs.py:208 templates/base.html:144
 #: templates/core/parliament_parties.html:7
 msgid "Parliamentary Parties"
 msgstr "Þingflokkar"
 
-#: core/breadcrumbs.py:205 templates/core/parliament.html:11
+#: core/breadcrumbs.py:212 templates/core/parliament.html:11
 #: templates/core/parliament_parties.html:14
 #: templates/core/parliament_party.html:17
 msgid "Parliamentarians"
 msgstr "Þingmenn"
 
-#: core/breadcrumbs.py:243 templates/core/person.html:41
+#: core/breadcrumbs.py:250 templates/core/person.html:41
 #: templates/core/person_select_from_multiple.html:10
 msgid "b."
 msgstr "f."
@@ -285,12 +307,12 @@ msgid "The two password fields didn't match."
 msgstr ""
 
 #: dossier/models.py:20 templates/core/parliament_issue.html:47
-#: templates/core/parliament_issue.html:174 templates/core/stub/issue.html:41
+#: templates/core/parliament_issue.html:174 templates/core/stub/issue.html:42
 msgid "Parliamentary Documents"
 msgstr "Þingskjöl"
 
 #: dossier/models.py:21 templates/core/parliament_issue.html:46
-#: templates/core/parliament_issue.html:182 templates/core/stub/issue.html:40
+#: templates/core/parliament_issue.html:182 templates/core/stub/issue.html:41
 msgid "Reviews"
 msgstr "Umsagnir"
 
@@ -597,11 +619,12 @@ msgstr "Varamenn"
 msgid "Observers"
 msgstr "Áheyrnarfulltrúar"
 
-#: templates/core/parliament_committee_issues.html:16
+#: templates/core/parliament_committee_issues.html:17
 msgid "Issues in committee"
 msgstr "Mál í nefnd"
 
 #: templates/core/parliament_committees.html:13 templates/core/person.html:135
+#: templates/core/stub/issue.html:45
 msgid "Committee"
 msgstr "Nefnd"
 
@@ -613,7 +636,7 @@ msgstr "Útbýtt"
 msgid "Parliamentary Document"
 msgstr "Þingskjal"
 
-#: templates/core/parliament_issue.html:49 templates/core/stub/issue.html:43
+#: templates/core/parliament_issue.html:49 templates/core/stub/issue.html:52
 msgid "Status"
 msgstr "Staða"
 
@@ -832,7 +855,7 @@ msgstr "dagskrárliður"
 msgid "parliamentary document"
 msgstr "þingskjal"
 
-#: templates/core/stub/document.html:24 templates/core/stub/issue.html:49
+#: templates/core/stub/document.html:24 templates/core/stub/issue.html:66
 msgid "Proposers"
 msgstr "Flutningsmenn"
 
@@ -866,23 +889,23 @@ msgstr "Samþykkja"
 msgid "Reject"
 msgstr "Hafna"
 
-#: templates/core/stub/issue.html:58 templates/core/stub/small/issue.html:45
+#: templates/core/stub/issue.html:75 templates/core/stub/small/issue.html:46
 msgid "and others"
 msgstr "o.fl."
 
-#: templates/core/stub/issue.html:71
+#: templates/core/stub/issue.html:88
 msgid "Mark as Unopened"
 msgstr "Merkja sem óopnað"
 
-#: templates/core/stub/issue.html:79
+#: templates/core/stub/issue.html:96
 msgid "B-issue"
 msgstr "B-mál"
 
-#: templates/core/stub/issue.html:88 templates/core/stub/small/issue.html:76
+#: templates/core/stub/issue.html:105 templates/core/stub/small/issue.html:90
 msgid "Inquisitor"
 msgstr "Fyrirspyrjandi"
 
-#: templates/core/stub/issue.html:91 templates/core/stub/small/issue.html:78
+#: templates/core/stub/issue.html:108 templates/core/stub/small/issue.html:92
 msgid "Responder"
 msgstr "Til svara"
 
@@ -935,7 +958,9 @@ msgid ""
 "strong>."
 msgstr ""
 "Þú getur sótt um aðild að hópi hér fyrir neðan. Allir meðlimir hópsins geta "
-"samþykkt umsókn þína eða hafnað henni. Athugaðu að þegar þú gerist meðlimur hóps <strong>fær allur hópurinn sjálfkrafa aðgang að öllum þínum gögnum</strong>."
+"samþykkt umsókn þína eða hafnað henni. Athugaðu að þegar þú gerist meðlimur "
+"hóps <strong>fær allur hópurinn sjálfkrafa aðgang að öllum þínum gögnum</"
+"strong>."
 
 #: templates/core/stub/membership_requests.html:16
 msgid "Apply"
@@ -949,7 +974,7 @@ msgstr "Óafgreiddar umsóknir"
 msgid "continued"
 msgstr "framhaldið"
 
-#: templates/core/stub/small/issue.html:65
+#: templates/core/stub/small/issue.html:79
 msgid "Special discussion"
 msgstr "Sérstök umræða"
 

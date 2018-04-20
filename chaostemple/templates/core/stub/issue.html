@@ -1,6 +1,7 @@
 {% load i18n %}
 {% load dossier_tags %}
 {% load smart_urls %}
+{% load issue %}
 
 <div control="issue-container" data-id="{{ issue.id }}">
     <div class="panel panel-default" control="issue">
@@ -42,6 +43,11 @@
                     {% if issue.current_step %}
                         | {% trans 'Status' %}: <strong>{{ issue.get_current_step_display }}</strong>
                     {% endif %}
+                    {% with issue|review_deadline as deadline %}
+                        {% if deadline %}
+                            | {% trans 'Review deadline' %}: <strong>{{ deadline }}</strong>
+                        {% endif %}
+                    {% endwith %}
                     </small>
                 </p>
                 <p>

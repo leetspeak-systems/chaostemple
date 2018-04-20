@@ -2,6 +2,10 @@ from django import template
 
 from althingi.models import Issue
 
+from django.template.defaultfilters import date
+from django.utils import timezone
+from django.utils.translation import gettext as _
+
 register = template.Library()
 
 
@@ -45,3 +49,31 @@ def order_by_progression(issues):
         return former, latter
 
     return sorted(issues, key=checker)
+
+
+@register.filter
+def review_deadline(issue):
+
+    review_deadline_steps = [
+        'committee-1-reviews-requested',
+        'committee-1-reviews-arrived',
+        'committee-former-reviews-requested',
+        'committee-former-reviews-arrived',
+    ]
+
+    if issue.current_step in review_deadline_steps:
+
+        today = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        days = (today - issue.review_deadline).days
+
+        if days == 0:
+            day_msg = _('today')
+        elif days > 0:
+            day_msg = _('yesterday') if days == 1 else _('%d days ago') % days
+        else:
+            days = 0 - days # Minus-days are in the future.
+            day_msg = _('tomorrow') if days == 1 else _('in %d days') % days
+
+        return '%s (%s)' % (date(issue.review_deadline), day_msg)
+    else:
+        return ''

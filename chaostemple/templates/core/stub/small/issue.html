@@ -1,6 +1,7 @@
 {% load i18n %}
 {% load dossier_tags %}
 {% load smart_urls %}
+{% load issue %}
 
 <tr control="issue-container" data-id="{{ issue.id }}" data-issue-type="{{ issue.issue_type }}" {% if start_hidden %}style="display: none;" {% endif %}>
     <td control="issue-small">
@@ -52,6 +53,11 @@
                 {% elif issue.current_step %}
                     {{ issue.get_current_step_display }}
                 {% endif %}
+                {% with issue|review_deadline as deadline %}
+                    {% if deadline %}
+                        <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" title="{{ deadline }}"></span>
+                    {% endif %}
+                {% endwith %}
             </span>
             </small>
             </div>

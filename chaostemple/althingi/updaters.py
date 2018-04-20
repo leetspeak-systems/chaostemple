@@ -2409,6 +2409,20 @@ def update_issue_status(issue_num, parliament_num=None):
         else:
             print('Already have status of issue: %s' % issue)
 
+    # Determine the committee which the issue belongs to, if any.
+    committee = issue.determine_committee()
+    if issue.to_committee != committee:
+        issue.to_committee = committee
+        issue.save()
+        print('Updated committee of issue %s to %s' % (issue, issue.to_committee))
+
+    # Determine the minister which the issue was sent to, if any.
+    minister = issue.determine_minister()
+    if issue.to_minister != minister:
+        issue.to_minister = minister
+        issue.save()
+        print('Updated minister of issue %s to %s' % (issue, issue.to_minister))
+
     # Determine the issue's fate (if any).
     # This is done so near the end of the processing of the issue because it
     # relies on the status, which in turn relies on things processed after the

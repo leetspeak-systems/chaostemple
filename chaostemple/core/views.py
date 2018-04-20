@@ -340,7 +340,9 @@ def parliament_committee(request, parliament_num, committee_id):
     agendas = committee.committee_agendas.filter(parliament__parliament_num=parliament_num).annotate(
         item_count=Count('committee_agenda_items')
     )
-    issues = committee.issues(parliament_num).prefetch_related('proposers__person').select_related('parliament')
+    issues = committee.issues.prefetch_related('proposers__person').select_related('parliament').filter(
+        parliament__parliament_num=parliament_num
+    )
 
     parliament = request.extravars['parliament']
     if parliament.timing_end:
@@ -376,12 +378,12 @@ def parliament_committee(request, parliament_num, committee_id):
 def parliament_committee_issues(request, parliament_num, committee_id):
 
     committee = Committee.objects.get(id=committee_id)
-    issues = committee.issues(
-        parliament_num
-    ).prefetch_related(
+    issues = committee.issues.prefetch_related(
         'proposers__person'
     ).select_related(
         'parliament'
+    ).filter(
+        parliament__parliament_num=parliament_num
     ).order_by(
         '-issue_num'
     )

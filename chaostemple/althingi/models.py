@@ -5,6 +5,7 @@ from django.db.models import Count
 from django.db.models import F
 from django.db.models import IntegerField
 from django.db.models import Prefetch
+from django.db.models import PROTECT
 from django.db.models import Q
 from django.db.models import SET_NULL
 from django.db.models import When
@@ -418,6 +419,9 @@ class Issue(models.Model):
     document_count = models.IntegerField(default=0) # Auto-populated by Document.save()
     review_count = models.IntegerField(default=0) # Auto-populated by Review.save()
 
+    to_committee = models.ForeignKey('Committee', null=True, related_name='issues', on_delete=PROTECT)
+    to_minister = models.ForeignKey('Minister', null=True, related_name='issues', on_delete=PROTECT)
+
     current_step = models.CharField(max_length=40, choices=ISSUE_STEPS, null=True)
     fate = models.CharField(max_length=40, choices=ISSUE_FATES, null=True)
 
@@ -643,6 +647,36 @@ class Issue(models.Model):
         # We return None to indicate that a status cannot be determined for
         # this issue type yet.
         return None
+
+    # Determine the committee that this issue belongs to, if anyway. In the
+    # unlikely and strange but conceivable case of it having been passed to
+    # more than one committee, we'll prefer the latest one.
+    def determine_committee(self):
+        try:
+            return self.vote_castings.select_related(
+                'to_committee'
+            ).exclude(
+                to_committee=None
+            ).order_by(
+                '-timing'
+            ).first().to_committee
+        except AttributeError:
+            return None
+
+    # Determine the minister that this issue was sent to, if anyway. In the
+    # unlikely and strange but conceivable case of it having been sent to more
+    # than one minister, we'll prefer the latest one.
+    def determine_minister(self):
+        try:
+            return self.vote_castings.select_related(
+                'to_minister'
+            ).exclude(
+                to_minister=None
+            ).order_by(
+                '-timing'
+            ).first().to_minister
+        except AttributeError:
+            return None
 
     def determine_fate(self):
 
@@ -1044,14 +1078,6 @@ class Committee(models.Model):
     committee_xml_id = models.IntegerField(unique=True)
 
     is_standing = models.BooleanField(default=True)
-
-    def issues(self, parliament_num=None):
-        if parliament_num is None:
-            parliament_num = CURRENT_PARLIAMENT_NUM
-        return Issue.objects.filter(
-            vote_castings__to_committee=self,
-            parliament__parliament_num=parliament_num
-        ).distinct()
 
     def __str__(self):
         return capfirst(self.name)

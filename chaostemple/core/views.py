@@ -478,7 +478,8 @@ def parliament_party(request, parliament_num, party_slug):
     ).distinct()
 
     issues = Issue.objects.select_related(
-        'parliament'
+        'parliament',
+        'to_committee'
     ).prefetch_related(
         'proposers__person'
     ).from_party(

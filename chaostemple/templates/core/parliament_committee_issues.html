@@ -18,9 +18,10 @@
         <a href="{% url 'parliament_committee' parliament_num committee.id %}">{{ committee }}</a>
     </h3>
 
+    {% include 'core/stub/issue_type_toggle.html' %}
+
     {% for issue in issues|order_by_progression reversed %}
         {% include 'core/stub/issue.html' %}
     {% endfor %}
 
 {% endblock %}
-

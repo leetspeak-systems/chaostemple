@@ -1,0 +1,25 @@
+{% load i18n %}
+{% load issue %}
+{% comment %}
+Requires 'issue_control.js' JavaScript to work, which should be included in all issue listings anyway.
+{% endcomment %}
+<div class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">{% trans 'Issue types' %}:</a>
+        </div>
+        <div class="collapse navbar-collapse">
+
+            {% for issue_type, issue_type_display in issues|issue_types %}
+                <button type="button"
+                        class="btn btn-default btn-sm navbar-btn"
+                        control="issue-type-toggle"
+                        data-issue-type="{{ issue_type }}">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    {{ issue_type_display|capfirst }}
+                </button>
+            {% endfor %}
+
+        </div>
+    </div>
+</div>

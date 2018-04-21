@@ -181,5 +181,27 @@ $(document).ready(function() {
     // If there is an issue type selector around... select the first tab.
     $('[control="issue-type-selector"] li:first-child a').trigger('click');
 
+    $(document).on('click', 'button[control="issue-type-toggle"]', function() {
+        // Controls.
+        var $button = $(this);
+        var $marker = $button.find('span.glyphicon-ok');
+
+        // Gathered variables.
+        var issue_type = $button.attr('data-issue-type');
+        var show = !$marker.hasClass('grey');
+
+        // Find the issues that we wish to either show or hide.
+        var $issues = $('[control="issue-container"][data-issue-type="' + issue_type + '"]');
+
+        if (show) {
+            $issues.hide();
+            $marker.addClass('grey');
+        }
+        else {
+            $issues.show();
+            $marker.removeClass('grey');
+        }
+    });
+
 });
 

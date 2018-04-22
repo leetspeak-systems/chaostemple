@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-20 22:25+0000\n"
+"POT-Creation-Date: 2018-04-22 15:28+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -174,10 +174,10 @@ msgid "Temple of Chaos"
 msgstr "Musteri Glundroðans"
 
 #: core/breadcrumbs.py:57 templates/base.html:51 templates/base.html:54
-#: templates/core/parliament_issue.html:32
-#: templates/core/parliament_issue.html:96
-#: templates/core/parliament_issue.html:111
-#: templates/core/parliament_party.html:12 templates/core/person.html:92
+#: templates/core/parliament_issue.html:33
+#: templates/core/parliament_issue.html:113
+#: templates/core/parliament_issue.html:128
+#: templates/core/parliament_party.html:13 templates/core/person.html:92
 #: templates/core/person.html:117 templates/core/person.html:139
 #: templates/core/person.html:163 templates/core/person.html:175
 #: templates/core/stub/parliament_selection.html:5
@@ -185,71 +185,72 @@ msgstr "Musteri Glundroðans"
 msgid "parliament"
 msgstr "þing"
 
-#: core/breadcrumbs.py:100 core/breadcrumbs.py:103 templates/base.html:62
+#: core/breadcrumbs.py:102 core/breadcrumbs.py:105 templates/base.html:62
 #: templates/core/day.html:63
 msgid "Today's issues"
 msgstr "Mál dagsins"
 
-#: core/breadcrumbs.py:115 templates/base.html:64
+#: core/breadcrumbs.py:117 templates/base.html:64
 #: templates/core/upcoming.html:14
 msgid "Upcoming Issues"
 msgstr "Komandi mál"
 
-#: core/breadcrumbs.py:122 templates/base.html:126
+#: core/breadcrumbs.py:124 templates/base.html:126
 msgid "Bookmarks"
 msgstr "Bókamerki"
 
-#: core/breadcrumbs.py:129 templates/base.html:106 templates/base.html:108
+#: core/breadcrumbs.py:131 templates/base.html:106 templates/base.html:108
 #: templates/core/user_issues_open.html:13
 msgid "Opened Issues"
 msgstr "Opnuð mál"
 
-#: core/breadcrumbs.py:136 templates/base.html:111
+#: core/breadcrumbs.py:138 templates/base.html:111
 msgid "Issues with new data"
 msgstr "Mál með nýjum gögnum"
 
-#: core/breadcrumbs.py:143 templates/base.html:65
+#: core/breadcrumbs.py:145 templates/base.html:65
 #: templates/core/parliament_documents_new.html:11
 msgid "New Parliamentary Documents"
 msgstr "Ný þingskjöl"
 
-#: core/breadcrumbs.py:150 core/breadcrumbs.py:201 templates/base.html:138
-#: templates/core/parliament.html:8 templates/core/parliament_committee.html:38
-#: templates/core/parliament_party.html:40 templates/core/person.html:159
+#: core/breadcrumbs.py:152 core/breadcrumbs.py:203 core/breadcrumbs.py:240
+#: templates/base.html:138 templates/core/parliament.html:8
+#: templates/core/parliament_committee.html:38
+#: templates/core/parliament_party.html:43 templates/core/person.html:159
 #: templates/core/stub/user_access_list.html:11
 msgid "Issues"
 msgstr "Þingmál"
 
-#: core/breadcrumbs.py:157
+#: core/breadcrumbs.py:159
 msgid "issue"
 msgstr "mál"
 
-#: core/breadcrumbs.py:164 templates/base.html:68 templates/base.html:140
-#: templates/core/parliament.html:9 templates/core/parliament_issue.html:79
+#: core/breadcrumbs.py:166 templates/base.html:68 templates/base.html:140
+#: templates/core/parliament.html:9 templates/core/parliament_issue.html:96
 #: templates/core/parliament_sessions.html:8
 msgid "Parliamentary Sessions"
 msgstr "Þingfundir"
 
-#: core/breadcrumbs.py:171
+#: core/breadcrumbs.py:173
 msgid "parliamentary session"
 msgstr "þingfundur"
 
-#: core/breadcrumbs.py:178 templates/core/parliament.html:10
+#: core/breadcrumbs.py:180 templates/core/parliament.html:10
 msgid "Committees"
 msgstr "Nefndir"
 
-#: core/breadcrumbs.py:208 templates/base.html:144
+#: core/breadcrumbs.py:210 templates/base.html:144
 #: templates/core/parliament_parties.html:7
 msgid "Parliamentary Parties"
 msgstr "Þingflokkar"
 
-#: core/breadcrumbs.py:212 templates/core/parliament.html:11
+#: core/breadcrumbs.py:214 templates/core/parliament.html:11
 #: templates/core/parliament_parties.html:14
-#: templates/core/parliament_party.html:17
+#: templates/core/parliament_party.html:18
 msgid "Parliamentarians"
 msgstr "Þingmenn"
 
-#: core/breadcrumbs.py:250 templates/core/person.html:41
+#: core/breadcrumbs.py:259 templates/core/person.html:41
 #: templates/core/person_select_from_multiple.html:10
 msgid "b."
 msgstr "f."
@@ -306,13 +307,13 @@ msgstr ""
 msgid "The two password fields didn't match."
 msgstr ""
 
-#: dossier/models.py:20 templates/core/parliament_issue.html:47
-#: templates/core/parliament_issue.html:174 templates/core/stub/issue.html:42
+#: dossier/models.py:20 templates/core/parliament_issue.html:48
+#: templates/core/parliament_issue.html:191 templates/core/stub/issue.html:42
 msgid "Parliamentary Documents"
 msgstr "Þingskjöl"
 
-#: dossier/models.py:21 templates/core/parliament_issue.html:46
-#: templates/core/parliament_issue.html:182 templates/core/stub/issue.html:41
+#: dossier/models.py:21 templates/core/parliament_issue.html:47
+#: templates/core/parliament_issue.html:199 templates/core/stub/issue.html:41
 msgid "Reviews"
 msgstr "Umsagnir"
 
@@ -429,7 +430,7 @@ msgstr "Ef ekki, endilega láttu okkur vita af vandanum.."
 msgid "Current and Upcoming"
 msgstr "Á döfinni"
 
-#: templates/base.html:86 templates/core/parliament_issue.html:67
+#: templates/base.html:86 templates/core/parliament_issue.html:84
 msgid "Committee Meetings"
 msgstr "Nefndarfundir"
 
@@ -623,7 +624,8 @@ msgstr "Áheyrnarfulltrúar"
 msgid "Issues in committee"
 msgstr "Mál í nefnd"
 
-#: templates/core/parliament_committees.html:13 templates/core/person.html:135
+#: templates/core/parliament_committees.html:13
+#: templates/core/parliament_issue.html:51 templates/core/person.html:135
 #: templates/core/stub/issue.html:45
 msgid "Committee"
 msgstr "Nefnd"
@@ -636,59 +638,59 @@ msgstr "Útbýtt"
 msgid "Parliamentary Document"
 msgstr "Þingskjal"
 
-#: templates/core/parliament_issue.html:49 templates/core/stub/issue.html:52
+#: templates/core/parliament_issue.html:58 templates/core/stub/issue.html:52
 msgid "Status"
 msgstr "Staða"
 
-#: templates/core/parliament_issue.html:60
+#: templates/core/parliament_issue.html:77
 msgid "Issue Portal"
 msgstr "Málsgátt"
 
-#: templates/core/parliament_issue.html:92
+#: templates/core/parliament_issue.html:109
 msgid "Previously published"
 msgstr "Áður lagt fram"
 
-#: templates/core/parliament_issue.html:107
+#: templates/core/parliament_issue.html:124
 msgid "Later published"
 msgstr "Endurflutt seinna"
 
-#: templates/core/parliament_issue.html:132
+#: templates/core/parliament_issue.html:149
 msgid "Summary"
 msgstr "Samantekt"
 
-#: templates/core/parliament_issue.html:135
+#: templates/core/parliament_issue.html:152
 msgid "Purpose"
 msgstr "Markmið"
 
-#: templates/core/parliament_issue.html:138
+#: templates/core/parliament_issue.html:155
 msgid "Change Description"
 msgstr "Helstu breytingar og nýjungar"
 
-#: templates/core/parliament_issue.html:141
+#: templates/core/parliament_issue.html:158
 msgid "Changes to Law"
 msgstr "Breytingar á lögum og tengd mál"
 
-#: templates/core/parliament_issue.html:144
+#: templates/core/parliament_issue.html:161
 msgid "Cost and Revenue"
 msgstr "Kostnaður og tekjur"
 
-#: templates/core/parliament_issue.html:147
+#: templates/core/parliament_issue.html:164
 msgid "Other Information"
 msgstr "Aðrar upplýsingar"
 
-#: templates/core/parliament_issue.html:150
+#: templates/core/parliament_issue.html:167
 msgid "Review Description"
 msgstr "Umsagnir (helstu atriði)"
 
-#: templates/core/parliament_issue.html:153
+#: templates/core/parliament_issue.html:170
 msgid "Fate"
 msgstr "Afgreiðsla"
 
-#: templates/core/parliament_issue.html:156
+#: templates/core/parliament_issue.html:173
 msgid "Media Coverage"
 msgstr "Fjölmiðlaumfjöllun"
 
-#: templates/core/parliament_issue.html:160
+#: templates/core/parliament_issue.html:177
 msgid "Categories"
 msgstr "Efnisflokkar"
 
@@ -697,6 +699,7 @@ msgid "Name, number, description, type or first proposer of issue"
 msgstr "Nafn, númer, lýsing, tegund eða fyrsti flutningsmaður máls"
 
 #: templates/core/parliament_issues.html:25
+#: templates/core/stub/issue_type_toggle.html:9
 msgid "Issue types"
 msgstr "Málstegundir"
 
@@ -734,9 +737,13 @@ msgstr "Engin þing hafa enn verið sett inn."
 msgid "Parliamentary Party"
 msgstr "Þingflokkur"
 
-#: templates/core/parliament_party.html:27
+#: templates/core/parliament_party.html:28
 msgid "Deputy Parliamentarians"
 msgstr "Varaþingmenn"
+
+#: templates/core/parliament_party_issues.html:17
+msgid "Issues from party"
+msgstr "Þingmál frá flokki"
 
 #: templates/core/parliament_persons.html:32
 msgid "All parties"

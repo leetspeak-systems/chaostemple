@@ -18,8 +18,10 @@
         <a href="{% url 'parliament_party' parliament_num party.slug %}">{{ party }}</a>
     </h3>
 
+    {% include 'core/stub/issue_type_toggle.html' %}
+
     {% for issue in issues|order_by_progression reversed %}
-        {% include 'core/stub/issue.html' %}
+        {% include 'core/stub/issue.html' with start_hidden=True %}
     {% endfor %}
 
 {% endblock %}

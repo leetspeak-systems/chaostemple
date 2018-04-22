@@ -111,3 +111,8 @@ def committee(issue):
 
     if issue.current_step in committee_steps:
         return issue.to_committee
+
+
+@register.filter
+def is_interesting(issue_type):
+    return issue_type in Issue.MOST_INTERESTING_ISSUE_TYPES

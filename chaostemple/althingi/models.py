@@ -387,6 +387,9 @@ class Issue(models.Model):
         ('sent-to-government', _('sent to government')),
     )
 
+    # Issues that are most relevant to the function of the software.
+    MOST_INTERESTING_ISSUE_TYPES = ('l', 'a')
+
     parliament = models.ForeignKey('Parliament', related_name='issues', on_delete=CASCADE)
 
     issue_num = models.IntegerField()  # IS: Málsnúmer

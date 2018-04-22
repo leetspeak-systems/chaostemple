@@ -203,5 +203,8 @@ $(document).ready(function() {
         }
     });
 
+    // Make all the issue type togglers do their things.
+    $('[control="issue-type-toggle"][is-interesting="true"]').trigger('click');
+
 });
 

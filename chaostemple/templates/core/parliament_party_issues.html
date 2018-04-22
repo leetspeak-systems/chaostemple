@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+{% load issue %}
+
+{% block javascript %}
+
+    <script language="javascript" type="text/javascript" src="{% static 'core/js/issue_control.js' %}"></script>
+
+{% endblock %}
+
+{% block content %}
+
+    {% include 'core/dialog/dialog_delete_issue_dossiers.html' %}
+
+    <h3>
+        {% trans 'Issues from party' %}:
+        <a href="{% url 'parliament_party' parliament_num party.slug %}">{{ party }}</a>
+    </h3>
+
+    {% for issue in issues|order_by_progression reversed %}
+        {% include 'core/stub/issue.html' %}
+    {% endfor %}
+
+{% endblock %}

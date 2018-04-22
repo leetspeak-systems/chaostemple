@@ -499,6 +499,32 @@ def parliament_party(request, parliament_num, party_slug):
     return render(request, 'core/parliament_party.html', ctx)
 
 
+def parliament_party_issues(request, parliament_num, party_slug):
+
+    parliament = request.extravars['parliament']
+
+    party = get_object_or_404(Party, slug=party_slug)
+
+    issues = Issue.objects.select_related(
+        'parliament',
+        'to_committee'
+    ).prefetch_related(
+        'proposers__person'
+    ).from_party(
+        party
+    ).filter(
+        parliament_id=parliament.id,
+        issue_group='A'
+    )
+
+    IssueUtilities.populate_dossier_statistics(issues)
+
+    ctx = {
+        'party': party,
+        'issues': issues,
+    }
+    return render(request, 'core/parliament_party_issues.html', ctx)
+
 
 def parliament_persons(request, parliament_num, party_slug=None):
 

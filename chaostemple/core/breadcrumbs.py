@@ -93,6 +93,8 @@ def process_breadcrumbs(breadcrumbs, view):
             slug = view_kwargs.get('slug')
         elif kwarg == 'subslug':
             subslug = view_kwargs.get('subslug')
+        elif kwarg == 'party_slug':
+            party_slug = view_kwargs.get('party_slug')
 
     if view_name == 'day':
         if 'input_date' in locals():
@@ -223,12 +225,19 @@ def process_breadcrumbs(breadcrumbs, view):
             caption
         )
 
-    if view_name == 'parliament_party':
-        party = Party.objects.get(slug=view_kwargs.get('party_slug'))
+    if view_name in ('parliament_party', 'parliament_party_issues'):
+        party = Party.objects.get(slug=party_slug)
         breadcrumbs = leave_breadcrumb(
             breadcrumbs,
-            ('parliament_party', parliament_num, party.slug),
+            ('parliament_party', parliament_num, party_slug),
             party
+        )
+
+    if view_name == 'parliament_party_issues':
+        breadcrumbs = leave_breadcrumb(
+            breadcrumbs,
+            ('parliament_party_issues', parliament_num, party_slug),
+            _('Issues')
         )
 
     if view_name == 'person':

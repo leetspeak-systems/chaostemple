@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% load i18n %}
+{% load smart_urls %}
 {% load issue %}
 
 {% block javascript %}
@@ -37,7 +38,10 @@
         </div>
 
         <div class="col-md-9">
-            <h3>{% trans 'Issues' %}</h3>
+            <h3>
+                <a href="{% breadcrumb_url 'parliament_party_issues' parliament_num party.slug %}"><i class="glyphicon glyphicon-resize-full"></i></a>
+                {% trans 'Issues' %}
+            </h3>
 
             {% include 'core/stub/issue_type_selector.html' %}
 

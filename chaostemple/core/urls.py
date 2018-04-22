@@ -21,6 +21,7 @@ urlpatterns = [
     url(r'^parliament/(?P<parliament_num>\d+)/committee/(?P<committee_id>\d+)/agenda/(?P<agenda_id>\d+)/$', views.parliament_committee_agenda, name='parliament_committee_agenda'),
     url(r'^parliament/(?P<parliament_num>\d+)/parties/$', views.parliament_parties, name='parliament_parties'),
     path('parliament/<int:parliament_num>/party/<str:party_slug>/', views.parliament_party, name='parliament_party'),
+    path('parliament/<int:parliament_num>/party/<str:party_slug>/issues/', views.parliament_party_issues, name='parliament_party_issues'),
     url(r'^parliament/(?P<parliament_num>\d+)/persons/$', views.parliament_persons, name='parliament_persons'),
     url(r'^parliament/(?P<parliament_num>\d+)/persons/party/(?P<party_slug>[A-Za-z0-9\-]+)/$', views.parliament_persons, name='parliament_persons'),
     url(r'^parliament/missing-data/', views.parliament_missing_data, name='parliament_missing_data'),

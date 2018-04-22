@@ -269,3 +269,8 @@
 1.4.9:
     * Database optimizations.
     * Issue view showing committee and review deadline, like in issue listing.
+
+1.4.10:
+    * Fixed problem with URLs turning into HTML text instead of actual links in memos.
+    * Control for toggling the visibility of issues by issue type in expanded issue listing view.
+    * Expanded issue listing for parties.

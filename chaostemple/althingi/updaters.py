@@ -182,12 +182,12 @@ def update_person(person_xml_id, parliament_num=None):
     if person_xml_id is not None and not isinstance(person_xml_id, int):
         raise TypeError('Parameter person_xml_id must be a number')
 
-    # Cached by parliament_num as well, to make sure that if we're iterating
-    # through multiple parliaments, we also catch the seats and committee
-    # seats below.
-    ah_key = '%d-%d' % (parliament.parliament_num, person_xml_id)
-    if ah_key in already_haves['persons']:
-        return already_haves['persons'][ah_key]
+    if person_xml_id in already_haves['persons']:
+        update_seats(person_xml_id, parliament.parliament_num)
+        update_committee_seats(person_xml_id, parliament.parliament_num)
+        update_minister_seats(person_xml_id, parliament.parliament_num)
+
+        return already_haves['persons'][person_xml_id]
 
     xml = get_xml('PERSON_URL', person_xml_id)
     if xml.tag != 'þingmaður':
@@ -285,7 +285,7 @@ def update_person(person_xml_id, parliament_num=None):
 
         print('Added person: %s' % person)
 
-    already_haves['persons'][ah_key] = person
+    already_haves['persons'][person_xml_id] = person
 
     update_seats(person_xml_id, parliament.parliament_num)
     update_committee_seats(person_xml_id, parliament.parliament_num)
@@ -297,7 +297,11 @@ def update_person(person_xml_id, parliament_num=None):
 def update_seats(person_xml_id, parliament_num=None):
 
     parliament = update_parliament(parliament_num)
-    person = update_person(person_xml_id, parliament.parliament_num)
+
+    try:
+        person = Person.objects.get(person_xml_id=person_xml_id)
+    except Person.DoesNotExist:
+        raise AlthingiException('Person with XML ID %d does not exist in database (maybe try updating persons)?')
 
     ah_key = '%d-%d' % (parliament.parliament_num, person_xml_id)
     if ah_key in already_haves['seats']:
@@ -683,7 +687,11 @@ def update_vote_castings(parliament_num=None, since=None):
 def update_committee_seats(person_xml_id, parliament_num=None):
 
     parliament = update_parliament(parliament_num)
-    person = update_person(person_xml_id, parliament.parliament_num)
+
+    try:
+        person = Person.objects.get(person_xml_id=person_xml_id)
+    except Person.DoesNotExist:
+        raise AlthingiException('Person with XML ID %d does not exist in database (maybe try updating persons)?')
 
     ah_key = '%d-%d' % (parliament.parliament_num, person_xml_id)
     if ah_key in already_haves['committee_seats']:
@@ -906,8 +914,9 @@ def update_issue(issue_num, parliament_num=None):
 
     update_categories()
 
-    # If issue has been published in an earlier parliament, we'll record it in this variable and deal with it afterwards
-    # Contains a list of structs, for exmaple: {'parliament_num': 144, 'issue_num': 524 }
+    # If issue has been published in an earlier parliament, we'll record it in
+    # this list and deal with it afterwards. Contains a list of lists where
+    # issue is designated as [parliament_num, issue_num].
     previously_published_as = []
 
     xml = get_xml('ISSUE_URL', parliament.parliament_num, issue_num)
@@ -1015,10 +1024,7 @@ def update_issue(issue_num, parliament_num=None):
         previous_parliament_num = int(previous_issue_xml.attrib['þingnúmer'])
         previous_issue_num = int(previous_issue_xml.attrib['málsnúmer'])
 
-        previously_published_as.append({
-            'parliament_num': previous_parliament_num,
-            'issue_num': previous_issue_num,
-        })
+        previously_published_as.append([previous_parliament_num, previous_issue_num])
 
     # See if this issue has summary information
     summary_xml_try = issue_xml.find('samantekt')
@@ -1418,11 +1424,21 @@ def update_issue(issue_num, parliament_num=None):
     already_haves['issues'][ah_key] = issue
 
     # Process previous publications of issue, if any
-    for previous_issue_info in previously_published_as:
-        previous_issue = update_issue(previous_issue_info['issue_num'], previous_issue_info['parliament_num'])
-        issue.previous_issues.add(previous_issue)
-        for more_previous_issue in previous_issue.previous_issues.all():
-            issue.previous_issues.add(more_previous_issue)
+    for previous_parliament_num, previous_issue_num in previously_published_as:
+        try:
+            previous_issue = Issue.objects.get(
+                issue_group='A',
+                parliament__parliament_num=previous_parliament_num,
+                issue_num=previous_issue_num
+            )
+            issue.previous_issues.add(previous_issue)
+            for more_previous_issue in previous_issue.previous_issues.all():
+                issue.previous_issues.add(more_previous_issue)
+        except Issue.DoesNotExist:
+            # If the issue was published in a previous parliament, we expect
+            # that parliament to have already been processed. If it hasn't
+            # been processed yet, we'll just move on with our lives.
+            pass
 
     return issue
 
@@ -2517,7 +2533,11 @@ def update_ministers(parliament_num=None):
 def update_minister_seats(person_xml_id, parliament_num=None):
 
     parliament = update_parliament(parliament_num)
-    person = update_person(person_xml_id, parliament.parliament_num)
+
+    try:
+        person = Person.objects.get(person_xml_id=person_xml_id)
+    except Person.DoesNotExist:
+        raise AlthingiException('Person with XML ID %d does not exist in database (maybe try updating persons)?')
 
     ah_key = '%d-%d' % (parliament.parliament_num, person_xml_id)
     if ah_key in already_haves['minister_seats']:

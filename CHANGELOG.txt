@@ -274,3 +274,6 @@
     * Fixed problem with URLs turning into HTML text instead of actual links in memos.
     * Control for toggling the visibility of issues by issue type in expanded issue listing view.
     * Expanded issue listing for parties.
+
+1.4.11:
+    * Increased performance of data processing.

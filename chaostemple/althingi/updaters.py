@@ -1455,15 +1455,19 @@ def _process_docless_issue(issue_xml):
 
     try:
         special_inquisitor_xml = issue_xml.find('málshefjandi')
-        special_responder_xml = issue_xml.find('til_andsvara')
 
         special_inquisitor = update_person(int(special_inquisitor_xml.attrib['id']), parliament.parliament_num)
         special_inquisitor_description = special_inquisitor_xml.text
-        special_responder = update_person(int(special_responder_xml.attrib['id']), parliament.parliament_num)
-        special_responder_description = special_responder_xml.text
     except AttributeError:
         special_inquisitor = None
         special_inquisitor_description = None
+
+    try:
+        special_responder_xml = issue_xml.find('til_andsvara')
+
+        special_responder = update_person(int(special_responder_xml.attrib['id']), parliament.parliament_num)
+        special_responder_description = special_responder_xml.text
+    except (AttributeError, ValueError):
         special_responder = None
         special_responder_description = None
 

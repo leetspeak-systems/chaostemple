@@ -89,8 +89,10 @@
                 <small>
                 {% trans 'Inquisitor' %}:
                 <a href="{% breadcrumb_url 'person' issue.special_inquisitor.slug issue.special_inquisitor.subslug %}">{{ issue.special_inquisitor }}</a>.
-                {% trans 'Responder' %}:
-                <a href="{% breadcrumb_url 'person' issue.special_responder.slug issue.special_responder.subslug %}">{{ issue.special_responder }}</a> ({{ issue.special_responder_description }}).
+                {% if issue.special_responder %}
+                    {% trans 'Responder' %}:
+                    <a href="{% breadcrumb_url 'person' issue.special_responder.slug issue.special_responder.subslug %}">{{ issue.special_responder }}</a> ({{ issue.special_responder_description }}).
+                {% endif %}
                 </small>
             {% endif %}
         {% endif %}

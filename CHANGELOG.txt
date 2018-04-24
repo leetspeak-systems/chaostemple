@@ -280,3 +280,6 @@
 
 1.4.12:
     * Tolerance added for missing special responder in special debates.
+
+1.4.13:
+    * Bug fixed which prevented special debates being shown in sessions when special responder was missing.

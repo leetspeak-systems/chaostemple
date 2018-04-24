@@ -277,3 +277,6 @@
 
 1.4.11:
     * Increased performance of data processing.
+
+1.4.12:
+    * Tolerance added for missing special responder in special debates.

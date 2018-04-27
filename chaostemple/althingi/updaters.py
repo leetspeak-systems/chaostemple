@@ -430,7 +430,14 @@ def update_vote_castings(parliament_num=None, since=None):
                 issue = update_issue(issue_num, parliament.parliament_num)
 
             doc_num = int(xml.find('þingskjal').attrib['skjalsnúmer'])
-            document = issue.documents.get(doc_num=doc_num)
+            try:
+                document = issue.documents.get(doc_num=doc_num)
+            except Document.DoesNotExist:
+                # This is a very unusual state, but may occur when the
+                # document that's being voted on hasn't been published on
+                # Parliament's website when the vote takes place.
+                document = None
+
         # NOTE / TODO: Waiting for B-issue types to appear in XML for vote castings.
         #elif issue_group == 'B':
         #    docless_issue_xml = vote_casting_xml.find('mál')

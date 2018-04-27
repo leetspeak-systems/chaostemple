@@ -283,3 +283,6 @@
 
 1.4.13:
     * Bug fixed which prevented special debates being shown in sessions when special responder was missing.
+
+1.4.14:
+    * Althingi module: Added tolerance for missing document when processing vote castings.

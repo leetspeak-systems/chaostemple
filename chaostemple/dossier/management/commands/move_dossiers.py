@@ -4,6 +4,8 @@ from sys import stdout
 
 from althingi.althingi_settings import CURRENT_PARLIAMENT_NUM
 
+from althingi.exceptions import DataIntegrityException
+
 from althingi.models import Review
 
 from dossier.models import Dossier
@@ -30,6 +32,20 @@ class Command(BaseCommand):
             log_num=target_review_log_num,
             issue__parliament__parliament_num=parliament_num
         )
+
+        # First, let's make sure that only useless dossiers exist on the
+        # target, because we'd like to remove them before moving them from
+        # source to target.
+        for dossier in target.dossiers.select_related('user').all():
+            if not dossier.is_useful():
+                stdout.write('Deleting useless dossier for user %s...' % dossier.user)
+                stdout.flush()
+
+                dossier.delete()
+
+                stdout.write(' done\n')
+            else:
+                raise DataIntegrityException('Useful dossier found for user %s in target' % dossier.user)
 
         for dossier in source.dossiers.select_related('user').all():
             stdout.write('Moving dossier for user %s...' % dossier.user)

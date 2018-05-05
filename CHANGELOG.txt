@@ -289,3 +289,6 @@
 
 1.4.15:
     * Data management tool for dealing with integrity issues added.
+
+1.4.16:
+    * Data integrity tools improvement.

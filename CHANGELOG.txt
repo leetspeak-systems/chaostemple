@@ -286,3 +286,6 @@
 
 1.4.14:
     * Althingi module: Added tolerance for missing document when processing vote castings.
+
+1.4.15:
+    * Data management tool for dealing with integrity issues added.

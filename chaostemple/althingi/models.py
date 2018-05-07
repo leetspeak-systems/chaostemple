@@ -1486,6 +1486,7 @@ class Speech(models.Model):
     seconds = models.IntegerField()
 
     speech_type = models.CharField(max_length=30)
+    president = models.BooleanField(default=False)
     iteration = models.CharField(max_length=3, null=True)
 
     order_in_issue = models.IntegerField(null=True)

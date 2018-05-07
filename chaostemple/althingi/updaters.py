@@ -2178,6 +2178,8 @@ def update_speeches(parliament_num=None, since=None):
         except KeyError:
             person = update_person(person_xml_id)
 
+        president = speech_xml.find('ræðumaður/forsetiAlþingis') is not None
+
         session_num = int(speech_xml.find('fundur').text)
         try:
             session = pref_sessions[session_num]
@@ -2258,6 +2260,10 @@ def update_speeches(parliament_num=None, since=None):
                 speech.person = person
                 changed = True
 
+            if speech.president != president:
+                speech.president = president
+                changed = True
+
             if speech.session != session:
                 speech.session = session
                 changed = True
@@ -2323,6 +2329,7 @@ def update_speeches(parliament_num=None, since=None):
         else:
             speech = Speech(timing_start=timing_start)
             speech.person = person
+            speech.president = president
             speech.session = session
             speech.issue = issue
             speech.date = date

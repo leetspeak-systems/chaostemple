@@ -292,3 +292,8 @@
 
 1.4.16:
     * Data integrity tools improvement.
+
+1.4.17:
+    * Althingi module: Speeches designate whether speech is held by the sitting president of Parliament.
+    * String made translatable.
+    * Current parliament number increased from 148 go 149.

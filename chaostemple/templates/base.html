@@ -209,6 +209,24 @@
             });
         </script>
 
+        {% comment %}
+        Load subscription JavaScript if subscriptions are relevant to this
+        page. This is determined by checking whether a template variable named
+        'subscriptions' is available.
+        {% endcomment %}
+        {% if subscriptions is not None %}
+            <script language="javascript" type="text/javascript">
+                var subscriptions = [];
+                {% for subscription in subscriptions %}
+                    subscriptions.push({
+                        'type': '{{ subscription.sub_type }}',
+                        'id': {{ subscription.subscribed_thing.id }},
+                    });
+                {% endfor %}
+            </script>
+            <script language="javascript" type="text/javascript" src="{% static 'core/js/subscription.js' %}"></script>
+        {% endif %}
+
         {% block javascript %}{% endblock %}
 
         {% include_jsonizer %}

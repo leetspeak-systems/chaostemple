@@ -1,0 +1,15 @@
+{% load i18n %}
+<button type="button"
+    control="toggle-subscription"
+
+    data-type="{{ type }}"
+    data-id="{{ id }}"
+    data-subscribed=""
+
+    data-toggle="tooltip"
+    title="{% trans 'Subscription' %}"
+
+    class="btn btn-default btn-xs">
+  <span control="subscription-icon" class="glyphicon glyphicon-star grey"></span>
+</button>
+

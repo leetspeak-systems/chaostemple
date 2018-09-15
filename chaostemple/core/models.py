@@ -217,3 +217,53 @@ class MembershipRequest(models.Model):
 
     class Meta:
         ordering = ['group__name', 'status']
+
+
+class Subscription(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='subscriptions', on_delete=CASCADE)
+    sub_type = models.CharField(max_length=20)
+
+    party = models.ForeignKey('althingi.Party', null=True, related_name='subscriptions', on_delete=CASCADE)
+    committee = models.ForeignKey('althingi.Committee', null=True, related_name='subscriptions', on_delete=CASCADE)
+    person = models.ForeignKey('althingi.Person', null=True, related_name='subscriptions', on_delete=CASCADE)
+
+    class Meta:
+        unique_together = ['user', 'party', 'committee', 'person']
+
+    def subscribed_thing(self):
+        try:
+            thing = getattr(self, self.sub_type)
+        except AttributeError:
+            thing = None
+        return thing
+
+    def save(self, *args, **kwargs):
+        # Make sure that what's being subscribed to is sane.
+        self.sub_type = ''
+        fields = ['party', 'committee', 'person']
+        for field in fields:
+            if getattr(self, field) is not None:
+                self.sub_type = field
+                break
+
+        if not self.sub_type:
+            raise Exception('Subscription must be to one of fields: %s' % ', '.join(fields))
+
+        # Only allow one thing to be subscribed to.
+        for field in fields:
+            if field != self.sub_type and getattr(self, field) is not None:
+                raise Exception(
+                    'Subscription may only be to one thing (currently %s)' % self.subscribed_thing()
+                )
+
+        # Prevent duplicate subscriptions.
+        thing = getattr(self, self.sub_type)
+        lookup = {'user': self.user, self.sub_type: thing}
+        if Subscription.objects.filter(**lookup).count() > 0:
+            raise Exception('Already subscribed to that item')
+
+        super(Subscription, self).save(*args, **kwargs)
+
+    def __str__(self):
+        sub_type = self.sub_type if self.sub_type else 'undetermined'
+        return '%s subscribed to %s %s' % (self.user, sub_type, self.subscribed_thing())

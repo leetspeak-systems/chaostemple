@@ -14,6 +14,7 @@ from core.models import Access
 from core.models import Issue
 from core.models import IssueBookmark
 from core.models import MembershipRequest
+from core.models import Subscription
 
 from jsonizer.utils import jsonize
 
@@ -235,5 +236,30 @@ def process_membership_request(request):
 
     ctx = {
         'html_content': html_content,
+    }
+    return ctx
+
+
+@login_required
+@jsonize
+def subscription_toggle(request, sub_type, sub_id):
+
+    lookup = {
+        'user': request.user,
+        '%s_id' % sub_type: sub_id,
+    }
+
+    subscribed = None
+
+    try:
+        Subscription.objects.get(**lookup).delete()
+        subscribed = False
+
+    except Subscription.DoesNotExist:
+        Subscription(**lookup).save()
+        subscribed = True
+
+    ctx = {
+        'subscribed': subscribed,
     }
     return ctx

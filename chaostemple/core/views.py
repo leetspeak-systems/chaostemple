@@ -25,6 +25,7 @@ from core.models import Issue
 from core.models import IssueBookmark
 from core.models import IssueUtilities
 from core.models import MembershipRequest
+from core.models import Subscription
 
 from dossier.models import Dossier
 from dossier.models import DossierStatistic
@@ -343,8 +344,13 @@ def parliament_committees(request, parliament_num):
         )
     ))
 
+    subscriptions = None
+    if request.user.is_authenticated:
+        subscriptions = Subscription.objects.filter(user=request.user, committee__in=committees)
+
     ctx = {
-        'committees': committees
+        'committees': committees,
+        'subscriptions': subscriptions,
     }
     return render(request, 'core/parliament_committees.html', ctx)
 

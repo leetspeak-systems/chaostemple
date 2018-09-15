@@ -10,11 +10,19 @@
         <div class="col-md-6">
             <table class="table">
                 <tr>
+                    {% if FEATURES.subscription and request.user.is_authenticated %}
+                        <th>&nbsp;</th>
+                    {% endif %}
                     <th>{% trans 'Committee' %}</th>
                     <th class="text-right">{% trans 'Meetings' %}</th>
                 </tr>
                 {% for committee in committees %}
                     <tr>
+                        {% if FEATURES.subscription and request.user.is_authenticated %}
+                            <td style="width: 1px;">
+                                {% include 'core/stub/subscription.html' with type='committee' id=committee.id %}
+                            </td>
+                        {% endif %}
                         <td>
                             <a href="{% breadcrumb_url 'parliament_committee' parliament_num committee.id %}">
                                 {{ committee }}

@@ -57,6 +57,8 @@ urlpatterns = [
     ),
     path('json/access/process/membership-request/', json_views.process_membership_request),
 
+    path('json/subscription/toggle/<str:sub_type>/<int:sub_id>/', json_views.subscription_toggle),
+
     url(r'^dossier/', include('dossier.urls')),
 ]
 

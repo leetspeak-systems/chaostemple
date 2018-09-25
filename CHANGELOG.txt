@@ -297,3 +297,6 @@
     * Althingi module: Speeches designate whether speech is held by the sitting president of Parliament.
     * String made translatable.
     * Current parliament number increased from 148 go 149.
+
+1.4.18:
+    * Bugfix: Issues shown twice when filtering by party (presumably because of whacky seat data).

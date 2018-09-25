@@ -32,7 +32,7 @@ class IssueQuerySet(models.QuerySet):
             proposers__person__seats__timing_in__lte=F('time_published'),
             proposers__person__seats__party=party,
             proposers__order=1
-        )
+        ).distinct()
 
 
 class PartyQuerySet(models.QuerySet):

@@ -300,3 +300,6 @@
 
 1.4.18:
     * Bugfix: Issues shown twice when filtering by party (presumably because of whacky seat data).
+
+1.4.19:
+    * Bugfix: Wrong issue displayed when receiving access to a single issue from someone else.

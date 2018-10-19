@@ -235,8 +235,8 @@ def parliament_issue(request, parliament_num, issue_num):
 
     partial_conditions = []
     for partial_access in accesses['partial']:
-        for issue in partial_access.issues.all():
-            partial_conditions.append(Q(user_id=partial_access.user_id) & Q(issue_id=issue.id))
+        for partial_issue in partial_access.issues.all():
+            partial_conditions.append(Q(user_id=partial_access.user_id) & Q(issue_id=partial_issue.id))
 
     # Add dossiers from users who have given full access
     prefetch_query = Q(user_id__in=visible_user_ids) | Q(user_id=request.user.id)

@@ -13,7 +13,7 @@ def jsonize(f):
             return HttpResponse(json.dumps(m))
         except Exception as e:
             if settings.DEBUG:
-                return HttpResponse(json.dumps(json_error(e.message)))
+                return HttpResponse(json.dumps(json_error(e.args[0])))
             else:
                 raise
 

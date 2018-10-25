@@ -10,10 +10,10 @@ def jsonize(f):
             if isinstance(m, HttpResponse):
                 return m
             m['ok'] = True
-            return HttpResponse(json.dumps(m))
+            return HttpResponse(json.dumps(m), content_type='text/json')
         except Exception as e:
             if settings.DEBUG:
-                return HttpResponse(json.dumps(json_error(e.args[0])))
+                return HttpResponse(json.dumps(json_error(e.args[0])), content_type='text/json')
             else:
                 raise
 

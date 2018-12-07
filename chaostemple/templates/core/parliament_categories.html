@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+{% load issue %}
+{% load smart_urls %}
+
+{% block javascript %}
+
+    <script language="javascript" type="text/javascript" src="{% static 'core/js/issue_control.js' %}"></script>
+
+{% endblock %}
+
+{% block content %}
+
+    {% include 'core/dialog/dialog_delete_issue_dossiers.html' %}
+
+    <h2>{% trans 'Categories' %}</h2>
+
+    <div class="row">
+        <div class="col-md-5">
+            <table class="table">
+                <tr>
+                    <th>{% trans 'Category Group' %}</th>
+                    <th>{% trans 'Category' %}</th>
+                </tr>
+                {% for cg in category_groups %}
+                    <tr>
+                        <td>{{ cg }}</td>
+                        <td>
+                            <ul>
+                            {% for cat in cg.categories.all %}
+                                <li>
+                                {% if cat.id == category.id %}
+                                    {{ cat }}
+                                {% else %}
+                                    <a href="{% url 'parliament_category' parliament_num cat.slug %}">{{ cat }}</a>
+                                {% endif %}
+                                </li>
+                            {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <div class="col-md-7">
+
+            {% if category %}
+                <h3>
+                    <a href="{% breadcrumb_url 'parliament_category_issues' parliament_num category.slug %}"><i class="glyphicon glyphicon-resize-full"></i></a>
+                    {% trans 'Issues in category' %}:
+                    {{ category }}
+                </h3>
+
+                {% include 'core/stub/issue_type_selector.html' %}
+
+                <table class="table">
+                {% for issue in issues|order_by_progression reversed %}
+                    {% include 'core/stub/small/issue.html' with start_hidden=True %}
+                {% empty %}
+                    <tr><td>{% trans 'No issues found' %}</td></tr>
+                {% endfor %}
+                </table>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+{% endblock %}
+

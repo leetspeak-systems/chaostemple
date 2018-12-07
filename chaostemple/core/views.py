@@ -32,6 +32,8 @@ from dossier.models import DossierStatistic
 from dossier.models import Memo
 
 from althingi.althingi_settings import CURRENT_PARLIAMENT_NUM
+from althingi.models import Category
+from althingi.models import CategoryGroup
 from althingi.models import Committee
 from althingi.models import CommitteeAgenda
 from althingi.models import CommitteeSeat
@@ -299,6 +301,50 @@ def parliament_issue(request, parliament_num, issue_num):
         'max_memo_length': Memo._meta.get_field('content').max_length,
     }
     return render(request, 'core/parliament_issue.html', ctx)
+
+
+def parliament_categories(request, parliament_num):
+
+    category_groups = CategoryGroup.objects.prefetch_related('categories')
+
+    ctx = {
+        'category_groups': category_groups,
+    }
+    return render(request, 'core/parliament_categories.html', ctx)
+
+
+def parliament_category(request, parliament_num, category_slug, view=None):
+
+    category_groups = CategoryGroup.objects.prefetch_related('categories')
+    category = Category.objects.get(slug=category_slug)
+
+    issues = Issue.objects.select_related(
+        'parliament',
+        'to_committee'
+    ).prefetch_related(
+        'proposers__person'
+    ).filter(
+        parliament__parliament_num=parliament_num,
+        issue_group='A',
+        categories=category
+    )
+
+    IssueUtilities.populate_dossier_statistics(issues)
+
+    ctx = {
+        'category_groups': category_groups,
+        'category': category,
+        'issues': issues,
+    }
+
+    if view == 'issues':
+        # This is the expanded view, with a more detailed focus on the issues.
+        # It takes exactly the same information so we decided to use the same
+        # function here. If these two pages begin to differ in other ways than
+        # mere presentation, then this function should be split in two.
+        return render(request, 'core/parliament_category_issues.html', ctx)
+    else:
+        return render(request, 'core/parliament_categories.html', ctx)
 
 
 def parliament_sessions(request, parliament_num):

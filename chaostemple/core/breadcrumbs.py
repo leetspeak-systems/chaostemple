@@ -9,6 +9,7 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils.translation import ugettext as _
 
 from althingi.althingi_settings import CURRENT_PARLIAMENT_NUM
+from althingi.models import Category
 from althingi.models import Committee
 from althingi.models import CommitteeAgenda
 from althingi.models import Party
@@ -87,6 +88,8 @@ def process_breadcrumbs(breadcrumbs, view):
             session_num = int(view_kwargs.get('session_num', 0))
         elif kwarg == 'committee_id':
             committee_id = int(view_kwargs.get('committee_id', 0))
+        elif kwarg == 'category_slug':
+            category_slug = view_kwargs.get('category_slug')
         elif kwarg == 'agenda_id':
             agenda_id = int(view_kwargs.get('agenda_id', 0))
         elif kwarg == 'slug':
@@ -200,6 +203,28 @@ def process_breadcrumbs(breadcrumbs, view):
         breadcrumbs = leave_breadcrumb(
             breadcrumbs,
             ('parliament_committee_issues', parliament_num, committee_id),
+            _('Issues')
+        )
+
+    if view_name in ('parliament_categories', 'parliament_category'):
+        breadcrumbs = leave_breadcrumb(
+            breadcrumbs,
+            ('parliament_categories', parliament_num),
+            _('Categories')
+        )
+
+    if view_name == 'parliament_category':
+        category = Category.objects.get(slug=category_slug)
+        breadcrumbs = leave_breadcrumb(
+            breadcrumbs,
+            ('parliament_category', parliament_num, category_slug),
+            category
+        )
+
+    if view_name == 'parliament_category_issues':
+        breadcrumbs = leave_breadcrumb(
+            breadcrumbs,
+            ('parliament_category_issues', parliament_num, category_slug),
             _('Issues')
         )
 

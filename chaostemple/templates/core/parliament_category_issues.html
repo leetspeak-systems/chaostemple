@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+{% load issue %}
+{% load smart_urls %}
+
+{% block javascript %}
+
+    <script language="javascript" type="text/javascript" src="{% static 'core/js/issue_control.js' %}"></script>
+
+{% endblock %}
+
+{% block content %}
+
+    {% include 'core/dialog/dialog_delete_issue_dossiers.html' %}
+
+    <h3>
+        {% trans 'Issues in category' %}:
+        <a href="{% breadcrumb_url 'parliament_category' parliament_num category.slug %}">{{ category }}</a>
+    </h3>
+
+    {% include 'core/stub/issue_type_toggle.html' %}
+
+    {% for issue in issues|order_by_progression reversed %}
+        {% include 'core/stub/issue.html' with start_hidden=True %}
+    {% endfor %}
+
+{% endblock %}

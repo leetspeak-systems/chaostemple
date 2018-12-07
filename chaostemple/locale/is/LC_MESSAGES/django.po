@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-15 20:35+0000\n"
+"POT-Creation-Date: 2018-12-07 13:32+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -225,7 +225,7 @@ msgstr "Þingmál"
 msgid "issue"
 msgstr "mál"
 
-#: core/breadcrumbs.py:166 templates/base.html:68 templates/base.html:140
+#: core/breadcrumbs.py:166 templates/base.html:68 templates/base.html:141
 #: templates/core/parliament.html:9 templates/core/parliament_issue.html:96
 #: templates/core/parliament_sessions.html:8
 msgid "Parliamentary Sessions"
@@ -239,7 +239,7 @@ msgstr "þingfundur"
 msgid "Committees"
 msgstr "Nefndir"
 
-#: core/breadcrumbs.py:210 templates/base.html:144
+#: core/breadcrumbs.py:210 templates/base.html:145
 #: templates/core/parliament_parties.html:7
 msgid "Parliamentary Parties"
 msgstr "Þingflokkar"
@@ -442,45 +442,50 @@ msgstr "Engin ný gögn"
 msgid "Lists"
 msgstr "Listar"
 
-#: templates/base.html:141 templates/core/parliament_committees.html:7
+#: templates/base.html:139 templates/core/parliament_categories.html:17
+#: templates/core/parliament_issue.html:177
+msgid "Categories"
+msgstr "Efnisflokkar"
+
+#: templates/base.html:142 templates/core/parliament_committees.html:7
 msgid "Standing Committees"
 msgstr "Fastanefndir"
 
-#: templates/base.html:143 templates/core/parliament_persons.html:39
+#: templates/base.html:144 templates/core/parliament_persons.html:39
 msgid "Parliamentarians and ministers"
 msgstr "Þingmenn og ráðherrar"
 
-#: templates/base.html:151 templates/core/user_home.html:6
+#: templates/base.html:152 templates/core/user_home.html:6
 #: templates/registration/password_change_done.html:11
 msgid "User Home"
 msgstr "Heimasvæði"
 
-#: templates/base.html:152 templates/core/user_access.html:19
+#: templates/base.html:153 templates/core/user_access.html:19
 msgid "Access"
 msgstr "Aðgangur"
 
-#: templates/base.html:154
+#: templates/base.html:155
 msgid "Logout"
 msgstr "Útskrá"
 
-#: templates/base.html:158 templates/registration/registration_form.html:12
+#: templates/base.html:159 templates/registration/registration_form.html:12
 msgid "Sign up"
 msgstr "Nýskrá"
 
-#: templates/base.html:159 templates/registration/login.html:12
+#: templates/base.html:160 templates/registration/login.html:12
 #: templates/registration/password_reset_complete.html:12
 msgid "Login"
 msgstr "Innskrá"
 
-#: templates/base.html:192
+#: templates/base.html:193
 msgid "Yes"
 msgstr "Já"
 
-#: templates/base.html:193
+#: templates/base.html:194
 msgid "No"
 msgstr "Nei"
 
-#: templates/base.html:200
+#: templates/base.html:201
 msgid "No results found"
 msgstr "Engar niðurstöður fundust"
 
@@ -594,6 +599,23 @@ msgstr "Þingmál"
 msgid "Are you sure you want to revoke this access?"
 msgstr "Ertu viss um að þú viljir eyða þessum aðgangi?"
 
+#: templates/core/parliament_categories.html:23
+msgid "Category Group"
+msgstr "Yfirefnisflokkur"
+
+#: templates/core/parliament_categories.html:24
+msgid "Category"
+msgstr "Efnisflokkur"
+
+#: templates/core/parliament_categories.html:52
+#: templates/core/parliament_category_issues.html:17
+msgid "Issues in category"
+msgstr "Þingmál í efnisflokki"
+
+#: templates/core/parliament_categories.html:62
+msgid "No issues found"
+msgstr "Engin mál fundust"
+
 #: templates/core/parliament_committee.html:18
 #: templates/core/parliament_committees.html:17
 msgid "Meetings"
@@ -689,10 +711,6 @@ msgstr "Afgreiðsla"
 #: templates/core/parliament_issue.html:173
 msgid "Media Coverage"
 msgstr "Fjölmiðlaumfjöllun"
-
-#: templates/core/parliament_issue.html:177
-msgid "Categories"
-msgstr "Efnisflokkar"
 
 #: templates/core/parliament_issues.html:23
 msgid "Name, number, description, type or first proposer of issue"

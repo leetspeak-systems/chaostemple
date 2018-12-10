@@ -4,6 +4,7 @@ from django.db.models import F
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import redirect
+from django.utils.timezone import datetime
 from django.utils.translation import ugettext as _
 
 from core.breadcrumbs import make_breadcrumbs
@@ -16,6 +17,7 @@ from althingi.models import Session
 from core.models import AccessUtilities
 from core.models import Issue
 from core.models import IssueUtilities
+from core.models import UserProfile
 
 class AccessMiddleware():
     def __init__(self, get_response):
@@ -26,6 +28,18 @@ class AccessMiddleware():
 
     def process_view(self, request, view_func, view_args, view_kwargs):
         AccessUtilities.cache_access(request.user)
+
+
+class UserLastSeenMiddleware():
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        return self.get_response(request)
+
+    def process_view(self, request, view_func, view_args, view_kwargs):
+        if request.user.is_authenticated:
+            UserProfile.objects.filter(id=request.user.id).update(last_seen=datetime.now())
 
 
 class ExtraVarsMiddleware():

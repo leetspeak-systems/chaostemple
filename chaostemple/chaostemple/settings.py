@@ -59,6 +59,7 @@ MIDDLEWARE = [
 
     'customsignup.middleware.EnsureProfileDataMiddleware',
 
+    'core.middleware.UserLastSeenMiddleware',
     'core.middleware.AccessMiddleware',
     'core.middleware.ExtraVarsMiddleware',
 ]

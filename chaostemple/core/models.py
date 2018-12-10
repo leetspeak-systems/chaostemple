@@ -142,6 +142,8 @@ class UserProfile(models.Model):
     initials = models.CharField(max_length=10, null=True)
     person = models.ForeignKey(Person, null=True, related_name='userprofile', on_delete=CASCADE)
 
+    last_seen = models.DateTimeField(null=True)
+
     def display_full(self):
         return mark_safe('<a href="mailto: %s">%s</a> (%s)' % (self.user.email, self.name, self.initials))
 

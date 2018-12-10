@@ -1,6 +1,15 @@
 {% load i18n %}
 
+{% if issue.current_step == 'concluded' %}
+    <small>
+    <span class="text text-{% if issue.fate == 'accepted' %}success{% elif issue.fate == 'rejected' %}danger{% elif issue.fate == 'sent-to-government' %}info{% else %}primary{% endif %}">
+    <i class="glyphicon glyphicon-ok"></i>
+    </span>
+    </small>
+{% endif %}
+
 ({{ issue.issue_num}}) {{ issue }}
+
 {% if issue.description %}
     <small>({{ issue.description }})</small>
 {% endif %}

@@ -303,3 +303,8 @@
 
 1.4.19:
     * Bugfix: Wrong issue displayed when receiving access to a single issue from someone else.
+
+1.4.20:
+    * Issue categories implemented.
+    * Menu item listings with issues show whether an issue is concluded or not, colored according to their fate.
+    * Height of textarea is automatically increased according to needed space, when typing.

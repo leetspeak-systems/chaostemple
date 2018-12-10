@@ -144,6 +144,12 @@ $(document).ready(function() {
         $edit_memo_counter.find('span[control="edit-memo-counter-value"]').text(memo_length);
     });
 
+    // Automatically adapt the height of the textarea according to needed space.
+    $(document).on('keyup', 'textarea[control="edit-memo-content"]', function(e) {
+        var $this = $(this);
+        $this.height($this[0].scrollHeight + 'px');
+    });
+
     // Text field: edit-memo-content
     $(document).on('keydown', 'textarea[control="edit-memo-content"]', function(e) {
         keycode = e.keyCode || e.which; // Cross-browser key detection (still ugly as hell)

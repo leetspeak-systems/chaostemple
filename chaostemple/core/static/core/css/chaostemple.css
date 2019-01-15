@@ -23,10 +23,11 @@ h2 small { white-space: nowrap; }
 
 h3.big-message { width: 320px; text-align: center; margin-left: auto; margin-right: auto; }
 
-ul.header-controls { float: right; font-size: 10px; }
-ul.header-controls li { float: left; list-style: none; margin-left: 12px; }
-ul.header-controls div[control="date-picker-container"] { position: relative; }
-ul.header-controls div[control="date-picker-container"] .bootstrap-datetimepicker-widget.dropdown-menu.bottom { top: 44px !important; right: 0px !important; }
+.header-controls { float: right; font-size: 10px; }
+.header-controls li { float: left; list-style: none; margin-left: 12px; }
+
+div[control="date-picker-container"] { position: relative; }
+div[control="date-picker-container"] .bootstrap-datetimepicker-widget.dropdown-menu.bottom { top: 44px !important; right: 0px !important; }
 
 div[control="dossier"] { margin-bottom: 10px; }
 div[control="dossier"]:last-child { margin-bottom: 0px; }

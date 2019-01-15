@@ -3,6 +3,16 @@
 
 {% block content %}
 
+    <div class="header-controls">
+        <div class="btn-group">
+
+            <a href="{% url 'auth_password_change' %}" class="btn btn-default btn-cs">{% trans 'Change Password' %}</a>
+            {% if not home_user.userprofile.person %}
+                <a href="{% url 'custom_profile_data' %}" class="btn btn-default">{% trans 'Change Profile' %}</a>
+            {% endif %}
+        </div>
+    </div>
+
     <h2>{% trans 'User Home' %}</h2>
 
     <div class="row">
@@ -31,10 +41,6 @@
             </table>
         </div>
         <div class="col-md-4">
-            <p><a href="{% url 'auth_password_change' %}" class="btn btn-default">{% trans 'Change Password' %}</a></p>
-            {% if not home_user.userprofile.person %}
-                <p><a href="{% url 'custom_profile_data' %}" class="btn btn-default">{% trans 'Change Profile' %}</a></p>
-            {% endif %}
         </div>
     </div>
 

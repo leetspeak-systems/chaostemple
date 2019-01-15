@@ -10,7 +10,7 @@
         <div class="col-md-6">
             <table class="table">
                 <tr>
-                    {% if FEATURES.subscription and request.user.is_authenticated %}
+                    {% if FEATURES.subscription_committee and request.user.is_authenticated %}
                         <th>&nbsp;</th>
                     {% endif %}
                     <th>{% trans 'Committee' %}</th>
@@ -18,7 +18,7 @@
                 </tr>
                 {% for committee in committees %}
                     <tr>
-                        {% if FEATURES.subscription and request.user.is_authenticated %}
+                        {% if FEATURES.subscription_committee and request.user.is_authenticated %}
                             <td style="width: 1px;">
                                 {% include 'core/stub/subscription.html' with type='committee' id=committee.id %}
                             </td>

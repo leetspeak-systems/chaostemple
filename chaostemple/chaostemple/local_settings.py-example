@@ -20,7 +20,7 @@ CUSTOM_SIGNUP_DOMAINS = ['example.com']
 # Developmental features. None of these should be fully functional, because if
 # they are, they should always be enabled.
 FEATURES = {
-    'subscription': False,
+    'subscription_committee': False,
 }
 
 # Database

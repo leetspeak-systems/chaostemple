@@ -308,3 +308,7 @@
     * Issue categories implemented.
     * Menu item listings with issues show whether an issue is concluded or not, colored according to their fate.
     * Height of textarea is automatically increased according to needed space, when typing.
+
+1.4.21:
+    * Under-the-hood fixes and improvements.
+    * Slight UI improvement in category listing.

@@ -701,8 +701,24 @@ def user_home(request):
 
     home_user = User.objects.get(id=request.user.id)
 
+    subscriptions = Subscription.objects.select_related(
+        'party',
+        'committee',
+        'person',
+        'category'
+    ).filter(
+        user_id=request.user.id
+    ).order_by(
+        'sub_type',
+        'party__name',
+        'committee__name',
+        'person__name',
+        'category__name'
+    )
+
     ctx = {
         'home_user': home_user,
+        'subscriptions': subscriptions,
     }
     return render(request, 'core/user_home.html', ctx)
 

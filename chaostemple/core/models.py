@@ -10,9 +10,12 @@ from django.db.models import IntegerField
 from django.db.models import OuterRef
 from django.db.models import Q
 from django.db.models import Subquery
+from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.utils import timezone
 from django.utils.translation import ugettext as _
+
+from althingi.althingi_settings import CURRENT_PARLIAMENT_NUM
 
 from althingi.models import Issue as AlthingiIssue
 from althingi.models import IssueQuerySet as AlthingiIssueQuerySet
@@ -222,8 +225,15 @@ class MembershipRequest(models.Model):
 
 
 class Subscription(models.Model):
+    SUB_TYPE_CHOICES = (
+        ('party', _('Parties')),
+        ('committee', _('Committees')),
+        ('person', _('MPs')),
+        ('category', _('Categories')),
+    )
+
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='subscriptions', on_delete=CASCADE)
-    sub_type = models.CharField(max_length=20)
+    sub_type = models.CharField(max_length=20, choices=SUB_TYPE_CHOICES)
 
     party = models.ForeignKey('althingi.Party', null=True, related_name='subscriptions', on_delete=CASCADE)
     committee = models.ForeignKey('althingi.Committee', null=True, related_name='subscriptions', on_delete=CASCADE)
@@ -239,6 +249,19 @@ class Subscription(models.Model):
         except AttributeError:
             thing = None
         return thing
+
+    def subscribed_thing_link(self):
+        thing = self.subscribed_thing()
+        if self.sub_type == 'committee':
+            if thing.parliament_num_last is not None:
+                parliament_num = thing.parliament_num_last
+            else:
+                parliament_num = CURRENT_PARLIAMENT_NUM
+            return reverse('parliament_committee', args=(parliament_num, thing.id))
+        elif self.sub_type == 'category':
+            return reverse('parliament_category', args=(CURRENT_PARLIAMENT_NUM, thing.slug))
+
+        return None
 
     def save(self, *args, **kwargs):
         # Make sure that what's being subscribed to is sane.

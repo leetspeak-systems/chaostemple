@@ -21,6 +21,7 @@ CUSTOM_SIGNUP_DOMAINS = ['example.com']
 # they are, they should always be enabled.
 FEATURES = {
     'subscription_committee': False,
+    'subscription_category': False,
 }
 
 # Database

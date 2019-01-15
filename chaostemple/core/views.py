@@ -307,8 +307,11 @@ def parliament_categories(request, parliament_num):
 
     category_groups = CategoryGroup.objects.prefetch_related('categories')
 
+    subscriptions = Subscription.objects.filter(user_id=request.user.id, sub_type='category')
+
     ctx = {
         'category_groups': category_groups,
+        'subscriptions': subscriptions,
     }
     return render(request, 'core/parliament_categories.html', ctx)
 
@@ -331,10 +334,13 @@ def parliament_category(request, parliament_num, category_slug, view=None):
 
     IssueUtilities.populate_dossier_statistics(issues)
 
+    subscriptions = Subscription.objects.filter(user_id=request.user.id, sub_type='category')
+
     ctx = {
         'category_groups': category_groups,
         'category': category,
         'issues': issues,
+        'subscriptions': subscriptions,
     }
 
     if view == 'issues':

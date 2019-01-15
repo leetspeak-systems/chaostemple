@@ -228,6 +228,7 @@ class Subscription(models.Model):
     party = models.ForeignKey('althingi.Party', null=True, related_name='subscriptions', on_delete=CASCADE)
     committee = models.ForeignKey('althingi.Committee', null=True, related_name='subscriptions', on_delete=CASCADE)
     person = models.ForeignKey('althingi.Person', null=True, related_name='subscriptions', on_delete=CASCADE)
+    category = models.ForeignKey('althingi.Category', null=True, related_name='subscriptions', on_delete=CASCADE)
 
     class Meta:
         unique_together = ['user', 'party', 'committee', 'person']
@@ -242,7 +243,7 @@ class Subscription(models.Model):
     def save(self, *args, **kwargs):
         # Make sure that what's being subscribed to is sane.
         self.sub_type = ''
-        fields = ['party', 'committee', 'person']
+        fields = ['party', 'committee', 'person', 'category']
         for field in fields:
             if getattr(self, field) is not None:
                 self.sub_type = field

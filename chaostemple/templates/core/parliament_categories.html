@@ -27,17 +27,18 @@
                     <tr>
                         <td>{{ cg }}</td>
                         <td>
-                            <ul>
                             {% for cat in cg.categories.all %}
-                                <li>
+                                <p>
+                                {% if FEATURES.subscription_category and request.user.is_authenticated %}
+                                    {% include 'core/stub/subscription.html' with type='category' id=cat.id %}
+                                {% endif %}
                                 {% if cat.id == category.id %}
                                     {{ cat }}
                                 {% else %}
                                     <a href="{% url 'parliament_category' parliament_num cat.slug %}">{{ cat }}</a>
                                 {% endif %}
-                                </li>
+                                </p>
                             {% endfor %}
-                            </ul>
                         </td>
                     </tr>
                 {% endfor %}

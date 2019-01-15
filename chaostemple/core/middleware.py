@@ -39,7 +39,7 @@ class UserLastSeenMiddleware():
 
     def process_view(self, request, view_func, view_args, view_kwargs):
         if request.user.is_authenticated:
-            UserProfile.objects.filter(id=request.user.id).update(last_seen=datetime.now())
+            UserProfile.objects.filter(user_id=request.user.id).update(last_seen=datetime.now())
 
 
 class ExtraVarsMiddleware():

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-12-07 13:32+0000\n"
+"POT-Creation-Date: 2019-01-15 20:21+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -135,11 +135,11 @@ msgstr "Skýrslu skilað"
 msgid "Concluded"
 msgstr "Lokið"
 
-#: althingi/models.py:385 core/models.py:179
+#: althingi/models.py:385 core/models.py:184
 msgid "rejected"
 msgstr "hafnað"
 
-#: althingi/models.py:386 core/models.py:180
+#: althingi/models.py:386 core/models.py:185
 msgid "accepted"
 msgstr "samþykkt"
 
@@ -173,7 +173,7 @@ msgstr "eftir %d daga"
 msgid "Temple of Chaos"
 msgstr "Musteri Glundroðans"
 
-#: core/breadcrumbs.py:57 templates/base.html:51 templates/base.html:54
+#: core/breadcrumbs.py:58 templates/base.html:51 templates/base.html:54
 #: templates/core/parliament_issue.html:33
 #: templates/core/parliament_issue.html:113
 #: templates/core/parliament_issue.html:128
@@ -185,125 +185,143 @@ msgstr "Musteri Glundroðans"
 msgid "parliament"
 msgstr "þing"
 
-#: core/breadcrumbs.py:102 core/breadcrumbs.py:105 templates/base.html:62
+#: core/breadcrumbs.py:105 core/breadcrumbs.py:108 templates/base.html:62
 #: templates/core/day.html:63
 msgid "Today's issues"
 msgstr "Mál dagsins"
 
-#: core/breadcrumbs.py:117 templates/base.html:64
+#: core/breadcrumbs.py:120 templates/base.html:64
 #: templates/core/upcoming.html:14
 msgid "Upcoming Issues"
 msgstr "Komandi mál"
 
-#: core/breadcrumbs.py:124 templates/base.html:126
+#: core/breadcrumbs.py:127 templates/base.html:126
 msgid "Bookmarks"
 msgstr "Bókamerki"
 
-#: core/breadcrumbs.py:131 templates/base.html:106 templates/base.html:108
+#: core/breadcrumbs.py:134 templates/base.html:106 templates/base.html:108
 #: templates/core/user_issues_open.html:13
 msgid "Opened Issues"
 msgstr "Opnuð mál"
 
-#: core/breadcrumbs.py:138 templates/base.html:111
+#: core/breadcrumbs.py:141 templates/base.html:111
 msgid "Issues with new data"
 msgstr "Mál með nýjum gögnum"
 
-#: core/breadcrumbs.py:145 templates/base.html:65
+#: core/breadcrumbs.py:148 templates/base.html:65
 #: templates/core/parliament_documents_new.html:11
 msgid "New Parliamentary Documents"
 msgstr "Ný þingskjöl"
 
-#: core/breadcrumbs.py:152 core/breadcrumbs.py:203 core/breadcrumbs.py:240
-#: templates/base.html:138 templates/core/parliament.html:8
-#: templates/core/parliament_committee.html:38
+#: core/breadcrumbs.py:155 core/breadcrumbs.py:206 core/breadcrumbs.py:228
+#: core/breadcrumbs.py:265 templates/base.html:138
+#: templates/core/parliament.html:8 templates/core/parliament_committee.html:38
 #: templates/core/parliament_party.html:43 templates/core/person.html:159
 #: templates/core/stub/user_access_list.html:11
 msgid "Issues"
 msgstr "Þingmál"
 
-#: core/breadcrumbs.py:159
+#: core/breadcrumbs.py:162
 msgid "issue"
 msgstr "mál"
 
-#: core/breadcrumbs.py:166 templates/base.html:68 templates/base.html:141
+#: core/breadcrumbs.py:169 templates/base.html:68 templates/base.html:141
 #: templates/core/parliament.html:9 templates/core/parliament_issue.html:96
 #: templates/core/parliament_sessions.html:8
 msgid "Parliamentary Sessions"
 msgstr "Þingfundir"
 
-#: core/breadcrumbs.py:173
+#: core/breadcrumbs.py:176
 msgid "parliamentary session"
 msgstr "þingfundur"
 
-#: core/breadcrumbs.py:180 templates/core/parliament.html:10
+#: core/breadcrumbs.py:183 core/models.py:230 templates/core/parliament.html:10
 msgid "Committees"
 msgstr "Nefndir"
 
-#: core/breadcrumbs.py:210 templates/base.html:145
+#: core/breadcrumbs.py:213 core/models.py:232 templates/base.html:139
+#: templates/core/parliament_categories.html:17
+#: templates/core/parliament_issue.html:177
+msgid "Categories"
+msgstr "Efnisflokkar"
+
+#: core/breadcrumbs.py:235 templates/base.html:145
 #: templates/core/parliament_parties.html:7
 msgid "Parliamentary Parties"
 msgstr "Þingflokkar"
 
-#: core/breadcrumbs.py:214 templates/core/parliament.html:11
+#: core/breadcrumbs.py:239 templates/core/parliament.html:11
 #: templates/core/parliament_parties.html:14
 #: templates/core/parliament_party.html:18
 msgid "Parliamentarians"
 msgstr "Þingmenn"
 
-#: core/breadcrumbs.py:259 templates/core/person.html:41
+#: core/breadcrumbs.py:284 templates/core/person.html:41
 #: templates/core/person_select_from_multiple.html:10
 msgid "b."
 msgstr "f."
 
-#: core/models.py:178
+#: core/models.py:183
 msgid "pending"
 msgstr ""
 
-#: customsignup/forms.py:17 templates/core/user_home.html:16
+#: core/models.py:229
+#, fuzzy
+#| msgid "All parties"
+msgid "Parties"
+msgstr "Allir flokkar"
+
+#: core/models.py:231
+#, fuzzy
+#| msgid "MP"
+msgid "MPs"
+msgstr "þm."
+
+#: customsignup/forms.py:17 templates/core/user_home.html:27
 msgid "Name"
 msgstr "Nafn"
 
-#: customsignup/forms.py:18 templates/core/user_home.html:28
+#: customsignup/forms.py:18 templates/core/user_home.html:39
 msgid "Initials"
 msgstr "Upphafsstafir"
 
-#: customsignup/forms.py:31
+#: customsignup/forms.py:40
 msgid "Initials already in use by an MP or minister."
 msgstr "Upphafsstafir fráteknir fyrir þingmann eða ráðherra."
 
-#: customsignup/forms.py:33
+#: customsignup/forms.py:42
 msgid "Initials already taken by a different user."
 msgstr "Upphafsstafir þegar í notkun af öðrum notanda."
 
-#: customsignup/forms.py:40 customsignup/forms.py:48
+#: customsignup/forms.py:49 customsignup/forms.py:57
 msgid "Email"
 msgstr "Netfang"
 
-#: customsignup/forms.py:50
+#: customsignup/forms.py:59
 msgid "Password"
 msgstr "Lykilorð"
 
-#: customsignup/forms.py:56
+#: customsignup/forms.py:65
 msgid "Password confirmation"
 msgstr ""
 
-#: customsignup/forms.py:59
+#: customsignup/forms.py:68
 msgid "Enter the same password as before, for verification."
 msgstr ""
 
-#: customsignup/forms.py:69
+#: customsignup/forms.py:78
 msgid "Email address not allowed."
 msgstr "Netfang ekki heimilt."
 
-#: customsignup/forms.py:72
+#: customsignup/forms.py:81
 msgid "Email address already in use."
 msgstr "Netfang þegar í notkun."
 
-#: customsignup/forms.py:79
+#: customsignup/forms.py:88
 msgid "Password must be supplied."
 msgstr ""
 
-#: customsignup/forms.py:87
+#: customsignup/forms.py:96
 msgid "The two password fields didn't match."
 msgstr ""
 
@@ -442,11 +460,6 @@ msgstr "Engin ný gögn"
 msgid "Lists"
 msgstr "Listar"
 
-#: templates/base.html:139 templates/core/parliament_categories.html:17
-#: templates/core/parliament_issue.html:177
-msgid "Categories"
-msgstr "Efnisflokkar"
-
 #: templates/base.html:142 templates/core/parliament_committees.html:7
 msgid "Standing Committees"
 msgstr "Fastanefndir"
@@ -455,7 +468,7 @@ msgstr "Fastanefndir"
 msgid "Parliamentarians and ministers"
 msgstr "Þingmenn og ráðherrar"
 
-#: templates/base.html:152 templates/core/user_home.html:6
+#: templates/base.html:152 templates/core/user_home.html:16
 #: templates/registration/password_change_done.html:11
 msgid "User Home"
 msgstr "Heimasvæði"
@@ -607,12 +620,12 @@ msgstr "Yfirefnisflokkur"
 msgid "Category"
 msgstr "Efnisflokkur"
 
-#: templates/core/parliament_categories.html:52
-#: templates/core/parliament_category_issues.html:17
+#: templates/core/parliament_categories.html:53
+#: templates/core/parliament_category_issues.html:18
 msgid "Issues in category"
 msgstr "Þingmál í efnisflokki"
 
-#: templates/core/parliament_categories.html:62
+#: templates/core/parliament_categories.html:63
 msgid "No issues found"
 msgstr "Engin mál fundust"
 
@@ -810,7 +823,7 @@ msgstr "Lokatími"
 msgid "parliamentarian"
 msgstr "þingmaður"
 
-#: templates/core/person.html:45 templates/core/user_home.html:12
+#: templates/core/person.html:45 templates/core/user_home.html:23
 msgid "Email address"
 msgstr "Netfang"
 
@@ -967,11 +980,11 @@ msgstr "ný"
 msgid "new"
 msgstr "nýtt"
 
-#: templates/core/stub/issue_menuentry.html:10
+#: templates/core/stub/issue_menuentry.html:19
 msgid "new documents"
 msgstr "ný þingskjöl"
 
-#: templates/core/stub/issue_menuentry.html:13
+#: templates/core/stub/issue_menuentry.html:22
 msgid "new reviews"
 msgstr "nýjar umsagnir"
 
@@ -1057,13 +1070,21 @@ msgstr "Meðlimir"
 msgid "Currently, you do not belong to any group."
 msgstr "Þú ert ekki í neinum hópi eins og er."
 
-#: templates/core/user_home.html:34
+#: templates/core/user_home.html:9
 msgid "Change Password"
 msgstr "Breyta lykilorði"
 
-#: templates/core/user_home.html:36
+#: templates/core/user_home.html:11
 msgid "Change Profile"
 msgstr "Breyta upplýsingum"
+
+#: templates/core/user_home.html:20
+msgid "User information"
+msgstr "Upplýsingar um notanda"
+
+#: templates/core/user_home.html:48
+msgid "Subscriptions"
+msgstr "Áskriftir"
 
 #: templates/registration/activation_complete.html:4
 msgid "Account Activated"

@@ -4,7 +4,7 @@ from django.db.models import F
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import redirect
-from django.utils.timezone import datetime
+from django.utils import timezone
 from django.utils.translation import ugettext as _
 
 from core.breadcrumbs import make_breadcrumbs
@@ -39,7 +39,7 @@ class UserLastSeenMiddleware():
 
     def process_view(self, request, view_func, view_args, view_kwargs):
         if request.user.is_authenticated:
-            UserProfile.objects.filter(user_id=request.user.id).update(last_seen=datetime.now())
+            UserProfile.objects.filter(user_id=request.user.id).update(last_seen=timezone.now())
 
 
 class ExtraVarsMiddleware():

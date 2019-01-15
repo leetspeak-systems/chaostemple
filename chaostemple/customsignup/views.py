@@ -68,19 +68,19 @@ def custom_profile_data(request):
         raise Http404
 
     if request.method == 'POST':
-        form = CustomProfileDataForm(request.POST)
+        form = CustomProfileDataForm(request.POST, request=request)
 
         if form.is_valid():
             profile.name = form.cleaned_data['name']
             profile.initials = form.cleaned_data['initials']
             profile.save()
 
-            return redirect(reverse('home'))
+            return redirect(reverse('user_home'))
     else:
         form = CustomProfileDataForm(initial={
             'name': profile.name,
             'initials': profile.initials,
-        })
+        }, request=request)
 
     ctx = {
         'form': form,

@@ -17,6 +17,11 @@ class CustomProfileDataForm(forms.Form):
     name = forms.CharField(label=_('Name'), max_length=200)
     initials = forms.CharField(label=_('Initials'), max_length=10)
 
+    # Overriding constructor because we need the request for sanity checking.
+    def __init__(self, *args, request, **kwargs):
+        self.request = request
+        super(CustomProfileDataForm, self).__init__(*args, **kwargs)
+
     def clean_initials(self):
         clean_initials = self.cleaned_data['initials']
 
@@ -25,7 +30,11 @@ class CustomProfileDataForm(forms.Form):
             parliament__parliament_num=CURRENT_PARLIAMENT_NUM
         ).count() > 0
 
-        taken_by_user = UserProfile.objects.filter(initials=clean_initials).count() > 0
+        taken_by_user = UserProfile.objects.filter(
+            initials=clean_initials
+        ).exclude(
+            user_id=self.request.user.id
+        ).count() > 0
 
         if taken_by_person:
             raise forms.ValidationError(_('Initials already in use by an MP or minister.'))

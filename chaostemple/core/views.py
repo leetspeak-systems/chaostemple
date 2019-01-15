@@ -697,9 +697,9 @@ def person(request, slug, subslug=None):
 
 
 @login_required
-def user_home(request, username):
+def user_home(request):
 
-    home_user = get_object_or_404(User, username=username)
+    home_user = User.objects.get(id=request.user.id)
 
     ctx = {
         'home_user': home_user,

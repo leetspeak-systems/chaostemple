@@ -37,15 +37,23 @@ $(document).ready(function() {
             url: '/dossier/' + dossier_id + '/fieldstate/' + fieldname + '/',
             data: { 'fieldstate': fieldstate },
             done: function(data, textStatus) {
+                // Update the relevant button's color, text and menu selection.
                 $('a[control="set-fieldstate"][data-dossier-id=' + dossier_id + '][data-fieldname=' + fieldname + ']').each(function() {
                     $anchor = $(this);
                     $dropdown = $('button[control="dropdown-fieldstate"][data-id=' + dossier_id + '][data-fieldname=' + fieldname + ']');
 
                     if ($anchor.data('fieldstate') == data[fieldname]) {
+                        // Set the correct menu selection to active.
                         $anchor.parent().addClass('active');
 
+                        // Update the button text.
                         $dropdown.find('.display').text($anchor.text());
-                        keepclass = ''; // This is needed in case two fieldstates have the same CSS class
+
+                        // "keepclass" is needed in case two fieldstates have
+                        // the same CSS class.
+                        keepclass = '';
+
+                        // Set the button color.
                         for (var key in fieldstate_css[fieldname]) {
                             if (key == data[fieldname]) {
                                 keepclass = fieldstate_css[fieldname][key];
@@ -57,6 +65,8 @@ $(document).ready(function() {
                         }
                     }
                     else {
+                        // Disactivating any menu selection which is not
+                        // selected.
                         $anchor.parent().removeClass('active');
                     }
                 });

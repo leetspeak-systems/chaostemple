@@ -1,3 +1,5 @@
+// We only want to show the auto-bookmark popup once.
+var auto_bookmark_popup_shown = false;
 
 jQuery.fn.extend({
     setMemoCount: function(memo_count) {
@@ -70,6 +72,25 @@ $(document).ready(function() {
                         $anchor.parent().removeClass('active');
                     }
                 });
+
+                /* The constant HAS_USEFUL_INFO only tells us what the state
+                 * was when the page was loaded. If there was no useful info
+                 * when the page was loaded, but the user has started working
+                 * on the issue, thereby presumably producing useful info, we
+                 * infer that the issue should be auto-bookmarked.
+                 */
+                if (!HAS_USEFUL_INFO && !IS_BOOKMARKED && !auto_bookmark_popup_shown) {
+                    $('a[control="issue-bookmark"]').click();
+
+                    // Show notification.
+                    var $notification = $('div[control="auto-bookmark-notification');
+                    $notification.fadeIn('fast');
+                    window.setTimeout(function() {
+                        $notification.fadeOut('fast');
+                    }, 6000);
+
+                    auto_bookmark_popup_shown = true;
+                }
             }
         });
     });

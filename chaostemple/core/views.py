@@ -272,6 +272,7 @@ def parliament_issue(request, parliament_num, issue_num):
         'committee'
     ).filter(committee_agenda_items__issue_id=issue.id)
 
+    statistic = None
     if request.user.is_authenticated:
         statistic, c = DossierStatistic.objects.get_or_create(issue_id=issue.id, user_id=request.user.id)
 
@@ -299,6 +300,7 @@ def parliament_issue(request, parliament_num, issue_num):
         'supportstates': Dossier.SUPPORT_STATES,
         'proposalstates': Dossier.PROPOSAL_STATES,
         'max_memo_length': Memo._meta.get_field('content').max_length,
+        'statistic': statistic,
     }
     return render(request, 'core/parliament_issue.html', ctx)
 

@@ -10,6 +10,9 @@
 
         fieldstate_css = {% autoescape off %}{% fieldstate_css %}{% endautoescape %}
 
+        var HAS_USEFUL_INFO = {% if statistic.has_useful_info %}true{% else %}false{% endif %};
+        var IS_BOOKMARKED = {% if issue in bookmarked_issues %}true{% else %}false{% endif %};
+
     </script>
 
     <script language="javascript" type="text/javascript" src="{% static 'core/js/document_control.js' %}"></script>
@@ -18,6 +21,7 @@
 
 {% block content %}
 
+    {% include 'core/stub/auto_bookmark_notification.html' %}
     {% include 'core/dialog/dialog_delete_dossier.html' %}
     {% include 'core/dialog/dialog_delete_memo.html' %}
 

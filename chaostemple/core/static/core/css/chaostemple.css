@@ -26,6 +26,8 @@ h3.big-message { width: 320px; text-align: center; margin-left: auto; margin-rig
 .header-controls { float: right; font-size: 10px; }
 .header-controls li { float: left; list-style: none; margin-left: 12px; }
 
+div[control="auto-bookmark-notification"] { position: fixed; width: 100%; bottom: 0px; text-align: center; display: none; z-index: 1000; padding-bottom: 0px; margin-bottom: 0px; }
+
 div[control="date-picker-container"] { position: relative; }
 div[control="date-picker-container"] .bootstrap-datetimepicker-widget.dropdown-menu.bottom { top: 44px !important; right: 0px !important; }
 

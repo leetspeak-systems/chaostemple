@@ -147,6 +147,8 @@ class UserProfile(models.Model):
 
     last_seen = models.DateTimeField(null=True)
 
+    setting_auto_bookmark = models.BooleanField(default=True)
+
     def display_full(self):
         return mark_safe('<a href="mailto: %s">%s</a> (%s)' % (self.user.email, self.name, self.initials))
 

@@ -44,6 +44,8 @@ urlpatterns = [
     url(r'^json/bookmark/issue/toggle/(?P<issue_id>\d+)/$', json_views.issue_bookmark_toggle, name='json_issue_bookmark_toggle'),
     url(r'^json/bookmark/issue/menu/(?P<parliament_num>\d+)$', json_views.issue_bookmark_menu, name='json_issue_bookmark_menu'),
 
+    path('json/settings/set/<str:setting_name>/<str:setting_value>/', json_views.setting_set),
+
     path('json/access/grant/group/<int:friend_group_id>/', json_views.access_grant),
     path('json/access/grant/group/<int:friend_group_id>/issue/<int:issue_id>/', json_views.access_grant),
     path('json/access/grant/user/<int:friend_id>/', json_views.access_grant),

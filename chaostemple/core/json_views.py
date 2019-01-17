@@ -15,6 +15,7 @@ from core.models import Issue
 from core.models import IssueBookmark
 from core.models import MembershipRequest
 from core.models import Subscription
+from core.models import UserProfile
 
 from jsonizer.utils import jsonize
 
@@ -261,5 +262,35 @@ def subscription_toggle(request, sub_type, sub_id):
 
     ctx = {
         'subscribed': subscribed,
+    }
+    return ctx
+
+
+@login_required
+@jsonize
+def setting_set(request, setting_name, setting_value):
+    allowed_settings = [
+        'auto_bookmark',
+    ]
+
+    if setting_name not in allowed_settings:
+        raise Http404
+
+    # Boolean support.
+    if setting_value.lower() in ['true', 'false']:
+        setting_value = setting_value.lower() == 'true'
+
+    userprofile = UserProfile.objects.get(user_id=request.user.id)
+
+    if getattr(userprofile, 'setting_%s' % setting_name) != setting_value:
+        setattr(userprofile, 'setting_%s' % setting_name, setting_value)
+        userprofile.save()
+        value_changed = True
+    else:
+        value_changed = False
+
+    ctx = {
+        'value_changed': value_changed,
+        'new_value': setting_value,
     }
     return ctx

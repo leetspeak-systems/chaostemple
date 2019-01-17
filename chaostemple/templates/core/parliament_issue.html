@@ -10,6 +10,7 @@
 
         fieldstate_css = {% autoescape off %}{% fieldstate_css %}{% endautoescape %}
 
+        var SETTING_AUTO_BOOKMARK = {% if user.userprofile.setting_auto_bookmark %}true{% else %}false{% endif %};
         var HAS_USEFUL_INFO = {% if statistic.has_useful_info %}true{% else %}false{% endif %};
         var IS_BOOKMARKED = {% if issue in bookmarked_issues %}true{% else %}false{% endif %};
 

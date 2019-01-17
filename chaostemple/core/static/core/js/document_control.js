@@ -79,7 +79,7 @@ $(document).ready(function() {
                  * on the issue, thereby presumably producing useful info, we
                  * infer that the issue should be auto-bookmarked.
                  */
-                if (!HAS_USEFUL_INFO && !IS_BOOKMARKED && !auto_bookmark_popup_shown) {
+                if (SETTING_AUTO_BOOKMARK && !HAS_USEFUL_INFO && !IS_BOOKMARKED && !auto_bookmark_popup_shown) {
                     $('a[control="issue-bookmark"]').click();
 
                     // Show notification.

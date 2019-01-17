@@ -1,6 +1,32 @@
 {% extends "base.html" %}
 {% load i18n %}
 
+{% block javascript %}
+<script language="javascript" type="text/javascript">
+
+$(document).ready(function() {
+    $('[control="setting"]').on('switchChange.bootstrapSwitch', function(e, value) {
+        var $setting = $(this);
+
+        var name = $setting.attr('data-setting-name');
+
+        $.jsonize({
+            message: {
+                'transit': 'Saving user setting...',
+                'success': 'User setting saved.',
+                'failure': 'Saving user setting failed!',
+            },
+            url: '/json/settings/set/' + name + '/' + value + '/',
+            done: function(data, textStatus) {
+            }
+        });
+
+    });
+});
+
+</script>
+{% endblock %}
+
 {% block content %}
 
     <div class="header-controls">
@@ -17,6 +43,7 @@
 
     <div class="row">
         <div class="col-md-6">
+
             <h3>{% trans 'User information' %}</h3>
             <table class="table">
                 <tr>
@@ -40,6 +67,12 @@
                     <td>{{ home_user.userprofile.initials }}</td>
                 </tr>
             </table>
+
+            <h3>{% trans 'Settings' %}</h3>
+            <input type="checkbox" control="setting" data-setting-name="auto_bookmark" {% if home_user.userprofile.setting_auto_bookmark %}checked="checked"{% endif %} />
+            &nbsp;
+            {% trans 'Automatically bookmark issues when worked on.' %}
+
         </div>
 
         {% if FEATURES.subscription_committee or FEATURES.subscription_category %}

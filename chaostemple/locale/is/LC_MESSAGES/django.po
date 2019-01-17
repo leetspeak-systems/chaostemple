@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-17 19:10+0000\n"
+"POT-Creation-Date: 2019-01-17 20:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -135,11 +135,11 @@ msgstr "Skýrslu skilað"
 msgid "Concluded"
 msgstr "Lokið"
 
-#: althingi/models.py:385 core/models.py:184
+#: althingi/models.py:385 core/models.py:186
 msgid "rejected"
 msgstr "hafnað"
 
-#: althingi/models.py:386 core/models.py:185
+#: althingi/models.py:386 core/models.py:187
 msgid "accepted"
 msgstr "samþykkt"
 
@@ -174,9 +174,9 @@ msgid "Temple of Chaos"
 msgstr "Musteri Glundroðans"
 
 #: core/breadcrumbs.py:58 templates/base.html:51 templates/base.html:54
-#: templates/core/parliament_issue.html:37
-#: templates/core/parliament_issue.html:112
-#: templates/core/parliament_issue.html:127
+#: templates/core/parliament_issue.html:41
+#: templates/core/parliament_issue.html:116
+#: templates/core/parliament_issue.html:131
 #: templates/core/parliament_party.html:13 templates/core/person.html:92
 #: templates/core/person.html:117 templates/core/person.html:139
 #: templates/core/person.html:163 templates/core/person.html:175
@@ -226,7 +226,7 @@ msgid "issue"
 msgstr "mál"
 
 #: core/breadcrumbs.py:169 templates/base.html:68 templates/base.html:141
-#: templates/core/parliament.html:9 templates/core/parliament_issue.html:95
+#: templates/core/parliament.html:9 templates/core/parliament_issue.html:99
 #: templates/core/parliament_sessions.html:8
 msgid "Parliamentary Sessions"
 msgstr "Þingfundir"
@@ -235,13 +235,13 @@ msgstr "Þingfundir"
 msgid "parliamentary session"
 msgstr "þingfundur"
 
-#: core/breadcrumbs.py:183 core/models.py:230 templates/core/parliament.html:10
+#: core/breadcrumbs.py:183 core/models.py:232 templates/core/parliament.html:10
 msgid "Committees"
 msgstr "Nefndir"
 
-#: core/breadcrumbs.py:213 core/models.py:232 templates/base.html:139
+#: core/breadcrumbs.py:213 core/models.py:234 templates/base.html:139
 #: templates/core/parliament_categories.html:17
-#: templates/core/parliament_issue.html:176
+#: templates/core/parliament_issue.html:180
 msgid "Categories"
 msgstr "Efnisflokkar"
 
@@ -261,23 +261,23 @@ msgstr "Þingmenn"
 msgid "b."
 msgstr "f."
 
-#: core/models.py:183
+#: core/models.py:185
 msgid "pending"
 msgstr ""
 
-#: core/models.py:229
+#: core/models.py:231
 msgid "Parties"
 msgstr "Flokkar"
 
-#: core/models.py:231
+#: core/models.py:233
 msgid "MPs"
 msgstr "Þingmenn"
 
-#: customsignup/forms.py:17 templates/core/user_home.html:27
+#: customsignup/forms.py:17 templates/core/user_home.html:54
 msgid "Name"
 msgstr "Nafn"
 
-#: customsignup/forms.py:18 templates/core/user_home.html:39
+#: customsignup/forms.py:18 templates/core/user_home.html:66
 msgid "Initials"
 msgstr "Upphafsstafir"
 
@@ -321,13 +321,13 @@ msgstr ""
 msgid "The two password fields didn't match."
 msgstr ""
 
-#: dossier/models.py:20 templates/core/parliament_issue.html:52
-#: templates/core/parliament_issue.html:190 templates/core/stub/issue.html:42
+#: dossier/models.py:20 templates/core/parliament_issue.html:56
+#: templates/core/parliament_issue.html:194 templates/core/stub/issue.html:42
 msgid "Parliamentary Documents"
 msgstr "Þingskjöl"
 
-#: dossier/models.py:21 templates/core/parliament_issue.html:51
-#: templates/core/parliament_issue.html:198 templates/core/stub/issue.html:41
+#: dossier/models.py:21 templates/core/parliament_issue.html:55
+#: templates/core/parliament_issue.html:202 templates/core/stub/issue.html:41
 msgid "Reviews"
 msgstr "Umsagnir"
 
@@ -444,7 +444,7 @@ msgstr "Ef ekki, endilega láttu okkur vita af vandanum.."
 msgid "Current and Upcoming"
 msgstr "Á döfinni"
 
-#: templates/base.html:86 templates/core/parliament_issue.html:83
+#: templates/base.html:86 templates/core/parliament_issue.html:87
 msgid "Committee Meetings"
 msgstr "Nefndarfundir"
 
@@ -464,7 +464,7 @@ msgstr "Fastanefndir"
 msgid "Parliamentarians and ministers"
 msgstr "Þingmenn og ráðherrar"
 
-#: templates/base.html:152 templates/core/user_home.html:16
+#: templates/base.html:152 templates/core/user_home.html:42
 #: templates/registration/password_change_done.html:11
 msgid "User Home"
 msgstr "Heimasvæði"
@@ -486,15 +486,15 @@ msgstr "Nýskrá"
 msgid "Login"
 msgstr "Innskrá"
 
-#: templates/base.html:193
+#: templates/base.html:195
 msgid "Yes"
 msgstr "Já"
 
-#: templates/base.html:194
+#: templates/base.html:196
 msgid "No"
 msgstr "Nei"
 
-#: templates/base.html:201
+#: templates/base.html:203
 msgid "No results found"
 msgstr "Engar niðurstöður fundust"
 
@@ -656,7 +656,7 @@ msgid "Issues in committee"
 msgstr "Mál í nefnd"
 
 #: templates/core/parliament_committees.html:16
-#: templates/core/parliament_issue.html:55 templates/core/person.html:135
+#: templates/core/parliament_issue.html:59 templates/core/person.html:135
 #: templates/core/stub/issue.html:45
 msgid "Committee"
 msgstr "Nefnd"
@@ -669,51 +669,51 @@ msgstr "Útbýtt"
 msgid "Parliamentary Document"
 msgstr "Þingskjal"
 
-#: templates/core/parliament_issue.html:62 templates/core/stub/issue.html:52
+#: templates/core/parliament_issue.html:66 templates/core/stub/issue.html:52
 msgid "Status"
 msgstr "Staða"
 
-#: templates/core/parliament_issue.html:108
+#: templates/core/parliament_issue.html:112
 msgid "Previously published"
 msgstr "Áður lagt fram"
 
-#: templates/core/parliament_issue.html:123
+#: templates/core/parliament_issue.html:127
 msgid "Later published"
 msgstr "Endurflutt seinna"
 
-#: templates/core/parliament_issue.html:148
+#: templates/core/parliament_issue.html:152
 msgid "Summary"
 msgstr "Samantekt"
 
-#: templates/core/parliament_issue.html:151
+#: templates/core/parliament_issue.html:155
 msgid "Purpose"
 msgstr "Markmið"
 
-#: templates/core/parliament_issue.html:154
+#: templates/core/parliament_issue.html:158
 msgid "Change Description"
 msgstr "Helstu breytingar og nýjungar"
 
-#: templates/core/parliament_issue.html:157
+#: templates/core/parliament_issue.html:161
 msgid "Changes to Law"
 msgstr "Breytingar á lögum og tengd mál"
 
-#: templates/core/parliament_issue.html:160
+#: templates/core/parliament_issue.html:164
 msgid "Cost and Revenue"
 msgstr "Kostnaður og tekjur"
 
-#: templates/core/parliament_issue.html:163
+#: templates/core/parliament_issue.html:167
 msgid "Other Information"
 msgstr "Aðrar upplýsingar"
 
-#: templates/core/parliament_issue.html:166
+#: templates/core/parliament_issue.html:170
 msgid "Review Description"
 msgstr "Umsagnir (helstu atriði)"
 
-#: templates/core/parliament_issue.html:169
+#: templates/core/parliament_issue.html:173
 msgid "Fate"
 msgstr "Afgreiðsla"
 
-#: templates/core/parliament_issue.html:172
+#: templates/core/parliament_issue.html:176
 msgid "Media Coverage"
 msgstr "Fjölmiðlaumfjöllun"
 
@@ -815,7 +815,7 @@ msgstr "Lokatími"
 msgid "parliamentarian"
 msgstr "þingmaður"
 
-#: templates/core/person.html:45 templates/core/user_home.html:23
+#: templates/core/person.html:45 templates/core/user_home.html:50
 msgid "Email address"
 msgstr "Netfang"
 
@@ -878,9 +878,9 @@ msgstr "Hvaða einstakling áttu við?"
 
 #: templates/core/stub/auto_bookmark_notification.html:4
 msgid ""
-"This issue has been automatically bookmarked. If you do not want to keep it "
-"bookmarked, you can remove the bookmark near the top of the page."
-msgstr "Þetta mál hefur sjálfkrafa verið bókamerkt. Ef þú vilt ekki hafa það bókamerkt geturðu fjarlægt bókamerkið ofarlega á síðunni."
+"This issue has been automatically bookmarked. You can unbookmark it at the "
+"top of the page. You can also change this behavior in your user settings."
+msgstr "Þetta mál hefur verið bókamerkt sjálfkrafa. Þú getur fjarlægt bókamerkið ofarlega á síðunni. Þú getur einnig breytt þessari virkni í notendastillingum."
 
 #: templates/core/stub/committee_agenda_item_header.html:5
 #: templates/core/stub/session_agenda_item_header.html:5
@@ -1068,19 +1068,27 @@ msgstr "Meðlimir"
 msgid "Currently, you do not belong to any group."
 msgstr "Þú ert ekki í neinum hópi eins og er."
 
-#: templates/core/user_home.html:9
+#: templates/core/user_home.html:35
 msgid "Change Password"
 msgstr "Breyta lykilorði"
 
-#: templates/core/user_home.html:11
+#: templates/core/user_home.html:37
 msgid "Change Profile"
 msgstr "Breyta upplýsingum"
 
-#: templates/core/user_home.html:20
+#: templates/core/user_home.html:47
 msgid "User information"
 msgstr "Upplýsingar um notanda"
 
-#: templates/core/user_home.html:48
+#: templates/core/user_home.html:71
+msgid "Settings"
+msgstr "Stillingar"
+
+#: templates/core/user_home.html:74
+msgid "Automatically bookmark issues when worked on."
+msgstr "Bókamerkja sjálfkrafa mál þegar unnið er í þeim."
+
+#: templates/core/user_home.html:81
 msgid "Subscriptions"
 msgstr "Áskriftir"
 

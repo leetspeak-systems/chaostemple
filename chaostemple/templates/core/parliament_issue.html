@@ -19,9 +19,12 @@
     <script language="javascript" type="text/javascript" src="{% static 'core/js/issue_control.js' %}"></script>
 {% endblock %}
 
+{% block outside_container %}
+    {% include 'core/stub/auto_bookmark_notification.html' %}
+{% endblock %}
+
 {% block content %}
 
-    {% include 'core/stub/auto_bookmark_notification.html' %}
     {% include 'core/dialog/dialog_delete_dossier.html' %}
     {% include 'core/dialog/dialog_delete_memo.html' %}
 

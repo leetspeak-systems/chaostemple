@@ -34,15 +34,15 @@ urlpatterns = [
 
     url(r'^user/home/$', views.user_home, name='user_home'),
     url(r'^user/access/$', views.user_access, name='user_access'),
-    url(r'^parliament/(?P<parliament_num>\d+)/user/issues/bookmarked/$', views.user_issues_bookmarked, name='user_issues_bookmarked'),
+    url(r'^parliament/(?P<parliament_num>\d+)/user/issues/monitored/$', views.user_issues_monitored, name='user_issues_monitored'),
     url(r'^user/issues/incoming/$', views.user_issues_incoming, name='user_issues_incoming'),
     url(r'^parliament/(?P<parliament_num>\d+)/user/issues/open/$', views.user_issues_open, name='user_issues_open'),
 
     url(r'^json/proposer/(?P<proposer_id>\d+)/subproposers/$', json_views.proposer_subproposers, name='json_proposers_subproposers'),
     url(r'^json/issue/list/(?P<parliament_num>\d+)/$', json_views.list_issues, name='json_list_issues'),
 
-    url(r'^json/bookmark/issue/toggle/(?P<issue_id>\d+)/$', json_views.issue_bookmark_toggle, name='json_issue_bookmark_toggle'),
-    url(r'^json/bookmark/issue/menu/(?P<parliament_num>\d+)$', json_views.issue_bookmark_menu, name='json_issue_bookmark_menu'),
+    url(r'^json/monitor/issue/toggle/(?P<issue_id>\d+)/$', json_views.issue_monitor_toggle, name='json_issue_monitor_toggle'),
+    url(r'^json/monitor/issue/menu/(?P<parliament_num>\d+)$', json_views.issue_monitor_menu, name='json_issue_monitor_menu'),
 
     path('json/settings/set/<str:setting_name>/<str:setting_value>/', json_views.setting_set),
 

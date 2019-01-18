@@ -1,18 +1,18 @@
 
 jQuery.fn.extend({
-    loadBookmarks: function(args) {
+    loadMonitors: function(args) {
         $menu = $(this);
 
         $.jsonize({
             message: {
-                'transit': 'Reloading bookmarks...',
-                'success': 'Bookmarks reloaded.',
-                'failure': 'Reloading bookmarks failed!',
+                'transit': 'Reloading monitors...',
+                'success': 'Monitors reloaded.',
+                'failure': 'Reloading monitors failed!',
             },
-            url: '/json/bookmark/issue/menu/' + PARLIAMENT_NUM,
+            url: '/json/monitor/issue/menu/' + PARLIAMENT_NUM,
             done: function(data, textStatus) {
                 $menuitems = $menu.find('ul[class="dropdown-menu"]');
-                if (data.bookmarked_issue_count > 0) {
+                if (data.monitored_issue_count > 0) {
                     $menu.show();
                     $menuitems.html(data.html_content);
                 }
@@ -85,26 +85,26 @@ $(document).ready(function() {
         }
     });
 
-    $(document).on('click', 'a[control="issue-bookmark"]', function() {
+    $(document).on('click', 'a[control="issue-monitor"]', function() {
         issue_id = $(this).data('issue-id');
 
         $.jsonize({
             message: {
-                'transit': 'Toggling bookmark...',
-                'success': 'Bookmark toggled.',
-                'failure': 'Toggling bookmark failed!',
+                'transit': 'Toggling monitor...',
+                'success': 'Monitor toggled.',
+                'failure': 'Toggling monitor failed!',
             },
-            url: '/json/bookmark/issue/toggle/' + issue_id + '/',
+            url: '/json/monitor/issue/toggle/' + issue_id + '/',
             done: function(data, textStatus) {
-                $icons = $('a[control="issue-bookmark"][data-issue-id=' + issue_id + '] span[control="issue-bookmark-icon"]');
-                if (data.is_bookmarked) {
+                $icons = $('a[control="issue-monitor"][data-issue-id=' + issue_id + '] span[control="issue-monitor-icon"]');
+                if (data.is_monitored) {
                     $icons.removeClass('grey');
                 }
                 else {
                     $icons.addClass('grey');
                 }
 
-                $('li[control="bookmark-menu"]').loadBookmarks();
+                $('li[control="monitor-menu"]').loadMonitors();
             }
         });
     });
@@ -154,7 +154,7 @@ $(document).ready(function() {
             },
             done: function(data, textStatus) {
                 $('div[control="issue-container"][data-id=' + data.issue_id + ']').html(data.html_content);
-                $('li[control="bookmark-menu"]').loadBookmarks();
+                $('li[control="monitor-menu"]').loadMonitors();
             }
         });
     });

@@ -22,7 +22,7 @@ from chaostemple.settings import MEANING_OF_RECENT
 from core.models import Access
 from core.models import AccessUtilities
 from core.models import Issue
-from core.models import IssueBookmark
+from core.models import IssueMonitor
 from core.models import IssueUtilities
 from core.models import MembershipRequest
 from core.models import Subscription
@@ -775,7 +775,7 @@ def user_access(request):
 
 
 @login_required
-def user_issues_bookmarked(request, parliament_num):
+def user_issues_monitored(request, parliament_num):
 
     issues = Issue.objects.select_related(
         'parliament',
@@ -784,7 +784,7 @@ def user_issues_bookmarked(request, parliament_num):
         'proposers__person',
         'proposers__committee'
     ).filter(
-        issue_bookmarks__user_id=request.user.id,
+        issue_monitors__user_id=request.user.id,
         parliament__parliament_num=parliament_num
     ).order_by('-issue_num')
 
@@ -793,7 +793,7 @@ def user_issues_bookmarked(request, parliament_num):
     ctx = {
         'issues': issues
     }
-    return render(request, 'core/user_issues_bookmarked.html', ctx)
+    return render(request, 'core/user_issues_monitored.html', ctx)
 
 
 @login_required

@@ -10,9 +10,9 @@
 
         fieldstate_css = {% autoescape off %}{% fieldstate_css %}{% endautoescape %}
 
-        var SETTING_AUTO_BOOKMARK = {% if user.userprofile.setting_auto_bookmark %}true{% else %}false{% endif %};
+        var SETTING_AUTO_MONITOR = {% if user.userprofile.setting_auto_monitor %}true{% else %}false{% endif %};
         var HAS_USEFUL_INFO = {% if statistic.has_useful_info %}true{% else %}false{% endif %};
-        var IS_BOOKMARKED = {% if issue in bookmarked_issues %}true{% else %}false{% endif %};
+        var IS_MONITORED = {% if issue in monitored_issues %}true{% else %}false{% endif %};
 
     </script>
 
@@ -21,7 +21,7 @@
 {% endblock %}
 
 {% block outside_container %}
-    {% include 'core/stub/auto_bookmark_notification.html' %}
+    {% include 'core/stub/auto_monitor_notification.html' %}
 {% endblock %}
 
 {% block content %}
@@ -138,7 +138,7 @@
 
                 <div class="navbar-right">
                     {% if user.is_authenticated %}
-                        {% include 'core/stub/issue_bookmark.html' with extraclasses='navbar-btn' %}
+                        {% include 'core/stub/issue_monitor.html' with extraclasses='navbar-btn' %}
                     {% endif %}
                 </div>
             </div>

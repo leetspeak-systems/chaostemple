@@ -82,7 +82,7 @@
             </div>
             {% if user.is_authenticated %}
                 <div class="panel-footer">
-                    {% include 'core/stub/issue_bookmark.html' %}
+                    {% include 'core/stub/issue_monitor.html' %}
 
                     {% if issue.dossier_statistics %}
                         <button control="delete-issue-dossiers" class="btn btn-default btn-xs pull-right" data-session-agenda-item-id="{{ session_agenda_item.id }}" data-id="{{ issue.id }}">{% trans 'Mark as Unopened' %}</button>

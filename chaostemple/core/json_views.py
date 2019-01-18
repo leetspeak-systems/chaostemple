@@ -12,7 +12,7 @@ from core.breadcrumbs import append_to_crumb_string
 
 from core.models import Access
 from core.models import Issue
-from core.models import IssueBookmark
+from core.models import IssueMonitor
 from core.models import MembershipRequest
 from core.models import Subscription
 from core.models import UserProfile
@@ -57,38 +57,38 @@ def list_issues(request, parliament_num):
 
 @login_required
 @jsonize
-def issue_bookmark_toggle(request, issue_id):
+def issue_monitor_toggle(request, issue_id):
 
-    is_bookmarked = None
+    is_monitored = None
 
     try:
-        issue_bookmark = IssueBookmark.objects.get(user_id=request.user.id, issue_id=issue_id)
-        issue_bookmark.delete()
-        is_bookmarked = False
-    except IssueBookmark.DoesNotExist:
-        issue_bookmark = IssueBookmark.objects.create(user_id=request.user.id, issue_id=issue_id)
-        is_bookmarked = True
+        issue_monitor = IssueMonitor.objects.get(user_id=request.user.id, issue_id=issue_id)
+        issue_monitor.delete()
+        is_monitored = False
+    except IssueMonitor.DoesNotExist:
+        issue_monitor = IssueMonitor.objects.create(user_id=request.user.id, issue_id=issue_id)
+        is_monitored = True
 
     ctx = {
-        'is_bookmarked': is_bookmarked,
+        'is_monitored': is_monitored,
     }
     return ctx
 
 @login_required
 @jsonize
-def issue_bookmark_menu(request, parliament_num):
+def issue_monitor_menu(request, parliament_num):
 
-    bookmarked_issues = request.extravars['bookmarked_issues']
+    monitored_issues = request.extravars['monitored_issues']
 
-    html_content = render_to_string('core/stub/issue_bookmark_menuitems.html', {
-        'bookmarked_issues': bookmarked_issues,
+    html_content = render_to_string('core/stub/issue_monitor_menuitems.html', {
+        'monitored_issues': monitored_issues,
         'parliament_num': parliament_num
     })
-    bookmarked_issue_count = len(bookmarked_issues)
+    monitored_issue_count = len(monitored_issues)
 
     ctx = {
         'html_content': html_content,
-        'bookmarked_issue_count': bookmarked_issue_count,
+        'monitored_issue_count': monitored_issue_count,
     }
     return ctx
 
@@ -270,7 +270,7 @@ def subscription_toggle(request, sub_type, sub_id):
 @jsonize
 def setting_set(request, setting_name, setting_value):
     allowed_settings = [
-        'auto_bookmark',
+        'auto_monitor',
     ]
 
     if setting_name not in allowed_settings:

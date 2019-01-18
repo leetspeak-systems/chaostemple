@@ -68,12 +68,12 @@ class ExtraVarsMiddleware():
                 parliament = None
 
         # Stuff for logged in users
-        bookmarked_issues = None
+        monitored_issues = None
         incoming_issues = None
         if request.user.is_authenticated:
-            # Bookmarks
-            bookmarked_issues = Issue.objects.select_related('parliament').filter(
-                issue_bookmarks__user_id=request.user.id,
+            # Monitors
+            monitored_issues = Issue.objects.select_related('parliament').filter(
+                issue_monitors__user_id=request.user.id,
                 parliament__parliament_num=parliament_num
             ).annotate_news(request.user.id).order_by('issue_num')
 
@@ -100,7 +100,7 @@ class ExtraVarsMiddleware():
             'parliaments': parliaments,
             'next_sessions': next_sessions,
             'next_committee_agendas': next_committee_agendas,
-            'bookmarked_issues': bookmarked_issues,
+            'monitored_issues': monitored_issues,
             'incoming_issues': incoming_issues,
             'view_name': request.resolver_match.view_name,
         }

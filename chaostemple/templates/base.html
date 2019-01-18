@@ -122,10 +122,10 @@
                             </ul>
                         </li>
 
-                        <li class="dropdown" control="bookmark-menu" {% if not bookmarked_issues %}style="display: none;" {% endif %}>
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans 'Bookmarks' %} <span class="caret"></span></a>
+                        <li class="dropdown" control="monitor-menu" {% if not monitored_issues %}style="display: none;" {% endif %}>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans 'Monitors' %} <span class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">
-                                {% include 'core/stub/issue_bookmark_menuitems.html' %}
+                                {% include 'core/stub/issue_monitor_menuitems.html' %}
                             </ul>
                         </li>
 

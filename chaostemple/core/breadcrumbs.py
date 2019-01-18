@@ -120,11 +120,11 @@ def process_breadcrumbs(breadcrumbs, view):
             _('Upcoming Issues')
         )
 
-    if view_name == 'user_issues_bookmarked':
+    if view_name == 'user_issues_monitored':
         breadcrumbs = leave_breadcrumb(
             breadcrumbs,
-            ('user_issues_bookmarked', parliament_num),
-            _('Bookmarks')
+            ('user_issues_monitored', parliament_num),
+            _('Monitors')
         )
 
     if view_name == 'user_issues_open':

@@ -71,7 +71,7 @@ def delete_issue_dossiers(request, issue_id):
     issue = Issue.objects.select_related('parliament').get(id=issue_id)
     IssueUtilities.populate_dossier_statistics([issue])
 
-    bookmarked_issues = request.extravars['bookmarked_issues']
+    monitored_issues = request.extravars['monitored_issues']
 
     # Get session agenda header information if needed
     session_agenda_item_id = int(request.GET.get('session_agenda_item_id', 0) or 0)
@@ -98,7 +98,7 @@ def delete_issue_dossiers(request, issue_id):
     stub_ctx.update({
         'issue': issue,
         'user': request.user,
-        'bookmarked_issues': bookmarked_issues,
+        'monitored_issues': monitored_issues,
     })
     html_content = render_to_string('core/stub/issue.html', stub_ctx, request=request)
 

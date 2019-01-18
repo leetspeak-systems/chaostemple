@@ -69,9 +69,9 @@ $(document).ready(function() {
             </table>
 
             <h3>{% trans 'Settings' %}</h3>
-            <input type="checkbox" control="setting" data-setting-name="auto_bookmark" {% if home_user.userprofile.setting_auto_bookmark %}checked="checked"{% endif %} />
+            <input type="checkbox" control="setting" data-setting-name="auto_monitor" {% if home_user.userprofile.setting_auto_monitor %}checked="checked"{% endif %} />
             &nbsp;
-            {% trans 'Automatically bookmark issues when worked on.' %}
+            {% trans 'Automatically monitor issues when worked on.' %}
 
         </div>
 

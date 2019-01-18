@@ -147,7 +147,7 @@ class UserProfile(models.Model):
 
     last_seen = models.DateTimeField(null=True)
 
-    setting_auto_bookmark = models.BooleanField(default=True)
+    setting_auto_monitor = models.BooleanField(default=True)
 
     def display_full(self):
         return mark_safe('<a href="mailto: %s">%s</a> (%s)' % (self.user.email, self.name, self.initials))
@@ -156,9 +156,9 @@ class UserProfile(models.Model):
         return self.initials if self.initials else self.user.email
 
 
-class IssueBookmark(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='issue_bookmarks', on_delete=CASCADE)
-    issue = models.ForeignKey(AlthingiIssue, related_name='issue_bookmarks', on_delete=CASCADE)
+class IssueMonitor(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='issue_monitors', on_delete=CASCADE)
+    issue = models.ForeignKey(AlthingiIssue, related_name='issue_monitors', on_delete=CASCADE)
 
 
 class Issue(AlthingiIssue):

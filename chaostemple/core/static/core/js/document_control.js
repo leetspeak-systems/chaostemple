@@ -1,5 +1,5 @@
-// We only want to show the auto-bookmark popup once.
-var auto_bookmark_popup_shown = false;
+// We only want to show the auto-monitor popup once.
+var auto_monitor_popup_shown = false;
 
 jQuery.fn.extend({
     setMemoCount: function(memo_count) {
@@ -77,19 +77,19 @@ $(document).ready(function() {
                  * was when the page was loaded. If there was no useful info
                  * when the page was loaded, but the user has started working
                  * on the issue, thereby presumably producing useful info, we
-                 * infer that the issue should be auto-bookmarked.
+                 * infer that the issue should be auto-monitored.
                  */
-                if (SETTING_AUTO_BOOKMARK && !HAS_USEFUL_INFO && !IS_BOOKMARKED && !auto_bookmark_popup_shown) {
-                    $('a[control="issue-bookmark"]').click();
+                if (SETTING_AUTO_MONITOR && !HAS_USEFUL_INFO && !IS_MONITORED && !auto_monitor_popup_shown) {
+                    $('a[control="issue-monitor"]').click();
 
                     // Show notification.
-                    var $notification = $('div[control="auto-bookmark-notification');
+                    var $notification = $('div[control="auto-monitor-notification');
                     $notification.fadeIn('fast');
                     window.setTimeout(function() {
                         $notification.fadeOut('fast');
                     }, 6000);
 
-                    auto_bookmark_popup_shown = true;
+                    auto_monitor_popup_shown = true;
                 }
             }
         });

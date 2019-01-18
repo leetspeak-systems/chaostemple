@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-17 20:54+0000\n"
+"POT-Creation-Date: 2019-01-17 21:35+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -196,8 +196,8 @@ msgid "Upcoming Issues"
 msgstr "Komandi mál"
 
 #: core/breadcrumbs.py:127 templates/base.html:126
-msgid "Bookmarks"
-msgstr "Bókamerki"
+msgid "Monitors"
+msgstr "Vaktanir"
 
 #: core/breadcrumbs.py:134 templates/base.html:106 templates/base.html:108
 #: templates/core/user_issues_open.html:13
@@ -878,9 +878,9 @@ msgstr "Hvaða einstakling áttu við?"
 
 #: templates/core/stub/auto_bookmark_notification.html:4
 msgid ""
-"This issue has been automatically bookmarked. You can unbookmark it at the "
-"top of the page. You can also change this behavior in your user settings."
-msgstr "Þetta mál hefur verið bókamerkt sjálfkrafa. Þú getur fjarlægt bókamerkið ofarlega á síðunni. Þú getur einnig breytt þessari virkni í notendastillingum."
+"This issue has been automatically monitored. You can unmonitor it at the top "
+"of the page. You can also change this behavior in your user settings."
+msgstr "Þetta mál hefur sjálfkrafa verið sett í vöktun. Þú getur afvaktað það ofarlega á síðunni. Þú getur einnig breytt þessari virkni í notendastillingum."
 
 #: templates/core/stub/committee_agenda_item_header.html:5
 #: templates/core/stub/session_agenda_item_header.html:5
@@ -945,15 +945,6 @@ msgstr "Fyrirspyrjandi"
 msgid "Responder"
 msgstr "Til svara"
 
-#: templates/core/stub/issue_bookmark.html:5
-msgid "Bookmark"
-msgstr "Bókamerki"
-
-#: templates/core/stub/issue_bookmark_menuitems.html:4
-#: templates/core/user_issues_bookmarked.html:15
-msgid "Bookmarked Issues"
-msgstr "Bókamerkt mál"
-
 #: templates/core/stub/issue_dossier_statistic.html:18
 msgctxt "document_plural"
 msgid "new"
@@ -985,6 +976,15 @@ msgstr "ný þingskjöl"
 #: templates/core/stub/issue_menuentry.html:22
 msgid "new reviews"
 msgstr "nýjar umsagnir"
+
+#: templates/core/stub/issue_monitor.html:5
+msgid "Monitor"
+msgstr "Vöktun"
+
+#: templates/core/stub/issue_monitor_menuitems.html:4
+#: templates/core/user_issues_monitored.html:15
+msgid "Monitored Issues"
+msgstr "Vöktuð mál"
 
 #: templates/core/stub/membership_requests.html:5
 msgid ""
@@ -1085,8 +1085,8 @@ msgid "Settings"
 msgstr "Stillingar"
 
 #: templates/core/user_home.html:74
-msgid "Automatically bookmark issues when worked on."
-msgstr "Bókamerkja sjálfkrafa mál þegar unnið er í þeim."
+msgid "Automatically monitor issues when worked on."
+msgstr "Setja mál sjálfkrafa í vöktun þegar unnið er í þeim."
 
 #: templates/core/user_home.html:81
 msgid "Subscriptions"
@@ -1290,6 +1290,12 @@ msgstr "Upplýsingar"
 #: templates/termsandconditions/tc_accept_terms.html:51
 msgid "Accept all"
 msgstr "Samþykkja alla"
+
+#~ msgid "Bookmarks"
+#~ msgstr "Bókamerki"
+
+#~ msgid "Bookmark"
+#~ msgstr "Bókamerki"
 
 #~ msgid "Issue Portal"
 #~ msgstr "Málsgátt"

@@ -660,6 +660,9 @@ class Issue(models.Model):
                 'to_committee'
             ).exclude(
                 to_committee=None
+            ).filter(
+                Q(conclusion='samþykkt')
+                | Q(conclusion=None)
             ).order_by(
                 '-timing'
             ).first().to_committee

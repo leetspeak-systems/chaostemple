@@ -159,25 +159,6 @@ $(document).ready(function() {
         });
     });
 
-    $(document).on('click', 'ul[control="issue-type-selector"] a', function() {
-        // Controls.
-        var $link = $(this);
-        var $tab = $link.parent(); // li-tag
-        var $issue_type_selector = $tab.parent(); // ul-tag
-
-        // Gathered variables.
-        var issue_type = $link.attr('data-issue-type');
-
-        // Make the clicked tab selected.
-        $issue_type_selector.find('li').removeClass('active');
-        $tab.addClass('active');
-
-        // Hide issues which are not of the selected type.
-        $('[control="issue-container"][data-issue-type!="' + issue_type + '"]').hide();
-        $('[control="issue-container"][data-issue-type="' + issue_type + '"]').show();
-
-    });
-
     // If there is an issue type selector around... select the first tab.
     $('[control="issue-type-selector"] li:first-child a').trigger('click');
 

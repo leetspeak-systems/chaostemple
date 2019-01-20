@@ -38,7 +38,7 @@
                 {% trans 'Issues' %}
             </h3>
 
-            {% include 'core/stub/issue_type_selector.html' %}
+            {% include 'core/stub/issue_type_toggle.html' %}
 
             <table class="table">
                 {% for issue in issues|order_by_progression reversed %}

@@ -102,6 +102,7 @@
                             </ul>
                         </li>
 
+                        {% if FEATURES.incoming_issues %}
                         <li class="dropdown" control="open-issue-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans 'Opened Issues' %} <span class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">
@@ -121,6 +122,7 @@
                                 {% endif %}
                             </ul>
                         </li>
+                        {% endif %}
 
                         <li class="dropdown" control="monitor-menu" {% if not monitored_issues %}style="display: none;" {% endif %}>
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans 'Monitors' %} <span class="caret"></span></a>

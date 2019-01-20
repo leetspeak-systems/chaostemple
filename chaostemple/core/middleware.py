@@ -78,9 +78,10 @@ class ExtraVarsMiddleware():
             ).annotate_news(request.user.id).order_by('issue_num')
 
             # Get incoming things that the user has not yet seen
-            incoming_issues = Issue.objects.select_related('parliament', 'to_committee').filter(
-                parliament__parliament_num=parliament_num
-            ).incoming(request.user.id).order_by('-issue_num')
+            if settings.FEATURES['incoming_issues']:
+                incoming_issues = Issue.objects.select_related('parliament', 'to_committee').filter(
+                    parliament__parliament_num=parliament_num
+                ).incoming(request.user.id).order_by('-issue_num')
 
         # Get parliaments, next sessions and next committees (we use this virtually always)
         parliaments = Parliament.objects.exclude(last_full_update=None)

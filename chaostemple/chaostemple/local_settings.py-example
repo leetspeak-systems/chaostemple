@@ -22,6 +22,13 @@ CUSTOM_SIGNUP_DOMAINS = ['example.com']
 FEATURES = {
     'subscription_committee': False,
     'subscription_category': False,
+
+    # This functionality is to be removed in favor of the change from
+    # bookmarks to monitoring. It is disabled by feature knob for the moment,
+    # until the change is complete, in case the users insist on bringing it
+    # back. It's time to remove the feature in its entirety alongside the
+    # feature knob if 2019-01-20 was a long time ago.
+    'incoming_issues': False,
 }
 
 # Database

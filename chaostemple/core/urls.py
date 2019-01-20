@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.conf.urls import include, url
 from django.urls import path
 
@@ -35,8 +36,6 @@ urlpatterns = [
     url(r'^user/home/$', views.user_home, name='user_home'),
     url(r'^user/access/$', views.user_access, name='user_access'),
     url(r'^parliament/(?P<parliament_num>\d+)/user/issues/monitored/$', views.user_issues_monitored, name='user_issues_monitored'),
-    url(r'^user/issues/incoming/$', views.user_issues_incoming, name='user_issues_incoming'),
-    url(r'^parliament/(?P<parliament_num>\d+)/user/issues/open/$', views.user_issues_open, name='user_issues_open'),
 
     url(r'^json/proposer/(?P<proposer_id>\d+)/subproposers/$', json_views.proposer_subproposers, name='json_proposers_subproposers'),
     url(r'^json/issue/list/(?P<parliament_num>\d+)/$', json_views.list_issues, name='json_list_issues'),
@@ -65,6 +64,13 @@ urlpatterns = [
 
     url(r'^dossier/', include('dossier.urls')),
 ]
+
+if settings.FEATURES['incoming_issues']:
+    urlpatterns += [
+        url(r'^user/issues/incoming/$', views.user_issues_incoming, name='user_issues_incoming'),
+        url(r'^parliament/(?P<parliament_num>\d+)/user/issues/open/$', views.user_issues_open, name='user_issues_open'),
+    ]
+
 
 handler500 = 'core.views.error500'
 

@@ -153,7 +153,7 @@ $(document).ready(function() {
                 'upcoming_committee_agenda_ids': $dialog.attr('data-upcoming-committee-agenda-ids'),
             },
             done: function(data, textStatus) {
-                $('div[control="issue-container"][data-id=' + data.issue_id + ']').html(data.html_content);
+                $('div[control="issue-container"][data-id=' + data.issue_id + ']').replaceWith(data.html_content);
                 $('li[control="monitor-menu"]').loadMonitors();
             }
         });

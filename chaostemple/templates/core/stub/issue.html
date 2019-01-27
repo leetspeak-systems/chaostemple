@@ -3,7 +3,7 @@
 {% load smart_urls %}
 {% load issue %}
 
-<div control="issue-container" data-id="{{ issue.id }}" data-issue-type="{{ issue.issue_type }}" {% if start_hidden %}style="display: none;" {% endif %}>
+<div control="issue-container" data-id="{{ issue.id }}" data-issue-type="{{ issue.issue_type }}" data-stub-type="normal" {% if start_hidden %}style="display: none;" {% endif %}>
     <div class="panel panel-default" control="issue">
         {% if session_agenda_item %}
             {% include 'core/stub/session_agenda_item_header.html' %}

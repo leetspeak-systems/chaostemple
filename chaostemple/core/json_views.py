@@ -13,6 +13,7 @@ from core.breadcrumbs import append_to_crumb_string
 from core.models import Access
 from core.models import Issue
 from core.models import IssueMonitor
+from core.models import IssueUtilities
 from core.models import MembershipRequest
 from core.models import Subscription
 from core.models import UserProfile
@@ -69,10 +70,33 @@ def issue_monitor_toggle(request, issue_id):
         issue_monitor = IssueMonitor.objects.create(user_id=request.user.id, issue_id=issue_id)
         is_monitored = True
 
+    issue = Issue.objects.select_related('parliament').get(id=issue_id)
+    IssueUtilities.populate_dossier_statistics([issue])
+
+    monitored_issues = request.extravars['monitored_issues']
+
+    # Determine which template to use. Currently 'small' is the only viable
+    # option aside from the default.
+    stub_type = request.GET.get('stub_type', '')
+    if stub_type == 'small':
+        template_filename = 'core/stub/%s/issue.html' % stub_type
+    else:
+        template_filename = 'core/stub/issue.html'
+
+    stub_ctx = {
+        'issue': issue,
+        'user': request.user,
+        'monitored_issues': monitored_issues,
+    }
+    html_content = render_to_string(template_filename, stub_ctx, request=request)
+
     ctx = {
         'is_monitored': is_monitored,
+        'issue_id': issue_id,
+        'html_content': html_content,
     }
     return ctx
+
 
 @login_required
 @jsonize

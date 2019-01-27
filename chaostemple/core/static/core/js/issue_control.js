@@ -86,7 +86,9 @@ $(document).ready(function() {
     });
 
     $(document).on('click', 'a[control="issue-monitor"]', function() {
-        issue_id = $(this).data('issue-id');
+        var $this = $(this);
+        var issue_id = $this.attr('data-issue-id');
+        var stub_type = $('[control="issue-container"][data-id="' + issue_id + '"]').attr('data-stub-type');
 
         $.jsonize({
             message: {
@@ -94,16 +96,9 @@ $(document).ready(function() {
                 'success': 'Monitor toggled.',
                 'failure': 'Toggling monitor failed!',
             },
-            url: '/json/monitor/issue/toggle/' + issue_id + '/',
+            url: '/json/monitor/issue/toggle/' + issue_id + '/?stub_type=' + stub_type,
             done: function(data, textStatus) {
-                $icons = $('a[control="issue-monitor"][data-issue-id=' + issue_id + '] span[control="issue-monitor-icon"]');
-                if (data.is_monitored) {
-                    $icons.removeClass('grey');
-                }
-                else {
-                    $icons.addClass('grey');
-                }
-
+                $('[control="issue-container"][data-id=' + data.issue_id + ']').replaceWith(data.html_content);
                 $('li[control="monitor-menu"]').loadMonitors();
             }
         });

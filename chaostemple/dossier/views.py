@@ -65,13 +65,26 @@ def delete_issue_dossiers(request, issue_id):
 
     stub_ctx = {}
 
-    Dossier.objects.filter(issue_id=issue_id, user_id=request.user.id).delete()
-    DossierStatistic.objects.filter(issue_id=issue_id, user_id=request.user.id).delete()
-
     issue = Issue.objects.select_related('parliament').get(id=issue_id)
     IssueUtilities.populate_dossier_statistics([issue])
 
     monitored_issues = request.extravars['monitored_issues']
+
+    Dossier.objects.filter(issue_id=issue_id, user_id=request.user.id).delete()
+
+    # If the issue is being monitored, we want to retain the dossier
+    # statistics to keep tracking changes of status and document/review
+    # counts. If the issue is not being monitored, however, we'll want to
+    # delete the dossier statistic for the sake of data cleanliness.
+    stat = issue.dossierstatistic_set.get(user_id=request.user.id)
+    if issue in monitored_issues:
+        # Reset the statistics.
+        stat.reset()
+
+        # Trigger an upate to has_useful_info.
+        stat.save()
+    else:
+        stat.delete()
 
     # Get session agenda header information if needed
     session_agenda_item_id = int(request.GET.get('session_agenda_item_id', 0) or 0)

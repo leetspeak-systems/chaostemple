@@ -292,9 +292,27 @@ class DossierStatistic(models.Model):
 
                     fieldstate_iterator = fieldstate_iterator + 1
 
+        # We will consider it useful info, if the issue is being monitored,
+        # and the user has not yet seen some of its documents or reviews.
+        is_monitored = self.issue.issue_monitors.filter(user_id=self.user_id).count() > 0
+        counts_differ = any([
+            self.document_count != self.issue.document_count,
+            self.review_count != self.issue.review_count,
+        ])
+        if is_monitored and counts_differ:
+            self.has_useful_info = True
+            return
+
         # If function hasn't already returned at this point, then nothing useful was found.
         self.has_useful_info = False
         return
+
+
+    def reset(self):
+        for field in self._meta.fields:
+            if type(field.default) is int and field.default == 0:
+                setattr(self, field.name, field.default)
+
 
     def update_stats_quite_inefficiently_please(self):
         '''

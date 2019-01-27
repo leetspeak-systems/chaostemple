@@ -160,6 +160,32 @@ class IssueMonitor(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='issue_monitors', on_delete=CASCADE)
     issue = models.ForeignKey(AlthingiIssue, related_name='issue_monitors', on_delete=CASCADE)
 
+    def save(self, *args, **kwargs):
+        super(IssueMonitor, self).save(*args, **kwargs)
+
+        try:
+            stat = self.issue.dossierstatistic_set.get(user_id=self.user_id)
+        except DossierStatistic.DoesNotExist:
+            # When an issue is monitored, there must exist a DossierStatistic,
+            # so that we have a place to record the state of things from now
+            # on. We'll want to be notified about new documents/reviews and
+            # changes to the issue's status.
+            stat = DossierStatistic(user_id=self.user_id, issue_id=self.issue_id)
+
+        # Trigger an update of has_useful_info.
+        stat.save()
+
+    def delete(self):
+        super(IssueMonitor, self).delete()
+
+        try:
+            stat = self.issue.dossierstatistic_set.get(user_id=self.user_id)
+            # Trigger an update of has_useful_info.
+            stat.save()
+        except DossierStatistic.DoesNotExist:
+            # Oh well, whatever. Nevermind.
+            pass
+
 
 class Issue(AlthingiIssue):
     objects = IssueQuerySet.as_manager()

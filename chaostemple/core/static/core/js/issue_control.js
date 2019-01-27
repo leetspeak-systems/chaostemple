@@ -159,9 +159,6 @@ $(document).ready(function() {
         });
     });
 
-    // If there is an issue type selector around... select the first tab.
-    $('[control="issue-type-selector"] li:first-child a').trigger('click');
-
     $(document).on('click', 'button[control="issue-type-toggle"]', function() {
         // Controls.
         var $button = $(this);

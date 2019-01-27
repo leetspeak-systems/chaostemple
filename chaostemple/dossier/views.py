@@ -66,7 +66,6 @@ def delete_issue_dossiers(request, issue_id):
     stub_ctx = {}
 
     issue = Issue.objects.select_related('parliament').get(id=issue_id)
-    IssueUtilities.populate_dossier_statistics([issue])
 
     monitored_issues = request.extravars['monitored_issues']
 
@@ -85,6 +84,8 @@ def delete_issue_dossiers(request, issue_id):
         stat.save()
     else:
         stat.delete()
+
+    IssueUtilities.populate_dossier_statistics([issue])
 
     # Get session agenda header information if needed
     session_agenda_item_id = int(request.GET.get('session_agenda_item_id', 0) or 0)

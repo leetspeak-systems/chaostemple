@@ -15,19 +15,26 @@
             </span>
 
             {{ issue.issue_num }}
-            | <a href="{% breadcrumb_url 'parliament_issue' issue.parliament.parliament_num issue.issue_num %}"><strong><span
-                        control="issue-name"
-                        data-id="{{ issue.id }}">{{ issue }}</span></strong></a>
+            |
+            {% if issue in monitored_issues %}
+                {% display_issue_new issue %}
+            {% endif %}
+            <a href="{% breadcrumb_url 'parliament_issue' issue.parliament.parliament_num issue.issue_num %}"><strong><span
+                    control="issue-name"
+                    data-id="{{ issue.id }}">{{ issue }}</span></strong>
+            </a>
             {% if issue.description %}
                 <small class="nowrap">(<span control="issue-description" data-id="{{ issue.id }}">{{ issue.description }}</span>)</small>
             {% endif %}
 
             <span class="nowrap">
             {% for d in issue.dossier_statistics %}
-                <a href="#" control="toggle-user-dossier-statistics"
-                        data-user-id="{{ d.user_id }}"
-                        data-issue-id="{{ issue.id }}"
-                        class="btn btn-xs btn-default">{{ d.user.userprofile }}</a>
+                {% if not d.issue_is_new and d.has_useful_info %}
+                    <a href="#" control="toggle-user-dossier-statistics"
+                            data-user-id="{{ d.user_id }}"
+                            data-issue-id="{{ issue.id }}"
+                            class="btn btn-xs btn-default">{{ d.user.userprofile }}</a>
+                {% endif %}
             {% endfor %}
             </span>
             </div>

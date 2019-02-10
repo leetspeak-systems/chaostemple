@@ -29,18 +29,22 @@ class IssueQuerySet(AlthingiIssueQuerySet):
 
     def annotate_news(self, user_id):
         '''
-        Annotates the query with the number of new_documents and new_reviews.
+        Annotates the query with the number of new_documents and new_reviews
+        and a seen_count which is the total number of documents or reviews
+        that the user has seen so far.
         '''
 
         news_subquery = Issue.objects.filter(
             dossierstatistic__user_id=user_id,
             pk=OuterRef('pk')
         ).annotate(
+            seen_count=F('dossierstatistic__document_count') + F('dossierstatistic__review_count'),
             new_documents=F('document_count') - F('dossierstatistic__document_count'),
             new_reviews=F('review_count') - F('dossierstatistic__review_count')
         )
 
         issues = self.annotate(
+            seen_count=Subquery(news_subquery.values('seen_count'), output_field=IntegerField()),
             new_documents=Subquery(news_subquery.values('new_documents'), output_field=IntegerField()),
             new_reviews=Subquery(news_subquery.values('new_reviews'), output_field=IntegerField())
         )
@@ -117,8 +121,7 @@ class IssueUtilities():
 
         dossier_statistics = DossierStatistic.objects.select_related('user__userprofile').filter(
             access_filter,
-            issue__in=issues,
-            has_useful_info=True
+            issue__in=issues
         )
 
         # TODO: Maybe we can make this fit with Issue.QuerySet.as_manager()

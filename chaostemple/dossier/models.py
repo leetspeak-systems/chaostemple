@@ -314,6 +314,12 @@ class DossierStatistic(models.Model):
                 setattr(self, field.name, field.default)
 
 
+    def issue_is_new(self):
+        # An issue is considered new if no documents or reviews have ever been
+        # seen by the user.
+        return self.document_count == self.review_count == 0
+
+
     def update_stats_quite_inefficiently_please(self):
         '''
         WARNING: This function is intended only for diagnostic and data-fixing purposes.

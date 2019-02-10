@@ -1,6 +1,7 @@
 from django import template
 from django.template import loader
 from django.utils.safestring import mark_safe
+from django.utils.translation import ugettext_lazy as _
 
 from dossier.models import Dossier
 
@@ -43,6 +44,26 @@ def fieldstate_css(status_type=None, value=None):
     else:
         return fieldstate_css_dict
 
+
+@register.simple_tag(takes_context=True)
+def display_issue_new(context, issue, size='normal'):
+    '''
+    Displays a label saying "New" if the user has not seen any documents or
+    reviews in the issue.
+    '''
+
+    if not hasattr(issue, 'dossier_statistics'):
+        return ''
+
+    for stat in issue.dossier_statistics:
+        if stat.user_id == context['request'].user.id and stat.issue_is_new():
+            return mark_safe(
+                '<span class="label label-danger memo-count">%s</span>' % _('New')
+            )
+
+    return ''
+
+
 @register.simple_tag(takes_context=True)
 def display_dossier_statistics(context, issue, size='normal'):
 
@@ -67,10 +88,20 @@ def display_dossier_statistics(context, issue, size='normal'):
         fieldstate_css_dict = fieldstate_css()
 
         # Determine all the users we need to display dossiers for
-        user_count = len(set([d.user_id for d in issue.dossier_statistics]))
+        user_count = len(set([d.user_id for d in issue.dossier_statistics if d.has_useful_info]))
 
         last_user_id = 0
         for stat in issue.dossier_statistics:
+
+            # We don't display stats for issues that are completely new, i.e.
+            # no documents or reviews have been seen by the user yet. The
+            # "new" state will be shown by `display_issue_new()`.
+            if stat.issue_is_new():
+                continue
+
+            # We also don't display stats that do not contain useful info.
+            if not stat.has_useful_info:
+                continue
 
             if (user_count > 1 or stat.user_id != request.user.id) and last_user_id != stat.user_id and template_user:
                 content.append(template_user.render({

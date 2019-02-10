@@ -122,7 +122,7 @@ class IssueUtilities():
         dossier_statistics = DossierStatistic.objects.select_related('user__userprofile').filter(
             access_filter,
             issue__in=issues
-        )
+        ).order_by('user__userprofile__initials')
 
         for issue in issues:
             if issue is None:
@@ -132,7 +132,11 @@ class IssueUtilities():
                 if dossier_statistic.issue_id == issue.id:
                     if not hasattr(issue, 'dossier_statistics'):
                         issue.dossier_statistics = []
-                    issue.dossier_statistics.append(dossier_statistic)
+
+                    if dossier_statistic.user_id == user_id:
+                        issue.dossier_statistics.insert(0, dossier_statistic)
+                    else:
+                        issue.dossier_statistics.append(dossier_statistic)
 
         return issues
 

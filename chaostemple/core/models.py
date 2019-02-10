@@ -124,8 +124,6 @@ class IssueUtilities():
             issue__in=issues
         )
 
-        # TODO: Maybe we can make this fit with Issue.QuerySet.as_manager()
-        # Perhaps by using annotate/aggregate with the DossierStatistic.objects.-query above.
         for issue in issues:
             if issue is None:
                 continue

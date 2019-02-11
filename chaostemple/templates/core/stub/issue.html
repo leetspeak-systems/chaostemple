@@ -87,9 +87,14 @@
             {% if user.is_authenticated %}
                 <div class="panel-footer">
                     {% include 'core/stub/issue_monitor.html' %}
-                    {% if issue.dossier_statistics %}
-                        <button control="delete-issue-dossiers" class="btn btn-default btn-xs pull-right" data-session-agenda-item-id="{{ session_agenda_item.id }}" data-id="{{ issue.id }}">{% trans 'Mark as Unopened' %}</button>
-                    {% endif %}
+                    {% comment %}
+                        If the user has dossier statistics in the issue, we know they'll be first.
+                    {% endcomment %}
+                    {% with issue.dossier_statistics.0 as my_stat %}
+                        {% if my_stat.user_id == user.id and not my_stat.issue_is_new %}
+                            <button control="delete-issue-dossiers" class="btn btn-default btn-xs pull-right" data-session-agenda-item-id="{{ session_agenda_item.id }}" data-id="{{ issue.id }}">{% trans 'Mark as New' %}</button>
+                        {% endif %}
+                    {% endwith %}
                 </div>
             {% endif %}
         {% elif issue.issue_group == 'B' %}

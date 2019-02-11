@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.db.models import Case
 from django.db.models import Count
+from django.db.models import IntegerField
 from django.db.models import Prefetch
 from django.db.models import Q
 from django.db.models import When
@@ -247,8 +248,30 @@ def parliament_issue(request, parliament_num, issue_num):
         prefetch_query.add(Q(reduce(operator.or_, partial_conditions)), Q.OR)
 
     # Add prefetch query but leave out useless information from other users
-    prefetch_queryset = Dossier.objects.filter(prefetch_query).annotate(memo_count=Count('memos')).exclude(
-        ~Q(user_id=request.user.id), attention='none', knowledge=0, support='undefined', proposal='none', memo_count=0
+    prefetch_queryset = Dossier.objects.filter(
+        prefetch_query
+    ).annotate(
+        memo_count=Count('memos'),
+        # In order to order the current user first but everyone else by
+        # initials, we first annotate the results so that the current user
+        # gets the order 0 (first) and others get 1. Then the current user is
+        # before everyone else, but the rest are tied with 1, which is
+        # resolved with a second order clause in the order_by below.
+        ordering=Case(
+            When(user_id=request.user.id, then=0),
+            default=1,
+            output_field=IntegerField()
+        )
+    ).exclude(
+        ~Q(user_id=request.user.id),
+        attention='none',
+        knowledge=0,
+        support='undefined',
+        proposal='none',
+        memo_count=0
+    ).order_by(
+        '-ordering',
+        '-user__userprofile__initials'
     )
 
     documents = Document.objects.prefetch_related(

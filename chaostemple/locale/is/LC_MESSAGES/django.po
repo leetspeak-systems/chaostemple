@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-10 23:40+0000\n"
+"POT-Creation-Date: 2019-02-11 00:24+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -135,11 +135,11 @@ msgstr "Skýrslu skilað"
 msgid "Concluded"
 msgstr "Lokið"
 
-#: althingi/models.py:385 core/models.py:215
+#: althingi/models.py:385 core/models.py:217
 msgid "rejected"
 msgstr "hafnað"
 
-#: althingi/models.py:386 core/models.py:216
+#: althingi/models.py:386 core/models.py:218
 msgid "accepted"
 msgstr "samþykkt"
 
@@ -235,11 +235,11 @@ msgstr "Þingfundir"
 msgid "parliamentary session"
 msgstr "þingfundur"
 
-#: core/breadcrumbs.py:183 core/models.py:261 templates/core/parliament.html:10
+#: core/breadcrumbs.py:183 core/models.py:263 templates/core/parliament.html:10
 msgid "Committees"
 msgstr "Nefndir"
 
-#: core/breadcrumbs.py:213 core/models.py:263 templates/base.html:141
+#: core/breadcrumbs.py:213 core/models.py:265 templates/base.html:141
 #: templates/core/parliament_categories.html:17
 #: templates/core/parliament_issue.html:180
 msgid "Categories"
@@ -261,15 +261,15 @@ msgstr "Þingmenn"
 msgid "b."
 msgstr "f."
 
-#: core/models.py:214
+#: core/models.py:216
 msgid "pending"
 msgstr ""
 
-#: core/models.py:260
+#: core/models.py:262
 msgid "Parties"
 msgstr "Flokkar"
 
-#: core/models.py:262
+#: core/models.py:264
 msgid "MPs"
 msgstr "Þingmenn"
 
@@ -559,18 +559,18 @@ msgstr "Eyða"
 
 #: templates/core/dialog/dialog_delete_issue_dossiers.html:8
 msgid ""
-"Are you sure you want to mark this entire issue as un-opened and delete all "
+"Are you sure you want to mark this entire issue as new and delete all "
 "dossiers on it?"
 msgstr ""
-"Ertu viss um að þú viljir merkja þetta mál sem óopnað og eyða öllum skrám um "
+"Ertu viss um að þú viljir merkja þetta mál sem nýtt og eyða öllum skrám um "
 "það?"
 
 #: templates/core/dialog/dialog_delete_issue_dossiers.html:9
 msgid ""
-"Marking an issue as un-opened entails permanently deleting the issue&apos;s "
-"dossiers which include information such as glossaries, knowledge statust etc."
+"Marking an issue as new permanently deletes the issue&apos;s dossiers which "
+"include information such as glossaries, knowledge status, etc."
 msgstr ""
-"Að merja mál sem óopnað felur í sér eyðingu allra skráa sem tilheyra málinu, "
+"Að merkja mál sem nýtt felur í sér eyðingu allra skráa sem tilheyra málinu, "
 "en þau innihalda gögn á borð við glósur, þekkingarstöðu o.s.frv."
 
 #: templates/core/dialog/dialog_delete_memo.html:8
@@ -901,7 +901,7 @@ msgstr "þingskjal"
 msgid "Proposers"
 msgstr "Flutningsmenn"
 
-#: templates/core/stub/dossier.html:105
+#: templates/core/stub/dossier.html:105 templates/core/stub/issue.html:96
 msgid "Mark as New"
 msgstr "Merkja sem nýtt"
 
@@ -935,19 +935,15 @@ msgstr "Hafna"
 msgid "and others"
 msgstr "o.fl."
 
-#: templates/core/stub/issue.html:91
-msgid "Mark as Unopened"
-msgstr "Merkja sem óopnað"
-
-#: templates/core/stub/issue.html:99
+#: templates/core/stub/issue.html:105
 msgid "B-issue"
 msgstr "B-mál"
 
-#: templates/core/stub/issue.html:108 templates/core/stub/small/issue.html:97
+#: templates/core/stub/issue.html:114 templates/core/stub/small/issue.html:97
 msgid "Inquisitor"
 msgstr "Fyrirspyrjandi"
 
-#: templates/core/stub/issue.html:112 templates/core/stub/small/issue.html:100
+#: templates/core/stub/issue.html:118 templates/core/stub/small/issue.html:100
 msgid "Responder"
 msgstr "Til svara"
 
@@ -1300,6 +1296,9 @@ msgstr "Upplýsingar"
 #: templates/termsandconditions/tc_accept_terms.html:51
 msgid "Accept all"
 msgstr "Samþykkja alla"
+
+#~ msgid "Mark as Unopened"
+#~ msgstr "Merkja sem óopnað"
 
 #~ msgid "Bookmarks"
 #~ msgstr "Bókamerki"

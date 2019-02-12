@@ -30,27 +30,7 @@
                     </tr>
                 {% endfor %}
             </table>
-        </div>
 
-        <div class="col-md-8">
-            <h3>
-                <a href="{% url 'parliament_committee_issues' parliament_num committee.id %}"><i class="glyphicon glyphicon-resize-full"></i></a>
-                {% trans 'Issues' %}
-            </h3>
-
-            {% include 'core/stub/issue_type_toggle.html' %}
-
-            <table class="table">
-                {% for issue in issues|order_by_progression reversed %}
-                    {% include 'core/stub/small/issue.html' with start_hidden=True %}
-                {% endfor %}
-            </table>
-        </div>
-
-    </div>
-    <div class="row">
-
-        <div class="col-md-4">
             <h3>{% trans 'Committee Members' %}</h3>
             <table class="table">
                 {% for person in persons %}
@@ -78,6 +58,22 @@
                         </td>
                     </tr>
                     {% endwith %}
+                {% endfor %}
+            </table>
+
+        </div>
+
+        <div class="col-md-8">
+            <h3>
+                <a href="{% url 'parliament_committee_issues' parliament_num committee.id %}"><i class="glyphicon glyphicon-resize-full"></i></a>
+                {% trans 'Issues' %}
+            </h3>
+
+            {% include 'core/stub/issue_type_toggle.html' %}
+
+            <table class="table">
+                {% for issue in issues|order_by_progression reversed %}
+                    {% include 'core/stub/small/issue.html' with start_hidden=True %}
                 {% endfor %}
             </table>
         </div>

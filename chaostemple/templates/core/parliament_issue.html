@@ -12,7 +12,7 @@
 
         var SETTING_AUTO_MONITOR = {% if user.userprofile.setting_auto_monitor %}true{% else %}false{% endif %};
         var HAS_USEFUL_INFO = {% if statistic.has_useful_info %}true{% else %}false{% endif %};
-        var IS_MONITORED = {% if issue in monitored_issues %}true{% else %}false{% endif %};
+        var IS_MONITORED = {% if issue.monitor %}true{% else %}false{% endif %};
 
     </script>
 

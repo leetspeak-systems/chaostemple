@@ -16,7 +16,7 @@
 
             {{ issue.issue_num }}
             |
-            {% if issue in monitored_issues %}
+            {% if issue.monitor %}
                 {% display_issue_new issue %}
             {% endif %}
             <a href="{% breadcrumb_url 'parliament_issue' issue.parliament.parliament_num issue.issue_num %}"><strong><span

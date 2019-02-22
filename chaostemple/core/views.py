@@ -78,7 +78,7 @@ def day(request, input_date=None):
         )
 
         # Populate the dossier statistics
-        IssueUtilities.populate_dossier_statistics([i.issue for i in session.session_agenda_items_loaded])
+        IssueUtilities.populate_issue_data([i.issue for i in session.session_agenda_items_loaded])
 
     # Get committee agendas of specified day
     committee_agendas = CommitteeAgenda.objects.select_related('committee', 'parliament').prefetch_related(
@@ -93,7 +93,7 @@ def day(request, input_date=None):
         )
 
         # Populate the dossier statistics
-        IssueUtilities.populate_dossier_statistics([a.issue for a in committee_agenda.committee_agenda_items_loaded])
+        IssueUtilities.populate_issue_data([a.issue for a in committee_agenda.committee_agenda_items_loaded])
 
     ctx = {
         'requested_yesterday': requested_yesterday,
@@ -140,7 +140,7 @@ def upcoming(request):
             committee_issues.append(issue)
 
     # Get the relevant dossier statistics
-    IssueUtilities.populate_dossier_statistics(session_issues + committee_issues)
+    IssueUtilities.populate_issue_data(session_issues + committee_issues)
 
     today = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
 
@@ -184,7 +184,7 @@ def parliament_documents_new(request, parliament_num):
         time_published__gte=a_while_ago
     ).order_by('-time_published')
 
-    IssueUtilities.populate_dossier_statistics([d.issue for d in documents])
+    IssueUtilities.populate_issue_data([d.issue for d in documents])
 
     ctx = {
         'documents': documents
@@ -212,7 +212,7 @@ def parliament_issues(request, parliament_num):
         if issue_type in issue_types:
             issue_type_labels += [issue_type_label]
 
-    IssueUtilities.populate_dossier_statistics(issues)
+    IssueUtilities.populate_issue_data(issues)
 
     ctx = {
         'issues': issues,
@@ -312,6 +312,8 @@ def parliament_issue(request, parliament_num, issue_num):
             # Save previously collectec dossier statistics
             statistic.save()
 
+    IssueUtilities.populate_issue_data([issue])
+
     ctx = {
         'issue': issue,
         'issue_sessions': issue_sessions,
@@ -357,7 +359,7 @@ def parliament_category(request, parliament_num, category_slug, view=None):
         categories=category
     )
 
-    IssueUtilities.populate_dossier_statistics(issues)
+    IssueUtilities.populate_issue_data(issues)
 
     subscriptions = Subscription.objects.filter(user_id=request.user.id, sub_type='category')
 
@@ -401,7 +403,7 @@ def parliament_session(request, parliament_num, session_num):
         'issue__proposers__committee'
     ).all()
 
-    IssueUtilities.populate_dossier_statistics([i.issue for i in session_agenda_items])
+    IssueUtilities.populate_issue_data([i.issue for i in session_agenda_items])
 
     ctx = {
         'session': session,
@@ -462,7 +464,7 @@ def parliament_committee(request, parliament_num, committee_id):
         'committee_seats__order'
     )
 
-    IssueUtilities.populate_dossier_statistics(issues)
+    IssueUtilities.populate_issue_data(issues)
 
     ctx = {
         'committee': committee,
@@ -486,7 +488,7 @@ def parliament_committee_issues(request, parliament_num, committee_id):
         '-issue_num'
     )
 
-    IssueUtilities.populate_dossier_statistics(issues)
+    IssueUtilities.populate_issue_data(issues)
 
     ctx = {
         'committee': committee,
@@ -503,7 +505,7 @@ def parliament_committee_agenda(request, parliament_num, committee_id, agenda_id
         'issue__proposers__person', 'issue__proposers__committee'
     ).all()
 
-    IssueUtilities.populate_dossier_statistics([i.issue for i in committee_agenda_items])
+    IssueUtilities.populate_issue_data([i.issue for i in committee_agenda_items])
 
     ctx = {
         'committee': committee,
@@ -572,7 +574,7 @@ def parliament_party(request, parliament_num, party_slug):
         issue_group='A'
     )
 
-    IssueUtilities.populate_dossier_statistics(issues)
+    IssueUtilities.populate_issue_data(issues)
 
     ctx = {
         'party': party,
@@ -600,7 +602,7 @@ def parliament_party_issues(request, parliament_num, party_slug):
         issue_group='A'
     )
 
-    IssueUtilities.populate_dossier_statistics(issues)
+    IssueUtilities.populate_issue_data(issues)
 
     ctx = {
         'party': party,
@@ -695,7 +697,7 @@ def person(request, slug, subslug=None):
         documents__is_main=True
     ).order_by('parliament__parliament_num')
 
-    IssueUtilities.populate_dossier_statistics(issues)
+    IssueUtilities.populate_issue_data(issues)
 
     special_discussions = Issue.objects.select_related('parliament', 'special_inquisitor', 'special_responder').filter(
         issue_group='B',
@@ -811,7 +813,7 @@ def user_issues_monitored(request, parliament_num):
         parliament__parliament_num=parliament_num
     ).order_by('-issue_num')
 
-    IssueUtilities.populate_dossier_statistics(issues)
+    IssueUtilities.populate_issue_data(issues)
 
     ctx = {
         'issues': issues
@@ -824,7 +826,7 @@ def user_issues_incoming(request):
 
     issues = request.extravars['incoming_issues'].prefetch_related('proposers__person', 'proposers__committee')
 
-    IssueUtilities.populate_dossier_statistics(issues)
+    IssueUtilities.populate_issue_data(issues)
 
     ctx = {
         'issues': issues
@@ -842,7 +844,7 @@ def user_issues_open(request, parliament_num):
         parliament__parliament_num=parliament_num
     ).order_by('issue_num')
 
-    IssueUtilities.populate_dossier_statistics(issues)
+    IssueUtilities.populate_issue_data(issues)
 
     ctx = {
         'issues': issues

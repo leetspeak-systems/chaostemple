@@ -71,7 +71,7 @@ def issue_monitor_toggle(request, issue_id):
         is_monitored = True
 
     issue = Issue.objects.select_related('parliament').get(id=issue_id)
-    IssueUtilities.populate_dossier_statistics([issue])
+    IssueUtilities.populate_issue_data([issue])
 
     monitored_issues = request.extravars['monitored_issues']
 

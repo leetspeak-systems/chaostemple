@@ -85,7 +85,7 @@ def delete_issue_dossiers(request, issue_id):
     else:
         stat.delete()
 
-    IssueUtilities.populate_dossier_statistics([issue])
+    IssueUtilities.populate_issue_data([issue])
 
     # Get session agenda header information if needed
     session_agenda_item_id = int(request.GET.get('session_agenda_item_id', 0) or 0)

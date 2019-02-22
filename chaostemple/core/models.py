@@ -94,7 +94,7 @@ class AccessUtilities():
 class IssueUtilities():
 
     @staticmethod
-    def populate_dossier_statistics(issues):
+    def populate_issue_data(issues):
 
         # Get currently logged in user ID
         user_id = AccessUtilities.get_user_id()
@@ -124,9 +124,16 @@ class IssueUtilities():
             issue__in=issues
         ).order_by('user__userprofile__initials')
 
+        # Retrieve the monitors for the given issues, if any.
+        monitor_map = { m.issue_id: m for m in IssueMonitor.objects.filter(user_id=user_id) }
+
         for issue in issues:
             if issue is None:
                 continue
+
+            # If the issue is being monitored by the user, apply the monitor to the issue.
+            if issue.id in monitor_map:
+                issue.monitor = monitor_map[issue.id]
 
             for dossier_statistic in dossier_statistics:
                 if dossier_statistic.issue_id == issue.id:

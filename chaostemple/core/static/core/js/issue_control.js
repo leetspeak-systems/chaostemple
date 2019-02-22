@@ -98,7 +98,18 @@ $(document).ready(function() {
             },
             url: '/json/monitor/issue/toggle/' + issue_id + '/?stub_type=' + stub_type,
             done: function(data, textStatus) {
-                $('[control="issue-container"][data-id=' + data.issue_id + ']').replaceWith(data.html_content);
+                var issue = $('[control="issue-container"][data-id=' + data.issue_id + ']')
+                if (issue.length > 0) {
+                    issue.replaceWith(data.html_content);
+                }
+                else {
+                    if (data.is_monitored) {
+                        $('[control="issue-monitor-icon"]').removeClass('grey');
+                    }
+                    else {
+                        $('[control="issue-monitor-icon"]').addClass('grey');
+                    }
+                }
                 $('li[control="monitor-menu"]').loadMonitors();
             }
         });

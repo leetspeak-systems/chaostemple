@@ -102,7 +102,7 @@
                             </ul>
                         </li>
 
-                        {% if FEATURES.incoming_issues %}
+                        {% if FEATURES.incoming_issues and user.is_authenticated %}
                         <li class="dropdown" control="open-issue-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans 'Opened Issues' %} <span class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">

@@ -312,3 +312,14 @@
 1.4.21:
     * Under-the-hood fixes and improvements.
     * Slight UI improvement in category listing.
+
+1.5:
+    * Various bugfixes.
+    * Various UI improvements.
+    * "Bookmarks" changed to "monitors". Issues are not bookmarked from now on, but monitored.
+    * Issues automatically monitored when user starts working on them.
+    * Monitored issues that the user has not seen at all, are marked with "New".
+    * Stats with no useful info except notifications of new documents/reviews only visible when issue is monitored.
+    * User's dossier statistics guaranteed to be first in a listing and the rest ordered alphabetically by initials.
+    * User's dossier data guaranteed to be last in issue view and the rest reverse-ordered by initials.
+    * Marking an issue as unopened updated to fit new functionality and changed from "unopened" to "new".

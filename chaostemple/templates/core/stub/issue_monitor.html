@@ -1,6 +1,10 @@
 {% load i18n %}
 
-<a href="#" control="issue-monitor" data-issue-id="{{ issue.id }}" class="btn btn-default btn-xs {{ extraclasses }}">
-    <span control="issue-monitor-icon" class="glyphicon glyphicon-eye-open {% if not issue.monitor %}grey{% endif %}"></span>
-    {% trans 'Monitor' %}
-</a>
+<div class="btn-group dropup" role="group">
+
+    <button control="issue-monitor" data-issue-id="{{ issue.id }}" class="btn btn-default btn-xs {{ extraclasses }}">
+        <span control="issue-monitor-icon" class="glyphicon glyphicon-eye-open {% if not issue.monitor %}grey{% endif %}"></span>
+        {% trans 'Monitor' %}
+    </button>
+
+</div>

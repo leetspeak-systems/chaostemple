@@ -85,7 +85,7 @@ $(document).ready(function() {
         }
     });
 
-    $(document).on('click', 'a[control="issue-monitor"]', function() {
+    $(document).on('click', '[control="issue-monitor"]', function() {
         var $this = $(this);
         var issue_id = $this.attr('data-issue-id');
         var stub_type = $('[control="issue-container"][data-id="' + issue_id + '"]').attr('data-stub-type');

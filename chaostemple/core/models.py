@@ -65,6 +65,18 @@ class IssueQuerySet(AlthingiIssueQuerySet):
         return issues
 
 
+class SubscriptionManager(models.Manager):
+    # Just so that the developer doesn't have to keep track of what things can
+    # be subscribed to.
+    def select_subscribed(self):
+        return self.select_related(
+            'committee',
+            'category'
+        ).prefetch_related(
+            'committee__issues',
+            'category__issues'
+        )
+
 # Model utilities
 
 class AccessUtilities():
@@ -127,6 +139,15 @@ class IssueUtilities():
         # Retrieve the monitors for the given issues, if any.
         monitor_map = { m.issue_id: m for m in IssueMonitor.objects.filter(user_id=user_id) }
 
+        # Get subscriptions so that we can look them up by issue.
+        subscription_map = {}
+        subscriptions = Subscription.objects.select_subscribed().filter(user_id=user_id)
+        for sub in subscriptions:
+            for issue in sub.subscribed_thing().issues.all():
+                if not issue.id in subscription_map:
+                    subscription_map[issue.id] = []
+                subscription_map[issue.id].append(sub)
+
         for issue in issues:
             if issue is None:
                 continue
@@ -134,6 +155,10 @@ class IssueUtilities():
             # If the issue is being monitored by the user, apply the monitor to the issue.
             if issue.id in monitor_map:
                 issue.monitor = monitor_map[issue.id]
+
+            # If the issue is subscribed to, apply the subscribed thing to it.
+            if issue.id in subscription_map:
+                issue.subscriptions = subscription_map[issue.id]
 
             for dossier_statistic in dossier_statistics:
                 if dossier_statistic.issue_id == issue.id:
@@ -265,6 +290,8 @@ class MembershipRequest(models.Model):
 
 
 class Subscription(models.Model):
+    objects = SubscriptionManager()
+
     SUB_TYPE_CHOICES = (
         ('party', _('Parties')),
         ('committee', _('Committees')),
@@ -282,6 +309,7 @@ class Subscription(models.Model):
 
     class Meta:
         unique_together = ['user', 'party', 'committee', 'person']
+        ordering = ['sub_type']
 
     def subscribed_thing(self):
         try:
@@ -323,12 +351,39 @@ class Subscription(models.Model):
                 )
 
         # Prevent duplicate subscriptions.
-        thing = getattr(self, self.sub_type)
+        thing = self.subscribed_thing()
         lookup = {'user': self.user, self.sub_type: thing}
         if Subscription.objects.filter(**lookup).count() > 0:
             raise Exception('Already subscribed to that item')
 
         super(Subscription, self).save(*args, **kwargs)
+
+        # Make sure that DossierStatistic objects exist for all issues. Those
+        # that already exist, we have to call save on, to trigger an update to
+        # has_useful_info. Those that don't exist, we'll have to create.
+        # TODO: This is rather slow. Should be faster.
+        issues = thing.issues.all() # "Things" are assumed to have issues.
+        stat_map = {stat.issue_id: stat for stat in DossierStatistic.objects.filter(
+            user_id=self.user_id,
+            issue__in=issues
+        )}
+        for issue in issues:
+            if issue.id in stat_map:
+                stat_map[issue.id].save()
+            else:
+                DossierStatistic(user_id=self.user_id, issue_id=issue.id).save()
+
+    def delete(self):
+
+        # Save DossierStatistic objects to trigger update_has_useful_info.
+        thing = self.subscribed_thing()
+        issues = thing.issues.all()
+
+        super(Subscription, self).delete()
+
+        # Must happen after the deletion, of course.
+        for stat in DossierStatistic.objects.filter(user_id=self.user_id, issue__in=issues):
+            stat.save()
 
     def __str__(self):
         sub_type = self.sub_type if self.sub_type else 'undetermined'

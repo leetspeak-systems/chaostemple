@@ -1,6 +1,7 @@
 import json
 
 from django.db.models import Max
+from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.template.loader import render_to_string
 
@@ -11,6 +12,7 @@ from althingi.models import SessionAgendaItem
 
 from core.models import Issue
 from core.models import IssueUtilities
+from core.models import Subscription
 
 from dossier.models import Dossier
 from dossier.models import DossierStatistic
@@ -67,16 +69,21 @@ def delete_issue_dossiers(request, issue_id):
 
     issue = Issue.objects.select_related('parliament').get(id=issue_id)
 
+    is_subscribed = Subscription.objects.filter(
+        Q(committee__issues=issue) | Q(category__issues=issue),
+        user_id=request.user.id
+    ).count() > 0
+
     monitored_issues = request.extravars['monitored_issues']
 
     Dossier.objects.filter(issue_id=issue_id, user_id=request.user.id).delete()
 
-    # If the issue is being monitored, we want to retain the dossier
-    # statistics to keep tracking changes of status and document/review
-    # counts. If the issue is not being monitored, however, we'll want to
-    # delete the dossier statistic for the sake of data cleanliness.
+    # If the issue is being monitored or is subscribed to, we want to retain
+    # the dossier statistics to keep tracking changes of status and
+    # document/review counts. If the issue is not being monitored, however,
+    # we'll delete the dossier statistic for the sake of data cleanliness.
     stat = issue.dossierstatistic_set.get(user_id=request.user.id)
-    if issue in monitored_issues:
+    if is_subscribed or issue in monitored_issues:
         # Reset the statistics.
         stat.reset()
 

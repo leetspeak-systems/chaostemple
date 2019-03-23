@@ -30,7 +30,7 @@
                 <p>
                     {{ issue.issue_num }}
                     |
-                    {% if issue.monitor %}
+                    {% if issue.monitor or issue.subscriptions %}
                         {% display_issue_new issue %}
                     {% endif %}
                     <a href="{% breadcrumb_url 'parliament_issue' issue.parliament.parliament_num issue.issue_num %}">
@@ -87,6 +87,14 @@
             {% if user.is_authenticated %}
                 <div class="panel-footer">
                     {% include 'core/stub/issue_monitor.html' %}
+                    {% if issue.subscriptions %}
+                        <small>
+                        {% trans 'Subscribed through:' %}
+                        {% for sub in issue.subscriptions %}
+                            <a href="{{ sub.subscribed_thing_link }}">{{ sub.subscribed_thing }}</a>{% if not forloop.last %},{% endif %}
+                        {% endfor %}
+                        </small>
+                    {% endif %}
                     {% comment %}
                         If the user has dossier statistics in the issue, we know they'll be first.
                     {% endcomment %}

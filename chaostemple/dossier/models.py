@@ -1,3 +1,4 @@
+from django.apps import apps
 from django.conf import settings
 from django.db import models
 from django.db.models import CASCADE
@@ -292,14 +293,20 @@ class DossierStatistic(models.Model):
 
                     fieldstate_iterator = fieldstate_iterator + 1
 
-        # We will consider it useful info, if the issue is being monitored,
-        # and the user has not yet seen some of its documents or reviews.
+        # We will consider it useful info, if the issue is being monitored or
+        # is a part of something that the user has subscribed to, and the user
+        # has not yet seen some of its documents or reviews.
+        Subscription = apps.get_model('core', 'Subscription')
+        is_subscribed = Subscription.objects.filter(
+            Q(committee__issues=self.issue) | Q(category__issues=self.issue),
+            user_id=self.user_id
+        ).count() > 0
         is_monitored = self.issue.issue_monitors.filter(user_id=self.user_id).count() > 0
         counts_differ = any([
             self.document_count != self.issue.document_count,
             self.review_count != self.issue.review_count,
         ])
-        if is_monitored and counts_differ:
+        if (is_monitored or is_subscribed) and counts_differ:
             self.has_useful_info = True
             return
 

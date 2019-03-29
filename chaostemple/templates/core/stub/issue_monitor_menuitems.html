@@ -9,4 +9,6 @@
             {% include 'core/stub/issue_menuentry.html' %}
         </a>
     </li>
+{% empty %}
+    <li class="dropdown-header">{% trans 'No issues are currently being monitored' %}</li>
 {% endfor %}

@@ -75,7 +75,14 @@ class ExtraVarsMiddleware():
             monitored_issues = Issue.objects.select_related('parliament').filter(
                 issue_monitors__user_id=request.user.id,
                 parliament__parliament_num=parliament_num
-            ).annotate_news(request.user.id).order_by('issue_num')
+            ).annotate_news(
+                request.user.id
+            ).exclude(
+                new_documents=0,
+                new_reviews=0
+            ).order_by(
+                'issue_num'
+            )
 
             # Get incoming things that the user has not yet seen
             if settings.FEATURES['incoming_issues']:

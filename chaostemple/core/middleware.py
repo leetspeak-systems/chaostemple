@@ -95,7 +95,6 @@ class ExtraVarsMiddleware():
                 ).incoming(request.user.id).order_by('-issue_num')
 
         # Get parliaments, next sessions and next committees (we use this virtually always)
-        parliaments = Parliament.objects.exclude(last_full_update=None)
         next_sessions = Session.objects.upcoming().select_related('parliament')
         next_committee_agendas = CommitteeAgenda.objects.upcoming().select_related('parliament', 'committee')
 
@@ -109,7 +108,6 @@ class ExtraVarsMiddleware():
             'parliament_num': parliament_num,
             'parliament': parliament,
             'breadcrumbs': breadcrumbs,
-            'parliaments': parliaments,
             'next_sessions': next_sessions,
             'next_committee_agendas': next_committee_agendas,
             'monitored_issues': monitored_issues,

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block content %}
+
+<h3>{% trans 'Earlier Parliaments' %}</h3>
+
+<p>{% trans 'Note: Earlier parliaments may lack data from newer features which were not available at the time.' %}</p>
+
+<div class="col-md-6">
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>{% trans 'Parliament number' %}</th>
+                <th>{% trans 'Era' %}</th>
+                <th>{% trans 'Last full data update' %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in parliaments %}
+            <tr>
+                <td>
+                    {% if parliament_num == p.parliament_num %}
+                        {{ p.parliament_num }}. {% trans 'parliament' %}
+                    {% else %}
+                        <a href="{% url 'parliament' p.parliament_num %}">
+                            {{ p.parliament_num }}. {% trans 'parliament' %}
+                        </a>
+                    {% endif %}
+                </td>
+                <td>{{ p.era }}</td>
+                <td>{{ p.last_full_update }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="col-md-6">
+
+    <h4>{{ parliament_num }}. {% trans 'parliament' %}</h4>
+
+    <hr />
+    <p><a href="{% url 'parliament_issues' parliament_num %}">{% trans 'Issues' %}</a></p>
+    <p><a href="{% url 'parliament_categories' parliament_num %}">{% trans 'Categories' %}</a></p>
+    <hr />
+    <p><a href="{% url 'parliament_sessions' parliament_num %}">{% trans 'Parliamentary Sessions' %}</a></p>
+    <p><a href="{% url 'parliament_committees' parliament_num %}">{% trans 'Standing Committees' %}</a></p>
+    <hr />
+    <p><a href="{% url 'parliament_persons' parliament_num %}">{% trans 'Parliamentarians and ministers' %}</a></p>
+    <p><a href="{% url 'parliament_parties' parliament_num %}">{% trans 'Parliamentary Parties' %}</a></p>
+</div>
+
+{% endblock %}

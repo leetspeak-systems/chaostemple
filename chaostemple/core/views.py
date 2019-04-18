@@ -165,11 +165,21 @@ def upcoming(request):
     return render(request, 'core/upcoming.html', ctx)
 
 
-def parliament(request, parliament_num):
+def parliaments(request, parliament_num=None):
+    '''
+    Note: The parliament_num variable is actually handled by middleware, so we
+    don't need to concern ourselves with it here. It is only an optional
+    parameter to this function so that we can use the same view for both
+    "parliaments" and "parliament number something" in the urlconf, since
+    their view code is the same.
+    '''
+
+    parliaments = Parliament.objects.exclude(last_full_update=None)
 
     ctx = {
+        'parliaments': parliaments,
     }
-    return render(request, 'core/parliament.html', ctx)
+    return render(request, 'core/parliaments.html', ctx)
 
 
 def parliament_documents_new(request, parliament_num):

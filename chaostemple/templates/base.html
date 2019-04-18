@@ -47,14 +47,16 @@
                 <div id="navbar" class="collapse navbar-collapse">
                     <ul class="nav navbar-nav">
 
+                        {% if parliament.parliament_num != newest_parliament_num %}
+
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ parliament_num }}. {% trans 'parliament' %} <span class="caret"></span></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><strong>({{ parliament.parliament_num }}. {% trans 'parliament' %})</strong></a>
                             <ul class="dropdown-menu" role="menu">
-                            {% for parliament in parliaments %}
-                                <li role="presentation"><a href="{% parliament_url parliament.parliament_num %}">{{ parliament.parliament_num }}. {% trans 'parliament' %} <small>({{ parliament.era }})</small></a></li>
-                            {% endfor %}
+                                <li role="presentation"><a href="/">{% trans 'Back to' %} {{ newest_parliament_num }}. {% trans 'parliament' %} <small>({% trans 'current' %})</small></a></li>
                             </ul>
                         </li>
+
+                        {% else %}
 
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans 'Current and Upcoming' %} <span class="caret"></span></a>
@@ -102,6 +104,8 @@
                             </ul>
                         </li>
 
+                        {% endif %}
+
                         {% if FEATURES.incoming_issues and user.is_authenticated %}
                         <li class="dropdown" control="open-issue-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans 'Opened Issues' %} <span class="caret"></span></a>
@@ -145,6 +149,8 @@
                                 <li class="divider"></li>
                                 <li><a href="{% url 'parliament_persons' parliament_num %}">{% trans 'Parliamentarians and ministers' %}</a></li>
                                 <li><a href="{% url 'parliament_parties' parliament_num %}">{% trans 'Parliamentary Parties' %}</a></li>
+                                <li class="divider"></li>
+                                <li><a href="{% url 'parliaments' %}"><em>{% trans 'Earlier Parliaments' %}</em></a></li>
                             </ul>
                         </li>
                         {% if user.is_authenticated %}

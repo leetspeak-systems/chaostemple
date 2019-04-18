@@ -11,15 +11,7 @@ jQuery.fn.extend({
             },
             url: '/json/monitor/issue/menu/' + PARLIAMENT_NUM,
             done: function(data, textStatus) {
-                $menuitems = $menu.find('ul[class="dropdown-menu"]');
-                if (data.monitored_issue_count > 0) {
-                    $menu.show();
-                    $menuitems.html(data.html_content);
-                }
-                else {
-                    $menu.hide();
-                    $menuitems.html('');
-                }
+                $menuitems = $menu.find('ul[class="dropdown-menu"]').html(data.html_content);
             }
         });
     },

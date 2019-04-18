@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-29 15:02+0000\n"
+"POT-Creation-Date: 2019-04-18 13:27+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -135,11 +135,11 @@ msgstr "Skýrslu skilað"
 msgid "Concluded"
 msgstr "Lokið"
 
-#: althingi/models.py:385 core/models.py:249
+#: althingi/models.py:385 core/models.py:250
 msgid "rejected"
 msgstr "hafnað"
 
-#: althingi/models.py:386 core/models.py:250
+#: althingi/models.py:386 core/models.py:251
 msgid "accepted"
 msgstr "samþykkt"
 
@@ -235,11 +235,11 @@ msgstr "Þingfundir"
 msgid "parliamentary session"
 msgstr "þingfundur"
 
-#: core/breadcrumbs.py:183 core/models.py:297 templates/core/parliament.html:10
+#: core/breadcrumbs.py:183 core/models.py:298 templates/core/parliament.html:10
 msgid "Committees"
 msgstr "Nefndir"
 
-#: core/breadcrumbs.py:213 core/models.py:299 templates/base.html:141
+#: core/breadcrumbs.py:213 core/models.py:300 templates/base.html:141
 #: templates/core/parliament_categories.html:17
 #: templates/core/parliament_issue.html:180
 msgid "Categories"
@@ -261,15 +261,15 @@ msgstr "Þingmenn"
 msgid "b."
 msgstr "f."
 
-#: core/models.py:248
+#: core/models.py:249
 msgid "pending"
 msgstr ""
 
-#: core/models.py:296
+#: core/models.py:297
 msgid "Parties"
 msgstr "Flokkar"
 
-#: core/models.py:298
+#: core/models.py:299
 msgid "MPs"
 msgstr "Þingmenn"
 
@@ -992,11 +992,14 @@ msgid "Monitor"
 msgstr "Vöktun"
 
 #: templates/core/stub/issue_monitor_menuitems.html:4
-#: templates/core/user_issues_monitored.html:15
-msgid "Monitored Issues"
-msgstr "Vöktuð mál"
+msgid "All monitored issues"
+msgstr "Öll vöktuð mál"
 
-#: templates/core/stub/issue_monitor_menuitems.html:13
+#: templates/core/stub/issue_monitor_menuitems.html:6
+msgid "News from monitored issues"
+msgstr "Fréttir af vöktuðum málum"
+
+#: templates/core/stub/issue_monitor_menuitems.html:14
 msgid "No issues are currently being monitored"
 msgstr "Engin mál eru í vöktun"
 
@@ -1098,13 +1101,21 @@ msgstr "Upplýsingar um notanda"
 msgid "Settings"
 msgstr "Stillingar"
 
-#: templates/core/user_home.html:74
+#: templates/core/user_home.html:76
 msgid "Automatically monitor issues when worked on."
 msgstr "Setja mál sjálfkrafa í vöktun þegar unnið er í þeim."
 
-#: templates/core/user_home.html:81
+#: templates/core/user_home.html:82
+msgid "Hide concluded issues from monitoring menu."
+msgstr "Sleppa loknum málum úr vöktunarvalblaði."
+
+#: templates/core/user_home.html:90
 msgid "Subscriptions"
 msgstr "Áskriftir"
+
+#: templates/core/user_issues_monitored.html:15
+msgid "Monitored Issues"
+msgstr "Mál í vöktun"
 
 #: templates/registration/activation_complete.html:4
 msgid "Account Activated"
@@ -1304,6 +1315,9 @@ msgstr "Upplýsingar"
 #: templates/termsandconditions/tc_accept_terms.html:51
 msgid "Accept all"
 msgstr "Samþykkja alla"
+
+#~ msgid "News"
+#~ msgstr "Fréttir"
 
 #~ msgid "Mark as Unopened"
 #~ msgstr "Merkja sem óopnað"

@@ -3,13 +3,15 @@
 
 <li><a href="{% url 'user_issues_monitored' parliament_num %}"><strong>{% trans 'All monitored issues' %}</strong></a></li>
 <li class="divider"></li>
-<li class="dropdown-header">{% trans 'News from monitored issues' %}</li>
-{% for issue in monitored_issues reversed %}
-    <li>
-        <a href="{% url 'parliament_issue' issue.parliament.parliament_num issue.issue_num %}?from={% crumb_string 'user_issues_monitored' issue.parliament.parliament_num %}">
-            {% include 'core/stub/issue_menuentry.html' %}
-        </a>
-    </li>
-{% empty %}
-    <li class="dropdown-header">{% trans 'No issues are currently being monitored' %}</li>
-{% endfor %}
+{% if monitored_issues.count %}
+    <li class="dropdown-header">{% trans 'News from monitored issues' %}</li>
+    {% for issue in monitored_issues reversed %}
+        <li>
+            <a href="{% url 'parliament_issue' issue.parliament.parliament_num issue.issue_num %}?from={% crumb_string 'user_issues_monitored' issue.parliament.parliament_num %}">
+                {% include 'core/stub/issue_menuentry.html' %}
+            </a>
+        </li>
+    {% endfor %}
+{% else %}
+    <li class="dropdown-header">{% trans 'No news from monitored issues' %}</li>
+{% endif %}

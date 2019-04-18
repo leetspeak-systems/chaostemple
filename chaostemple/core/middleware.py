@@ -84,6 +84,10 @@ class ExtraVarsMiddleware():
                 'issue_num'
             )
 
+            # Hide concluded issues from monitoring menu.
+            if request.user.userprofile.setting_hide_concluded_from_monitors:
+                monitored_issues = monitored_issues.exclude(current_step='concluded')
+
             # Get incoming things that the user has not yet seen
             if settings.FEATURES['incoming_issues']:
                 incoming_issues = Issue.objects.select_related('parliament', 'to_committee').filter(

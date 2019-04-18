@@ -1,8 +1,9 @@
 {% load i18n %}
 {% load smart_urls %}
 
-<li><a href="{% url 'user_issues_monitored' parliament_num %}"><strong>{% trans 'Monitored Issues' %}</strong></a></li>
+<li><a href="{% url 'user_issues_monitored' parliament_num %}"><strong>{% trans 'All monitored issues' %}</strong></a></li>
 <li class="divider"></li>
+<li class="dropdown-header">{% trans 'News' %}</li>
 {% for issue in monitored_issues reversed %}
     <li>
         <a href="{% url 'parliament_issue' issue.parliament.parliament_num issue.issue_num %}?from={% crumb_string 'user_issues_monitored' issue.parliament.parliament_num %}">

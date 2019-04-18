@@ -295,6 +295,7 @@ def subscription_toggle(request, sub_type, sub_id):
 def setting_set(request, setting_name, setting_value):
     allowed_settings = [
         'auto_monitor',
+        'hide_concluded_from_monitors',
     ]
 
     if setting_name not in allowed_settings:

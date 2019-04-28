@@ -323,3 +323,9 @@
     * User's dossier statistics guaranteed to be first in a listing and the rest ordered alphabetically by initials.
     * User's dossier data guaranteed to be last in issue view and the rest reverse-ordered by initials.
     * Marking an issue as unopened updated to fit new functionality and changed from "unopened" to "new".
+
+1.5.1:
+    * Monitoring menubar always visible, even when no issues are being monitored.
+    * Monitored issues not shown in monitoring menu unless there is news.
+    * Concluded issues not shown in monitoring menu by default (user-configurable setting).
+    * Navigation of parliaments redesigned.

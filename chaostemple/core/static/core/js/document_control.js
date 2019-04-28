@@ -80,7 +80,7 @@ $(document).ready(function() {
                  * infer that the issue should be auto-monitored.
                  */
                 if (SETTING_AUTO_MONITOR && !HAS_USEFUL_INFO && !IS_MONITORED && !auto_monitor_popup_shown) {
-                    $('a[control="issue-monitor"]').click();
+                    $('[control="issue-monitor"]').click();
 
                     // Show notification.
                     var $notification = $('div[control="auto-monitor-notification');

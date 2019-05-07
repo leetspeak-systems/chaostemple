@@ -447,11 +447,11 @@ msgstr "Ef ekki, endilega láttu okkur vita af vandanum.."
 
 #: templates/base.html:55
 msgid "Back to"
-msgstr ""
+msgstr "Aftur í"
 
 #: templates/base.html:55
 msgid "current"
-msgstr ""
+msgstr "líðandi"
 
 #: templates/base.html:62
 msgid "Current and Upcoming"

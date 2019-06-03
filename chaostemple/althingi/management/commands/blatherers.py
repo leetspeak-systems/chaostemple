@@ -38,6 +38,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('-t', '--today', nargs='*', help='Show only today')
+        parser.add_argument('-s', '--skip-speaker', nargs='*', help='Skip speeches by speaker')
 
     def handle(self, *args, **options):
         try:
@@ -54,10 +55,21 @@ class Command(BaseCommand):
 
             parliament = Parliament.objects.get(parliament_num=parliament_num)
 
-            persons = Person.objects.filter(
-                #speeches__president=False,
-                speeches__session__parliament=parliament
-            ).annotate(
+            # Base conditions for person lookup.
+            # This must be constructed and then manipulated according to
+            # options because we have to issue a single filter.
+            q_conditions = {
+                'speeches__session__parliament': parliament,
+            }
+
+            # Process option for skipping speaker.
+            if options['skip_speaker'] is not None:
+                q_conditions['speeches__president'] = False
+
+            persons = Person.objects.filter(**q_conditions)
+
+            # Add annotations and get more data.
+            persons = persons.annotate(
                 seconds=Sum('speeches__seconds'),
                 count=Count('speeches')
             ).prefetch_latest_seats(parliament).prefetch_latest_minister_seats(parliament)

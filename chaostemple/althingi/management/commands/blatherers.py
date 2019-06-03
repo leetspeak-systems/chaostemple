@@ -41,6 +41,7 @@ class Command(BaseCommand):
         parser.add_argument('-t', '--today', nargs='*', help='Show only today')
         parser.add_argument('-i', '--issue', nargs='*', help='Only current issue (automatically skips speaker)')
         parser.add_argument('-s', '--skip-speaker', nargs='*', help='Skip speeches by speaker')
+        parser.add_argument('-c', '--sort-by-count', nargs='*', help='Sort by count')
 
     def handle(self, *args, **options):
         try:
@@ -120,7 +121,12 @@ class Command(BaseCommand):
 
                 rows.append([None, person, party, seconds, count])
 
-            rows = sorted(rows, key=operator.itemgetter(3))
+            # Sort rows by speech count if requested.
+            if options['sort_by_count'] is not None:
+                rows = sorted(rows, key=operator.itemgetter(4))
+            else:
+                rows = sorted(rows, key=operator.itemgetter(3))
+
             row_count = len(rows)
             for i, row in enumerate(rows):
                 row[0] = row_count - i # Set the seat
@@ -128,10 +134,15 @@ class Command(BaseCommand):
 
             print(tabulate(rows, headers=['Sæti', 'Nafn', 'Flokkur', 'Tími', 'Fjöldi']))
 
-            ordered = sorted(party_seconds.items(), key=operator.itemgetter(1))
             rows = []
-            for party, seconds in ordered:
+            for party, seconds in party_seconds.items():
                 rows.append([party, human_readable(seconds), party_counts[party]])
+
+            # Sort party rows by speech count if requested.
+            if options['sort_by_count'] is not None:
+                rows = sorted(rows, key=operator.itemgetter(2))
+            else:
+                rows = sorted(rows, key=operator.itemgetter(1))
 
             print(tabulate(rows, headers=['Flokkur', 'Tími', 'Fjöldi']))
 

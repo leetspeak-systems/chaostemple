@@ -3,6 +3,7 @@ import operator
 from althingi.althingi_settings import CURRENT_PARLIAMENT_NUM
 from althingi.models import Parliament
 from althingi.models import Person
+from althingi.models import Speech
 
 from datetime import timedelta
 
@@ -38,6 +39,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('-t', '--today', nargs='*', help='Show only today')
+        parser.add_argument('-i', '--issue', nargs='*', help='Only current issue (automatically skips speaker)')
         parser.add_argument('-s', '--skip-speaker', nargs='*', help='Skip speeches by speaker')
 
     def handle(self, *args, **options):
@@ -61,6 +63,14 @@ class Command(BaseCommand):
             q_conditions = {
                 'speeches__session__parliament': parliament,
             }
+
+            # Process option for limiting to current issue.
+            if options['issue'] is not None:
+                last_issue = Speech.objects.last().issue
+                q_conditions['speeches__issue'] = last_issue
+
+                # Option implies skipping speaker.
+                options['skip_speaker'] = True
 
             # Process option for skipping speaker.
             if options['skip_speaker'] is not None:

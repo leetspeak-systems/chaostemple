@@ -4,9 +4,12 @@ from althingi.althingi_settings import CURRENT_PARLIAMENT_NUM
 from althingi.models import Parliament
 from althingi.models import Person
 
+from datetime import timedelta
+
 from django.core.management.base import BaseCommand
 from django.db.models import Count
 from django.db.models import Sum
+from django.utils import timezone
 
 from tabulate import tabulate
 
@@ -33,13 +36,21 @@ class Command(BaseCommand):
             self.print_help()
         quit(2)
 
+    def add_arguments(self, parser):
+        parser.add_argument('-t', '--today', nargs='*', help='Show only today')
+
     def handle(self, *args, **options):
         try:
 
             parliament_num = CURRENT_PARLIAMENT_NUM
 
-            date_from = None
-            date_to = None
+            if options['today'] is not None:
+                today = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
+                date_from = today
+                date_to = today + timedelta(days=1)
+            else:
+                date_from = None
+                date_to = None
 
             parliament = Parliament.objects.get(parliament_num=parliament_num)
 

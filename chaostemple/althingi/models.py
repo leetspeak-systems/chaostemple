@@ -1501,7 +1501,7 @@ class Speech(models.Model):
     sound_remote_path = models.CharField(max_length=500, null=True)
 
     def __str__(self):
-        return '%s @ %s' % (self.person, self.timing_start)
+        return '%s @ %s' % (self.person, self.timing_start.strftime('%Y-%m-%d %H:%M:%S'))
 
     class Meta:
         ordering = ['timing_start']

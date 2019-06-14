@@ -329,3 +329,7 @@
     * Monitored issues not shown in monitoring menu unless there is news.
     * Concluded issues not shown in monitoring menu by default (user-configurable setting).
     * Navigation of parliaments redesigned.
+
+1.5.2:
+    * Utility script updates.
+    * Upgraded to Django 2.2.

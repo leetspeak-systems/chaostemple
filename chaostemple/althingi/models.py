@@ -398,6 +398,7 @@ class Issue(models.Model):
     name = models.CharField(max_length=500)
     description = models.TextField()
     categories = models.ManyToManyField('Category', related_name='issues')
+    from_government = models.BooleanField(default=False)
 
     time_published = models.DateTimeField(null=True)
     review_deadline = models.DateTimeField(null=True)

@@ -9,6 +9,10 @@
 
             <div>
             <span style="float: right;">
+                {% if issue.from_government %}
+                    <span class="glyphicon glyphicon-tower" data-toggle="tooltip" title="{% trans 'Government issue' %}"></span>
+                {% endif %}
+                &nbsp;
                 {% if user.is_authenticated %}
                     {% include 'core/stub/small/issue_monitor.html' %}
                 {% endif %}

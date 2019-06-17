@@ -1302,6 +1302,23 @@ def update_issue(issue_num, parliament_num=None):
 
                 proposer_ids.append(proposer.id)
 
+                # Determine if this is a government issue by examining the
+                # first proposer of the main document.
+                if doc.is_main and order == 1:
+                    from_government = MinisterSeat.objects.filter(
+                        Q(timing_out__gte=doc.time_published) | Q(timing_out=None),
+                        timing_in__lte=doc.time_published,
+                        person_id=person.id,
+                    ).count() > 0
+
+                    if issue.from_government != from_government:
+                        issue.from_government = from_government
+                        issue.save()
+
+                        print('Updated issue origin: %s' % (
+                            'government' if issue.from_government else 'non-government'
+                        ))
+
         # Delete proposers that no longer exist online.
         for proposer in Proposer.objects.filter(document=doc).exclude(id__in=proposer_ids):
             proposer.delete()

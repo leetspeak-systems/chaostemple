@@ -185,7 +185,8 @@ $(document).ready(function() {
     $(document).on('keydown', 'textarea[control="edit-memo-content"]', function(e) {
         keycode = e.keyCode || e.which; // Cross-browser key detection (still ugly as hell)
 
-        if (keycode == 13) { // Enter key
+        // Check for enter key. Ignore if shift is held down.
+        if (keycode == 13 && !e.shiftKey) {
             var $this = $(this);
             var memo_id = $this.data('id');
             var dossier_id = $this.data('dossier-id');

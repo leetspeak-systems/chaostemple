@@ -333,3 +333,8 @@
 1.5.2:
     * Utility script updates.
     * Upgraded to Django 2.2.
+
+1.5.3
+    * Shift-enter makes a new line instead of automatically saving in memos.
+    * Government issues marked as such.
+    * Entire issue list downloadable as CSV.

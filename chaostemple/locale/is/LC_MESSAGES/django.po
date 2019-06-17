@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-17 14:39+0000\n"
+"POT-Creation-Date: 2019-06-17 23:11+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -262,6 +262,80 @@ msgstr "Þingmenn"
 msgid "b."
 msgstr "f."
 
+#: core/json_views.py:429
+msgid "Nr"
+msgstr ""
+
+#: core/json_views.py:430 customsignup/forms.py:17
+#: templates/core/user_home.html:54
+msgid "Name"
+msgstr "Nafn"
+
+#: core/json_views.py:431
+msgid "Issue type"
+msgstr "Málstegund"
+
+#: core/json_views.py:432 templates/core/parliament_issue.html:66
+#: templates/core/stub/issue.html:59
+msgid "Status"
+msgstr "Staða"
+
+#: core/json_views.py:433 templates/core/parliament_issue.html:173
+msgid "Fate"
+msgstr "Afgreiðsla"
+
+#: core/json_views.py:434 core/json_views.py:435
+msgid "Proposer"
+msgstr "Flutningsmaður"
+
+#: core/json_views.py:434
+msgid "person"
+msgstr "persóna"
+
+#: core/json_views.py:435
+msgid "committee"
+msgstr "nefnd"
+
+#: core/json_views.py:436 templates/core/parliament_documents_new.html:15
+msgid "Published"
+msgstr "Útbýtt"
+
+#: core/json_views.py:437 templates/core/stub/issue.html:25
+#: templates/core/stub/small/issue.html:13
+msgid "Government issue"
+msgstr "Stjórnarmál"
+
+#: core/json_views.py:438 templates/core/person.html:88
+msgid "Minister"
+msgstr "Ráðherra"
+
+#: core/json_views.py:440 templates/core/person.html:87
+#: templates/core/person.html:112
+msgid "Party"
+msgstr "Flokkur"
+
+#: core/json_views.py:441 templates/core/parliament_committees.html:16
+#: templates/core/parliament_issue.html:59 templates/core/person.html:135
+#: templates/core/stub/issue.html:52
+msgid "Committee"
+msgstr "Nefnd"
+
+#: core/json_views.py:442
+msgid "Rapporteur"
+msgstr "Framsögumaður"
+
+#: core/json_views.py:443
+msgid "Committee meetings"
+msgstr "Nefndarfundir"
+
+#: core/json_views.py:461 templates/base.html:203
+msgid "Yes"
+msgstr "Já"
+
+#: core/json_views.py:461 templates/base.html:204
+msgid "No"
+msgstr "Nei"
+
 #: core/models.py:249
 msgid "pending"
 msgstr ""
@@ -273,10 +347,6 @@ msgstr "Flokkar"
 #: core/models.py:299
 msgid "MPs"
 msgstr "Þingmenn"
-
-#: customsignup/forms.py:17 templates/core/user_home.html:54
-msgid "Name"
-msgstr "Nafn"
 
 #: customsignup/forms.py:18 templates/core/user_home.html:66
 msgid "Initials"
@@ -505,14 +575,6 @@ msgstr "Nýskrá"
 msgid "Login"
 msgstr "Innskrá"
 
-#: templates/base.html:203
-msgid "Yes"
-msgstr "Já"
-
-#: templates/base.html:204
-msgid "No"
-msgstr "Nei"
-
 #: templates/base.html:211
 msgid "No results found"
 msgstr "Engar niðurstöður fundust"
@@ -674,23 +736,9 @@ msgstr "Áheyrnarfulltrúar"
 msgid "Issues in committee"
 msgstr "Mál í nefnd"
 
-#: templates/core/parliament_committees.html:16
-#: templates/core/parliament_issue.html:59 templates/core/person.html:135
-#: templates/core/stub/issue.html:52
-msgid "Committee"
-msgstr "Nefnd"
-
-#: templates/core/parliament_documents_new.html:15
-msgid "Published"
-msgstr "Útbýtt"
-
 #: templates/core/parliament_documents_new.html:16
 msgid "Parliamentary Document"
 msgstr "Þingskjal"
-
-#: templates/core/parliament_issue.html:66 templates/core/stub/issue.html:59
-msgid "Status"
-msgstr "Staða"
 
 #: templates/core/parliament_issue.html:112
 msgid "Previously published"
@@ -728,10 +776,6 @@ msgstr "Aðrar upplýsingar"
 msgid "Review Description"
 msgstr "Umsagnir (helstu atriði)"
 
-#: templates/core/parliament_issue.html:173
-msgid "Fate"
-msgstr "Afgreiðsla"
-
 #: templates/core/parliament_issue.html:176
 msgid "Media Coverage"
 msgstr "Fjölmiðlaumfjöllun"
@@ -741,6 +785,10 @@ msgid "Name, number, description, type or first proposer of issue"
 msgstr "Nafn, númer, lýsing, tegund eða fyrsti flutningsmaður máls"
 
 #: templates/core/parliament_issues.html:25
+msgid "Download CSV"
+msgstr "Niðurhala CSV"
+
+#: templates/core/parliament_issues.html:26
 msgid "Issue types"
 msgstr "Málstegundir"
 
@@ -886,14 +934,6 @@ msgstr "Ráðherrasetur"
 msgid "Time period"
 msgstr "Tímabil"
 
-#: templates/core/person.html:87 templates/core/person.html:112
-msgid "Party"
-msgstr "Flokkur"
-
-#: templates/core/person.html:88
-msgid "Minister"
-msgstr "Ráðherra"
-
 #: templates/core/person.html:108
 msgid "Seats"
 msgstr "Þingseta"
@@ -965,10 +1005,6 @@ msgstr "Samþykkja"
 #: templates/core/stub/incoming_membership_requests.html:28
 msgid "Reject"
 msgstr "Hafna"
-
-#: templates/core/stub/issue.html:25 templates/core/stub/small/issue.html:13
-msgid "Government issue"
-msgstr "Stjórnarmál"
 
 #: templates/core/stub/issue.html:82 templates/core/stub/small/issue.html:57
 msgid "and others"

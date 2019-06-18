@@ -461,9 +461,8 @@ def parliament_committee(request, parliament_num, committee_id):
         timing = timezone.now()
 
     persons = Person.objects.filter(
-        Q(committee_seats__timing_out__gte=timing) | Q(committee_seats__timing_out=None),
-        committee_seats__timing_in__lte=timing,
-        committee_seats__committee_id=committee.id
+        committee_seats__committee_id=committee.id,
+        committee_seats__parliament__parliament_num=parliament_num
     ).prefetch_latest_committee_seats(
         committee,
         parliament

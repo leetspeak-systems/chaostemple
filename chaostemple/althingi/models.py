@@ -78,7 +78,7 @@ class PersonQuerySet(models.QuerySet):
 
         p = Prefetch('seats', queryset=p_queryset, to_attr='last_seat')
 
-        return self.prefetch_related(p)
+        return self.prefetch_related(p).distinct()
 
     def prefetch_latest_president_seats(self, parliament=None, *args):
         if parliament is None:
@@ -102,7 +102,7 @@ class PersonQuerySet(models.QuerySet):
 
         p = Prefetch('president_seats', queryset=p_queryset, to_attr='last_president_seat')
 
-        return self.prefetch_related(p)
+        return self.prefetch_related(p).distinct()
 
     def prefetch_latest_minister_seats(self, parliament=None, *args):
         if parliament is None:
@@ -126,7 +126,7 @@ class PersonQuerySet(models.QuerySet):
 
         p = Prefetch('minister_seats', queryset=p_queryset, to_attr='last_minister_seats')
 
-        return self.prefetch_related(p)
+        return self.prefetch_related(p).distinct()
 
     def prefetch_latest_committee_seats(self, committee, parliament=None, *args):
         if parliament is None:
@@ -150,7 +150,7 @@ class PersonQuerySet(models.QuerySet):
 
         p = Prefetch('seats', queryset=p_queryset, to_attr='last_committee_seat')
 
-        return self.prefetch_related(p)
+        return self.prefetch_related(p).distinct()
 
 
 class PresidentSeatQuerySet(models.QuerySet):

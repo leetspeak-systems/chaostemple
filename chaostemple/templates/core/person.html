@@ -95,7 +95,9 @@
                             - {% if minister_seat.timing_out %}{{ minister_seat.timing_out|date:'SHORT_DATE_FORMAT' }}{% else %}...{% endif %}
                         </td>
                         <td>
+                            {% if minister_seat.party %}
                             <a href="{% breadcrumb_url 'parliament_persons' parliament_num minister_seat.party.slug %}">{{ minister_seat.party.name }}</a>
+                            {% endif %}
                         </td>
                         <td>{{ minister_seat.minister|capfirst }}</td>
                     </tr>

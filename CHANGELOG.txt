@@ -338,3 +338,8 @@
     * Shift-enter makes a new line instead of automatically saving in memos.
     * Government issues marked as such.
     * Entire issue list downloadable as CSV.
+
+1.5.4:
+    * UI fix: Government-issue label was missing in issue view (but present in listings).
+    * Crash bugfixes.
+    * Slightly more tolerance toward incomplete seating data.

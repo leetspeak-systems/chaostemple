@@ -63,9 +63,9 @@ class PersonQuerySet(models.QuerySet):
         if parliament.timing_end is None:
             q_timing = Q(timing_out=None) | Q(timing_out__gte=parliament.timing_start, seat_type='varamaður')
         else:
-            # NOTE: One day given as wiggle-room due to imperfect data.
+            # NOTE: Two days given as wiggle-room due to imperfect data.
             q_timing = Q(
-                timing_out__lte=parliament.timing_end + timezone.timedelta(days=1),
+                timing_out__lte=parliament.timing_end + timezone.timedelta(days=2),
                 timing_out__gte=parliament.timing_start
             )
 

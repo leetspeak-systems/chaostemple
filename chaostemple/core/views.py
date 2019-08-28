@@ -1,6 +1,8 @@
 import operator
 from functools import reduce
 
+from datetime import timedelta
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.contrib.auth.models import User
@@ -667,6 +669,71 @@ def parliament_persons(request, parliament_num, party_slug=None):
         'party': party,
     }
     return render(request, 'core/parliament_persons.html', ctx)
+
+
+def parliament_stats(request, parliament_num):
+
+    inquiries = Issue.objects.prefetch_related('documents').filter(
+        parliament__parliament_num=parliament_num,
+        issue_type='q'
+    )
+    answered_inquiries = inquiries.prefetch_related('documents').filter(current_step='answered')
+
+    inquiry_count = inquiries.count()
+    inquiry_count_answered = answered_inquiries.count()
+    inquiry_ratio_answered = round(float(inquiry_count_answered) / float(inquiry_count) * 100, 2)
+
+    # We'll need to iterate through the inquiries to create some data.
+    total_seconds = 0
+    max_time = None
+    max_issue = None
+    min_time = None
+    min_issue = None
+    for issue_q in answered_inquiries:
+        # Done weirdly to save database hits. If this doesn't work, then
+        # something is wrong with the data.
+        for doc in issue_q.documents.all():
+            if doc.is_main:
+                doc_inquiry = doc
+            elif doc.doc_type == 'svar':
+                doc_answer = doc
+
+        timing_inquiry = doc_inquiry.time_published
+        timing_answer = doc_answer.time_published
+
+        # Find out how long it took to respond to the inquiry.
+        time_taken = timing_answer - timing_inquiry
+
+        # Collect the total number of seconds that have passed between an
+        # inquiry being put forth and a response being delivered, so that we
+        # can calculate the average response time.
+        total_seconds += time_taken.total_seconds()
+
+        # Catch the maximum time taken to respond.
+        if max_time is None or max_time < time_taken:
+            max_time = time_taken
+            max_issue = issue_q
+
+        # Catch the minimum time taken to respond.
+        if min_time is None or min_time > time_taken:
+            min_time = time_taken
+            min_issue = issue_q
+
+    # Actually calculate average.
+    seconds = float(total_seconds) / float(len(answered_inquiries))
+    inquiry_time_avg = timedelta(seconds=seconds)
+
+    ctx = {
+        'inquiry_count': inquiry_count,
+        'inquiry_count_answered': inquiry_count_answered,
+        'inquiry_ratio_answered': inquiry_ratio_answered,
+        'inquiry_time_avg': inquiry_time_avg,
+        'max_time': max_time,
+        'max_issue': max_issue,
+        'min_time': min_time,
+        'min_issue': min_issue,
+    }
+    return render(request, 'core/parliament_stats.html', ctx)
 
 
 def parliament_missing_data(request):

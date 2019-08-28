@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load smart_urls %}
+{% load issue %}
+
+{% block content %}
+
+    <h2>{% trans 'Statistics' %}</h2>
+
+    <div class="row">
+
+        <div class="col-md-12">
+
+            <h3>{% trans 'Inquiries with written responses' %}</h3>
+
+            <table class="table">
+                <tr>
+                    <th>{% trans 'Inquiries' %}</th>
+                    <td>{{ inquiry_count }}</td>
+                </tr>
+                <tr>
+                    <th>{% trans 'Answered inquiries' %}</th>
+                    <td>{{ inquiry_count_answered }}</td>
+                </tr>
+                <tr>
+                    <th>{% trans 'Response ratio' %}</th>
+                    <td>{{ inquiry_ratio_answered }}%</td>
+                </tr>
+                <tr>
+                    <th>{% trans 'Average waiting time' %}</th>
+                    <td>{{ inquiry_time_avg.days }} {% trans 'days' %}</td>
+                </tr>
+                <tr>
+                    <th>{% trans 'Highest waiting time' %}</th>
+                    <td>{{ max_time.days }} {% trans 'days' %}</td>
+                    <td>{% include 'core/stub/micro/issue.html' with issue=max_issue %}</td>
+                </tr>
+                <tr>
+                    <th>{% trans 'Lowest waiting time' %}</th>
+                    <td>{{ min_time.days }} {% trans 'days' %}</td>
+                    <td>{% include 'core/stub/micro/issue.html' with issue=min_issue %}</td>
+                </tr>
+            </table>
+
+        </div>
+
+    </div>
+
+{% endblock %}

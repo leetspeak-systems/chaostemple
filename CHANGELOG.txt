@@ -343,3 +343,6 @@
     * UI fix: Government-issue label was missing in issue view (but present in listings).
     * Crash bugfixes.
     * Slightly more tolerance toward incomplete seating data.
+
+1.5.5:
+    * Current parliament number increased from 149 to 150.

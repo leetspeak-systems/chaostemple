@@ -116,3 +116,31 @@ def sensible_datetime(value):
     else:
         return pytz.timezone('UTC').localize(d)
 
+
+# Monkey-patch iCalendar output text to make up for `ics`s lack of support for
+# a few fields.
+def monkey_patch_ical(ical_text, name, description=None, time_zone=None):
+    extra = [
+        'NAME:%s' % name,
+        'X-WR-CALNAME:%s' % name,
+    ]
+
+    if description is not None:
+        extra += [
+            'DESCRIPTION:%s' % description,
+            'X-WR-CALDESC:%s' % description,
+        ]
+
+    if time_zone is not None:
+        extra += [
+            'TIMEZONE-ID:%s' % time_zone,
+            'X-WR-TIMEZONE:%s' % time_zone,
+        ]
+
+    newlines = []
+    for line in ical_text.split('\r\n'):
+        newlines.append(line)
+        if line[0:7] == 'PRODID:':
+            newlines += extra
+
+    return '\r\n'.join(newlines)

@@ -6,3 +6,4 @@ dateutils
 markdown2
 lxml
 django-termsandconditions
+ics

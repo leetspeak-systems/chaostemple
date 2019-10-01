@@ -349,3 +349,6 @@
 
 1.5.6:
     * iCal exports of committee meeting agendas. So far, not accessible from UI but only if you know the URL.
+
+1.5.7:
+    * Althingi module: Under-the-hood performance improvements when fetching data, reflecting updated options.

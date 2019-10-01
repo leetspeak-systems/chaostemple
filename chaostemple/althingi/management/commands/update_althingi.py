@@ -64,7 +64,7 @@ class Command(BaseCommand):
         print('Options:')
         print('  parliament=<parliament_num>       Specify parliament number (defaults to current)')
         print('                                    Must be integer or range of integers, for example 130-140')
-        print('  since=<datetime>                  Skip things from before given datetime when processing supported commands')
+        print('  days=<day-count>                  Only get info from the last given days in supported commands')
         print('                                    Supported commands: vote_castings, speeches')
         print()
 
@@ -122,22 +122,24 @@ class Command(BaseCommand):
             else:
                 iterator = range(parliament_from, parliament_to + 1)
 
-
-            # Handle the "since" option.
-            if 'since' in processed_args:
-                since = sensible_datetime(processed_args['since'])
+            # Handle the "days" option.
+            if 'days' in processed_args:
+                try:
+                    days = int(processed_args['days'])
+                except TypeError:
+                    self.error('Option "days" must be an integer')
             else:
-                since = None
+                days = None
 
             # Update data according to options.
             for parliament_num in iterator:
-                self.update_data(parliament_num, since, processed_args)
+                self.update_data(parliament_num, days, processed_args)
 
 
         except KeyboardInterrupt:
             quit(1)
 
-    def update_data(self, parliament_num, since, args):
+    def update_data(self, parliament_num, days, args):
 
         print('Processing parliament %d with args: %s' % (parliament_num, args))
 
@@ -225,11 +227,11 @@ class Command(BaseCommand):
 
             if 'vote_castings' in args:
                 has_run = True
-                update_vote_castings(parliament_num, since)
+                update_vote_castings(parliament_num, days)
 
             if 'speeches' in args:
                 has_run = True
-                update_speeches(parliament_num, since)
+                update_speeches(parliament_num, days)
 
             if 'upcoming' in args:
                 has_run = True

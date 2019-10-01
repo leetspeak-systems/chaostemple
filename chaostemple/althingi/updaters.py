@@ -1,6 +1,8 @@
 from collections import OrderedDict
 from datetime import datetime
+from datetime import timedelta
 from django.db.models import Q
+from django.utils import timezone
 from sys import stderr
 from sys import stdout
 from xml.parsers.expat import ExpatError
@@ -379,10 +381,9 @@ def update_seats(person_xml_id, parliament_num=None):
     return seats
 
 
-def update_vote_castings(parliament_num=None, since=None):
+def update_vote_castings(parliament_num=None, days=None):
 
     parliament = update_parliament(parliament_num)
-    since = sensible_datetime(since)
 
     # Needed for some vote castings that cannot update individual ministers.
     update_ministers(parliament.parliament_num)
@@ -410,18 +411,15 @@ def update_vote_castings(parliament_num=None, since=None):
     }
 
     vote_casting_ids = []
-    for xml in get_xml('VOTE_CASTINGS_URL', parliament.parliament_num).findall('atkvæðagreiðsla'):
-
-        # We get the timing first to see if we we to process this any further.
-        timing = sensible_datetime(xml.find('tími').text)
-        if since and timing < since:
-            continue
+    for xml in get_xml('VOTE_CASTINGS_URL', parliament.parliament_num, days=days).findall('atkvæðagreiðsla'):
 
         vote_casting_xml_id = int(xml.attrib['atkvæðagreiðslunúmer'])
 
         issue_num = int(xml.attrib['málsnúmer'])
 
         issue_group = xml.attrib['málsflokkur']
+
+        timing = sensible_datetime(xml.find('tími').text)
 
         if issue_group == 'A':
             try:
@@ -684,8 +682,17 @@ def update_vote_castings(parliament_num=None, since=None):
     ).exclude(
         id__in=vote_casting_ids
     )
-    if since:
+    if days is not None:
+        # If we're limiting by day count, we'll only want to mark vote
+        # castings within that range as deletable.
+
+        now = timezone.now()
+        today = timezone.datetime(now.year, now.month, now.day)
+
+        since = sensible_datetime(today - timedelta(days=days))
+
         deletable_vote_castings = deletable_vote_castings.filter(timing__gte=since)
+
     for deletable_vote_casting in deletable_vote_castings:
         deletable_vote_casting.delete()
         print('Deleted non-existent vote casting: %s' % deletable_vote_casting)
@@ -2158,15 +2165,14 @@ def _process_session_agenda_xml(session_xml):
     return session
 
 
-def update_speeches(parliament_num=None, since=None):
+def update_speeches(parliament_num=None, days=None):
 
     parliament = update_parliament(parliament_num)
-    since = sensible_datetime(since)
 
     if parliament.parliament_num in already_haves['speeches']:
         return already_haves['speeches'][parliament.parliament_num]
 
-    xml = get_xml('SPEECHES_URL', parliament.parliament_num)
+    xml = get_xml('SPEECHES_URL', parliament.parliament_num, days=days)
 
     pref_persons = dict((p.person_xml_id, p) for p in Person.objects.all())
     pref_sessions = dict((s.session_num, s) for s in Session.objects.filter(parliament_id=parliament.id))
@@ -2180,10 +2186,7 @@ def update_speeches(parliament_num=None, since=None):
     speech_orders = {}
     for speech_xml in xml.findall('ræða'):
 
-        # Timing found first to check if we need to process any further.
         timing_start = sensible_datetime(speech_xml.find('ræðahófst').text)
-        if since and timing_start < since:
-            continue
 
         timing_end = sensible_datetime(speech_xml.find('ræðulauk').text)
 
@@ -2372,8 +2375,17 @@ def update_speeches(parliament_num=None, since=None):
     ).exclude(
         timing_start__in=[s.timing_start for s in speeches],
     )
-    if since:
+    if days is not None:
+        # If we're limiting by day count, we'll only want to mark speeches
+        # within that range as deletable.
+
+        now = timezone.now()
+        today = timezone.datetime(now.year, now.month, now.day)
+
+        since = sensible_datetime(today - timedelta(days=days))
+
         deletable_speeches = deletable_speeches.filter(timing_start__gte=since)
+
     for deletable_speech in deletable_speeches:
         deletable_speech.delete()
         print('Deleted non-existent speech: %s' % deletable_speech)

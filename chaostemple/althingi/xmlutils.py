@@ -38,11 +38,14 @@ xml_urls = {
 
 
 # Construct cached XML filename.
-def xml_cache_filename(xml_url_name, *args):
+def xml_cache_filename(xml_url_name, *args, **kwargs):
     filename = xml_url_name
 
     for arg in args:
         filename += '.%d' % arg
+
+    if 'days' in kwargs and kwargs['days'] is not None:
+        filename += '.days_%d' % kwargs['days']
 
     filename = os.path.join(althingi_settings.XML_CACHE_DIR, '%s.xml' % filename)
 
@@ -50,9 +53,9 @@ def xml_cache_filename(xml_url_name, *args):
 
 
 # Retrieve XML and cache it
-def get_xml(xml_url_name, *args):
+def get_xml(xml_url_name, *args, **kwargs):
 
-    cache_filename = xml_cache_filename(xml_url_name, *args)
+    cache_filename = xml_cache_filename(xml_url_name, *args, **kwargs)
 
     if not os.path.isdir(althingi_settings.XML_CACHE_DIR):
         os.makedirs(althingi_settings.XML_CACHE_DIR)
@@ -63,7 +66,13 @@ def get_xml(xml_url_name, *args):
             f.close()
 
     else:
-        response = get_response(xml_urls[xml_url_name] % args)
+        url = xml_urls[xml_url_name] % args
+
+        if 'days' in kwargs and kwargs['days'] is not None:
+            url += '&' if '?' in url else '?'
+            url += 'dagar=%d' % kwargs['days']
+
+        response = get_response(url)
         xml_content = response.read()
 
         # Write the XML contents to cache file.

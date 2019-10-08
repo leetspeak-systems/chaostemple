@@ -1473,14 +1473,18 @@ def update_issue(issue_num, parliament_num=None):
             review.save()
 
             admin_emails = [admin_email for admin_name, admin_email in settings.ADMINS]
-            send_mail(
-                '%s%s' % (settings.EMAIL_SUBJECT_PREFIX, 'Failed deleting non-existent review'),
-                msg,
-                settings.SERVER_EMAIL,
-                admin_emails
-            )
+            try:
+                send_mail(
+                    '%s%s' % (settings.EMAIL_SUBJECT_PREFIX, 'Failed deleting non-existent review'),
+                    msg,
+                    settings.SERVER_EMAIL,
+                    admin_emails
+                )
+                admins_notified_txt = 'admins notified'
+            except ConnectionRefusedError:
+                admins_notified_txt = 'admins NOT notified'
 
-            print('Failed deleting non-existent review (admins notified): %s' % review)
+            print('Failed deleting non-existent review (%s): %s' % (admins_notified_txt, review))
 
     already_haves['issues'][ah_key] = issue
 

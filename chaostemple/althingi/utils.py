@@ -8,6 +8,38 @@ from datetime import datetime
 
 from althingi import althingi_settings
 
+# We simply **cannot** be bothered to figure out the fancy locale-based way of
+# doing this. These months will always be Icelandic and in no other language,
+# and we don't care about the OS's or runtime environment's opinion on that.
+ICELANDIC_MONTHS = {
+    1: 'janúar',
+    2: 'febrúar',
+    3: 'mars',
+    4: 'apríl',
+    5: 'maí',
+    6: 'júní',
+    7: 'júlí',
+    8: 'ágúst',
+    9: 'september',
+    10: 'október',
+    11: 'nóvember',
+    12: 'desember',
+}
+
+
+# To determine whether the time is 'árdegis', 'á hádegi', 'miðdegis' or
+# 'síðdegis' according to Althingi's customs.
+def icelandic_am_pm(dt):
+    if dt.hour >= 0 and dt.hour < 12:
+        return 'árdegis'
+    elif dt.hour == 12 and dt.minute == 0:
+        return 'á hádegi'
+    elif ((dt.hour == 12 and dt.minute > 0) or dt.hour > 12) and dt.hour < 15:
+        return 'miðdegis'
+    elif dt.hour >= 15:
+        return 'síðdegis'
+
+
 def mkpath(path):
     try:
         os.makedirs(path)

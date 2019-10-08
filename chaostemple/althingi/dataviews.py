@@ -2,6 +2,8 @@ from althingi.althingi_settings import CURRENT_PARLIAMENT_NUM
 from althingi.models import Committee
 from althingi.models import CommitteeAgenda
 from althingi.templatetags.external_urls import external_issue_url
+from althingi.utils import icelandic_am_pm
+from althingi.utils import ICELANDIC_MONTHS
 from althingi.utils import monkey_patch_ical
 
 from django.http import HttpResponse
@@ -75,6 +77,42 @@ def ical(request):
         event.begin = agenda.timing_start_planned
         event.end = agenda.timing_end
         event.url = 'https://www.althingi.is/thingnefndir/dagskra-nefndarfunda/?nfaerslunr=%d' % agenda_id
+
+        # Committee agendas are never planned at midnight (or damn well
+        # hopefully not). So when a committee agenda is planned without a time
+        # factor, or in other words, is timed at midnight, we'll assume that
+        # the timing is actually not precisely determined and turn it into an
+        # all-day event instead, using the timing text (determined below) to
+        # elaborate instead.
+        if event.begin.hour == 0 and event.begin.minute == 0 and event.begin.second == 0:
+            event.make_all_day()
+
+        if agenda.timing_text:
+            # If agenda.timing_text is just a representation of what is
+            # already known from the planned starting time, we'll want to
+            # nullify it so that we don't clutter the name with it
+            # unnecessarily. To do this, we have to re-construct the text that
+            # is typically provided and compare it against agenda.timing_text.
+            # If they match, we won't include it. If they don't match, then
+            # what's provided in agenda.timing_text is presumably more
+            # meaningful than simply a (badly) reformatted version of
+            # agenda.timing_start_planned.
+
+            timing = agenda.timing_start_planned
+
+            day = timing.day
+            month_name = ICELANDIC_MONTHS[timing.month]
+            year = str(timing.year)[2:]
+            time = timing.strftime('%-I:%M')
+            am_pm = icelandic_am_pm(timing)
+
+            # Known inconsistencies are whether there is a space in the
+            # beginning, and whether there is one space or two between "kl."
+            # and the time-of-day. We strip and replace to compensate.
+            timing_text_test = '%d. %s %s, kl. %s %s' % (day, month_name, year, time, am_pm)
+            if agenda.timing_text.strip().replace('  ', ' ') != timing_text_test:
+                event.name += ' (%s)' % agenda.timing_text.strip()
+
         cal.events.add(event)
 
     ical_text = monkey_patch_ical(

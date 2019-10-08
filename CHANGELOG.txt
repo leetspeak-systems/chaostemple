@@ -352,3 +352,6 @@
 
 1.5.7:
     * Althingi module: Under-the-hood performance improvements when fetching data, reflecting updated options.
+
+1.5.8:
+    * Althingi module: Reviews marked as pending_deletion and admins notified instead of halting all processing.

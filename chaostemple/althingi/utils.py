@@ -119,7 +119,7 @@ def sensible_datetime(value):
 
 # Monkey-patch iCalendar output text to make up for `ics`s lack of support for
 # a few fields.
-def monkey_patch_ical(ical_text, name, description=None, time_zone=None):
+def monkey_patch_ical(ical_text, name, description=None, time_zone=None, duration=None):
     extra = [
         'NAME:%s' % name,
         'X-WR-CALNAME:%s' % name,
@@ -135,6 +135,12 @@ def monkey_patch_ical(ical_text, name, description=None, time_zone=None):
         extra += [
             'TIMEZONE-ID:%s' % time_zone,
             'X-WR-TIMEZONE:%s' % time_zone,
+        ]
+
+    if duration is not None:
+        extra += [
+            'REFRESH-INTERVAL;VALUE=DURATION:%s' % duration,
+            'X-PUBLISHED-TTL:%s' % duration,
         ]
 
     newlines = []

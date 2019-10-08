@@ -81,7 +81,8 @@ def ical(request):
         cal.__str__(),
         'Fastanefndir Alþingis',
         'Dagatal sem inniheldur boðaða fundi fastanefnda Alþingis ásamt dagskrá í lýsingu.',
-        'Reykjavik/Iceland'
+        'Reykjavik/Iceland',
+        'PT10M'
     )
 
     if request.GET.get('plaintext', False):

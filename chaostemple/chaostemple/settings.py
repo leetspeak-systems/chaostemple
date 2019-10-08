@@ -116,6 +116,9 @@ LOGIN_REDIRECT_URL = '/'
 # Settings for Terms and Conditions
 TERMS_EXCLUDE_URL_PREFIX_LIST = ('/admin/', '/accounts/')
 
+# Default email settings
+EMAIL_SUBJECT_PREFIX = '[django-althingi] '
+
 from chaostemple.local_settings import *
 if DEBUG:
     import imp

@@ -1,6 +1,8 @@
 from collections import OrderedDict
 from datetime import datetime
 from datetime import timedelta
+from django.conf import settings
+from django.core.mail import send_mail
 from django.db.models import Q
 from django.utils import timezone
 from sys import stderr
@@ -38,6 +40,7 @@ from althingi.models import Vote
 from althingi.models import VoteCasting
 
 from althingi.exceptions import AlthingiException
+from althingi.exceptions import DataIntegrityException
 
 from althingi.utils import get_last_parliament_num
 from althingi.utils import maybe_download_document
@@ -1449,8 +1452,35 @@ def update_issue(issue_num, parliament_num=None):
 
     # Delete local reviews that no longer exist online.
     for review in Review.objects.filter(issue_id=issue.id).exclude(log_num__in=log_nums):
-        review.delete()
-        print('Deleted non-existent review: %s' % review)
+        try:
+            review.delete()
+            print('Deleted non-existent review: %s' % review)
+        except DataIntegrityException as ex:
+            msg = ex.args[0]
+
+            # When a DataIntegrityException is thrown by the underlying
+            # deletion mechanism, it means that a user has put in some kind of
+            # information in a dossier and tied it to a review that no longer
+            # exists. These cases must be handled manually. Instead of
+            # deleting the review (and associated, possibly useful dossiers)
+            # or halting the processing, we'll mark the review as
+            # pending_deletion and notify administrators so that they can deal
+            # with it as soon as possible. While the review still exists,
+            # certain statistics may continue to be wrong. This is not fixed
+            # because the expectation is that pending_deletion reviews should
+            # be manually fixed ASAP.
+            review.pending_deletion = True
+            review.save()
+
+            admin_emails = [admin_email for admin_name, admin_email in settings.ADMINS]
+            send_mail(
+                '%s%s' % (settings.EMAIL_SUBJECT_PREFIX, 'Failed deleting non-existent review'),
+                msg,
+                settings.SERVER_EMAIL,
+                admin_emails
+            )
+
+            print('Failed deleting non-existent review (admins notified): %s' % review)
 
     already_haves['issues'][ah_key] = issue
 

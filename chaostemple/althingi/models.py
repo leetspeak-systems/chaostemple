@@ -865,6 +865,16 @@ class Review(models.Model):
     pdf_remote_path = models.CharField(max_length=500, null=True)
     pdf_filename = models.CharField(max_length=50)
 
+    # Reviews cannot responsibly be deleted when a user has put in useful
+    # information in a dossier that belongs to it. These cases inevitably
+    # require manual interference. Instead of either deleting the review, or
+    # producing an error when this situation occurs, we'll mark the review as
+    # pending deletion so that we can collect them later while allowing
+    # processing to continue. Reviews with pending_deletion=True should
+    # regularly be checked and resolved, and should only occur when a user has
+    # created a useful dossier tied to it.
+    pending_deletion = models.BooleanField(default=False)
+
     def pdf_link(self):
         if self.pdf_filename:
             return static(self.pdf_filename)

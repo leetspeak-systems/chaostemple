@@ -7,3 +7,4 @@ markdown2
 lxml
 django-termsandconditions
 ics
+requests

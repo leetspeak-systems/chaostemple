@@ -1,7 +1,7 @@
 import os
+import requests
 
 from sys import stderr
-from urllib.request import urlopen
 
 from lxml import etree
 
@@ -61,7 +61,7 @@ def get_xml(xml_url_name, *args, **kwargs):
         os.makedirs(althingi_settings.XML_CACHE_DIR)
 
     if althingi_settings.USE_XML_CACHE and os.path.isfile(cache_filename):
-        with open(cache_filename, 'rb') as f:
+        with open(cache_filename, 'r') as f:
             xml_content = f.read()
             f.close()
 
@@ -73,15 +73,15 @@ def get_xml(xml_url_name, *args, **kwargs):
             url += 'dagar=%d' % kwargs['days']
 
         response = get_response(url)
-        xml_content = response.read()
+        xml_content = response.text
 
         # Write the XML contents to cache file.
-        with open(cache_filename, 'wb') as f:
+        with open(cache_filename, 'w') as f:
             f.write(xml_content)
             f.close()
 
     # Return the parsed XML.
-    return etree.fromstring(xml_content)
+    return etree.fromstring(xml_content.encode('utf-8'))
 
 
 # Clear XML cache.
@@ -99,7 +99,7 @@ def get_response(web_url):
     success = False
     while not success and retry_count > -1:
         try:
-            response = urlopen(web_url, timeout=althingi_settings.REMOTE_CONTENT_TIMEOUT)
+            response = requests.get(web_url, timeout=althingi_settings.REMOTE_CONTENT_TIMEOUT, headers={'Cache-Control': 'no-cache'})
             success = True
         except IOError:
             print('Retrieving remote content failed, retries left: %s...' % retry_count)

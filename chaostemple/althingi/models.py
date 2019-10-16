@@ -1285,6 +1285,7 @@ class CommitteeAgenda(models.Model):
     timing_start = models.DateTimeField(null=True)
     timing_end = models.DateTimeField(null=True)
     timing_text = models.CharField(max_length=200, null=True)
+    location = models.CharField(max_length=100, null=True)
 
     committee_agenda_xml_id = models.IntegerField(unique=True)
 

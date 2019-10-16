@@ -1951,6 +1951,22 @@ def _process_committee_agenda_xml(xml):
         timing_end = None
 
     try:
+        # NOTE/TODO: At the time of this writing (2019-10-16), the tag already
+        # exists in the grand list of committee agendas (see <1>) but not in
+        # the XML specific to the committee agenda in question (see <2>),
+        # which is where we happen to be processing it. Instead of changing
+        # our entire way of doing things, we'll leave this presumably fully
+        # developed solution in and wait for the XML to be updated. Once this
+        # starts working, please remove this comment.
+        #
+        # <1> /altext/xml/nefndarfundir/
+        # <2> /altext/xml/nefndarfundir/nefndarfundur/?dagskrarnumer=20955
+        #
+        location = xml.find('staður').text
+    except AttributeError:
+        location = None
+
+    try:
         committee_agenda = CommitteeAgenda.objects.get(
             committee_agenda_xml_id=committee_agenda_xml_id,
             parliament=parliament
@@ -1969,6 +1985,9 @@ def _process_committee_agenda_xml(xml):
         if committee_agenda.timing_text != timing_text:
             committee_agenda.timing_text = timing_text
             changed = True
+        if committee_agenda.location != location:
+            committee_agenda.location = location
+            changed = True
 
         if changed:
             committee_agenda.save()
@@ -1985,6 +2004,7 @@ def _process_committee_agenda_xml(xml):
         committee_agenda.timing_start = timing_start
         committee_agenda.timing_end = timing_end
         committee_agenda.timing_text = timing_text
+        committee_agenda.location = location
         committee_agenda.save()
 
         print('Added committee agenda: %s' % committee_agenda)

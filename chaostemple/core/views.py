@@ -529,15 +529,11 @@ def parliament_committee_agenda(request, parliament_num, committee_id, agenda_id
 def parliament_parties(request, parliament_num):
 
     parliament = request.extravars['parliament']
-    if parliament.timing_end:
-        timing = parliament.timing_end - timezone.timedelta(minutes=1)
-    else:
-        timing = timezone.now()
 
     parties = Party.objects.filter(
         Q(parliament_num_last__gte=parliament_num) | Q(parliament_num_last=None),
         parliament_num_first__lte=parliament_num
-    ).annotate_mp_counts(timing)
+   ).annotate_mp_counts(parliament)
 
     ctx = {
         'parties': parties,

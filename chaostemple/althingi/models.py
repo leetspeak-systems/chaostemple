@@ -36,7 +36,13 @@ class IssueQuerySet(models.QuerySet):
 
 
 class PartyQuerySet(models.QuerySet):
-    def annotate_mp_counts(self, timing):
+    def annotate_mp_counts(self, parliament):
+
+        if parliament.timing_end:
+            timing = parliament.timing_end - timezone.timedelta(minutes=1)
+        else:
+            timing = timezone.now()
+
         return self.annotate(
             mp_count=Count(
                 Case(
@@ -45,7 +51,8 @@ class PartyQuerySet(models.QuerySet):
                             Q(seats__timing_out__gte=timing) | Q(seats__timing_out=None),
                             seats__timing_in__lte=timing,
                             seats__seat_type__in=['þingmaður', 'varamaður'],
-                            seats__party_id=F('id')
+                            seats__party_id=F('id'),
+                            seats__parliament=parliament
                         ),
                         then='seats__person_id'
                     ),

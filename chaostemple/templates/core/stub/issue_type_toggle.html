@@ -10,7 +10,7 @@ Requires 'issue_control.js' JavaScript to work, which should be included in all 
                     class="btn btn-default btn-sm navbar-btn"
                     control="issue-type-toggle"
                     data-issue-type="{{ issue_type }}"
-                is-interesting="{% if issue_type|is_interesting %}true{% else %}false{% endif %}">
+                    is-interesting="{% if issue_type|is_interesting %}true{% else %}false{% endif %}">
                 <span class="glyphicon glyphicon-ok grey"></span>
                 {{ issue_type_display|capfirst }}
             </button>

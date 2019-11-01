@@ -15,7 +15,6 @@ urlpatterns = [
     path('parliament/<int:parliament_num>/', views.parliaments, name='parliament'),
     url(r'^parliament/(?P<parliament_num>\d+)/documents/new/', views.parliament_documents_new, name='parliament_documents_new'),
     url(r'^parliament/(?P<parliament_num>\d+)/issues/$', views.parliament_issues, name='parliament_issues'),
-    path('parliament/<int:parliament_num>/issues/csv/', json_views.csv_parliament_issues, name='csv_parliament_issues'),
     url(r'^parliament/(?P<parliament_num>\d+)/issue/(?P<issue_num>\d+)/$', views.parliament_issue, name='parliament_issue'),
     path('parliament/<int:parliament_num>/categories/', views.parliament_categories, name='parliament_categories'),
     path('parliament/<int:parliament_num>/category/<str:category_slug>/', views.parliament_category, name='parliament_category'),

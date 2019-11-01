@@ -1,15 +1,18 @@
 from althingi.althingi_settings import CURRENT_PARLIAMENT_NUM
 from althingi.models import Committee
 from althingi.models import CommitteeAgenda
+from althingi.models import Issue
 from althingi.templatetags.external_urls import external_issue_url
 from althingi.utils import icelandic_am_pm
 from althingi.utils import ICELANDIC_MONTHS
 from althingi.utils import monkey_patch_ical
+from althingi.utils import quote
 
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.template.defaultfilters import capfirst
 from django.urls import reverse
+from django.utils.translation import ugettext as _
 
 from ics import Calendar
 from ics import Event
@@ -129,3 +132,163 @@ def ical(request):
         content_type = 'text/calendar'
 
     return HttpResponse(ical_text, content_type='%s; charset=utf-8' % content_type)
+
+
+def csv_parliament_issues(request, parliament_num):
+
+    # Standard SQL not only used for a massive performance boost but actually
+    # also for clarity. The ORM way turned out to be way more convoluted and
+    # involved a lot of advanced ORM features.
+    issues = Issue.objects.raw(
+        '''
+        SELECT DISTINCT
+            i.id,
+            i.issue_num,
+            i.issue_type,
+            i.name,
+            i.description,
+            i.current_step,
+            i.fate,
+            prop_pers.name AS proposer_person,
+            prop_com.name AS proposer_committee,
+            i.proposer_type,
+            mini.name AS minister,
+            i.time_published,
+            party.name AS party,
+            com.name AS committee,
+            rap_pers.name AS rapporteur,
+            COUNT(cai.id) AS committee_meeting_count
+        FROM
+            -- Basic info
+            althingi_issue AS i
+            INNER JOIN althingi_parliament AS par ON par.id = i.parliament_id
+
+            -- Proposers
+            INNER JOIN althingi_proposer AS prop ON (
+                prop.issue_id = i.id
+                AND (
+                    prop.order = 1
+                    OR prop.order IS NULL
+                )
+            )
+            LEFT OUTER JOIN althingi_person AS prop_pers ON (
+                prop_pers.id = prop.person_id
+            )
+            LEFT OUTER JOIN althingi_committee AS prop_com ON (
+                prop_com.id = prop.committee_id
+            )
+
+            -- Timing of person's seat, party etc.
+            LEFT OUTER JOIN althingi_seat AS seat ON (
+                seat.person_id = prop_pers.id
+                AND (
+                    seat.timing_out >= i.time_published
+                    OR seat.timing_out IS NULL
+                )
+                AND seat.timing_in <= i.time_published
+            )
+            LEFT OUTER JOIN althingi_ministerseat AS mseat ON (
+                mseat.person_id = prop_pers.id
+                AND (
+                    mseat.timing_out >= i.time_published
+                    OR mseat.timing_out IS NULL
+                )
+                AND mseat.timing_in <= i.time_published
+            )
+			LEFT OUTER JOIN althingi_minister AS mini ON (
+				mini.id = mseat.minister_id
+            )
+            LEFT OUTER JOIN althingi_party AS party ON (
+                party.id = seat.party_id
+                OR party.id = mseat.party_id
+            )
+
+            -- Committee
+            LEFT OUTER JOIN althingi_committee AS com ON com.id = i.to_committee_id
+            LEFT OUTER JOIN althingi_rapporteur AS rap ON rap.issue_id = i.id
+            LEFT OUTER JOIN althingi_person AS rap_pers ON rap_pers.id = rap.person_id
+            LEFT OUTER JOIN althingi_committeeagendaitem AS cai ON cai.issue_id = i.id
+        WHERE
+            par.parliament_num = %s
+            AND i.issue_group = 'A'
+        GROUP BY
+            id,
+            issue_num,
+            issue_type,
+            name,
+            description,
+            current_step,
+            fate,
+            proposer_person,
+            proposer_committee,
+            proposer_type,
+            time_published,
+            party,
+            committee,
+            rapporteur
+        ORDER BY
+            i.issue_num
+        ''',
+        [parliament_num]
+    )
+
+    first_line = [
+        _('Nr'),
+        _('Name'),
+        _('Issue type'),
+        _('Status'),
+        _('Fate'),
+        '%s (%s)' % (_('Proposer'), _('person')),
+        '%s (%s)' % (_('Proposer'), _('committee')),
+        _('Published'),
+        _('Issue origin'),
+        _('Minister'),
+
+        _('Party'),
+        _('Committee'),
+        _('Rapporteur'),
+        _('Committee meetings'),
+    ]
+
+    lines = ['# "%s"' % '","'.join(first_line)]
+    for issue in issues:
+
+        # Prepare basic info.
+        issue_num = str(issue.issue_num)
+        if len(issue.description):
+            name = quote('%s (%s)' % (capfirst(issue.name), issue.description))
+        else:
+            name = quote(capfirst(issue.name))
+        issue_type = quote(capfirst(issue.get_issue_type_display()))
+        status = quote(issue.get_current_step_display())
+        fate = quote(capfirst(issue.get_fate_display()))
+        proposer_person = quote(issue.proposer_person)
+        proposer_committee = quote(issue.proposer_committee)
+        published = quote(issue.time_published.strftime('%Y-%m-%d'))
+        proposer_type = quote(issue.get_proposer_type_display())
+        minister = quote(capfirst(issue.minister))
+        party = quote(capfirst(issue.party))
+        committee = quote(capfirst(issue.committee))
+        rapporteur = quote(capfirst(issue.rapporteur))
+        committee_meeting_count = str(issue.committee_meeting_count)
+
+        # Construct line for issue.
+        line = [
+            issue_num,
+            name,
+            issue_type,
+            status,
+            fate,
+            proposer_person,
+            proposer_committee,
+            published,
+            proposer_type,
+            minister,
+            party,
+            committee,
+            rapporteur,
+            committee_meeting_count,
+        ]
+        lines.append(','.join(line))
+
+    return HttpResponse('\n'.join(lines) + '\n', content_type='text/csv')

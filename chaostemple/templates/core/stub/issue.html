@@ -21,8 +21,8 @@
                         <span class="label label-default">{{ issue.time_published|date:'SHORT_DATE_FORMAT' }}</span>
                     {% endif %}
                     <span class="label label-default">{{ issue.get_issue_type_display|capfirst }}</span>
-                    {% if issue.from_government %}
-                        <span class="label label-default">{% trans 'Government issue' %}</span>
+                    {% if issue.proposer_type == 'government' %}
+                        <span class="label label-default">{{ issue.get_proposer_type_display }}</span>
                     {% endif %}
                     {% if issue.fate %}
                         <span class="label label-{% if issue.fate == 'accepted' %}success{% elif issue.fate == 'rejected' %}danger{% elif issue.fate == 'sent-to-government' %}info{% else %}primary{% endif %}">

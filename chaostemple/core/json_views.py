@@ -344,7 +344,7 @@ def csv_parliament_issues(request, parliament_num):
             i.fate,
             prop_pers.name AS proposer_person,
             prop_com.name AS proposer_committee,
-            i.from_government,
+            i.proposer_type,
             mini.name AS minister,
             i.time_published,
             party.name AS party,
@@ -414,7 +414,7 @@ def csv_parliament_issues(request, parliament_num):
             fate,
             proposer_person,
             proposer_committee,
-            from_government,
+            proposer_type,
             time_published,
             party,
             committee,
@@ -434,7 +434,7 @@ def csv_parliament_issues(request, parliament_num):
         '%s (%s)' % (_('Proposer'), _('person')),
         '%s (%s)' % (_('Proposer'), _('committee')),
         _('Published'),
-        _('Government issue'),
+        _('Issue origin'),
         _('Minister'),
 
         _('Party'),
@@ -458,7 +458,7 @@ def csv_parliament_issues(request, parliament_num):
         proposer_person = quote(issue.proposer_person)
         proposer_committee = quote(issue.proposer_committee)
         published = quote(issue.time_published.strftime('%Y-%m-%d'))
-        from_government = quote(_('Yes') if issue.from_government else _('No'))
+        proposer_type = quote(issue.get_proposer_type_display())
         minister = quote(capfirst(issue.minister))
         party = quote(capfirst(issue.party))
         committee = quote(capfirst(issue.committee))
@@ -475,7 +475,7 @@ def csv_parliament_issues(request, parliament_num):
             proposer_person,
             proposer_committee,
             published,
-            from_government,
+            proposer_type,
             minister,
             party,
             committee,

@@ -1321,13 +1321,13 @@ def update_issue(issue_num, parliament_num=None):
                         person_id=person.id,
                     ).count() > 0
 
-                    if issue.from_government != from_government:
-                        issue.from_government = from_government
+                    proposer_type = 'government' if from_government else 'parliamentarian'
+
+                    if issue.proposer_type != proposer_type:
+                        issue.proposer_type = proposer_type
                         issue.save()
 
-                        print('Updated issue origin: %s' % (
-                            'government' if issue.from_government else 'non-government'
-                        ))
+                        print('Updated issue proposer type: %s' % issue.proposer_type)
 
         # Delete proposers that no longer exist online.
         for proposer in Proposer.objects.filter(document=doc).exclude(id__in=proposer_ids):

@@ -9,8 +9,8 @@
 
             <div>
             <span style="float: right;">
-                {% if issue.from_government %}
-                    <span class="glyphicon glyphicon-tower" data-toggle="tooltip" title="{% trans 'Government issue' %}"></span>
+                {% if issue.proposer_type == 'government' %}
+                    <span class="glyphicon glyphicon-tower" data-toggle="tooltip" title="{{ issue.get_propoer_type_display }}"></span>
                 {% endif %}
                 &nbsp;
                 {% if user.is_authenticated %}

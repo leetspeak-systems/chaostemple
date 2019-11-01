@@ -394,6 +394,13 @@ class Issue(models.Model):
         ('sent-to-government', _('sent to government')),
     )
 
+    # Origin of issue, i.e. whether it comes from the government or some
+    # random MP. Possibly "committee" should be an option here in the future.
+    PROPOSER_TYPES = (
+        ('government', _('Government issue')),
+        ('parliamentarian', _('MP issue')),
+    )
+
     # Issues that are most relevant to the function of the software.
     MOST_INTERESTING_ISSUE_TYPES = ('l', 'a')
 
@@ -405,7 +412,7 @@ class Issue(models.Model):
     name = models.CharField(max_length=500)
     description = models.TextField()
     categories = models.ManyToManyField('Category', related_name='issues')
-    from_government = models.BooleanField(default=False)
+    proposer_type = models.CharField(max_length=30, choices=PROPOSER_TYPES, default='parliamentarian')
 
     time_published = models.DateTimeField(null=True)
     review_deadline = models.DateTimeField(null=True)

@@ -3,11 +3,12 @@
 {% comment %}
 Requires 'issue_control.js' JavaScript to work, which should be included in all issue listings anyway.
 {% endcomment %}
-<div class="navbar navbar-default">
-    <div class="container-fluid">
+
+<div control="issue-filter">
+    <div class="btn-group">
         {% for issue_type, issue_type_display in issues|issue_types %}
             <button type="button"
-                    class="btn btn-default btn-sm navbar-btn"
+                    class="btn btn-default btn-sm"
                     control="issue-type-toggle"
                     data-issue-type="{{ issue_type }}"
                     is-interesting="{% if issue_type|is_interesting %}true{% else %}false{% endif %}">
@@ -15,14 +16,25 @@ Requires 'issue_control.js' JavaScript to work, which should be included in all 
                 {{ issue_type_display|capfirst }}
             </button>
         {% endfor %}
-        <div class="pull-right">
-            <button type="button" class="btn btn-default btn-xs navbar-btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">... <span class="caret"></span></button>
-            <ul class="dropdown-menu dropdown-menu-right checkboxes">
-                <li><a><label><input type="checkbox" control="proposer-type-toggle" value="government" skip-switch="true" autocomplete="off"/> {% trans 'Government issues' %}</label></a></li>
-                <li><a><label><input type="checkbox" control="proposer-type-toggle" value="parliamentarian" skip-switch="true" autocomplete="off" /> {% trans 'Parliamentarian issues' %}</label></a></li>
-            </ul>
-
-        </div>
     </div>
 
+    <!-- The span is dynamically given the CSS class "dropup" to reverse the caret inside it, when the filter is expanded. -->
+    <span>
+        <button control="filter-expander" type="button" class="btn btn-default btn-xs"><span class="caret"></span></button>
+    </span>
+
+</div>
+
+<div control="issue-filter-extra">
+    <div class="btn-group">
+        {% for proposer_type, proposer_type_display in issues|proposer_types %}
+            <button type="button"
+                    class="btn btn-default btn-sm"
+                    control="proposer-type-toggle"
+                    data-proposer-type="{{ proposer_type }}">
+                <span class="glyphicon glyphicon-ok grey"></span>
+                {{ proposer_type_display }}
+            </button>
+        {% endfor %}
+    </div>
 </div>

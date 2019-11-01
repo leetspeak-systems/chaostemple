@@ -208,13 +208,23 @@ $(document).ready(function() {
 
     });
 
-    $(document).on('click', 'input[control="proposer-type-toggle"]', function() {
+    $(document).on('click', 'button[control="proposer-type-toggle"]', function() {
         // Controls.
         var $button = $(this);
+        var $marker = $button.find('span.glyphicon-ok');
 
         // Gathered variables.
-        var proposer_type = $button.val();
-        var show = $button.prop('checked');
+        var proposer_type = $button.attr('data-proposer-type');
+        var show = $marker.hasClass('grey');
+
+        // Add or remove the "grey" class depending on whether we are going to
+        // show (not grey) or hide things (grey).
+        if (show) {
+            $marker.removeClass('grey');
+        }
+        else {
+            $marker.addClass('grey');
+        }
 
         // Apply filter condition.
         $('[control="issue-container"][data-proposer-type="' + proposer_type + '"]').applyFilterCondition(
@@ -226,4 +236,24 @@ $(document).ready(function() {
 
     // Make all the togglers do their things.
     $('[control="issue-type-toggle"][is-interesting="true"],[control="proposer-type-toggle"]').trigger('click');
+
+    $(document).on('click', 'button[control="filter-expander"]', function() {
+        // Controls.
+        var $button = $(this);
+        var $span = $button.parent();
+        var $issue_filter_extra = $('[control="issue-filter-extra"]');
+
+        // Figure out whether to show or hide.
+        var show = !$span.hasClass('dropup');
+
+        // Show or hide accordingly.
+        if (show) {
+            $span.addClass('dropup');
+            $issue_filter_extra.show('fast');
+        }
+        else {
+            $span.removeClass('dropup');
+            $issue_filter_extra.hide('fast');
+        }
+    });
 });

@@ -13,6 +13,7 @@ register = template.Library()
 
 # Find the expected order of issue types.
 ISSUE_TYPE_ORDER = [t[0] for t in Issue.ISSUE_TYPES]
+PROPOSER_TYPE_ORDER = [t[0] for t in Issue.PROPOSER_TYPES]
 
 
 @register.filter
@@ -23,6 +24,16 @@ def issue_types(issues):
     '''
     types = set([(i.issue_type, i.get_issue_type_display()) for i in issues])
     return sorted(types, key=lambda t: ISSUE_TYPE_ORDER.index(t[0]))
+
+
+@register.filter
+def proposer_types(issues):
+    '''
+    Extracts the proposer types of the given issues and returns them ordered
+    according to their order in the model.
+    '''
+    types = set([(i.proposer_type, i.get_proposer_type_display()) for i in issues])
+    return sorted(types, key=lambda t: PROPOSER_TYPE_ORDER.index(t[0]))
 
 
 @register.filter

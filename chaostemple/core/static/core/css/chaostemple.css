@@ -75,6 +75,9 @@ div[control="issue-header"] { margin-bottom: 0px; border-top-width: 0px; border-
 div[control="issue-header"] span.subitem:first-child { border-left: 0px solid #000000; padding-left: 0px; margin-left: 0px; }
 div[control="issue-header"] span.subitem { border-left: 1px solid #b8b8ff; padding-left: 6px; margin-left: 2px; }
 
+div[control="issue-filter"],div[control="issue-filter-extra"] { margin-bottom: 10px; }
+div[control="issue-filter-extra"] { display: none; }
+
 div[control="issue-dossier-statistic"].small-issues { display: none; padding: 3px 0px 3px 0px; }
 
 td[control="issue-small"] div:first-child { min-height: 24px; }

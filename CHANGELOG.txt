@@ -355,3 +355,16 @@
 
 1.5.8:
     * Althingi module: Reviews marked as pending_deletion and admins notified instead of halting all processing.
+
+1.5.9:
+    * Althingi module: Committee agenda iCal export showing timing text in name when appropriate and marking unspecific time-of-day as all-day.
+    * Althingi module: Requests-library used instead of urllib's urlopen.
+    * Althingi module: Location of committee agendas recorded (once available in XML, which is not yet).
+    * Althingi module: CSV export moved from main project to Althingi module.
+    * Fixed incorrect MP count in party listing.
+    * Generic filter added to issue listings in committees, parties and categories.
+    * CSV export added to generic filter.
+    * Proposer type added to generic filter (government/parliamentarian origin).
+    * Text search (number, name, description, proposer) added to generic filter.
+    * Numeric searches in text search match only exact issue numbers.
+    * Filter in main issue listing replaced with generic filter.

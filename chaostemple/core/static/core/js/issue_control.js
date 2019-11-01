@@ -309,4 +309,16 @@ $(document).ready(function() {
 
         }).applyFilterCondition('search-text', true);
     });
+
+    $(document).on('click', 'button[control="download-csv"]', function() {
+        var issue_nums = [];
+        $('[control="issue-container"]').each(function() {
+            var $issue = $(this);
+            if ($issue.is(':visible')) {
+                issue_nums.push($issue.attr('data-issue-num'));
+            }
+        });
+        var url = '/althingi/parliament/' + PARLIAMENT_NUM + '/issues/csv/?issue_nums=' + issue_nums.join();
+        location.href = url;
+    });
 });

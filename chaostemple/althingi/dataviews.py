@@ -1,4 +1,5 @@
 from althingi.althingi_settings import CURRENT_PARLIAMENT_NUM
+from althingi.exceptions import AlthingiException
 from althingi.models import Committee
 from althingi.models import CommitteeAgenda
 from althingi.models import Issue
@@ -136,6 +137,24 @@ def ical(request):
 
 def csv_parliament_issues(request, parliament_num):
 
+    # Check if a specific set of issues was requested. Otherwise we'll return
+    # everything in the given parliament.
+    if 'issue_nums' in request.GET:
+        try:
+            issue_nums = request.GET.get('issue_nums').split(',')
+
+            # If an empty string is given, we'll want no results.
+            if issue_nums == ['']:
+                issue_nums = [0]
+            else:
+                # Make sure that this is nothing but a list of integers.
+                [int(issue_num) for issue_num in issue_nums]
+
+        except:
+            raise AlthingiException('URL parameter "issue_nums" should be a comma-seperated list of integers')
+    else:
+        issue_nums = None
+
     # Standard SQL not only used for a massive performance boost but actually
     # also for clarity. The ORM way turned out to be way more convoluted and
     # involved a lot of advanced ORM features.
@@ -211,6 +230,12 @@ def csv_parliament_issues(request, parliament_num):
         WHERE
             par.parliament_num = %s
             AND i.issue_group = 'A'
+            AND (
+                -- The parameter will be 1 if all issues are requested.
+                1 = %s
+                -- Otherwise, the issue num will have to be in the given list.
+                OR i.issue_num IN %s
+            )
         GROUP BY
             id,
             issue_num,
@@ -229,7 +254,16 @@ def csv_parliament_issues(request, parliament_num):
         ORDER BY
             i.issue_num
         ''',
-        [parliament_num]
+        [
+            parliament_num,
+
+            # Give 1 if we want all issues, otherwise 0.
+            1 if issue_nums is None else 0,
+
+            # Give requested issue numbers if any are requested, otherwise
+            # look for something that we know doesn't exist.
+            issue_nums if issue_nums is not None else [-1]
+        ]
     )
 
     first_line = [

@@ -77,7 +77,7 @@ div[control="issue-header"] span.subitem { border-left: 1px solid #b8b8ff; paddi
 
 div[control="issue-filter"],div[control="issue-filter-extra"] { margin-bottom: 10px; }
 div[control="issue-filter-extra"] { display: none; }
-input[control="issue-search"] { min-width: 300px; }
+input[control="issue-search"] { min-width: 292px; }
 
 div[control="issue-dossier-statistic"].small-issues { display: none; padding: 3px 0px 3px 0px; }
 

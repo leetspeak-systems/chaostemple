@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-01 12:14+0000\n"
+"POT-Creation-Date: 2019-11-01 12:39+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -284,7 +284,7 @@ msgid "Issue type"
 msgstr "Málstegund"
 
 #: core/json_views.py:432 templates/core/parliament_issue.html:69
-#: templates/core/stub/issue.html:59
+#: templates/core/stub/issue.html:64
 msgid "Status"
 msgstr "Staða"
 
@@ -323,7 +323,7 @@ msgstr "Flokkur"
 
 #: core/json_views.py:441 templates/core/parliament_committees.html:16
 #: templates/core/parliament_issue.html:62 templates/core/person.html:137
-#: templates/core/stub/issue.html:52
+#: templates/core/stub/issue.html:57
 msgid "Committee"
 msgstr "Nefnd"
 
@@ -392,12 +392,12 @@ msgid "The two password fields didn't match."
 msgstr ""
 
 #: dossier/models.py:21 templates/core/parliament_issue.html:59
-#: templates/core/parliament_issue.html:197 templates/core/stub/issue.html:49
+#: templates/core/parliament_issue.html:197 templates/core/stub/issue.html:54
 msgid "Parliamentary Documents"
 msgstr "Þingskjöl"
 
 #: dossier/models.py:22 templates/core/parliament_issue.html:58
-#: templates/core/parliament_issue.html:205 templates/core/stub/issue.html:48
+#: templates/core/parliament_issue.html:205 templates/core/stub/issue.html:53
 msgid "Reviews"
 msgstr "Umsagnir"
 
@@ -1017,11 +1017,11 @@ msgstr "dagskrárliður"
 msgid "parliamentary document"
 msgstr "þingskjal"
 
-#: templates/core/stub/document.html:24 templates/core/stub/issue.html:73
+#: templates/core/stub/document.html:24 templates/core/stub/issue.html:78
 msgid "Proposers"
 msgstr "Flutningsmenn"
 
-#: templates/core/stub/dossier.html:105 templates/core/stub/issue.html:107
+#: templates/core/stub/dossier.html:105 templates/core/stub/issue.html:112
 msgid "Mark as New"
 msgstr "Merkja sem nýtt"
 
@@ -1051,23 +1051,23 @@ msgstr "Samþykkja"
 msgid "Reject"
 msgstr "Hafna"
 
-#: templates/core/stub/issue.html:82 templates/core/stub/small/issue.html:57
+#: templates/core/stub/issue.html:87 templates/core/stub/small/issue.html:62
 msgid "and others"
 msgstr "o.fl."
 
-#: templates/core/stub/issue.html:95
+#: templates/core/stub/issue.html:100
 msgid "Subscribed through:"
 msgstr ""
 
-#: templates/core/stub/issue.html:116
+#: templates/core/stub/issue.html:121
 msgid "B-issue"
 msgstr "B-mál"
 
-#: templates/core/stub/issue.html:125 templates/core/stub/small/issue.html:101
+#: templates/core/stub/issue.html:130 templates/core/stub/small/issue.html:106
 msgid "Inquisitor"
 msgstr "Fyrirspyrjandi"
 
-#: templates/core/stub/issue.html:129 templates/core/stub/small/issue.html:104
+#: templates/core/stub/issue.html:134 templates/core/stub/small/issue.html:109
 msgid "Responder"
 msgstr "Til svara"
 
@@ -1123,6 +1123,14 @@ msgstr "Fréttir af vöktuðum málum"
 msgid "No news from monitored issues"
 msgstr "Engar fréttar af vöktuðum málum"
 
+#: templates/core/stub/issue_type_toggle.html:21
+msgid "Government issues"
+msgstr "Stjórnarmál"
+
+#: templates/core/stub/issue_type_toggle.html:22
+msgid "Parliamentarian issues"
+msgstr "Þingmannamál"
+
 #: templates/core/stub/membership_requests.html:5
 msgid ""
 "You may request membership of a group below. Any user in that group may "
@@ -1147,7 +1155,7 @@ msgstr "Óafgreiddar umsóknir"
 msgid "continued"
 msgstr "framhaldið"
 
-#: templates/core/stub/small/issue.html:90
+#: templates/core/stub/small/issue.html:95
 msgid "Special discussion"
 msgstr "Sérstök umræða"
 

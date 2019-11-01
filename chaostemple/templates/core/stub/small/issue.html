@@ -3,7 +3,11 @@
 {% load smart_urls %}
 {% load issue %}
 
-<tr control="issue-container" data-id="{{ issue.id }}" data-issue-type="{{ issue.issue_type }}" data-stub-type="small" {% if start_hidden %}style="display: none;" {% endif %}>
+<tr control="issue-container"
+        data-id="{{ issue.id }}"
+        data-issue-type="{{ issue.issue_type }}"
+        data-proposer-type="{{ issue.proposer_type }}"
+        data-stub-type="small" {% if start_hidden %}style="display: none;" {% endif %}>
     <td control="issue-small">
         {% if issue.issue_group == 'A' %}
 

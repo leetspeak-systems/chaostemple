@@ -15,6 +15,31 @@ jQuery.fn.extend({
             }
         });
     },
+
+    // Issues can be filtered in various ways. Examples include by search
+    // text, issue type and proposer type. Each filter checks whether
+    // individual conditions are fulfilled for each issue in a given issue
+    // list, updating their respective "condition-*" fields, and then calls
+    // this function on each applicable issue to see whether all the
+    // conditions are fulfilled. If so, the issue is shown, but if one of them
+    // is explicitly false, then it is not shown.
+    applyFilterCondition: function(condition_name, condition_value) {
+        var $rows = $(this);
+
+        // Only particular condition names are accepted.
+        if (['issue-type', 'proposer-type'].indexOf(condition_name) < 0) {
+            return;
+        }
+
+        // Apply the given condition. The value is forced to either "true" or
+        // "false" in the HTML.
+        $rows.attr('condition-' + condition_name, (condition_value ? 'true' : 'false'));
+
+        // Display and hide issues depending on whether all the conditions are met or not.
+        $rows.filter('[condition-issue-type="false"],[condition-proposer-type="false"]').hide();
+        $rows.filter('[condition-issue-type="true"][condition-proposer-type="true"]').show();
+    },
+
 });
 
 $(document).ready(function() {
@@ -164,23 +189,41 @@ $(document).ready(function() {
 
         // Gathered variables.
         var issue_type = $button.attr('data-issue-type');
-        var show = !$marker.hasClass('grey');
+        var show = $marker.hasClass('grey');
 
-        // Find the issues that we wish to either show or hide.
-        var $issues = $('[control="issue-container"][data-issue-type="' + issue_type + '"]');
-
+        // Add or remove the "grey" class depending on whether we are going to
+        // show (not grey) or hide things (grey).
         if (show) {
-            $issues.hide();
-            $marker.addClass('grey');
-        }
-        else {
-            $issues.show();
             $marker.removeClass('grey');
         }
+        else {
+            $marker.addClass('grey');
+        }
+
+        // Apply filter condition.
+        $('[control="issue-container"][data-issue-type="' + issue_type + '"]').applyFilterCondition(
+            'issue-type',
+            show
+        );
+
     });
 
-    // Make all the issue type togglers do their things.
-    $('[control="issue-type-toggle"][is-interesting="true"]').trigger('click');
+    $(document).on('click', 'input[control="proposer-type-toggle"]', function() {
+        // Controls.
+        var $button = $(this);
 
+        // Gathered variables.
+        var proposer_type = $button.val();
+        var show = $button.prop('checked');
+
+        // Apply filter condition.
+        $('[control="issue-container"][data-proposer-type="' + proposer_type + '"]').applyFilterCondition(
+            'proposer-type',
+            show
+        );
+
+    });
+
+    // Make all the togglers do their things.
+    $('[control="issue-type-toggle"][is-interesting="true"],[control="proposer-type-toggle"]').trigger('click');
 });
-

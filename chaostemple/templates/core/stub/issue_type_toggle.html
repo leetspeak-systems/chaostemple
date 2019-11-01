@@ -15,5 +15,14 @@ Requires 'issue_control.js' JavaScript to work, which should be included in all 
                 {{ issue_type_display|capfirst }}
             </button>
         {% endfor %}
+        <div class="pull-right">
+            <button type="button" class="btn btn-default btn-xs navbar-btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">... <span class="caret"></span></button>
+            <ul class="dropdown-menu dropdown-menu-right checkboxes">
+                <li><a><label><input type="checkbox" control="proposer-type-toggle" value="government" skip-switch="true" autocomplete="off"/> {% trans 'Government issues' %}</label></a></li>
+                <li><a><label><input type="checkbox" control="proposer-type-toggle" value="parliamentarian" skip-switch="true" autocomplete="off" /> {% trans 'Parliamentarian issues' %}</label></a></li>
+            </ul>
+
+        </div>
     </div>
+
 </div>

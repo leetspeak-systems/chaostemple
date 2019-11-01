@@ -4,38 +4,15 @@
 
 {% block javascript %}
     <script language="javascript" type="text/javascript" src="{% static 'core/js/issue_control.js' %}"></script>
-    <script language="javascript" type="text/javascript" src="{% static 'core/js/table_filter.js' %}"></script>
-
-    <script language="javascript">
-        $(document).ready(function() {
-            $('div[control="issue-filter"]').tableFilter('table[control="issue-list"]');
-        });
-    </script>
-
 {% endblock %}
 
 {% block content %}
 
-    {% include 'core/dialog/dialog_delete_issue_dossiers.html' %}
+    {% include 'core/stub/issue_type_toggle.html' with open=True %}
 
-    <div control="issue-filter">
-        <div class="input-group">
-            <input type="text" control="issue-search" class="form-control" placeholder="{% trans 'Name, number, description, type or first proposer of issue' %}" />
-            <div class="input-group-btn">
-                <a href="{% url 'csv_parliament_issues' parliament_num %}" class="btn btn-default">{% trans 'Download CSV' %}</a>
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{% trans 'Issue types' %} <span class="caret"></span></button>
-                <ul class="dropdown-menu dropdown-menu-right checkboxes">
-                    {% for issue_type_label in issue_type_labels %}
-                        <li><a><label><input type="checkbox" skip-switch="true" value="{{ issue_type_label }}" /> {{ issue_type_label|capfirst }}</label></a></li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    <table class="table" control="issue-list">
+    <table class="table">
         {% for issue in issues reversed %}
-            {% include 'core/stub/small/issue.html' %}
+            {% include 'core/stub/small/issue.html' with start_hidden=True %}
         {% endfor %}
     </table>
 

@@ -5,10 +5,12 @@
 
 <div control="issue-container"
         data-id="{{ issue.id }}"
+        data-issue-num="{{ issue.issue_num }}"
         data-issue-type="{{ issue.issue_type }}"
         data-proposer-type="{{ issue.proposer_type }}"
         data-stub-type="normal"
-        {% if start_hidden %}style="display: none;" {% endif %}>
+        {% if start_hidden %}style="display: none;" {% endif %}
+        condition-search-text="true">
     <div class="panel panel-default" control="issue">
         {% if session_agenda_item %}
             {% include 'core/stub/session_agenda_item_header.html' %}

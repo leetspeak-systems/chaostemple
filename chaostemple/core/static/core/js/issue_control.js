@@ -27,7 +27,7 @@ jQuery.fn.extend({
         var $rows = $(this);
 
         // Only particular condition names are accepted.
-        if (['issue-type', 'proposer-type'].indexOf(condition_name) < 0) {
+        if (['issue-type', 'proposer-type', 'search-text'].indexOf(condition_name) < 0) {
             return;
         }
 
@@ -36,8 +36,8 @@ jQuery.fn.extend({
         $rows.attr('condition-' + condition_name, (condition_value ? 'true' : 'false'));
 
         // Display and hide issues depending on whether all the conditions are met or not.
-        $rows.filter('[condition-issue-type="false"],[condition-proposer-type="false"]').hide();
-        $rows.filter('[condition-issue-type="true"][condition-proposer-type="true"]').show();
+        $rows.filter('[condition-issue-type="false"],[condition-proposer-type="false"],[condition-search-text="false"]').hide();
+        $rows.filter('[condition-issue-type="true"][condition-proposer-type="true"][condition-search-text="true"]').show();
     },
 
 });
@@ -255,5 +255,58 @@ $(document).ready(function() {
             $span.removeClass('dropup');
             $issue_filter_extra.hide('fast');
         }
+    });
+
+    $(document).on('keyup', 'input[control="issue-search"]', function() {
+        var $issue_search = $(this);
+
+        var search_strings = $issue_search.val().toLowerCase().trim().replace(/ +/g, ' ').split(' ');
+        for (var i = 0; i < search_strings.length; i++) {
+            var search_string = search_strings[i];
+            //alert("!" + search_string + "!");
+        }
+
+        var $rows = $('[control="issue-container"]');
+
+        // Start by declaring that none of the rows match the search criteria.
+        // We'll then figure out which ones do.
+        $rows.applyFilterCondition('search-text', false);
+
+        // Run an anonymous function on each row that returns true if the
+        // search matches the row. Those rows returning true are filtered out
+        // and declared as fulfilling the filter condition of search-text.
+        $rows.filter(function(i, row) {
+            var $row = $(this);
+
+            // Go through search strings and record how often they match.
+            var hits = 0;
+            for (var i = 0; i < search_strings.length; i++) {
+                var search_string = search_strings[i];
+
+                // An all-numeric search term means a search for issue number.
+                // Partial searches by issue number don't make sense, since
+                // people only search by issue number if they have the exact
+                // number. Therefore, to prevent "6" from matching issues with
+                // numbers 6, 26, 64, 261 and 687 (as examples), all-numeric
+                // search terms get the special treatment of being matched
+                // precisely to the issue number, as opposed to only having to
+                // show up somewhere in the row's text.
+                if (parseInt(search_string) == search_string) {
+                    if ($row.attr('data-issue-num') == search_string) {
+                        hits++;
+                    }
+                }
+                else if ($row.text().toLowerCase().indexOf(search_string) > -1) {
+                    hits++;
+                }
+            }
+
+            // If search strings were found in the row as often as the number
+            // of search strings were applied, we know that all of the search
+            // strings can be found in the row, and so it is marked for
+            // inclusion in the search results.
+            return hits == search_strings.length;
+
+        }).applyFilterCondition('search-text', true);
     });
 });

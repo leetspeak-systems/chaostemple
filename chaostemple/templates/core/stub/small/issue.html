@@ -5,9 +5,11 @@
 
 <tr control="issue-container"
         data-id="{{ issue.id }}"
+        data-issue-num="{{ issue.issue_num }}"
         data-issue-type="{{ issue.issue_type }}"
         data-proposer-type="{{ issue.proposer_type }}"
-        data-stub-type="small" {% if start_hidden %}style="display: none;" {% endif %}>
+        data-stub-type="small" {% if start_hidden %}style="display: none;" {% endif %}
+        condition-search-text="true">
     <td control="issue-small">
         {% if issue.issue_group == 'A' %}
 

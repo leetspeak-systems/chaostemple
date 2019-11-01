@@ -5,6 +5,7 @@ Requires 'issue_control.js' JavaScript to work, which should be included in all 
 {% endcomment %}
 
 <div control="issue-filter">
+
     <div class="btn-group">
         {% for issue_type, issue_type_display in issues|issue_types %}
             <button type="button"
@@ -18,14 +19,17 @@ Requires 'issue_control.js' JavaScript to work, which should be included in all 
         {% endfor %}
     </div>
 
-    <!-- The span is dynamically given the CSS class "dropup" to reverse the caret inside it, when the filter is expanded. -->
-    <span>
-        <button control="filter-expander" type="button" class="btn btn-default btn-xs"><span class="caret"></span></button>
-    </span>
+    {% if not open %}
+        <!-- The span is dynamically given the CSS class "dropup" to reverse the caret inside it, when the filter is expanded. -->
+        <span>
+            <button control="filter-expander" type="button" class="btn btn-default btn-xs"><span class="caret"></span></button>
+        </span>
+    {% endif %}
 
 </div>
 
-<div control="issue-filter-extra">
+<div control="issue-filter-extra" {% if open %}style="display: block;"{% endif %}>
+
     <div class="btn-group">
         {% for proposer_type, proposer_type_display in issues|proposer_types %}
             <button type="button"
@@ -37,4 +41,9 @@ Requires 'issue_control.js' JavaScript to work, which should be included in all 
             </button>
         {% endfor %}
     </div>
+
+    <span class="form-inline">
+        <input type="text" control="issue-search" class="form-control input-sm" autocomplete="off" placeholder="{% trans 'Number, name, description or first proposer of issue' %}" />
+    </span>
+
 </div>

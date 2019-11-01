@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-16 13:10+0000\n"
+"POT-Creation-Date: 2019-11-01 12:14+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -18,134 +18,142 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: althingi/models.py:328 althingi/models.py:351 althingi/models.py:368
-#: althingi/models.py:374
+#: althingi/models.py:335 althingi/models.py:358 althingi/models.py:375
+#: althingi/models.py:381
 msgid "Distributed"
 msgstr "Dreift"
 
-#: althingi/models.py:329
+#: althingi/models.py:336
 msgid "Awaiting 1st debate"
 msgstr "Bíður 1. umræðu"
 
-#: althingi/models.py:330
+#: althingi/models.py:337
 msgid "Currently in 1st debate"
 msgstr "Í 1. umræðu"
 
-#: althingi/models.py:331
+#: althingi/models.py:338
 msgid "1st debate concluded"
 msgstr "1. umræðu lokið"
 
-#: althingi/models.py:332 althingi/models.py:355
+#: althingi/models.py:339 althingi/models.py:362
 msgid "Sent to committee"
 msgstr "Sent til nefndar"
 
-#: althingi/models.py:333 althingi/models.py:356
+#: althingi/models.py:340 althingi/models.py:363
 msgid "Currently in committee"
 msgstr "Í nefnd"
 
-#: althingi/models.py:334 althingi/models.py:357
+#: althingi/models.py:341 althingi/models.py:364
 msgid "Reviews requested"
 msgstr "Í umsagnarferli"
 
-#: althingi/models.py:335 althingi/models.py:358
+#: althingi/models.py:342 althingi/models.py:365
 msgid "Reviews deadline expired"
 msgstr "Umsagnarfrestur liðinn"
 
-#: althingi/models.py:336 althingi/models.py:359
+#: althingi/models.py:343 althingi/models.py:366
 msgid "Considered by committee"
 msgstr "Úr nefnd"
 
-#: althingi/models.py:337
+#: althingi/models.py:344
 msgid "Awaiting 2nd debate"
 msgstr "Bíður 2. umræðu"
 
-#: althingi/models.py:338
+#: althingi/models.py:345
 msgid "Currently in 2nd debate"
 msgstr "Í 2. umræðu"
 
-#: althingi/models.py:339
+#: althingi/models.py:346
 msgid "2nd debate concluded"
 msgstr "2. umræðu lokið"
 
-#: althingi/models.py:340
+#: althingi/models.py:347
 msgid "Sent to committee (after 2nd debate)"
 msgstr "Sent til nefndar (eftir 2. umræðu)"
 
-#: althingi/models.py:341
+#: althingi/models.py:348
 msgid "Currently in committee (after 2nd debate)"
 msgstr "Í nefnd (eftir 2. umræðu)"
 
-#: althingi/models.py:342
+#: althingi/models.py:349
 msgid "Considered by committee (after 2nd debate)"
 msgstr "Úr nefnd (eftir 2. umræðu)"
 
-#: althingi/models.py:343
+#: althingi/models.py:350
 msgid "Awaiting 3rd debate"
 msgstr "Bíður 3. umræðu"
 
-#: althingi/models.py:344
+#: althingi/models.py:351
 msgid "Currently in 3rd debate"
 msgstr "Í 3. umræðu"
 
-#: althingi/models.py:345
+#: althingi/models.py:352
 msgid "3rd debate concluded"
 msgstr "3. umræðu lokið"
 
-#: althingi/models.py:346 althingi/models.py:363
+#: althingi/models.py:353 althingi/models.py:370
 msgid "Issue concluded"
 msgstr "Máli lokið"
 
-#: althingi/models.py:352
+#: althingi/models.py:359
 msgid "Awaiting former debate"
 msgstr "Bíður fyrri umræðu"
 
-#: althingi/models.py:353
+#: althingi/models.py:360
 msgid "Currently in former debate"
 msgstr "Í fyrri umræðu"
 
-#: althingi/models.py:354
+#: althingi/models.py:361
 msgid "Former debate concluded"
 msgstr "Fyrri umræðu lokið"
 
-#: althingi/models.py:360
+#: althingi/models.py:367
 msgid "Awaiting latter debate"
 msgstr "Bíður seinni umræðu"
 
-#: althingi/models.py:361
+#: althingi/models.py:368
 msgid "Currently in latter debate"
 msgstr "Í seinni umræðu"
 
-#: althingi/models.py:362
+#: althingi/models.py:369
 msgid "Latter debate concluded"
 msgstr "Seinni umræðu lokið"
 
-#: althingi/models.py:369
+#: althingi/models.py:376
 msgid "Answered"
 msgstr "Svarað"
 
-#: althingi/models.py:375
+#: althingi/models.py:382
 msgid "Voted on"
 msgstr "Atkvæði greidd"
 
-#: althingi/models.py:376
+#: althingi/models.py:383
 msgid "Report delieverd"
 msgstr "Skýrslu skilað"
 
-#: althingi/models.py:377
+#: althingi/models.py:384
 msgid "Concluded"
 msgstr "Lokið"
 
-#: althingi/models.py:385 core/models.py:250
+#: althingi/models.py:392 core/models.py:250
 msgid "rejected"
 msgstr "hafnað"
 
-#: althingi/models.py:386 core/models.py:251
+#: althingi/models.py:393 core/models.py:251
 msgid "accepted"
 msgstr "samþykkt"
 
-#: althingi/models.py:387
+#: althingi/models.py:394
 msgid "sent to government"
 msgstr "sent til ríkisstjórnar"
+
+#: althingi/models.py:400
+msgid "Government issue"
+msgstr "Stjórnarmál"
+
+#: althingi/models.py:401
+msgid "MP issue"
+msgstr "Þingmannamál"
 
 #: althingi/templatetags/issue.py:81
 msgid "today"
@@ -300,10 +308,9 @@ msgstr "nefnd"
 msgid "Published"
 msgstr "Útbýtt"
 
-#: core/json_views.py:437 templates/core/parliament_issue.html:48
-#: templates/core/stub/issue.html:25 templates/core/stub/small/issue.html:13
-msgid "Government issue"
-msgstr "Stjórnarmál"
+#: core/json_views.py:437
+msgid "Issue origin"
+msgstr "Málsuppruni"
 
 #: core/json_views.py:438 templates/core/person.html:88
 msgid "Minister"
@@ -327,14 +334,6 @@ msgstr "Framsögumaður"
 #: core/json_views.py:443
 msgid "Committee meetings"
 msgstr "Nefndarfundir"
-
-#: core/json_views.py:461 templates/base.html:203
-msgid "Yes"
-msgstr "Já"
-
-#: core/json_views.py:461 templates/base.html:204
-msgid "No"
-msgstr "Nei"
 
 #: core/models.py:249
 msgid "pending"
@@ -574,6 +573,14 @@ msgstr "Nýskrá"
 #: templates/registration/password_reset_complete.html:12
 msgid "Login"
 msgstr "Innskrá"
+
+#: templates/base.html:203
+msgid "Yes"
+msgstr "Já"
+
+#: templates/base.html:204
+msgid "No"
+msgstr "Nei"
 
 #: templates/base.html:211
 msgid "No results found"
@@ -1428,18 +1435,3 @@ msgstr "Upplýsingar"
 #: templates/termsandconditions/tc_accept_terms.html:51
 msgid "Accept all"
 msgstr "Samþykkja alla"
-
-#, fuzzy
-#~| msgid "Attention"
-#~ msgid "Written questions"
-#~ msgstr "Aðvörun"
-
-#, fuzzy
-#~| msgid "Question"
-#~ msgid "Questions"
-#~ msgstr "Spurning"
-
-#, fuzzy
-#~| msgid "Question"
-#~ msgid "Question count"
-#~ msgstr "Spurning"

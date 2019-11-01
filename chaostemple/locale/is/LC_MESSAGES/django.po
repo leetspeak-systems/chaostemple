@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-01 12:39+0000\n"
+"POT-Creation-Date: 2019-11-01 19:37+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -155,24 +155,24 @@ msgstr "Stjórnarmál"
 msgid "MP issue"
 msgstr "Þingmannamál"
 
-#: althingi/templatetags/issue.py:81
+#: althingi/templatetags/issue.py:92
 msgid "today"
 msgstr "í dag"
 
-#: althingi/templatetags/issue.py:83
+#: althingi/templatetags/issue.py:94
 msgid "yesterday"
 msgstr "í gær"
 
-#: althingi/templatetags/issue.py:83
+#: althingi/templatetags/issue.py:94
 #, python-format
 msgid "%d days ago"
 msgstr "fyrir %d dögum"
 
-#: althingi/templatetags/issue.py:86
+#: althingi/templatetags/issue.py:97
 msgid "tomorrow"
 msgstr "á morgun"
 
-#: althingi/templatetags/issue.py:86
+#: althingi/templatetags/issue.py:97
 #, python-format
 msgid "in %d days"
 msgstr "eftir %d daga"
@@ -1123,13 +1123,9 @@ msgstr "Fréttir af vöktuðum málum"
 msgid "No news from monitored issues"
 msgstr "Engar fréttar af vöktuðum málum"
 
-#: templates/core/stub/issue_type_toggle.html:21
-msgid "Government issues"
-msgstr "Stjórnarmál"
-
-#: templates/core/stub/issue_type_toggle.html:22
-msgid "Parliamentarian issues"
-msgstr "Þingmannamál"
+#: templates/core/stub/issue_type_toggle.html:44
+msgid "Number, name, description or first proposer of issue"
+msgstr "Númer, nafn, lýsing eða fyrsti flutningsmaður máls"
 
 #: templates/core/stub/membership_requests.html:5
 msgid ""
@@ -1443,3 +1439,9 @@ msgstr "Upplýsingar"
 #: templates/termsandconditions/tc_accept_terms.html:51
 msgid "Accept all"
 msgstr "Samþykkja alla"
+
+#~ msgid "Government issues"
+#~ msgstr "Stjórnarmál"
+
+#~ msgid "Parliamentarian issues"
+#~ msgstr "Þingmannamál"

@@ -6,8 +6,12 @@
     <h3>{% trans 'Which person do you mean?' %}</h3>
 
     <ul class="nav nav-pills">
-        {% for person in persons %}
-            <li role="presentation"><a href="{% url 'person' person.slug person.subslug %}">{{ person }}, {% trans 'b.' %} {{ person.birthdate.year }}</a></li>
+        {% for possible in possibles %}
+        <li role="presentation">
+            <a href="{{ possible.url }}">
+                {{ possible.name }}, {% trans 'b.' %} {{ possible.birthyear }}
+            </a>
+        </li>
         {% endfor %}
     </ul>
 

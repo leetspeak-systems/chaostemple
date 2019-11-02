@@ -29,6 +29,7 @@ from core.models import IssueMonitor
 from core.models import IssueUtilities
 from core.models import MembershipRequest
 from core.models import Subscription
+from core.utils import complete_person
 
 from dossier.models import Dossier
 from dossier.models import DossierStatistic
@@ -742,15 +743,8 @@ def parliament_missing_data(request):
 
 
 def person(request, slug, subslug=None):
-    # If no subslug is provided, we try to figure out who the person is and if we can't, we ask the user
     if subslug is None:
-        persons = Person.objects.filter(slug=slug).order_by('-birthdate')
-        if persons.count() > 1:
-            return render(request, 'core/person_select_from_multiple.html', { 'persons': persons })
-        elif persons.count() == 1:
-            return redirect(reverse('person', args=(slug, persons[0].subslug)))
-        else:
-            raise Http404
+        return complete_person(request, slug)
 
     # Both 'slug' and 'subslug' exist at this point
     person = Person.objects.get(slug=slug, subslug=subslug)

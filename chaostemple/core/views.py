@@ -668,6 +668,45 @@ def parliament_persons(request, parliament_num, party_slug=None):
     return render(request, 'core/parliament_persons.html', ctx)
 
 
+def parliament_person_issues(request, parliament_num, slug, subslug=None):
+
+    if subslug is None:
+        return complete_person(request, slug)
+
+    person = Person.objects.get(slug=slug, subslug=subslug)
+
+    rapporteur_issues = Issue.objects.select_related(
+        'parliament',
+        'to_committee'
+    ).prefetch_related(
+        'proposers__person'
+    ).filter(
+        rapporteurs__person=person,
+        parliament__parliament_num=parliament_num
+    )
+
+    proposed_issues = Issue.objects.select_related(
+        'parliament',
+        'to_committee'
+    ).prefetch_related(
+        'proposers__person'
+    ).filter(
+        proposers__person=person,
+        proposers__order=1,
+        parliament__parliament_num=parliament_num
+    )
+
+    IssueUtilities.populate_issue_data(rapporteur_issues)
+    IssueUtilities.populate_issue_data(proposed_issues)
+
+    ctx = {
+        'person': person,
+        'rapporteur_issues': rapporteur_issues,
+        'proposed_issues': proposed_issues,
+    }
+    return render(request, 'core/parliament_person_issues.html', ctx)
+
+
 def parliament_stats(request, parliament_num):
 
     inquiries = Issue.objects.prefetch_related('documents').filter(

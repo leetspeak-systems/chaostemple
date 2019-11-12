@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+{% load issue %}
+
+{% block javascript %}
+
+<script language="javascript" type="text/javascript" src="{% static 'core/js/issue_control.js' %}"></script>
+
+{% endblock %}
+
+{% block content %}
+
+<h1>{{ person }} <small>{% trans 'Issues' %}</small></h1>
+
+<div class="col-md-6">
+    <h2>{% trans 'Rapporteured issues' %}</h2>
+    <table class="table">
+        {% for issue in rapporteur_issues|order_by_progression reversed %}
+            {% include 'core/stub/small/issue.html' %}
+        {% endfor %}
+    </table>
+</div>
+
+<div class="col-md-6">
+    <h2>{% trans 'Proposed issues' %}</h2>
+    <table class="table">
+        {% for issue in proposed_issues|order_by_progression reversed %}
+            {% include 'core/stub/small/issue.html' %}
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock %}

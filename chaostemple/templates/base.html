@@ -141,6 +141,12 @@
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans 'Lists' %} <span class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">
+                                {% if user.userprofile.person %}
+                                    {% with user.userprofile.person as person %}
+                                    <li><a href="{% url 'parliament_person_issues' parliament_num person.slug person.subslug %}">{% trans 'My issues' %}</a></li>
+                                    <li class="divider"></li>
+                                    {% endwith %}
+                                {% endif %}
                                 <li><a href="{% url 'parliament_issues' parliament_num %}">{% trans 'Issues' %}</a></li>
                                 <li><a href="{% url 'parliament_categories' parliament_num %}">{% trans 'Categories' %}</a></li>
                                 <li class="divider"></li>

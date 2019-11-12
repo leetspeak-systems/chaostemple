@@ -30,6 +30,8 @@ urlpatterns = [
     path('parliament/<int:parliament_num>/party/<str:party_slug>/issues/', views.parliament_party_issues, name='parliament_party_issues'),
     url(r'^parliament/(?P<parliament_num>\d+)/persons/$', views.parliament_persons, name='parliament_persons'),
     url(r'^parliament/(?P<parliament_num>\d+)/persons/party/(?P<party_slug>[A-Za-z0-9\-]+)/$', views.parliament_persons, name='parliament_persons'),
+    path('parliament/<int:parliament_num>/person/<str:slug>/issues/', views.parliament_person_issues, name='parliament_person_issues'),
+    path('parliament/<int:parliament_num>/person/<str:slug>/<str:subslug>/issues/', views.parliament_person_issues, name='parliament_person_issues'),
     url(r'^parliament/missing-data/', views.parliament_missing_data, name='parliament_missing_data'),
 
     url(r'^person/(?P<slug>[A-Za-z\-]+)/$', views.person, name='person'),

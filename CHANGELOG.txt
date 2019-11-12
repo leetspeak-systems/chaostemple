@@ -368,3 +368,6 @@
     * Text search (number, name, description, proposer) added to generic filter.
     * Numeric searches in text search match only exact issue numbers.
     * Filter in main issue listing replaced with generic filter.
+
+1.5.10:
+    * Dedicated page for a person's rapporteured and proposed issues.

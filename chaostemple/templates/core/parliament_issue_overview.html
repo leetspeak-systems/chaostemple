@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+{% load issue %}
+{% load smart_urls %}
+
+{% block javascript %}
+
+<script language="javascript" type="text/javascript" src="{% static 'core/js/issue_control.js' %}"></script>
+
+{% endblock %}
+
+{% block content %}
+
+<h1>
+    {% if party %}
+        {% trans 'Issue overview by MPs' %}:
+        <a href="{% breadcrumb_url 'parliament_party' parliament_num party.slug %}">{{ party }}</a>
+    {% else %}
+        {% trans 'Issue overview by MP' %}:
+        <a href="{% breadcrumb_url 'person' persons.0.slug persons.0.subslug %}">{{ persons.0 }}</a>
+    {% endif %}
+</h1>
+
+{% for person in persons %}
+<div class="row">
+    {% if party %}
+    <div class="col-md-12">
+        <h2><a href="{% breadcrumb_url 'person' person.slug person.subslug %}">{{ person }}</a></h2>
+    </div>
+    {% endif %}
+
+    <div class="col-md-6">
+        <h3>{% trans 'Proposed issues' %}</h3>
+        <table class="table">
+            {% for issue in person.proposed_issues|order_by_progression reversed %}
+                {% include 'core/stub/small/issue.html' %}
+            {% empty %}
+                <tr><td>{% trans 'MP has not proposed any issues during this parliament.' %}</td></tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="col-md-6">
+        <h3>{% trans 'Rapporteured issues' %}</h3>
+        <table class="table">
+            {% for issue in person.rapporteured_issues|order_by_progression reversed %}
+                {% include 'core/stub/small/issue.html' %}
+            {% empty %}
+                <tr><td>{% trans 'MP is not a rapporteur for any issue during this parliament.' %}</td></tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}

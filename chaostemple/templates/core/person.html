@@ -156,7 +156,7 @@
         <div class="col-md-6">
 
             {% if issues.count %}
-            <h3><a href="{% breadcrumb_url 'parliament_person_issues' newest_parliament_num person.slug person.subslug %}">{% trans 'Issues' %}</a></h3>
+            <h3><a href="{% breadcrumb_url 'parliament_issue_overview' newest_parliament_num 'person' person.slug person.subslug %}">{% trans 'Issues' %}</a></h3>
             <table class="table">
                 {% for issue in issues reversed %}
                     {% ifchanged issue.parliament.parliament_num %}

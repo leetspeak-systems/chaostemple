@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.db.models import Case
 from django.db.models import Count
+from django.db.models import F
 from django.db.models import IntegerField
 from django.db.models import Prefetch
 from django.db.models import Q
@@ -668,43 +669,60 @@ def parliament_persons(request, parliament_num, party_slug=None):
     return render(request, 'core/parliament_persons.html', ctx)
 
 
-def parliament_person_issues(request, parliament_num, slug, subslug=None):
+def parliament_issue_overview(request, parliament_num, slug_type, slug, subslug=None):
 
-    if subslug is None:
-        return complete_person(request, slug)
+    if slug_type == 'person':
+        if subslug is None:
+            return complete_person(request, slug)
 
-    person = Person.objects.get(slug=slug, subslug=subslug)
+        persons = Person.objects.filter(slug=slug, subslug=subslug)
+        party = None
 
-    rapporteur_issues = Issue.objects.select_related(
+    elif slug_type == 'party':
+
+        persons = Person.objects.filter(seats__party__slug=slug, seats__parliament__parliament_num=parliament_num)
+        party = Party.objects.get(slug=slug)
+
+    else:
+        raise Http404
+
+    # Get issues either proposed or rapporteured by persons, annotating the
+    # person_id of the rapporteur and proposer, so that we can later figure
+    # out which issue belongs to which person and for what reason, with only a
+    # single query for issues.
+    issues = Issue.objects.select_related(
         'parliament',
         'to_committee'
     ).prefetch_related(
         'proposers__person'
     ).filter(
-        rapporteurs__person=person,
-        parliament__parliament_num=parliament_num
-    )
-
-    proposed_issues = Issue.objects.select_related(
-        'parliament',
-        'to_committee'
-    ).prefetch_related(
-        'proposers__person'
-    ).filter(
-        proposers__person=person,
+        Q(rapporteurs__person__in=persons) | Q(proposers__person__in=persons),
         proposers__order=1,
         parliament__parliament_num=parliament_num
+    ).annotate(
+        rapporteur_person_id=F('rapporteurs__person_id'),
+        proposer_person_id=F('proposers__person_id')
     )
 
-    IssueUtilities.populate_issue_data(rapporteur_issues)
-    IssueUtilities.populate_issue_data(proposed_issues)
+    IssueUtilities.populate_issue_data(issues)
+
+    # Tie rapporteured and proposed issues to their respective persons.
+    for person in persons:
+
+        person.rapporteured_issues = []
+        person.proposed_issues = []
+
+        for issue in issues:
+            if issue.proposer_person_id == person.id:
+                person.proposed_issues.append(issue)
+            if issue.rapporteur_person_id == person.id:
+                person.rapporteured_issues.append(issue)
 
     ctx = {
-        'person': person,
-        'rapporteur_issues': rapporteur_issues,
-        'proposed_issues': proposed_issues,
+        'persons': persons,
+        'party': party,
     }
-    return render(request, 'core/parliament_person_issues.html', ctx)
+    return render(request, 'core/parliament_issue_overview.html', ctx)
 
 
 def parliament_stats(request, parliament_num):

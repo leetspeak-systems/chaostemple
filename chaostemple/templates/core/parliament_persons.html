@@ -36,7 +36,7 @@ $(document).ready(function() {
     </select>
     </div>
 
-    <h2>{% trans 'Parliamentarians and ministers' %}{% if party %} <small>({{ party }})</small>{% endif %}</h2>
+    <h2>{% trans 'Parliamentarians and ministers' %}{% if party %}: <a href="{% breadcrumb_url 'parliament_party' parliament_num party.slug %}">{{ party }}</a>{% endif %}</h2>
 
     <div class="row">
         <div class="col-md-12">

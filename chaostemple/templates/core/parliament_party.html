@@ -15,7 +15,10 @@
     <div class="row">
 
         <div class="col-md-3">
-            <h3>{% trans 'Parliamentarians' %}</h3>
+            <h3>
+                <a href="{% breadcrumb_url 'parliament_persons' parliament_num party.slug %}"><i class="glyphicon glyphicon-resize-full"></i></a>
+                {% trans 'Parliamentarians' %}
+            </h3>
             <table class="table">
                 {% for person in persons %}
                     {% with person.last_seat.0 as last_seat %}

@@ -7,23 +7,27 @@
     <h2>{% trans 'Parliamentary Parties' %}</h2>
 
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-6">
             <table class="table">
-                <tr>
-                    <th>{% trans 'Parliamentary Party' %}</th>
-                    <th style="text-align: right;">{% trans 'Parliamentarians' %}</th>
-                </tr>
                 {% for party in parties %}
                     <tr>
                         <td>
                             {% if party.special %}
-                                <em><a href="{% breadcrumb_url 'parliament_party' parliament_num party.slug %}">{{ party.name }}</a></em>
+                                <em>{{ party.name }}</em>
                             {% else %}
-                                <a href="{% breadcrumb_url 'parliament_party' parliament_num party.slug %}">{{ party.name }}</a>
-                           {% endif %}
+                                {{ party.name }}
+                            {% endif %}
+                            <small>({{ party.mp_count }})</small>
                         </td>
-                        <td style="text-align: right;">
-                            <a href="{% breadcrumb_url 'parliament_persons' parliament_num party.slug %}">{{ party.mp_count }}</a>
+                        <td>
+                            <a href="{% breadcrumb_url 'parliament_party' parliament_num party.slug %}">
+                                {% trans 'More info' %}
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{% breadcrumb_url 'parliament_issue_overview' parliament_num 'party' party.slug %}">
+                                {% trans 'Issues by MPs' %}
+                            </a>
                         </td>
                     </tr>
                 {% endfor %}

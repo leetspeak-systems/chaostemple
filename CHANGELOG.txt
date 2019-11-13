@@ -371,3 +371,6 @@
 
 1.5.10:
     * Dedicated page for a person's rapporteured and proposed issues.
+
+1.5.11:
+    * Page for person's rapporteured and proposed issues generalized for parties as well.

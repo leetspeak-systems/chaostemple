@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-12 00:09+0000\n"
+"POT-Creation-Date: 2019-11-12 20:01+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -291,10 +291,9 @@ msgstr "Ný þingskjöl"
 #: core/breadcrumbs.py:155 core/breadcrumbs.py:206 core/breadcrumbs.py:228
 #: core/breadcrumbs.py:265 templates/base.html:150
 #: templates/core/parliament_committee.html:69
-#: templates/core/parliament_party.html:43
-#: templates/core/parliament_person_issues.html:14
-#: templates/core/parliaments.html:46 templates/core/person.html:161
-#: templates/core/stub/user_access_list.html:11
+#: templates/core/parliament_issue_overview.html:27
+#: templates/core/parliament_party.html:46 templates/core/parliaments.html:46
+#: templates/core/person.html:161 templates/core/stub/user_access_list.html:11
 msgid "Issues"
 msgstr "Þingmál"
 
@@ -327,8 +326,7 @@ msgstr "Efnisflokkar"
 msgid "Parliamentary Parties"
 msgstr "Þingflokkar"
 
-#: core/breadcrumbs.py:239 templates/core/parliament_parties.html:14
-#: templates/core/parliament_party.html:18
+#: core/breadcrumbs.py:239 templates/core/parliament_party.html:20
 msgid "Parliamentarians"
 msgstr "Þingmenn"
 
@@ -793,6 +791,30 @@ msgstr "Umsagnir (helstu atriði)"
 msgid "Media Coverage"
 msgstr "Fjölmiðlaumfjöllun"
 
+#: templates/core/parliament_issue_overview.html:17
+msgid "Issue overview by MPs"
+msgstr "Málayfirlit þingmanna"
+
+#: templates/core/parliament_issue_overview.html:20
+msgid "Issue overview by MP"
+msgstr "Málayfirlit þingmanns"
+
+#: templates/core/parliament_issue_overview.html:31
+msgid "Proposed issues"
+msgstr "Framlögð mál"
+
+#: templates/core/parliament_issue_overview.html:36
+msgid "MP has not proposed any issues during this parliament."
+msgstr "Þingmaðurinn hefur ekki lagt fram mál á þessu þingi."
+
+#: templates/core/parliament_issue_overview.html:42
+msgid "Rapporteured issues"
+msgstr "Framsögumál"
+
+#: templates/core/parliament_issue_overview.html:47
+msgid "MP is not a rapporteur for any issue during this parliament."
+msgstr "Þingmaðurinn hefur engin framsögumál á þessu þingi."
+
 #: templates/core/parliament_missing_data.html:6
 msgid ""
 "Data from Althingi is required for this software to operate. In order to "
@@ -823,25 +845,21 @@ msgstr ""
 msgid "No parliaments have been configured yet."
 msgstr "Engin þing hafa enn verið sett inn."
 
-#: templates/core/parliament_parties.html:13
-msgid "Parliamentary Party"
-msgstr "Þingflokkur"
+#: templates/core/parliament_parties.html:24
+msgid "More info"
+msgstr "Nánar"
 
-#: templates/core/parliament_party.html:28
+#: templates/core/parliament_parties.html:29
+msgid "Issues by MPs"
+msgstr "Mál eftir þingmönnum"
+
+#: templates/core/parliament_party.html:31
 msgid "Deputy Parliamentarians"
 msgstr "Varaþingmenn"
 
 #: templates/core/parliament_party_issues.html:17
 msgid "Issues from party"
 msgstr "Þingmál frá flokki"
-
-#: templates/core/parliament_person_issues.html:17
-msgid "Proposed issues"
-msgstr "Framlögð mál"
-
-#: templates/core/parliament_person_issues.html:26
-msgid "Rapporteured issues"
-msgstr "Framsögumál"
 
 #: templates/core/parliament_persons.html:32
 msgid "All parties"
@@ -1446,11 +1464,11 @@ msgstr "Upplýsingar"
 msgid "Accept all"
 msgstr "Samþykkja alla"
 
+#~ msgid "Parliamentary Party"
+#~ msgstr "Þingflokkur"
+
 #~ msgid "Name, number, description, type or first proposer of issue"
 #~ msgstr "Nafn, númer, lýsing, tegund eða fyrsti flutningsmaður máls"
-
-#~ msgid "Issue types"
-#~ msgstr "Málstegundir"
 
 #~ msgid "Government issues"
 #~ msgstr "Stjórnarmál"

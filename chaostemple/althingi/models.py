@@ -436,6 +436,7 @@ class Issue(models.Model):
 
     document_count = models.IntegerField(default=0) # Auto-populated by Document.save()
     review_count = models.IntegerField(default=0) # Auto-populated by Review.save()
+    committee_agenda_item_count = models.IntegerField(default=0) # Auto-populated by CommitteeAgendaItem.save()
 
     to_committee = models.ForeignKey('Committee', null=True, related_name='issues', on_delete=PROTECT)
     to_minister = models.ForeignKey('Minister', null=True, related_name='issues', on_delete=PROTECT)
@@ -1315,6 +1316,25 @@ class CommitteeAgendaItem(models.Model):
     order = models.IntegerField()
     name = models.CharField(max_length=300)
     issue = models.ForeignKey('Issue', null=True, related_name='committee_agenda_items', on_delete=CASCADE)
+
+    def save(self, *args, **kwargs):
+        super(CommitteeAgendaItem, self).save(*args, **kwargs)
+        if self.issue is not None:
+            # Tell issue about how many agenda items there are.
+            self.issue.committee_agenda_item_count = CommitteeAgendaItem.objects.filter(
+                issue_id=self.issue.id
+            ).count()
+            self.issue.save()
+
+    def delete(self):
+        if self.issue is not None:
+            # Tell issue about how many agenda items there are. Note the -1,
+            # because we update the issue before we delete.
+            self.issue.committee_agenda_item_count = CommitteeAgendaItem.objects.filter(
+                issue_id=self.issue.id
+            ).count() - 1
+            self.issue.save()
+        super(CommitteeAgendaItem, self).delete()
 
     def __str__(self):
         if self.issue is not None:

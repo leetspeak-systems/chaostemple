@@ -60,6 +60,7 @@
                             <strong>
                                 <a href="{% breadcrumb_url 'parliament_committee' issue.parliament.parliament_num issue_committee.id %}">{{ issue_committee.abbreviation_short|upper }}</a>
                             </strong>
+                            ({{ issue.committee_agenda_item_count }})
                         {% endif %}
                     {% endwith %}
                     {% if issue.current_step %}

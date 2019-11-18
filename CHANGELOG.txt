@@ -374,3 +374,6 @@
 
 1.5.11:
     * Page for person's rapporteured and proposed issues generalized for parties as well.
+
+1.5.12:
+    * Number of committee meetings that the issue has been scheduled on shown in issue listings.

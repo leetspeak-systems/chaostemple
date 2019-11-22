@@ -377,3 +377,6 @@
 
 1.5.12:
     * Number of committee meetings that the issue has been scheduled on shown in issue listings.
+
+1.5.13:
+    * Issues ordered by progression in main issue list.

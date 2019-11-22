@@ -387,6 +387,47 @@ class Issue(models.Model):
     # All issue step definitions combined for use with choices-attribute in fields.
     ISSUE_STEPS = ISSUE_STEPS_L + ISSUE_STEPS_A + ISSUE_STEPS_Q + ISSUE_STEPS_B
 
+    # A combined list of issue steps used to order issue by progression
+    # despite them being of a different type. For example, a motion
+    # (þingsályktunartillaga) which has reached the step
+    # "iteration-latter-finished" is really at the same place as a bill
+    # (frumvarp) which is at the step "iteration-3-finished".
+    ISSUE_STEP_ORDER = {
+        'distributed': 0,
+        'iteration-1-waiting': 1,
+        'iteration-former-waiting': 1,
+        'iteration-1-current': 2,
+        'iteration-former-current': 2,
+        'iteration-1-finished': 3,
+        'iteration-former-finished': 3,
+        'committee-1-waiting': 4,
+        'committee-former-waiting': 4,
+        'committee-1-current': 5,
+        'committee-former-current': 5,
+        'committee-1-reviews-requested': 6,
+        'committee-former-reviews-requested': 6,
+        'committee-1-reviews-arrived': 7,
+        'committee-former-reviews-arrived': 7,
+        'committee-1-finished': 8,
+        'committee-former-finished': 8,
+        'iteration-2-waiting': 9,
+        'iteration-2-current': 10,
+        'iteration-2-finished': 11,
+        'committee-2-waiting': 12,
+        'committee-2-current': 13,
+        'committee-2-finished': 14,
+        'iteration-3-waiting': 15,
+        'iteration-latter-waiting': 15,
+        'iteration-3-current': 16,
+        'iteration-latter-current': 16,
+        'iteration-3-finished': 17,
+        'iteration-latter-finished': 17,
+        'voted-on': 17,
+        'report-delivered': 18,
+        'concluded': 19,
+        'answered': 19,
+    }
+
     # Issue fates are only applicable when they are concluded.
     ISSUE_FATES = (
         ('rejected', _('rejected')),

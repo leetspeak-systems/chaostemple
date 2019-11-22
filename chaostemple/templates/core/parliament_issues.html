@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% load i18n %}
+{% load issue %}
 
 {% block javascript %}
     <script language="javascript" type="text/javascript" src="{% static 'core/js/issue_control.js' %}"></script>
@@ -11,7 +12,7 @@
     {% include 'core/stub/issue_type_toggle.html' with open=True %}
 
     <table class="table">
-        {% for issue in issues reversed %}
+        {% for issue in issues|order_by_progression reversed %}
             {% include 'core/stub/small/issue.html' with start_hidden=True %}
         {% endfor %}
     </table>

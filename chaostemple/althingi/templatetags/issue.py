@@ -46,11 +46,10 @@ def order_by_progression(issues):
     '''
 
     def checker(i):
-        # Does this issue type even have defined steps?
-        if hasattr(Issue, 'ISSUE_STEPS_%s' % i.issue_type.upper()):
-            # If so, we'll figure out how to sort according to those.
-            ISSUE_STEP_ORDER = [s[0] for s in getattr(Issue, 'ISSUE_STEPS_%s' % i.issue_type.upper())]
-            primary = ISSUE_STEP_ORDER.index(i.current_step)
+        # Can we determine this issue's progression by its current step?
+        if i.current_step in Issue.ISSUE_STEP_ORDER:
+            # If so, we'll do that.
+            primary = Issue.ISSUE_STEP_ORDER[i.current_step]
         else:
             # Order is indeterminate. Let's go with zero. Zero is cool.
             primary = 0

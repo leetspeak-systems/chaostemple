@@ -85,11 +85,15 @@ class Command(BaseCommand):
                 count=Count('speeches')
             ).prefetch_latest_seats(parliament).prefetch_latest_minister_seats(parliament)
 
+            total_seconds = 0
+            total_count = 0
             party_seconds = {'': 0}
             party_counts = {'': 0}
-            for party in parliament.parties.all():
+            party_mp_counts = {}
+            for party in parliament.parties.annotate_mp_counts(parliament):
                 party_seconds[party.name] = 0
                 party_counts[party.name] = 0
+                party_mp_counts[party.name] = party.mp_count
 
             rows = []
             for i, person in enumerate(persons):
@@ -119,7 +123,16 @@ class Command(BaseCommand):
                 party_seconds[party] += seconds
                 party_counts[party] += count
 
+                total_seconds += seconds
+                total_count += count
+
                 rows.append([None, person, party, seconds, count])
+
+            # Calculate ratios, which must be calculated after we've gathered
+            # total_seconds and total_count in the previous iteration.
+            for row in rows:
+                row.append(round(100 * float(row[3]) / total_seconds, 2))
+                row.append(round(100 * float(row[4]) / total_count, 2))
 
             # Sort rows by speech count if requested.
             if options['sort_by_count'] is not None:
@@ -132,11 +145,23 @@ class Command(BaseCommand):
                 row[0] = row_count - i # Set the seat
                 row[3] = human_readable(row[3])
 
-            print(tabulate(rows, headers=['Sæti', 'Nafn', 'Flokkur', 'Tími', 'Fjöldi']))
+            print(tabulate(rows, headers=['Nr.', 'Nafn', 'Flokkur', 'Tími', 'Fj.', 'Tími %', 'Fj. %']))
 
             rows = []
             for party, seconds in party_seconds.items():
-                rows.append([party, human_readable(seconds), party_counts[party]])
+                count = party_counts[party]
+
+                ratio_seconds = round(100 * float(seconds) / total_seconds, 2)
+                ratio_count = round(100 * float(count) / total_count, 2)
+
+                if party in party_mp_counts:
+                    mp_count = party_mp_counts[party]
+                    ratio_mp_count = round(100 * float(mp_count) / 63, 2)
+                else:
+                    mp_count = None
+                    ratio_mp_count = None
+
+                rows.append([party, human_readable(seconds), party_counts[party], ratio_seconds, ratio_count, mp_count, ratio_mp_count])
 
             # Sort party rows by speech count if requested.
             if options['sort_by_count'] is not None:
@@ -144,7 +169,7 @@ class Command(BaseCommand):
             else:
                 rows = sorted(rows, key=operator.itemgetter(1))
 
-            print(tabulate(rows, headers=['Flokkur', 'Tími', 'Fjöldi']))
+            print(tabulate(rows, headers=['Flokkur', 'Tími', 'Fjöldi', 'Tími %', 'Fjöldi %', 'Þingm.', 'Þingm. %']))
 
         except KeyboardInterrupt:
             quit(1)

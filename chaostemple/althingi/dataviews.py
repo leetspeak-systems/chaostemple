@@ -176,7 +176,7 @@ def csv_parliament_issues(request, parliament_num):
             party.name AS party,
             com.name AS committee,
             rap_pers.name AS rapporteur,
-            COUNT(cai.id) AS committee_meeting_count
+            COUNT(DISTINCT cai.id) AS committee_meeting_count
         FROM
             -- Basic info
             althingi_issue AS i

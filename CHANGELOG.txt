@@ -380,3 +380,7 @@
 
 1.5.13:
     * Issues ordered by progression in main issue list.
+
+1.5.14:
+    * Repetition of MPs in issue overview fixed.
+    * Fixed wrong committee meeting count in CSV export.

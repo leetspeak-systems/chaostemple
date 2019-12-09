@@ -680,7 +680,10 @@ def parliament_issue_overview(request, parliament_num, slug_type, slug, subslug=
 
     elif slug_type == 'party':
 
-        persons = Person.objects.filter(seats__party__slug=slug, seats__parliament__parliament_num=parliament_num)
+        persons = Person.objects.filter(
+            seats__party__slug=slug,
+            seats__parliament__parliament_num=parliament_num
+        ).distinct()
         party = Party.objects.get(slug=slug)
 
     else:

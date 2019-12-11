@@ -2289,7 +2289,7 @@ def update_speeches(parliament_num=None, days=None):
         # must be figured out on the client side. This gives us a unique
         # identifier from two variables, the issue's ID and the speech's order
         # within it. If no issue is specified, we leave this field as null.
-        if issue is not None:
+        if issue is not None and parliament_num <= 115:
             if not issue.id in speech_orders:
                 speech_orders[issue.id] = 0
             speech_orders[issue.id] += 1

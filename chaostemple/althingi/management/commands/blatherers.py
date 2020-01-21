@@ -19,7 +19,7 @@ def human_readable(seconds):
     minutes, seconds = divmod(seconds, 60)
     hours, minutes = divmod(minutes, 60)
     days, hours = divmod(hours, 24)
-    hr = '%d days, %d:%02d:%02d' % (days, hours, minutes, seconds)
+    hr = '%d days, %02d:%02d:%02d' % (days, hours, minutes, seconds)
     return hr
 
 class Command(BaseCommand):

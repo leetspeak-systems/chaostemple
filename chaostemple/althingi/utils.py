@@ -7,6 +7,7 @@ from datetime import date
 from datetime import datetime
 
 from althingi import althingi_settings
+from althingi.xmlutils import get_response
 
 # We simply **cannot** be bothered to figure out the fancy locale-based way of
 # doing this. These months will always be Icelandic and in no other language,
@@ -61,10 +62,10 @@ def maybe_download_document(remote_path, parliament_num, issue_num):
 
     local_filename = os.path.join('althingi', parliament_num.__str__(), issue_num.__str__(), basename)
 
-    content = get_response(remote_path).read()
+    content = get_response(remote_path).content
     localpath = os.path.join(althingi_settings.STATIC_DOCUMENT_DIR, local_filename)
     mkpath(os.path.dirname(localpath))
-    outfile = open(localpath, 'w')
+    outfile = open(localpath, 'wb')
     outfile.write(content)
     outfile.close()
 
@@ -89,10 +90,10 @@ def maybe_download_review(remote_path, log_num, parliament_num, issue_num):
     filename = os.path.basename(remote_path)
     local_filename = os.path.join('althingi', parliament_num.__str__(), issue_num.__str__(), filename)
 
-    content = response.read()
+    content = response.content
     localpath = os.path.join(althingi_settings.STATIC_DOCUMENT_DIR, local_filename)
     mkpath(os.path.dirname(localpath))
-    outfile = open(localpath, 'w')
+    outfile = open(localpath, 'wb')
     outfile.write(content)
     outfile.close()
 

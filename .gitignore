@@ -9,6 +9,7 @@ local
 share
 local_settings.py
 /chaostemple/static
+/chaostemple/althingi/static/althingi
 /chaostemple/althingi/management/commands/temp_*
 /chaostemple/althingi/xmlcache
 /chaostemple/althingi/settings.py

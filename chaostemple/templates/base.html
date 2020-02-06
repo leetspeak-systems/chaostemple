@@ -1,6 +1,5 @@
 {% load i18n %}
 {% load static %}
-{% load jsonizer %}
 {% load smart_urls %}
 {% load committee %}
 {% load session %}
@@ -172,60 +171,9 @@
 
         </div><!-- /.container -->
 
-        <script type="text/javascript" language="javascript" src="{% static 'core/js/jquery-3.3.1/jquery-3.3.1.min.js' %}"></script>
-        <script type="text/javascript" language="javascript" src="{% static 'core/js/jquery-ui-1.12.1/jquery-ui.min.js' %}"></script>
-        <script type="text/javascript" language="javascript" src="{% static 'core/js/bootstrap-3.3.7/js/bootstrap.min.js' %}"></script>
-        <script type="text/javascript" language="javascript" src="{% static 'core/js/bootstrap-switch-3.3.2/js/bootstrap-switch.min.js' %}"></script>
-        <script type="text/javascript" language="javascript" src="{% static 'core/js/select2-4.0.2/dist/js/select2.min.js' %}"></script>
-        <script type="text/javascript" language="javascript" src="{% static 'core/js/chaostemple.js' %}"></script>
-
-        <script type="text/javascript" language="javascript">
-            // Constants required from server-side by JavaScript
-            USER_ID = {% if user.is_authenticated %}{{ user.id }}{% else %}0{% endif %};
-            PARLIAMENT_NUM = {{ parliament_num }};
-            LANGUAGE_CODE = '{{ LANGUAGE_CODE }}';
-
-            $.fn.bootstrapSwitch.defaults.onText = '{% trans "Yes" %}';
-            $.fn.bootstrapSwitch.defaults.offText = '{% trans "No" %}';
-            $.fn.bootstrapSwitch.defaults.size = 'mini';
-
-            $(document).ready(function() {
-                // Make <select> items filterable with Select2 by default
-                $('select').select2({
-                    'language': {
-                        'noResults': function() { return "{% trans 'No results found' %}"; }
-                    }
-                });
-
-                // Make checkboxes cool by default
-                $('input[type="checkbox"][skip-switch!="true"]').bootstrapSwitch();
-
-                // Enable Bootstrap tooltips
-                $('[data-toggle="tooltip"]').tooltip();
-            });
-        </script>
-
-        {% comment %}
-        Load subscription JavaScript if subscriptions are relevant to this
-        page. This is determined by checking whether a template variable named
-        'subscriptions' is available.
-        {% endcomment %}
-        {% if subscriptions is not None %}
-            <script language="javascript" type="text/javascript">
-                var subscriptions = [];
-                {% for subscription in subscriptions %}
-                    subscriptions.push({
-                        'type': '{{ subscription.sub_type }}',
-                        'id': {{ subscription.subscribed_thing.id }},
-                    });
-                {% endfor %}
-            </script>
-            <script language="javascript" type="text/javascript" src="{% static 'core/js/subscription.js' %}"></script>
-        {% endif %}
+        {% include 'base_scripts.html' %}
 
         {% block javascript %}{% endblock %}
-
-        {% include_jsonizer %}
 
     </body>
 </html>

@@ -90,6 +90,8 @@ class Dossier(models.Model):
     review = models.ForeignKey(Review, null=True, related_name='dossiers', on_delete=PROTECT)
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='dossiers', on_delete=CASCADE)
+
+    notes = models.TextField(default='')
     attention = models.CharField(max_length=20, default='none', choices=ATTENTION_STATES)
     knowledge = models.IntegerField(default=0, choices=KNOWLEDGE_STATES)
     support = models.CharField(max_length=20, default='undefined', choices=SUPPORT_STATES)

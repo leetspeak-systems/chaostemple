@@ -31,6 +31,11 @@ div[control="auto-monitor-notification"] { position: fixed; width: 100%; bottom:
 div[control="date-picker-container"] { position: relative; }
 div[control="date-picker-container"] .bootstrap-datetimepicker-widget.dropdown-menu.bottom { top: 44px !important; right: 0px !important; }
 
+div[control="dossier-file-viewer"] { float: left; height: 100%; width: 70%; border-right: 1px solid black; overflow: hidden; }
+div[control="dossier-file-viewer"] iframe { border-width: 0px; padding: 0px; margin: 0px; }
+div[control="dossier-editor"] { height: 100%; overflow-y: scroll; }
+div[control="dossier-editor"] td[control="dossier-editor-control"] { text-align: right; }
+
 div[control="dossier"] { margin-bottom: 10px; }
 div[control="dossier"]:last-child { margin-bottom: 0px; }
 div[control="dossier"] label { font-weight: normal; width: 60px; margin-right: 8px; }

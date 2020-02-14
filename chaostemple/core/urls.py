@@ -32,6 +32,7 @@ urlpatterns = [
     url(r'^parliament/(?P<parliament_num>\d+)/persons/party/(?P<party_slug>[A-Za-z0-9\-]+)/$', views.parliament_persons, name='parliament_persons'),
     path('parliament/<int:parliament_num>/issue-overview/<str:slug_type>/<str:slug>/', views.parliament_issue_overview, name='parliament_issue_overview'),
     path('parliament/<int:parliament_num>/issue-overview/<str:slug_type>/<str:slug>/<str:subslug>/', views.parliament_issue_overview, name='parliament_issue_overview'),
+    path('parliament/<int:parliament_num>/review/<int:log_num>/', views.parliament_review, name='parliament_review'),
     url(r'^parliament/missing-data/', views.parliament_missing_data, name='parliament_missing_data'),
 
     url(r'^person/(?P<slug>[A-Za-z\-]+)/$', views.person, name='person'),

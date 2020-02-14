@@ -1,0 +1,49 @@
+{% extends "base_workspace.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block javascript %}
+
+<script src="{% static 'core/js/dossier_control.js' %}"></script>
+
+<script language="javascript" type="text/javascript">
+
+var MSG_STATUS_UNSAVED = "{% trans 'About to save changes...' %}";
+var MSG_STATUS_SAVED = "{% trans 'Saved.' %}";
+var MSG_STATUS_ERROR = "{% trans 'Could not save notes!' %}";
+
+</script>
+
+{% endblock %}
+
+{% block content %}
+
+<div control="dossier-file-viewer">
+
+    <iframe src="{% url 'parliament_review' parliament_num review.log_num %}" width="100%" height="100%"></iframe>
+
+</div>
+
+<div control="dossier-editor">
+
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <table style="width: 100%;">
+                <tr>
+                    <td>
+                        <span class="label label-default" control="dossier-status"></span>
+                    </td>
+                    <td control="dossier-editor-control">
+                        <button control="dossier-save" type="button" class="btn btn-default" disabled="true">{% trans 'Save' %}</button>
+                        <button type="button" class="btn btn-default">{% trans 'Close' %}</button>
+                    </td>
+                </tr>
+            </table>
+
+            <textarea class="prosearea-editor" data-dossier-id="{{ dossier.id }}" name="dossier_notes_{{ dossier.id }}">{{ dossier.notes }}</textarea>
+        </div>
+    </div>
+
+<div>
+
+{% endblock %}

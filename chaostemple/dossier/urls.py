@@ -1,4 +1,5 @@
 from django.conf.urls import url
+from django.urls import path
 
 from dossier import views
 
@@ -7,6 +8,10 @@ urlpatterns = [
     url(r'^(?P<dossier_id>\d+)/delete/$', views.delete_dossier, name='json_delete_dossier'),
 
     url(r'^issue/(?P<issue_id>\d+)/delete/$', views.delete_issue_dossiers, name='json_delete_issue_dossiers'),
+
+    path('parliament/<int:parliament_num>/review/<int:log_num>/', views.dossier_review, name='dossier_review'),
+
+    path('<int:dossier_id>/set-notes/', views.set_notes, name='json_dossier_set_notes'),
 
     url(r'^memo/(?P<dossier_id>\d+)/add/$', views.add_memo, name='json_add_memo'),
     url(r'^memo/(?P<memo_id>\d+)/edit/$', views.edit_memo, name='json_edit_memo'),

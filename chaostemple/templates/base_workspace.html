@@ -1,0 +1,37 @@
+{% load i18n %}
+{% load static %}
+{% load jsonizer %}
+{% load smart_urls %}
+{% load committee %}
+{% load session %}
+<!DOCTYPE html>
+<html lang="en" style="height: 100%;">
+    <head>
+        {% include 'base_headers.html' %}
+    </head>
+
+    <body style="margin: 0px; padding: 0px; height: 100%;">
+
+        {% block content %}{% endblock %}
+
+        {% block outside_container %}{% endblock %}
+
+        {% include 'base_scripts.html' %}
+
+        <!-- ProseArea -->
+        <script type="text/javascript" language="javascript" src="{% static 'prosearea-0.3/js/ProseArea.js' %}"></script>
+        <script type="text/javascript" language="javascript" src="{% static 'prosearea-0.3/js/ProseArea-dev.js' %}"></script>
+        <link rel="stylesheet" href="{% static 'prosearea-0.3/css/editor.css' %}" />
+        <script type="text/javascript" language="javascript">
+            let translations = {
+                'markdown': 'Markdán',
+                'wysiwyg': 'ÞSÞSEÞSÞF'
+            }
+            markdownify(document.querySelectorAll('.prosearea-editor'), 'wysiwyg', translations, false);
+        </script>
+
+        {% block javascript %}{% endblock %}
+
+    </body>
+</html>
+

@@ -3,10 +3,13 @@ import json
 from django.db.models import Max
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404
+from django.shortcuts import render
 from django.template.loader import render_to_string
 
 from althingi.models import CommitteeAgenda
 from althingi.models import CommitteeAgendaItem
+from althingi.models import Review
 from althingi.models import Session
 from althingi.models import SessionAgendaItem
 
@@ -19,6 +22,19 @@ from dossier.models import DossierStatistic
 from dossier.models import Memo
 
 from jsonizer.utils import jsonize
+
+
+@login_required
+def dossier_review(request, parliament_num, log_num):
+    review = get_object_or_404(Review, issue__parliament__parliament_num=parliament_num, log_num=log_num)
+
+    dossier, created = Dossier.objects.get_or_create(user_id=request.user.id, review_id=review.id)
+
+    ctx = {
+        'review': review,
+        'dossier': dossier,
+    }
+    return render(request, 'dossier/dossier.html', ctx)
 
 
 @login_required
@@ -128,6 +144,19 @@ def delete_issue_dossiers(request, issue_id):
         'html_content': html_content,
     }
     return ctx
+
+
+@login_required
+@jsonize
+def set_notes(request, dossier_id):
+    dossier = get_object_or_404(Dossier, id=dossier_id, user_id=request.user.id)
+
+    notes = request.POST.get('notes', '')
+
+    dossier.notes = notes
+    dossier.save()
+
+    return {'notes': notes}
 
 
 @login_required

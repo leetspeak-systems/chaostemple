@@ -1,4 +1,6 @@
 import operator
+import os
+import requests
 from functools import reduce
 
 from datetime import timedelta
@@ -15,6 +17,7 @@ from django.db.models import Prefetch
 from django.db.models import Q
 from django.db.models import When
 from django.http import Http404
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
@@ -313,6 +316,7 @@ def parliament_issue(request, parliament_num, issue_num):
     if request.user.is_authenticated:
         statistic, c = DossierStatistic.objects.get_or_create(issue_id=issue.id, user_id=request.user.id)
 
+        '''
         stats_updated = False
         for document in Document.objects.filter(issue_id=issue.id).exclude(dossiers__user_id=request.user.id):
             Dossier(document=document, user_id=request.user.id).save(input_statistic=statistic)
@@ -325,6 +329,7 @@ def parliament_issue(request, parliament_num, issue_num):
         if stats_updated:
             # Save previously collectec dossier statistics
             statistic.save()
+        '''
 
     IssueUtilities.populate_issue_data([issue])
 
@@ -791,6 +796,28 @@ def parliament_stats(request, parliament_num):
         'min_issue': min_issue,
     }
     return render(request, 'core/parliament_stats.html', ctx)
+
+
+def parliament_review(request, parliament_num, log_num):
+    '''
+    A proxy function that will retrieve remote PDF content and pass it
+    through, byte-for-byte. This is done to avoid cross-origin issues. In the
+    future it may also support some kind of auto-download feature, where we
+    download the PDF the first time it is accessed but retrieved from local
+    disk in subsequent requests.
+    '''
+    review = get_object_or_404(Review, issue__parliament__parliament_num=parliament_num, log_num=log_num)
+
+    # Check if we have a copy on the local disk.
+    if review.pdf_filename:
+        filepath = 'althingi/static/%s' % review.pdf_filename
+        with open(filepath, 'rb') as f:
+            content = f.read()
+    else:
+        response = requests.get(review.pdf_link())
+        content = response.content
+
+    return HttpResponse(content, content_type='application/pdf')
 
 
 def parliament_missing_data(request):

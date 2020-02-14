@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load smart_urls %}
 
 <div class="panel panel-default" control="review" data-id="{{ review.id }}">
     <div class="panel-body">
@@ -13,7 +14,11 @@
         </div>
         <div>
             <span class="glyphicon glyphicon-inbox"></span>
-            <a class="title" href="{{ review.pdf_link }}" target="_blank">{{ review.sender_name }}</a>{% if review.sender_name_description %}<strong>{% if review.sender_name_description.0 != ',' %} {% endif %}{{ review.sender_name_description }}</strong>{% endif %}
+            {% if FEATURES.new_dossier_editor %}
+                <a class="title" href="{% breadcrumb_url 'dossier_review' parliament_num review.log_num %}" target="_blank">{{ review.sender_name }}</a>{% if review.sender_name_description %}<strong>{% if review.sender_name_description.0 != ',' %} {% endif %}{{ review.sender_name_description }}</strong>{% endif %}
+            {% else %}
+                <a class="title" href="{{ review.pdf_link }}" target="_blank">{{ review.sender_name }}</a>{% if review.sender_name_description %}<strong>{% if review.sender_name_description.0 != ',' %} {% endif %}{{ review.sender_name_description }}</strong>{% endif %}
+            {% endif %}
             <small>({{ review.get_review_type_display }})</small>
         </div>
     </div>
@@ -21,6 +26,7 @@
         <div class="panel-footer" data-dossier-id="{{ dossier.id }}">
             {% include 'core/stub/dossier.html' %}
         </div>
+
     {% endfor %}
 </div>
 

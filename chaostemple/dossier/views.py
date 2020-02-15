@@ -29,7 +29,7 @@ def dossier_review(request, parliament_num, log_num):
     review = get_object_or_404(Review, issue__parliament__parliament_num=parliament_num, log_num=log_num)
     issue = review.issue
     dossier, created = Dossier.objects.get_or_create(user_id=request.user.id, review_id=review.id)
-    statistic, c = DossierStatistic.objects.get_or_create(issue_id=issue.id, user_id=request.user.id)
+    statistic = DossierStatistic.objects.filter(issue_id=issue.id, user_id=request.user.id).first()
 
     IssueUtilities.populate_issue_data([issue])
 

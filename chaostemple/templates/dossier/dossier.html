@@ -1,6 +1,7 @@
 {% extends "base_workspace.html" %}
 {% load i18n %}
 {% load static %}
+{% load dossier_tags %}
 
 {% block javascript %}
 
@@ -12,8 +13,19 @@ var MSG_STATUS_UNSAVED = "{% trans 'About to save changes...' %}";
 var MSG_STATUS_SAVED = "{% trans 'Saved.' %}";
 var MSG_STATUS_ERROR = "{% trans 'Could not save notes!' %}";
 
+var fieldstate_css = {% autoescape off %}{% fieldstate_css %}{% endautoescape %}
+
+var ISSUE_ID = {{ issue.id }};
+var SETTING_AUTO_MONITOR = {% if user.userprofile.setting_auto_monitor %}true{% else %}false{% endif %};
+var HAS_USEFUL_INFO = {% if statistic.has_useful_info %}true{% else %}false{% endif %};
+var IS_MONITORED = {% if issue.monitor %}true{% else %}false{% endif %};
+
 </script>
 
+{% endblock %}
+
+{% block outside_container %}
+    {% include 'core/stub/auto_monitor_notification.html' %}
 {% endblock %}
 
 {% block content %}
@@ -39,10 +51,12 @@ var MSG_STATUS_ERROR = "{% trans 'Could not save notes!' %}";
                     </td>
                 </tr>
             </table>
-
-            <textarea class="prosearea-editor" data-dossier-id="{{ dossier.id }}" name="dossier_notes_{{ dossier.id }}">{{ dossier.notes }}</textarea>
         </div>
     </div>
+
+    {% include 'dossier/stub/dossier_buttons.html' %}
+
+    <textarea class="prosearea-editor" data-dossier-id="{{ dossier.id }}" name="dossier_notes_{{ dossier.id }}">{{ dossier.notes }}</textarea>
 
 <div>
 

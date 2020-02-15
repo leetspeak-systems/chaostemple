@@ -24,6 +24,7 @@ from django.shortcuts import render
 from django.utils import dateparse
 from django.utils import timezone
 
+from chaostemple.settings import FEATURES
 from chaostemple.settings import MEANING_OF_RECENT
 
 from core.models import Access
@@ -316,18 +317,19 @@ def parliament_issue(request, parliament_num, issue_num):
     if request.user.is_authenticated:
         statistic, c = DossierStatistic.objects.get_or_create(issue_id=issue.id, user_id=request.user.id)
 
-        stats_updated = False
-        for document in Document.objects.filter(issue_id=issue.id).exclude(dossiers__user_id=request.user.id):
-            Dossier(document=document, user_id=request.user.id).save(input_statistic=statistic)
-            stats_updated = True
+        if not FEATURES['new_dossier_editor']:
+            stats_updated = False
+            for document in Document.objects.filter(issue_id=issue.id).exclude(dossiers__user_id=request.user.id):
+                Dossier(document=document, user_id=request.user.id).save(input_statistic=statistic)
+                stats_updated = True
 
-        for review in Review.objects.filter(issue_id=issue.id).exclude(dossiers__user_id=request.user.id):
-            Dossier(review=review, user_id=request.user.id).save(input_statistic=statistic)
-            stats_updated = True
+            for review in Review.objects.filter(issue_id=issue.id).exclude(dossiers__user_id=request.user.id):
+                Dossier(review=review, user_id=request.user.id).save(input_statistic=statistic)
+                stats_updated = True
 
-        if stats_updated:
-            # Save previously collectec dossier statistics
-            statistic.save()
+            if stats_updated:
+                # Save previously collectec dossier statistics
+                statistic.save()
 
     IssueUtilities.populate_issue_data([issue])
 

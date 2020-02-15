@@ -72,31 +72,37 @@ def issue_monitor_toggle(request, issue_id):
         issue_monitor = IssueMonitor.objects.create(user_id=request.user.id, issue_id=issue_id)
         is_monitored = True
 
-    issue = Issue.objects.select_related('parliament').get(id=issue_id)
-    IssueUtilities.populate_issue_data([issue])
-
-    monitored_issues = request.extravars['monitored_issues']
-
-    # Determine which template to use. Currently 'small' is the only viable
-    # option aside from the default.
-    stub_type = request.GET.get('stub_type', '')
-    if stub_type == 'small':
-        template_filename = 'core/stub/%s/issue.html' % stub_type
-    else:
-        template_filename = 'core/stub/issue.html'
-
-    stub_ctx = {
-        'issue': issue,
-        'user': request.user,
-        'monitored_issues': monitored_issues,
-    }
-    html_content = render_to_string(template_filename, stub_ctx, request=request)
-
+    # Prepare basic result object.
     ctx = {
         'is_monitored': is_monitored,
         'issue_id': issue_id,
-        'html_content': html_content,
     }
+
+    # If a stub_type is provided we'll need to return some HTML to display.
+    stub_type = request.GET.get('stub_type', '')
+    if stub_type:
+        issue = Issue.objects.select_related('parliament').get(id=issue_id)
+        IssueUtilities.populate_issue_data([issue])
+
+        monitored_issues = request.extravars['monitored_issues']
+
+        # Determine which template to use. Currently 'small' is the only
+        # viable option aside from the default.
+        if stub_type == 'small':
+            template_filename = 'core/stub/%s/issue.html' % stub_type
+        elif stub_type == 'normal':
+            template_filename = 'core/stub/issue.html'
+        else:
+            raise Exception('Unknown stub type "%s"' % stub_type)
+
+        stub_ctx = {
+            'issue': issue,
+            'user': request.user,
+            'monitored_issues': monitored_issues,
+        }
+
+        ctx['html_content'] = render_to_string(template_filename, stub_ctx, request=request)
+
     return ctx
 
 

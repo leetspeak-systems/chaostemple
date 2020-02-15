@@ -106,6 +106,9 @@ $(document).ready(function() {
         var $this = $(this);
         var issue_id = $this.attr('data-issue-id');
         var stub_type = $('[control="issue-container"][data-id="' + issue_id + '"]').attr('data-stub-type');
+        if (!stub_type) {
+            stub_type = '';
+        }
 
         $.jsonize({
             message: {

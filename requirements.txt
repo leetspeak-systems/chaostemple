@@ -8,3 +8,4 @@ lxml
 django-termsandconditions
 ics==0.5
 requests
+tabulate

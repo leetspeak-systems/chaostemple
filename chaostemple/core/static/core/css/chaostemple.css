@@ -35,8 +35,9 @@ div[control="dossier-file-viewer"] { float: left; height: 100%; width: 65%; bord
 div[control="dossier-file-viewer"] iframe { border-width: 0px; padding: 0px; margin: 0px; }
 div[control="dossier-editor"] { height: 100%; overflow-y: scroll; }
 div[control="dossier-editor"] td[control="dossier-editor-control"] { text-align: right; }
+div[control="dossier-editor"] div[control="prosearea-container"] { float: left; width: 100%; }
 
-div[control="dossier-buttons"] span[control="fieldstate-container"] { white-space: nowrap; padding-bottom: 8px; }
+div[control="dossier-buttons"] span[control="fieldstate-container"] { float: left; white-space: nowrap; margin-bottom: 10px; }
 div[control="dossier-buttons"] label { font-weight: normal; width: 60px; margin: 0px 12px 0px 12px; font-size: small; }
 div[control="dossier-buttons"] button[control="dropdown-fieldstate"] { width: 150px; text-align: left; }
 

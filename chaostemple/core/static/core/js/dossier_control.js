@@ -55,6 +55,11 @@ $(document).ready(function() {
         $dossier_save.attr('disabled', false);
     });
 
+    // Button: Close
+    $(document).on('click', 'button[control="dossier-close"]', function() {
+        window.close()
+    });
+
     // Buttons: Fieldstates
     $(document).on('click', 'a[control="set-fieldstate"]', function() {
         $this = $(this);

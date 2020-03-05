@@ -20,6 +20,20 @@ var SETTING_AUTO_MONITOR = {% if user.userprofile.setting_auto_monitor %}true{% 
 var HAS_USEFUL_INFO = {% if statistic.has_useful_info %}true{% else %}false{% endif %};
 var IS_MONITORED = {% if issue.monitor %}true{% else %}false{% endif %};
 
+$(document).ready(function() {
+
+    var prosearea_editor = document.querySelector('.prosearea-editor');
+
+    // Initial focus.
+    prosearea_editor.focus()
+
+    // Unexpected clicks to focus editor.
+    $(document).on('click', '[control="dossier-editor"]', function() {
+        prosearea_editor.focus();
+    });
+
+});
+
 </script>
 
 {% endblock %}

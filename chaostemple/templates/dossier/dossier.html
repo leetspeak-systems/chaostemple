@@ -70,7 +70,7 @@ $(document).ready(function() {
 
     {% include 'dossier/stub/dossier_buttons.html' %}
 
-    <textarea class="prosearea-editor" data-dossier-id="{{ dossier.id }}" name="dossier_notes_{{ dossier.id }}">{{ dossier.notes }}</textarea>
+    <textarea class="prosearea-editor" data-dossier-id="{{ dossier.id }}" name="dossier_notes_{{ dossier.id }}">{% if dossier.notes %}{{ dossier.notes }}{% else %}*{% endif %}</textarea>
 
 <div>
 

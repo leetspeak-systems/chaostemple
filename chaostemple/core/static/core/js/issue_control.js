@@ -44,6 +44,50 @@ jQuery.fn.extend({
 
 $(document).ready(function() {
 
+    document.addEventListener('visibilitychange', function(ev) {
+        if (document.visibilityState == 'visible') {
+            var elem = $(document.activeElement);
+
+            if (elem.data('reload-on-focus') == undefined) {
+                // Nothing to do here.
+                return;
+            }
+
+            var log_num = elem.data('log-num');
+            var doc_num = elem.data('doc-num');
+
+            var url = '/dossier/parliament/' + PARLIAMENT_NUM + '/deck';
+            if (log_num) {
+                url += '/review/' + log_num + '/';
+            }
+            else if (doc_num) {
+                url += '/document/' + doc_num + '/';
+            }
+
+            $.jsonize({
+                message: {
+                    'transit': 'Retrieving dossiers...',
+                    'success': 'Dossiers retrieved.',
+                    'failure': 'Dossiers retrieval failed!',
+                },
+                url: url,
+                done: function(data, textStatus) {
+                    let id = '';
+                    if (log_num) {
+                        id = 'data-log-num="' + log_num + '"';
+                    }
+                    else if (doc_num) {
+                        id = 'data-doc-num="' + doc_num + '"';
+                    }
+                    $('div[control="dossier-deck"][' + id + ']').html(data.html);
+                },
+            });
+
+
+
+        }
+    });
+
     $(document).on('click', 'a[control="expand-proposer"]', function() {
         var $this = $(this);
         var proposer_id = $this.attr('data-id');

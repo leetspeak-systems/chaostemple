@@ -15,18 +15,19 @@
         <div>
             <span class="glyphicon glyphicon-inbox"></span>
             {% if FEATURES.new_dossier_editor %}
-                <a class="title" href="{% breadcrumb_url 'dossier_review' parliament_num review.log_num %}" target="_blank">{{ review.sender_name }}</a>{% if review.sender_name_description %}<strong>{% if review.sender_name_description.0 != ',' %} {% endif %}{{ review.sender_name_description }}</strong>{% endif %}
+                <a class="title" href="{% breadcrumb_url 'dossier_review' parliament_num review.log_num %}" data-reload-on-focus="1" data-log-num="{{ review.log_num }}" target="_blank">{{ review.sender_name }}</a>{% if review.sender_name_description %}<strong>{% if review.sender_name_description.0 != ',' %} {% endif %}{{ review.sender_name_description }}</strong>{% endif %}
             {% else %}
                 <a class="title" href="{{ review.pdf_link }}" target="_blank">{{ review.sender_name }}</a>{% if review.sender_name_description %}<strong>{% if review.sender_name_description.0 != ',' %} {% endif %}{{ review.sender_name_description }}</strong>{% endif %}
             {% endif %}
             <small>({{ review.get_review_type_display }})</small>
         </div>
     </div>
+    <div control="dossier-deck" data-log-num="{{ review.log_num }}">
     {% for dossier in review.dossiers.all %}
         <div class="panel-footer" data-dossier-id="{{ dossier.id }}">
             {% include 'core/stub/dossier.html' %}
         </div>
-
     {% endfor %}
+    </div>
 </div>
 

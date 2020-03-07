@@ -9,6 +9,7 @@ from django.template.loader import render_to_string
 
 from althingi.models import CommitteeAgenda
 from althingi.models import CommitteeAgendaItem
+from althingi.models import Document
 from althingi.models import Review
 from althingi.models import Session
 from althingi.models import SessionAgendaItem
@@ -24,16 +25,53 @@ from dossier.models import Memo
 from jsonizer.utils import jsonize
 
 
+'''
 @login_required
-def dossier_review(request, parliament_num, log_num):
-    review = get_object_or_404(Review, issue__parliament__parliament_num=parliament_num, log_num=log_num)
-    issue = review.issue
-    dossier, created = Dossier.objects.get_or_create(user_id=request.user.id, review_id=review.id)
+def dossier_document(request, parliament_num, doc_num):
+    document = get_object_or_404(Document, issue__parliament__parliament_num=parliament_num, doc_num=doc_num)
+    issue = document.issue
+    dossier, created = Dossier.objects.get_or_create(user_id=request.user.id, document_id=document.id)
     statistic = DossierStatistic.objects.filter(issue_id=issue.id, user_id=request.user.id).first()
 
     IssueUtilities.populate_issue_data([issue])
 
     ctx = {
+        'document': document,
+        'issue': issue,
+        'dossier': dossier,
+        'statistic': statistic,
+
+        'attentionstates': Dossier.ATTENTION_STATES,
+        'knowledgestates': Dossier.KNOWLEDGE_STATES,
+        'supportstates': Dossier.SUPPORT_STATES,
+        'proposalstates': Dossier.PROPOSAL_STATES,
+    }
+    return render(request, 'dossier/dossier.html', ctx)
+'''
+
+
+@login_required
+def dossier(request, parliament_num, doc_num=None, log_num=None):
+
+    # Default values.
+    document = None
+    review = None
+
+    if doc_num is not None:
+        document = get_object_or_404(Document, issue__parliament__parliament_num=parliament_num, doc_num=doc_num)
+        issue = document.issue
+        dossier, created = Dossier.objects.get_or_create(user_id=request.user.id, document_id=document.id)
+    elif log_num is not None:
+        review = get_object_or_404(Review, issue__parliament__parliament_num=parliament_num, log_num=log_num)
+        issue = review.issue
+        dossier, created = Dossier.objects.get_or_create(user_id=request.user.id, review_id=review.id)
+
+    statistic = DossierStatistic.objects.filter(issue_id=issue.id, user_id=request.user.id).first()
+
+    IssueUtilities.populate_issue_data([issue])
+
+    ctx = {
+        'document': document,
         'review': review,
         'issue': issue,
         'dossier': dossier,

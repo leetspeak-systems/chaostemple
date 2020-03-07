@@ -247,50 +247,7 @@ def parliament_issue(request, parliament_num, issue_num):
         issue_num=issue_num
     )
 
-    # Get access objects and sort them
-    accesses = {'partial': [], 'full': []}
-    for access in AccessUtilities.get_access():
-        accesses['full' if access.full_access else 'partial'].append(access)
-
-    visible_user_ids = [a.user_id for a in accesses['full']]
-
-    partial_conditions = []
-    for partial_access in accesses['partial']:
-        for partial_issue in partial_access.issues.all():
-            partial_conditions.append(Q(user_id=partial_access.user_id) & Q(issue_id=partial_issue.id))
-
-    # Add dossiers from users who have given full access
-    prefetch_query = Q(user_id__in=visible_user_ids) | Q(user_id=request.user.id)
-    # Add dossiers from users who have given access to this particular issue
-    if len(partial_conditions) > 0:
-        prefetch_query.add(Q(reduce(operator.or_, partial_conditions)), Q.OR)
-
-    # Add prefetch query but leave out useless information from other users
-    prefetch_queryset = Dossier.objects.filter(
-        prefetch_query
-    ).annotate(
-        memo_count=Count('memos'),
-        # In order to order the current user first but everyone else by
-        # initials, we first annotate the results so that the current user
-        # gets the order 0 (first) and others get 1. Then the current user is
-        # before everyone else, but the rest are tied with 1, which is
-        # resolved with a second order clause in the order_by below.
-        ordering=Case(
-            When(user_id=request.user.id, then=0),
-            default=1,
-            output_field=IntegerField()
-        )
-    ).exclude(
-        ~Q(user_id=request.user.id),
-        attention='none',
-        knowledge=0,
-        support='undefined',
-        proposal='none',
-        memo_count=0
-    ).order_by(
-        '-ordering',
-        '-user__userprofile__initials'
-    )
+    prefetch_queryset = IssueUtilities.build_dossier_prefetch_queryset()
 
     documents = Document.objects.prefetch_related(
         Prefetch('dossiers', queryset=prefetch_queryset),

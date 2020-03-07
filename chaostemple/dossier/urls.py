@@ -1,6 +1,7 @@
 from django.conf.urls import url
 from django.urls import path
 
+from dossier import json_views
 from dossier import views
 
 urlpatterns = [
@@ -9,7 +10,10 @@ urlpatterns = [
 
     url(r'^issue/(?P<issue_id>\d+)/delete/$', views.delete_issue_dossiers, name='json_delete_issue_dossiers'),
 
-    path('parliament/<int:parliament_num>/review/<int:log_num>/', views.dossier_review, name='dossier_review'),
+    path('parliament/<int:parliament_num>/document/<int:doc_num>/', views.dossier, name='dossier_document'),
+    path('parliament/<int:parliament_num>/review/<int:log_num>/', views.dossier, name='dossier_review'),
+    path('parliament/<int:parliament_num>/deck/document/<int:doc_num>/', json_views.dossier_deck, name='dossier_deck_document'),
+    path('parliament/<int:parliament_num>/deck/review/<int:log_num>/', json_views.dossier_deck, name='dossier_deck_review'),
 
     path('<int:dossier_id>/set-notes/', views.set_notes, name='json_dossier_set_notes'),
 

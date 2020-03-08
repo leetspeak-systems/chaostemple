@@ -1,3 +1,5 @@
+import requests
+
 from althingi.models import Document
 from althingi.models import Review
 from django.http import Http404

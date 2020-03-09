@@ -1,3 +1,5 @@
+import re
+
 from django.apps import apps
 from django.conf import settings
 from django.db import models
@@ -167,6 +169,18 @@ class Dossier(models.Model):
         elif self.review_id:
             self.issue_id = self.review.issue_id
             self.dossier_type = 'review'
+
+        # Markdown automatically considers "4. something" in the beginning of
+        # a sentence to be a sequentually numbered list, and thus if usually
+        # rendered as "1. something" if standing alone, ignoring the number
+        # but rather going by the sequence of the sentence. In legal text we
+        # very often refer to legal positions with something like "7. gr." or
+        # "4. mgr." and so forth. We must thus automatically escape these
+        # numbers so that they are retained durin rendering. This is done by
+        # adding a backslash after the number we wish to retain literally.
+        escapees = ['gr.', 'mgr.', 'málsl.', 'tölul.', 'stafl.', 'kafli', 'kafla']
+        for e in escapees:
+            self.notes = re.sub(r'(\d+)\. %s' % e, r'\1\. %s' % e, self.notes)
 
         # Make sure that standard stuff happens.
         super(Dossier, self).save(*args, **kwargs)

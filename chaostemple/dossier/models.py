@@ -157,8 +157,10 @@ class Dossier(models.Model):
 
 
     def save(self, input_statistic=None, *args, **kwargs):
+        # Check if dossier is new.
         new = self.pk is None
 
+        # Auto-fill issue_id and denote dossier type.
         if self.document_id:
             self.issue_id = self.document.issue_id
             self.dossier_type = 'document'
@@ -166,8 +168,10 @@ class Dossier(models.Model):
             self.issue_id = self.review.issue_id
             self.dossier_type = 'review'
 
+        # Make sure that standard stuff happens.
         super(Dossier, self).save(*args, **kwargs)
 
+        # Treat DossierStatistic.
         if input_statistic is None:
             statistic, c = DossierStatistic.objects.get_or_create(issue_id=self.issue_id, user_id=self.user_id)
         else:

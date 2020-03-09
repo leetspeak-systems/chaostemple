@@ -24,7 +24,7 @@ class Command(BaseCommand):
 
             notes = ''
             for memo in memos:
-                notes += '* %s\n' % memo.content
+                notes += '* %s\n\n' % memo.content.strip('*').strip()
 
             dossier.notes = notes
             dossier.save()

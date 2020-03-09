@@ -1,12 +1,18 @@
 import re
 
+from core.models import AccessUtilities
+
 from django.apps import apps
 from django.conf import settings
 from django.db import models
 from django.db.models import CASCADE
+from django.db.models import Case
+from django.db.models import Count
 from django.db.models import F
+from django.db.models import IntegerField
 from django.db.models import PROTECT
 from django.db.models import Q
+from django.db.models import When
 from django.utils.translation import ugettext_lazy as _
 
 from althingi.models import Document
@@ -16,7 +22,78 @@ from althingi.models import Review
 from model_utils import FieldTracker
 
 
+class DossierManager(models.Manager):
+    def by_user(self, user):
+        '''
+        Filers dossiers by the appropriate visibility toward the given user.
+        Example:
+
+            dossiers = Dossier.objects.by_user(request.user).filter(
+                document__issue__parliament__parliament_num=150,
+                document__doc_num=123
+            )
+
+        Can also be used with prefetch_related.
+        Example:
+
+            visible_dossiers = Dossier.objects.by_user(request.user)
+            documents = Document.objects.prefetch_related(
+                Prefetch('dossiers', queryset=visible_dossiers)
+            )
+        '''
+
+        # Get access objects and sort them
+        accesses = {'partial': [], 'full': []}
+        for access in AccessUtilities.get_access():
+            accesses['full' if access.full_access else 'partial'].append(access)
+
+        visible_user_ids = [a.user_id for a in accesses['full']]
+
+        partial_conditions = []
+        for partial_access in accesses['partial']:
+            for partial_issue in partial_access.issues.all():
+                partial_conditions.append(Q(user_id=partial_access.user_id) & Q(issue_id=partial_issue.id))
+
+        # Add dossiers from users who have given full access
+        prefetch_query = Q(user_id__in=visible_user_ids) | Q(user_id=user.id)
+        # Add dossiers from users who have given access to this particular issue
+        if len(partial_conditions) > 0:
+            prefetch_query.add(Q(reduce(operator.or_, partial_conditions)), Q.OR)
+
+        # Add prefetch query but leave out useless information from other users
+        visible_dossiers = Dossier.objects.select_related(
+            'user__userprofile'
+        ).filter(
+            prefetch_query
+        ).annotate(
+            memo_count=Count('memos'),
+            # In order to order the current user first but everyone else by
+            # initials, we first annotate the results so that the current user
+            # gets the order 0 (first) and others get 1. Then the current user is
+            # before everyone else, but the rest are tied with 1, which is
+            # resolved with a second order clause in the order_by below.
+            ordering=Case(
+                When(user_id=user.id, then=0),
+                default=1,
+                output_field=IntegerField()
+            )
+        ).exclude(
+            ~Q(user_id=user.id),
+            attention='none',
+            knowledge=0,
+            support='undefined',
+            proposal='none',
+            memo_count=0
+        ).order_by(
+            '-ordering',
+            '-user__userprofile__initials'
+        ).distinct()
+
+        return visible_dossiers
+
+
 class Dossier(models.Model):
+    objects = DossierManager()
     tracker = FieldTracker(fields=['attention', 'knowledge', 'support', 'proposal'])
 
     DOSSIER_TYPES = (

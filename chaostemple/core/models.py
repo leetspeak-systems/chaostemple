@@ -2,17 +2,15 @@ import operator
 from functools import reduce
 from threading import currentThread
 
+from django.apps import apps
 from django.conf import settings
 from django.db import models
 from django.db.models import CASCADE
-from django.db.models import Case
-from django.db.models import Count
 from django.db.models import F
 from django.db.models import IntegerField
 from django.db.models import OuterRef
 from django.db.models import Q
 from django.db.models import Subquery
-from django.db.models import When
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.utils import timezone
@@ -23,9 +21,6 @@ from althingi.althingi_settings import CURRENT_PARLIAMENT_NUM
 from althingi.models import Issue as AlthingiIssue
 from althingi.models import IssueQuerySet as AlthingiIssueQuerySet
 from althingi.models import Person
-
-from dossier.models import Dossier
-from dossier.models import DossierStatistic
 
 # Custom query sets and model managers
 
@@ -111,6 +106,7 @@ class IssueUtilities():
 
     @staticmethod
     def populate_issue_data(issues):
+        DossierStatistic = apps.get_model('dossier', 'DossierStatistic')
 
         # Get currently logged in user ID
         user_id = AccessUtilities.get_user_id()
@@ -177,77 +173,6 @@ class IssueUtilities():
         return issues
 
 
-    @staticmethod
-    def build_dossier_prefetch_queryset():
-        '''
-        NOTE/TODO: This probably belongs in Dossier's ModelManager.
-        Function to build a prefetch object that can be used to prefetch
-        dossiers from either documents or reviews by applying like so:
-
-            documents = Document.objects.prefetch_related(
-                Prefetch('dossiers', queryset=prefetch_queryset)
-            )
-
-        Can also be used to get dossiers by currently logged in user, like so:
-
-            dossiers = IssueUtilities.build_dossier_prefetch_query().filter(
-                document__issue__parliament__parliament_num=150,
-                document__doc_num=123
-            )
-
-        '''
-
-        # Get currently logged in user ID
-        user_id = AccessUtilities.get_user_id()
-
-        # Get access objects and sort them
-        accesses = {'partial': [], 'full': []}
-        for access in AccessUtilities.get_access():
-            accesses['full' if access.full_access else 'partial'].append(access)
-
-        visible_user_ids = [a.user_id for a in accesses['full']]
-
-        partial_conditions = []
-        for partial_access in accesses['partial']:
-            for partial_issue in partial_access.issues.all():
-                partial_conditions.append(Q(user_id=partial_access.user_id) & Q(issue_id=partial_issue.id))
-
-        # Add dossiers from users who have given full access
-        prefetch_query = Q(user_id__in=visible_user_ids) | Q(user_id=user_id)
-        # Add dossiers from users who have given access to this particular issue
-        if len(partial_conditions) > 0:
-            prefetch_query.add(Q(reduce(operator.or_, partial_conditions)), Q.OR)
-
-        # Add prefetch query but leave out useless information from other users
-        prefetch_queryset = Dossier.objects.filter(
-            prefetch_query
-        ).annotate(
-            memo_count=Count('memos'),
-            # In order to order the current user first but everyone else by
-            # initials, we first annotate the results so that the current user
-            # gets the order 0 (first) and others get 1. Then the current user is
-            # before everyone else, but the rest are tied with 1, which is
-            # resolved with a second order clause in the order_by below.
-            ordering=Case(
-                When(user_id=user_id, then=0),
-                default=1,
-                output_field=IntegerField()
-            )
-        ).exclude(
-            ~Q(user_id=user_id),
-            attention='none',
-            knowledge=0,
-            support='undefined',
-            proposal='none',
-            memo_count=0
-        ).order_by(
-            '-ordering',
-            '-user__userprofile__initials'
-        ).distinct()
-
-        return prefetch_queryset
-
-
 ### Models
 
 class UserProfile(models.Model):
@@ -274,6 +199,8 @@ class IssueMonitor(models.Model):
     issue = models.ForeignKey(AlthingiIssue, related_name='issue_monitors', on_delete=CASCADE)
 
     def save(self, *args, **kwargs):
+        DossierStatistic = apps.get_model('dossier', 'DossierStatistic')
+
         super(IssueMonitor, self).save(*args, **kwargs)
 
         try:
@@ -408,6 +335,8 @@ class Subscription(models.Model):
         return None
 
     def save(self, *args, **kwargs):
+        DossierStatistic = apps.get_model('dossier', 'DossierStatistic')
+
         # Make sure that what's being subscribed to is sane.
         self.sub_type = ''
         fields = ['party', 'committee', 'person', 'category']
@@ -450,6 +379,7 @@ class Subscription(models.Model):
                 DossierStatistic(user_id=self.user_id, issue_id=issue.id).save()
 
     def delete(self):
+        DossierStatistic = apps.get_model('dossier', 'DossierStatistic')
 
         # Save DossierStatistic objects to trigger update_has_useful_info.
         thing = self.subscribed_thing()

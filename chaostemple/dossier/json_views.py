@@ -1,4 +1,3 @@
-from core.models import IssueUtilities
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.template.loader import render_to_string
@@ -10,7 +9,7 @@ from jsonizer.utils import jsonize
 @login_required
 @jsonize
 def dossier_deck(request, parliament_num, doc_num=None, log_num=None):
-    dossiers = IssueUtilities.build_dossier_prefetch_queryset()
+    dossiers = Dossier.objects.by_user(request.user)
 
     if log_num is not None:
         dossiers = dossiers.filter(review__issue__parliament__parliament_num=parliament_num, review__log_num=log_num)

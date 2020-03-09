@@ -247,10 +247,10 @@ def parliament_issue(request, parliament_num, issue_num):
         issue_num=issue_num
     )
 
-    prefetch_queryset = IssueUtilities.build_dossier_prefetch_queryset()
+    visible_dossiers = Dossier.objects.by_user(request.user)
 
     documents = Document.objects.prefetch_related(
-        Prefetch('dossiers', queryset=prefetch_queryset),
+        Prefetch('dossiers', queryset=visible_dossiers),
         'dossiers__memos',
         'dossiers__user',
         'proposers__person',
@@ -258,7 +258,7 @@ def parliament_issue(request, parliament_num, issue_num):
     ).filter(issue=issue)
 
     reviews = Review.objects.prefetch_related(
-        Prefetch('dossiers', queryset=prefetch_queryset),
+        Prefetch('dossiers', queryset=visible_dossiers),
         'dossiers__memos',
         'dossiers__user',
         'committee'

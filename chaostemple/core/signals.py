@@ -21,7 +21,7 @@ def delete_dossiers_on_deletion(sender, instance, **kwargs):
 
     dossiers = Dossier.objects.filter(**dossier_kwargs)
     for dossier in dossiers:
-        if dossier.is_useful():
+        if dossier.is_useful:
             if sender is Review:
                 # This is a review that is about to be deleted, but it has a
                 # user-generated dossier attached to it with useful

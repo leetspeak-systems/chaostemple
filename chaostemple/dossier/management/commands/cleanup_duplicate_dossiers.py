@@ -46,7 +46,7 @@ class Command(BaseCommand):
                 last_dossier.user_id == dossier.user_id
             ])
             if is_duplicate:
-                if dossier.is_useful():
+                if dossier.is_useful:
                     print('USEFUL duplicate dossier found, not deleting: %s, %s' % (
                         dossier.user.username,
                         dossier.review.sender_name

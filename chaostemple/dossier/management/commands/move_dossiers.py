@@ -37,7 +37,7 @@ class Command(BaseCommand):
         # target, because we'd like to remove them before moving them from
         # source to target.
         for dossier in target.dossiers.select_related('user').all():
-            if not dossier.is_useful():
+            if not dossier.is_useful:
                 stdout.write('Deleting useless dossier for user %s...' % dossier.user)
                 stdout.flush()
 

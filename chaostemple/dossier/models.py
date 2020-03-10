@@ -79,11 +79,7 @@ class DossierManager(models.Manager):
             )
         ).exclude(
             ~Q(user_id=user.id),
-            attention='none',
-            knowledge=0,
-            support='undefined',
-            proposal='none',
-            memo_count=0
+            is_useful=False
         ).order_by(
             '-ordering',
             '-user__userprofile__initials'
@@ -176,14 +172,7 @@ class Dossier(models.Model):
     support = models.CharField(max_length=20, default='undefined', choices=SUPPORT_STATES)
     proposal = models.CharField(max_length=20, default='none', choices=PROPOSAL_STATES)
 
-    def is_useful(self):
-        return any([
-            self.memos.count() != 0,
-            self.attention != 'none',
-            self.knowledge != 0,
-            self.support != 'undefined',
-            self.proposal != 'none',
-        ])
+    is_useful = models.BooleanField(default=False)
 
     def update_statistic(self, statistic, field, old_value, new_value):
         # Short-hands
@@ -258,6 +247,18 @@ class Dossier(models.Model):
         escapees = ['gr.', 'mgr.', 'málsl.', 'tölul.', 'stafl.', 'kafli', 'kafla']
         for e in escapees:
             self.notes = re.sub(r'(\d+)\. %s' % e, r'\1\. %s' % e, self.notes)
+
+        # Determine if dossier contains useful info. Non-useful dossiers mean
+        # that the file (document or review) has been opened and thus should
+        # not be marked as "unread".
+        self.is_useful = any([
+            self.memos.count() != 0,
+            len(self.notes) > 0,
+            self.attention != 'none',
+            self.knowledge != 0,
+            self.support != 'undefined',
+            self.proposal != 'none',
+        ])
 
         # Make sure that standard stuff happens.
         super(Dossier, self).save(*args, **kwargs)

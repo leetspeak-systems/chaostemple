@@ -55,16 +55,16 @@ class DossierManager(models.Manager):
                 partial_conditions.append(Q(user_id=partial_access.user_id) & Q(issue_id=partial_issue.id))
 
         # Add dossiers from users who have given full access
-        prefetch_query = Q(user_id__in=visible_user_ids) | Q(user_id=user.id)
+        filter_params = Q(user_id__in=visible_user_ids) | Q(user_id=user.id)
         # Add dossiers from users who have given access to this particular issue
         if len(partial_conditions) > 0:
-            prefetch_query.add(Q(reduce(operator.or_, partial_conditions)), Q.OR)
+            filter_params.add(Q(reduce(operator.or_, partial_conditions)), Q.OR)
 
         # Add prefetch query but leave out useless information from other users
         visible_dossiers = Dossier.objects.select_related(
             'user__userprofile'
         ).filter(
-            prefetch_query
+            filter_params
         ).annotate(
             memo_count=Count('memos'),
             # In order to order the current user first but everyone else by

@@ -43,6 +43,8 @@ urlpatterns = [
 
     url(r'^json/proposer/(?P<proposer_id>\d+)/subproposers/$', json_views.proposer_subproposers, name='json_proposers_subproposers'),
     url(r'^json/issue/list/(?P<parliament_num>\d+)/$', json_views.list_issues, name='json_list_issues'),
+    path('json/parliament/<int:parliament_num>/document/<int:doc_num>/', json_views.document, name='json_document'),
+    path('json/parliament/<int:parliament_num>/review/<int:log_num>/', json_views.review, name='json_review'),
 
     url(r'^json/monitor/issue/toggle/(?P<issue_id>\d+)/$', json_views.issue_monitor_toggle, name='json_issue_monitor_toggle'),
     url(r'^json/monitor/issue/menu/(?P<parliament_num>\d+)$', json_views.issue_monitor_menu, name='json_issue_monitor_menu'),

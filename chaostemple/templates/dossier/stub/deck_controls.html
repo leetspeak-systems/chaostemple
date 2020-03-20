@@ -1,0 +1,14 @@
+{% load i18n %}
+
+{% if document.seen or review.seen %}
+    <div control="deck-controls">
+        <button
+                control="delete-dossier"
+                {% if document %}data-doc-num="{{ document.doc_num }}"{% endif %}
+                {% if review %}data-log-num="{{ review.log_num }}"{% endif %}
+                class="btn btn-default btn-xs">
+            {% trans 'Mark as New' %}
+        </button>
+    </div>
+{% endif %}
+

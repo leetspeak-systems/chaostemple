@@ -197,7 +197,9 @@
     <h3>{% trans 'Parliamentary Documents' %}</h3>
     <div class="documents">
         {% for document in documents %}
-            {% include "core/stub/document.html" %}
+            <div control="document-container" data-document-id="{{ document.id }}">
+                {% include "core/stub/document.html" %}
+            </div>
         {% endfor %}
     </div>
 
@@ -205,7 +207,9 @@
         <h3>{% trans 'Reviews' %}</h3>
         <div class="reviews">
             {% for review in reviews %}
-                {% include "core/stub/review.html" %}
+                <div control="review-container" data-review-id="{{ review.id }}">
+                    {% include "core/stub/review.html" %}
+                </div>
             {% endfor %}
         </div>
     {% endif %}

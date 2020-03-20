@@ -6,6 +6,7 @@ from django.apps import apps
 from django.conf import settings
 from django.db import models
 from django.db.models import CASCADE
+from django.db.models import Count
 from django.db.models import F
 from django.db.models import IntegerField
 from django.db.models import OuterRef
@@ -20,7 +21,9 @@ from althingi.althingi_settings import CURRENT_PARLIAMENT_NUM
 
 from althingi.models import Issue as AlthingiIssue
 from althingi.models import IssueQuerySet as AlthingiIssueQuerySet
+from althingi.models import Document as AlthingiDocument
 from althingi.models import Person
+from althingi.models import Review as AlthingiReview
 
 # Custom query sets and model managers
 
@@ -62,6 +65,21 @@ class IssueQuerySet(AlthingiIssueQuerySet):
         )
 
         return issues
+
+
+class SeenQuerySet(models.QuerySet):
+    '''
+    A query set for annotating the "seen" attribute on the Document and Review
+    models. Used with proxy models below. Depends on being used with a model
+    that has Dossier relationships called "dossiers".
+    '''
+    def annotate_seen(self, user):
+        return self.annotate(
+            seen=Count(
+                'dossiers',
+                filter=Q(dossiers__user=user)
+            )
+        )
 
 
 class SubscriptionManager(models.Manager):
@@ -229,6 +247,20 @@ class IssueMonitor(models.Model):
 
 class Issue(AlthingiIssue):
     objects = IssueQuerySet.as_manager()
+
+    class Meta:
+        proxy = True
+
+
+class Document(AlthingiDocument):
+    objects = SeenQuerySet.as_manager()
+
+    class Meta:
+        proxy = True
+
+
+class Review(AlthingiReview):
+    objects = SeenQuerySet.as_manager()
 
     class Meta:
         proxy = True

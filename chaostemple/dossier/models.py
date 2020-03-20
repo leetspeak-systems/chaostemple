@@ -78,7 +78,6 @@ class DossierManager(models.Manager):
                 output_field=IntegerField()
             )
         ).exclude(
-            ~Q(user_id=user.id),
             is_useful=False
         ).order_by(
             '-ordering',
@@ -248,6 +247,12 @@ class Dossier(models.Model):
         for e in escapees:
             self.notes = re.sub(r'(\d+)\. %s' % e, r'\1\. %s' % e, self.notes)
 
+        # There is a tendency to press enter after writing something, and
+        # since that creates a new bullet in the editor, this tendency results
+        # in stray bullets on the right side of the text. We'll take it out,
+        # also accounting for white space on either side of it.
+        self.notes = self.notes.strip().rstrip('*').strip()
+
         # Determine if dossier contains useful info. Non-useful dossiers mean
         # that the file (document or review) has been opened and thus should
         # not be marked as "unread".
@@ -287,16 +292,13 @@ class Dossier(models.Model):
 
         dossier_count = Dossier.objects.filter(issue_id=self.issue_id, user_id=self.user_id).count()
 
-        if dossier_count == 0:
-            statistic.delete()
-        else:
-            for field in self.tracker.fields:
-                self.update_statistic(statistic, field, getattr(self, field), None)
-            self.update_counts(statistic, dossier_type)
+        for field in self.tracker.fields:
+            self.update_statistic(statistic, field, getattr(self, field), None)
+        self.update_counts(statistic, dossier_type)
 
-            self.update_memo_counts(statistic, dossier_type)
+        self.update_memo_counts(statistic, dossier_type)
 
-            statistic.save()
+        statistic.save()
 
 
     @staticmethod

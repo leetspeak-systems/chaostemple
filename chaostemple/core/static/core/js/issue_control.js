@@ -56,35 +56,32 @@ $(document).ready(function() {
             var log_num = elem.data('log-num');
             var doc_num = elem.data('doc-num');
 
-            var url = '/dossier/parliament/' + PARLIAMENT_NUM + '/deck';
             if (log_num) {
-                url += '/review/' + log_num + '/';
+                $.jsonize({
+                    message: {
+                        'transit': 'Retrieving review...',
+                        'success': 'Review retrieved.',
+                        'failure': 'Review retrieval failed!',
+                    },
+                    url: '/json/parliament/' + PARLIAMENT_NUM + '/review/' + log_num + '/',
+                    done: function(data, textStatus) {
+                        $('div[control="review-container"][data-review-id="' + data.review_id + '"]').html(data.html);
+                    },
+                });
             }
             else if (doc_num) {
-                url += '/document/' + doc_num + '/';
+                $.jsonize({
+                    message: {
+                        'transit': 'Retrieving document...',
+                        'success': 'Document retrieved.',
+                        'failure': 'Document retrieval failed!',
+                    },
+                    url: '/json/parliament/' + PARLIAMENT_NUM + '/document/' + doc_num + '/',
+                    done: function(data, textStatus) {
+                        $('div[control="document-container"][data-document-id="' + data.document_id + '"]').html(data.html);
+                    },
+                });
             }
-
-            $.jsonize({
-                message: {
-                    'transit': 'Retrieving dossiers...',
-                    'success': 'Dossiers retrieved.',
-                    'failure': 'Dossiers retrieval failed!',
-                },
-                url: url,
-                done: function(data, textStatus) {
-                    let id = '';
-                    if (log_num) {
-                        id = 'data-log-num="' + log_num + '"';
-                    }
-                    else if (doc_num) {
-                        id = 'data-doc-num="' + doc_num + '"';
-                    }
-                    $('div[control="dossier-deck"][' + id + ']').html(data.html);
-                },
-            });
-
-
-
         }
     });
 

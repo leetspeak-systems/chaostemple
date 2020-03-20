@@ -1,0 +1,39 @@
+{% load i18n %}
+{% load dossier_tags %}
+{% load markdown %}
+
+<div control="dossier-deck-item">
+
+    <div control="dossier-user">
+        <a href="mailto:{{ dossier.user.email }}">{{ dossier.user.userprofile }}</a>:
+    </div>
+
+    {% if dossier.document.doc_type|fieldstate_applicable:'knowledge' %}
+        <div control="fieldstate" class="label label-{% fieldstate_css 'knowledge' dossier.knowledge %}">
+            {% trans 'Knowledge' %}: {{ dossier.get_knowledge_display }}
+        </div>
+    {% endif %}
+
+    {% if dossier.document.doc_type|fieldstate_applicable:'attention' %}
+        <div control="fieldstate" class="label label-{% fieldstate_css 'attention' dossier.attention %}">
+            {% trans 'Attention' %}: {{ dossier.get_attention_display }}
+        </div>
+    {% endif %}
+
+    {% if dossier.document.doc_type|fieldstate_applicable:'support' %}
+        <div control="fieldstate" class="label label-{% fieldstate_css 'support' dossier.support %}">
+            {% trans 'Support' %}: {{ dossier.get_support_display }}
+        </div>
+    {% endif %}
+
+    {% if dossier.document.doc_type|fieldstate_applicable:'proposal' %}
+        <div control="fieldstate" class="label label-{% fieldstate_css 'proposal' dossier.proposal %}">
+            {% trans 'Proposal' %}: {{ dossier.get_proposal_display }}
+        </div>
+    {% endif %}
+
+    <div control="notes" class="{% if dossier.notes %}notes-padding-top{% endif %}">
+        {{ dossier.notes|markdown }}
+    </div>
+
+</div>

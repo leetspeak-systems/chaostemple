@@ -3,6 +3,7 @@ from django.contrib.auth.models import Group
 from django.http import Http404
 from django.http import HttpResponse
 from django.urls import reverse
+from django.db.models import Prefetch
 from django.db.utils import IntegrityError
 from django.shortcuts import get_object_or_404
 from django.template.defaultfilters import capfirst
@@ -13,12 +14,16 @@ from althingi.models import Proposer
 from core.breadcrumbs import append_to_crumb_string
 
 from core.models import Access
+from core.models import Document
 from core.models import Issue
 from core.models import IssueMonitor
 from core.models import IssueUtilities
 from core.models import MembershipRequest
+from core.models import Review
 from core.models import Subscription
 from core.models import UserProfile
+
+from dossier.models import Dossier
 
 from jsonizer.utils import jsonize
 
@@ -57,6 +62,55 @@ def list_issues(request, parliament_num):
         'issue_list': issue_list_json,
     }
     return ctx
+
+
+@login_required
+@jsonize
+def document(request, parliament_num, doc_num):
+
+    prefetch_q = Dossier.objects.by_user(request.user)
+
+    document = Document.objects.prefetch_related(
+        Prefetch('dossiers', queryset=prefetch_q)
+    ).annotate_seen(
+        request.user
+    ).get(
+        issue__parliament__parliament_num=parliament_num,
+        doc_num=doc_num
+    )
+
+    html = render_to_string('core/stub/document.html', { 'document': document }, request=request)
+
+    ctx = {
+        'document_id': document.id,
+        'html': html,
+    }
+    return ctx
+
+
+@login_required
+@jsonize
+def review(request, parliament_num, log_num):
+
+    prefetch_q = Dossier.objects.by_user(request.user)
+
+    review = Review.objects.prefetch_related(
+        Prefetch('dossiers', queryset=prefetch_q)
+    ).annotate_seen(
+        request.user
+    ).get(
+        issue__parliament__parliament_num=parliament_num,
+        log_num=log_num
+    )
+
+    html = render_to_string('core/stub/review.html', { 'review': review }, request=request)
+
+    ctx = {
+        'review_id': review.id,
+        'html': html,
+    }
+    return ctx
+
 
 @login_required
 @jsonize

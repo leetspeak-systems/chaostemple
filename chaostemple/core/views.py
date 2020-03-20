@@ -29,10 +29,12 @@ from chaostemple.settings import MEANING_OF_RECENT
 
 from core.models import Access
 from core.models import AccessUtilities
+from core.models import Document
 from core.models import Issue
 from core.models import IssueMonitor
 from core.models import IssueUtilities
 from core.models import MembershipRequest
+from core.models import Review
 from core.models import Subscription
 from core.utils import complete_person
 
@@ -46,11 +48,9 @@ from althingi.models import CategoryGroup
 from althingi.models import Committee
 from althingi.models import CommitteeAgenda
 from althingi.models import CommitteeSeat
-from althingi.models import Document
 from althingi.models import Parliament
 from althingi.models import Party
 from althingi.models import Person
-from althingi.models import Review
 from althingi.models import Session
 
 
@@ -251,18 +251,26 @@ def parliament_issue(request, parliament_num, issue_num):
 
     documents = Document.objects.prefetch_related(
         Prefetch('dossiers', queryset=visible_dossiers),
-        'dossiers__memos',
-        'dossiers__user',
+        'dossiers__user__userprofile',
         'proposers__person',
         'proposers__committee',
-    ).filter(issue=issue)
+    ).annotate_seen(
+        request.user
+    ).filter(
+        issue=issue
+    )
 
     reviews = Review.objects.prefetch_related(
         Prefetch('dossiers', queryset=visible_dossiers),
-        'dossiers__memos',
-        'dossiers__user',
+        'dossiers__user__userprofile',
         'committee'
-    ).select_related('issue__parliament').filter(issue=issue)
+    ).select_related(
+        'issue__parliament'
+    ).annotate_seen(
+        request.user
+    ).filter(
+        issue=issue
+    )
 
     issue_sessions = Session.objects.select_related('parliament').filter(session_agenda_items__issue_id=issue.id)
     issue_committee_agendas = CommitteeAgenda.objects.select_related(

@@ -1,6 +1,7 @@
 import json
 
 from django.db.models import Max
+from django.db.models import Prefetch
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
@@ -110,19 +111,55 @@ def dossier_fieldstate(request, dossier_id, fieldname):
 
 @login_required
 @jsonize
-def delete_dossier(request, dossier_id):
+def delete_dossier(request, parliament_num, doc_num=None, log_num=None):
 
-    dossier = Dossier.objects.get(id=dossier_id, user=request.user)
-    document_id = dossier.document_id
-    review_id = dossier.review_id
+    # Same dossier prefetch regardless of whether the dossier belongs to a
+    # document or a review.
+    prefetch_q = Dossier.objects.by_user(request.user)
 
-    dossier.delete()
+    if doc_num is not None:
 
-    ctx = {
-        'document_id': document_id,
-        'review_id': review_id,
-    }
-    return ctx
+        Dossier.objects.get(
+            user=request.user,
+            document__issue__parliament__parliament_num=parliament_num,
+            document__doc_num=doc_num
+        ).delete()
+
+        document = Document.objects.prefetch_related(
+            Prefetch('dossiers', queryset=prefetch_q)
+        ).get(
+            issue__parliament__parliament_num=parliament_num,
+            doc_num=doc_num
+        )
+
+        html = render_to_string('core/stub/document.html', { 'document': document }, request=request)
+
+        return {
+            'document_id': document.id,
+            'html': html,
+        }
+
+    elif log_num is not None:
+
+        Dossier.objects.get(
+            user=request.user,
+            review__issue__parliament__parliament_num=parliament_num,
+            review__log_num=log_num
+        ).delete()
+
+        review = Review.objects.prefetch_related(
+            Prefetch('dossiers', queryset=prefetch_q)
+        ).get(
+            issue__parliament__parliament_num=parliament_num,
+            log_num=log_num
+        )
+
+        html = render_to_string('core/stub/review.html', { 'review': review }, request=request)
+
+        return {
+            'review_id': review.id,
+            'html': html,
+        }
 
 
 @login_required

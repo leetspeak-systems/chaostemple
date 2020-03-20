@@ -427,7 +427,7 @@ class DossierStatistic(models.Model):
         return self.document_count == self.review_count == 0
 
 
-    def update_stats_quite_inefficiently_please(self):
+    def update_stats_quite_inefficiently_please(self, show_output=True):
         '''
         WARNING: This function is intended only for diagnostic and data-fixing purposes.
         Do not use it for general production purposes. That would be silly.
@@ -460,7 +460,7 @@ class DossierStatistic(models.Model):
                             status_type: fieldstate
                         }
                         count = Dossier.objects.filter(**kwargs).exclude(**exclude_kwargs).count()
-                        if getattr(self, stat_field_name) != count:
+                        if show_output and getattr(self, stat_field_name) != count:
                             print("(%s, %s) %s: %d" % (self.user, self.issue, stat_field_name, count))
                         setattr(self, stat_field_name, count)
 
@@ -470,7 +470,7 @@ class DossierStatistic(models.Model):
                 user_id=self.user_id,
                 dossier_type=dossier_type
             ).count()
-            if getattr(self, count_fieldname) != count:
+            if show_output and getattr(self, count_fieldname) != count:
                 print('(%s, %s) %s: %d' % (self.user, self.issue, count_fieldname, count))
             setattr(self, count_fieldname, count)
 
@@ -480,7 +480,7 @@ class DossierStatistic(models.Model):
                 dossier__issue_id=self.issue_id,
                 dossier__dossier_type=dossier_type
             ).count()
-            if getattr(self, memo_count_fieldname) != memo_count:
+            if show_output and getattr(self, memo_count_fieldname) != memo_count:
                 print('(%s, %s) %s: %d' % (self.user, self.issue, memo_count_fieldname, memo_count))
             setattr(self, memo_count_fieldname, memo_count)
 

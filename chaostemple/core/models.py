@@ -74,6 +74,10 @@ class SeenQuerySet(models.QuerySet):
     that has Dossier relationships called "dossiers".
     '''
     def annotate_seen(self, user):
+
+        if not user.is_authenticated:
+            return self
+
         return self.annotate(
             seen=Count(
                 'dossiers',

@@ -24,18 +24,22 @@
         {% if issue.issue_group == 'A' %}
             <div class="panel-body">
                 <p class="pull-right">
+                    <small>
                     {% if issue.time_published %}
-                        <span class="label label-default">{{ issue.time_published|date:'SHORT_DATE_FORMAT' }}</span>
+                        {{ issue.time_published|date:'SHORT_DATE_FORMAT' }}
+                        |
                     {% endif %}
-                    <span class="label label-default">{{ issue.get_issue_type_display|capfirst }}</span>
+                    {{ issue.get_issue_type_display|capfirst }}
                     {% if issue.proposer_type == 'government' %}
-                        <span class="label label-default">{{ issue.get_proposer_type_display }}</span>
+                        | {{ issue.get_proposer_type_display }}
                     {% endif %}
                     {% if issue.fate %}
+                        &nbsp;
                         <span class="label label-{% if issue.fate == 'accepted' %}success{% elif issue.fate == 'rejected' %}danger{% elif issue.fate == 'sent-to-government' %}info{% else %}primary{% endif %}">
                             {{ issue.get_fate_display|capfirst }}
                         </span>
                     {% endif %}
+                    </small>
                 </p>
                 <p>
                     {{ issue.issue_num }}

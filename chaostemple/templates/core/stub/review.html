@@ -4,13 +4,17 @@
 <div class="panel panel-default" control="review" data-id="{{ review.id }}">
     <div class="panel-body">
         <div style="float: right;">
+            <small>
             {% if review.committee %}
-                <a class="label label-default" href="{% url 'parliament_committee' review.issue.parliament.parliament_num review.committee.id %}">{{ review.committee }}</a>
+                <a href="{% url 'parliament_committee' review.issue.parliament.parliament_num review.committee.id %}">{{ review.committee }}</a>
+                |
             {% endif %}
             {% if review.president_seat %}
-                <span class="label label-default">{{ review.president_seat.president }}</span>
+                {{ review.president_seat.president }}
+                |
             {% endif %}
-            <span class="label label-default">{{ review.date_arrived|date:'SHORT_DATE_FORMAT' }}</span>
+            {{ review.date_arrived|date:'SHORT_DATE_FORMAT' }}
+            </small>
         </div>
         <div>
             <span class="glyphicon glyphicon-inbox"></span>

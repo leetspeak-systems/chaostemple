@@ -1,4 +1,3 @@
-from althingi.althingi_settings import CURRENT_PARLIAMENT_NUM
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 from dossier.models import Dossier
@@ -22,7 +21,7 @@ class Command(BaseCommand):
 
         # Step 1. Generate is_useful values for dossiers.
         print('Generating usefulness information for dossiers...', end='', flush=True)
-        dossiers = Dossier.objects.filter(issue__parliament__parliament_num=CURRENT_PARLIAMENT_NUM)
+        dossiers = Dossier.objects.all()
         for dossier in dossiers:
             dossier.save()
             print('.', end='', flush=True)
@@ -36,7 +35,6 @@ class Command(BaseCommand):
         # Step 3. Turn "memos" into "notes".
         print('Turning memos into notes...', end='', flush=True)
         dossiers = Dossier.objects.prefetch_related('memos')
-        dossiers = dossiers.filter(issue__parliament__parliament_num=CURRENT_PARLIAMENT_NUM)
         for dossier in dossiers:
 
             memos = dossier.memos.all()
@@ -53,7 +51,7 @@ class Command(BaseCommand):
 
         # Step 4. Update dossier statistics to reflect deletions and updates.
         print('Updating dossier statistics...', end='', flush=True)
-        stats = DossierStatistic.objects.filter(issue__parliament__parliament_num=CURRENT_PARLIAMENT_NUM)
+        stats = DossierStatistic.objects.all()
         for stat in stats:
             stat.update_stats_quite_inefficiently_please(show_output=False)
             print('.', end='', flush=True)

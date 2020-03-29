@@ -5,7 +5,6 @@ from dossier import views
 
 urlpatterns = [
     url(r'^(?P<dossier_id>\d+)/fieldstate/(?P<fieldname>.+)/$', views.dossier_fieldstate, name='json_dossier_fieldstate'),
-    url(r'^(?P<dossier_id>\d+)/delete/$', views.delete_dossier, name='json_delete_dossier'),
 
     url(r'^issue/(?P<issue_id>\d+)/delete/$', views.delete_issue_dossiers, name='json_delete_issue_dossiers'),
 

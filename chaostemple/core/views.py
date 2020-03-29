@@ -40,7 +40,6 @@ from core.utils import complete_person
 
 from dossier.models import Dossier
 from dossier.models import DossierStatistic
-from dossier.models import Memo
 
 from althingi.althingi_settings import CURRENT_PARLIAMENT_NUM
 from althingi.models import Category
@@ -307,7 +306,6 @@ def parliament_issue(request, parliament_num, issue_num):
         'knowledgestates': Dossier.KNOWLEDGE_STATES,
         'supportstates': Dossier.SUPPORT_STATES,
         'proposalstates': Dossier.PROPOSAL_STATES,
-        'max_memo_length': Memo._meta.get_field('content').max_length,
         'statistic': statistic,
     }
     return render(request, 'core/parliament_issue.html', ctx)

@@ -66,7 +66,6 @@ class DossierManager(models.Manager):
         ).filter(
             filter_params
         ).annotate(
-            memo_count=Count('memos'),
             # In order to order the current user first but everyone else by
             # initials, we first annotate the results so that the current user
             # gets the order 0 (first) and others get 1. Then the current user is
@@ -142,7 +141,7 @@ class Dossier(models.Model):
         'frumvarp nefndar': ['support', 'proposal'],
         'fsp. til munnl. svars': ['support', 'proposal'],
         'fsp. til skrifl. svars': ['support', 'proposal'],
-        'lög (samhlj.)': ['memo', 'knowledge', 'attention', 'support', 'proposal'],
+        'lög (samhlj.)': ['knowledge', 'attention', 'support', 'proposal'],
         'lög í heild': ['support', 'proposal'],
         'nál. með brtt.': [],
         'nefndarálit': ['proposal'],
@@ -151,7 +150,7 @@ class Dossier(models.Model):
         'stjórnarfrumvarp': ['support', 'proposal'],
         'stjórnartillaga': ['support', 'proposal'],
         'svar': ['support', 'proposal'],
-        'þál. (samhlj.)': ['memo', 'knowledge', 'attention', 'support', 'proposal'],
+        'þál. (samhlj.)': ['knowledge', 'attention', 'support', 'proposal'],
         'þál. í heild': ['support', 'proposal'],
         'þáltill.': ['support', 'proposal'],
         'þáltill. n.': ['support', 'proposal'],
@@ -212,17 +211,6 @@ class Dossier(models.Model):
         setattr(statistic, '%s_count' % dossier_type, count)
 
 
-    def update_memo_counts(self, statistic, dossier_type):
-        fieldname = '%s_memo_count' % dossier_type
-        count = Memo.objects.filter(
-            user_id=statistic.user_id,
-            dossier__issue_id=statistic.issue_id,
-            dossier__dossier_type=dossier_type
-        ).count()
-
-        setattr(statistic, fieldname, count)
-
-
     def save(self, input_statistic=None, *args, **kwargs):
         # Check if dossier is new.
         new = self.pk is None
@@ -257,7 +245,6 @@ class Dossier(models.Model):
         # that the file (document or review) has been opened and thus should
         # not be marked as "unread".
         self.is_useful = any([
-            self.memos.count() != 0,
             len(self.notes) > 0,
             self.attention != 'none',
             self.knowledge != 0,
@@ -296,21 +283,7 @@ class Dossier(models.Model):
             self.update_statistic(statistic, field, getattr(self, field), None)
         self.update_counts(statistic, dossier_type)
 
-        self.update_memo_counts(statistic, dossier_type)
-
         statistic.save()
-
-
-    @staticmethod
-    def supports_dossier(doc_type):
-        # A document type doesn't have dossier support at all, if everything
-        # that you can do with a dossier is excluded from the document type.
-
-        if doc_type in Dossier.DOC_TYPE_EXCLUSIONS:
-            ex = Dossier.DOC_TYPE_EXCLUSIONS[doc_type]
-            if all([t[0] in ex for t in Dossier.STATUS_TYPES]) and 'memo' in ex:
-                return False
-        return True
 
 
     @staticmethod
@@ -346,7 +319,6 @@ class DossierStatistic(models.Model):
     document_proposal_major = models.IntegerField(default=0)
 
     document_count = models.IntegerField(default=0)
-    document_memo_count = models.IntegerField(default=0)
 
     review_attention_exclamation = models.IntegerField(default=0)
     review_attention_question = models.IntegerField(default=0)
@@ -367,18 +339,12 @@ class DossierStatistic(models.Model):
     review_proposal_major = models.IntegerField(default=0)
 
     review_count = models.IntegerField(default=0)
-    review_memo_count = models.IntegerField(default=0)
 
     def save(self, *args, **kwargs):
         self.update_has_useful_info()
         super(DossierStatistic, self).save(*args, **kwargs)
 
     def update_has_useful_info(self):
-
-        # Check this first and return, to not unnecessarily iterate through the fieldstates.
-        if self.document_memo_count > 0 or self.review_memo_count > 0:
-            self.has_useful_info = True
-            return
 
         for dossier_type, dossier_type_name in Dossier.DOSSIER_TYPES:
             for status_type, status_type_name in Dossier.STATUS_TYPES:
@@ -474,42 +440,4 @@ class DossierStatistic(models.Model):
                 print('(%s, %s) %s: %d' % (self.user, self.issue, count_fieldname, count))
             setattr(self, count_fieldname, count)
 
-            memo_count_fieldname = '%s_memo_count' % dossier_type
-            memo_count = Memo.objects.filter(
-                user_id=self.user_id,
-                dossier__issue_id=self.issue_id,
-                dossier__dossier_type=dossier_type
-            ).count()
-            if show_output and getattr(self, memo_count_fieldname) != memo_count:
-                print('(%s, %s) %s: %d' % (self.user, self.issue, memo_count_fieldname, memo_count))
-            setattr(self, memo_count_fieldname, memo_count)
-
         self.save()
-
-
-class Memo(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='memos', on_delete=CASCADE)
-    dossier = models.ForeignKey('Dossier', related_name='memos', on_delete=CASCADE)
-    content = models.CharField(max_length=2000)
-    order = models.IntegerField()
-
-    def save(self, *args, **kwargs):
-        new = self.pk is None
-
-        super(Memo, self).save(*args, **kwargs)
-
-        if new:
-            statistic = DossierStatistic.objects.get(user_id=self.user_id, issue_id=self.dossier.issue_id)
-            self.dossier.update_memo_counts(statistic, self.dossier.dossier_type)
-            statistic.save()
-
-    def delete(self):
-        super(Memo, self).delete()
-
-        statistic = DossierStatistic.objects.get(user_id=self.user_id, issue_id=self.dossier.issue_id)
-        self.dossier.update_memo_counts(statistic, self.dossier.dossier_type)
-        statistic.save()
-
-    class Meta:
-        ordering = ['order']
-

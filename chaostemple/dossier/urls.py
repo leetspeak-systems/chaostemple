@@ -17,9 +17,4 @@ urlpatterns = [
 
     path('<int:dossier_id>/set-notes/', views.set_notes, name='json_dossier_set_notes'),
 
-    url(r'^memo/(?P<dossier_id>\d+)/add/$', views.add_memo, name='json_add_memo'),
-    url(r'^memo/(?P<memo_id>\d+)/edit/$', views.edit_memo, name='json_edit_memo'),
-    url(r'^memo/(?P<memo_id>\d+)/delete/$', views.delete_memo, name='json_delete_memo'),
-    url(r'^memo/sort/(?P<dossier_id>\d+)/', views.sort_memos, name='json_sort_memos'),
-
 ]

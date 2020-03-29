@@ -20,13 +20,13 @@
         ever been seen by the user. In other words, the issue is new.
     {% endcomment %}
     {% if issue.seen_count == 0 %}
-        <span class="label label-danger memo-count">{% trans 'New issue' %}</span>
+        <span class="label label-danger label-smooth">{% trans 'New issue' %}</span>
     {% else %}
         {% if issue.new_documents %}
-            <span class="label label-danger memo-count">{{ issue.new_documents }} {% trans 'new documents' %}</span>
+            <span class="label label-danger label-smooth">{{ issue.new_documents }} {% trans 'new documents' %}</span>
         {% endif %}
         {% if issue.new_reviews %}
-            <span class="label label-danger memo-count">{{ issue.new_reviews }} {% trans 'new reviews' %}</span>
+            <span class="label label-danger label-smooth">{{ issue.new_reviews }} {% trans 'new reviews' %}</span>
         {% endif %}
     {% endif %}
 {% endif %}

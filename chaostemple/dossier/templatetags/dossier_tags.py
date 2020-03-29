@@ -58,7 +58,7 @@ def display_issue_new(context, issue, size='normal'):
     for stat in issue.dossier_statistics:
         if stat.user_id == context['request'].user.id and stat.issue_is_new():
             return mark_safe(
-                '<span class="label label-danger memo-count">%s</span>' % _('New')
+                '<span class="label label-danger label-smooth">%s</span>' % _('New')
             )
 
     return ''
@@ -144,9 +144,6 @@ def display_dossier_statistics(context, issue, size='normal'):
                 elif dossier_type == 'review':
                     icon = 'inbox'
 
-                # Determine memo count
-                memo_count = getattr(stat, '%s_memo_count' % dossier_type)
-
                 # Calculate new documents or reviews
                 new_count = 0
                 stat_type_count = getattr(stat, '%s_count' % dossier_type)
@@ -159,7 +156,6 @@ def display_dossier_statistics(context, issue, size='normal'):
                         'user_id': stat.user_id,
                         'issue_id': issue.id,
                         'icon': icon,
-                        'memo_count': memo_count,
                         'new_count': new_count,
                         'dossier_type': dossier_type,
                         'dossier_type_name': dossier_type_name,
@@ -168,11 +164,7 @@ def display_dossier_statistics(context, issue, size='normal'):
 
     return mark_safe(''.join(content))
 
-@register.filter
-def supports_dossier(doc_type):
-    return Dossier.supports_dossier(doc_type)
 
 @register.filter
 def fieldstate_applicable(doc_type, fieldstate):
     return Dossier.fieldstate_applicable(doc_type, fieldstate)
-

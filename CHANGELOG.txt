@@ -384,3 +384,9 @@
 1.5.14:
     * Repetition of MPs in issue overview fixed.
     * Fixed wrong committee meeting count in CSV export.
+
+1.6:
+    * New dossier editing with document/review visible while editing notes and setting knobs.
+    * Displaying of other users' dossiers improved.
+    * Documents/reviews considered new until opened (by current user) instead of new until seen.
+    * Unnecessary clutter reduced in UI.

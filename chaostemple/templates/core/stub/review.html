@@ -18,28 +18,16 @@
         </div>
         <div>
             <span class="glyphicon glyphicon-inbox"></span>
-            {% if FEATURES.new_dossier_editor %}
-                {% if user.is_authenticated and not review.seen %}<span class="label label-danger label-smooth">{% trans 'New' %}</span>{% endif %}<a class="title" href="{% breadcrumb_url 'dossier_review' parliament_num review.log_num %}" data-reload-on-focus="1" data-log-num="{{ review.log_num }}" target="_blank">{{ review.sender_name }}</a>{% if review.sender_name_description %}<strong>{% if review.sender_name_description.0 != ',' %} {% endif %}{{ review.sender_name_description }}</strong>{% endif %}
-            {% else %}
-                <a class="title" href="{{ review.pdf_link }}" target="_blank">{{ review.sender_name }}</a>{% if review.sender_name_description %}<strong>{% if review.sender_name_description.0 != ',' %} {% endif %}{{ review.sender_name_description }}</strong>{% endif %}
-            {% endif %}
+            {% if user.is_authenticated and not review.seen %}<span class="label label-danger label-smooth">{% trans 'New' %}</span>{% endif %}<a class="title" href="{% breadcrumb_url 'dossier_review' parliament_num review.log_num %}" data-reload-on-focus="1" data-log-num="{{ review.log_num }}" target="_blank">{{ review.sender_name }}</a>{% if review.sender_name_description %}<strong>{% if review.sender_name_description.0 != ',' %} {% endif %}{{ review.sender_name_description }}</strong>{% endif %}
             <small>({{ review.get_review_type_display }})</small>
         </div>
         {% include 'dossier/stub/deck_controls.html' %}
     </div>
 
-    {% if FEATURES.new_dossier_editor %}
-        {% if review.dossiers.all %}
-            <div class="panel-footer" control="dossier-deck" data-log-num="{{ review.log_num }}">
-                {% include 'dossier/stub/deck.html' with dossiers=review.dossiers.all %}
-            </div>
-        {% endif %}
-    {% else %}
-        {% for dossier in review.dossiers.all %}
-            <div class="panel-footer" data-dossier-id="{{ dossier.id }}">
-                {% include 'core/stub/dossier.html' %}
-            </div>
-        {% endfor %}
+    {% if review.dossiers.all %}
+        <div class="panel-footer" control="dossier-deck" data-log-num="{{ review.log_num }}">
+            {% include 'dossier/stub/deck.html' with dossiers=review.dossiers.all %}
+        </div>
     {% endif %}
 
 </div>

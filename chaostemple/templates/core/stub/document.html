@@ -13,11 +13,7 @@
         </div>
         <div>
             <span class="glyphicon glyphicon-file"></span>
-            {% if FEATURES.new_dossier_editor %}
-                {% if user.is_authenticated and not document.seen %}<span class="label label-danger label-smooth">{% trans 'New' %}</span>{% endif %}<a class="title" href="{% breadcrumb_url 'dossier_document' parliament_num document.doc_num %}" data-reload-on-focus="1" data-doc-num="{{ document.doc_num }}" target="_blank">{{ document.get_doc_type_display|capfirst }}</a>
-            {% else %}
-                <a class="title" href="{{ document.preferred_link }}" target="_blank">{{ document.get_doc_type_display|capfirst }}</a>
-            {% endif %}
+            {% if user.is_authenticated and not document.seen %}<span class="label label-danger label-smooth">{% trans 'New' %}</span>{% endif %}<a class="title" href="{% breadcrumb_url 'dossier_document' parliament_num document.doc_num %}" data-reload-on-focus="1" data-doc-num="{{ document.doc_num }}" target="_blank">{{ document.get_doc_type_display|capfirst }}</a>
             {% if document.html_link %}
                 &nbsp;<a target="_blank" href="{{ document.html_link }}"><img src="{% static 'core/img/icons/html.24x24.png' %}" /></a>
             {% endif %}
@@ -42,18 +38,10 @@
         {% endif %}
     </div>
 
-    {% if FEATURES.new_dossier_editor %}
-        {% if document.dossiers.all %}
-            <div class="panel-footer" control="dossier-deck" data-doc-num="{{ document.doc_num }}">
-                {% include 'dossier/stub/deck.html' with dossiers=document.dossiers.all %}
-            </div>
-        {% endif %}
-    {% else %}
-        {% for dossier in document.dossiers.all %}
-            <div class="panel-footer" data-dossier-id="{{ dossier.id }}">
-                {% include 'core/stub/dossier.html' %}
-            </div>
-        {% endfor %}
+    {% if document.dossiers.all %}
+        <div class="panel-footer" control="dossier-deck" data-doc-num="{{ document.doc_num }}">
+            {% include 'dossier/stub/deck.html' with dossiers=document.dossiers.all %}
+        </div>
     {% endif %}
 
 </div>

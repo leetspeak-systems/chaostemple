@@ -23,10 +23,6 @@ FEATURES = {
     'subscription_committee': False,
     'subscription_category': False,
 
-    # New dossier editor that shows PDF/HTML and controls side-by-side instead
-    # of just as a footer to each document/review in the issue view.
-    'new_dossier_editor': False,
-
     # This functionality is to be removed in favor of the change from
     # bookmarks to monitoring. It is disabled by feature knob for the moment,
     # until the change is complete, in case the users insist on bringing it

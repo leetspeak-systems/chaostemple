@@ -28,7 +28,7 @@
 
     {% if dossier.document.doc_type|fieldstate_applicable:'proposal' %}
         <div control="fieldstate" class="label label-{% fieldstate_css 'proposal' dossier.proposal %}">
-            {% trans 'Proposal' %}: {{ dossier.get_proposal_display }}
+            {% trans 'Proposals' %}: {{ dossier.get_proposal_display }}
         </div>
     {% endif %}
 

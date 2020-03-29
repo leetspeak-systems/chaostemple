@@ -14,7 +14,7 @@
         <div>
             <span class="glyphicon glyphicon-file"></span>
             {% if FEATURES.new_dossier_editor %}
-                {% if user.is_authenticated and not document.dossiers.all.count and not document.seen %}<span class="label label-danger memo-count">{% trans 'New' %}</span>{% endif %}<a class="title" href="{% breadcrumb_url 'dossier_document' parliament_num document.doc_num %}" data-reload-on-focus="1" data-doc-num="{{ document.doc_num }}" target="_blank">{{ document.get_doc_type_display|capfirst }}</a>
+                {% if user.is_authenticated and not document.seen %}<span class="label label-danger memo-count">{% trans 'New' %}</span>{% endif %}<a class="title" href="{% breadcrumb_url 'dossier_document' parliament_num document.doc_num %}" data-reload-on-focus="1" data-doc-num="{{ document.doc_num }}" target="_blank">{{ document.get_doc_type_display|capfirst }}</a>
             {% else %}
                 <a class="title" href="{{ document.preferred_link }}" target="_blank">{{ document.get_doc_type_display|capfirst }}</a>
             {% endif %}

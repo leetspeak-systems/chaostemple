@@ -95,6 +95,47 @@ $(document).ready(function() {
         });
     });
 
+    // Button: create-dossier
+    $(document).on('click', 'button[control="create-dossier"]', function() {
+        let $this = $(this);
+        let doc_num = $this.data('doc-num');
+        let log_num = $this.data('log-num');
+
+        // Construct URL based on whether the dossier belongs to a document or
+        // review. This distinction is only important because they are
+        // designated by different kinds of IDs (doc_num and log_num,
+        // respectively).
+        let url = '/dossier/parliament/' + PARLIAMENT_NUM;
+        if (doc_num) {
+            url += '/document/' + doc_num;
+        }
+        else if (log_num) {
+            url += '/review/' + log_num;
+        }
+        else {
+            // This makes no sense. Let's just do nothing.
+            return;
+        }
+        url += '/create/';
+
+        $.jsonize({
+            message: {
+                'transit': 'Creating dossier...',
+                'success': 'Dossier created.',
+                'failure': 'Dossier creation failed!',
+            },
+            url: url,
+            done: function(data, textStatus) {
+                if (data.document_id) {
+                    $('div[control="document-container"][data-document-id=' + data.document_id + ']').html(data.html);
+                }
+                else if (data.review_id) {
+                    $('div[control="review-container"][data-review-id=' + data.review_id + ']').html(data.html);
+                }
+            }
+        });
+    });
+
     // Button: delete-dossier
     $(document).on('click', 'button[control="delete-dossier"]', function() {
         let $this = $(this);

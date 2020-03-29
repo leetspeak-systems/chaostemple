@@ -10,13 +10,13 @@ from django.template.loader import render_to_string
 
 from althingi.models import CommitteeAgenda
 from althingi.models import CommitteeAgendaItem
-from althingi.models import Document
-from althingi.models import Review
 from althingi.models import Session
 from althingi.models import SessionAgendaItem
 
+from core.models import Document
 from core.models import Issue
 from core.models import IssueUtilities
+from core.models import Review
 from core.models import Subscription
 
 from dossier.models import Dossier
@@ -107,6 +107,66 @@ def dossier_fieldstate(request, dossier_id, fieldname):
         fieldname: getattr(dossier, fieldname),
     }
     return ctx
+
+
+@login_required
+@jsonize
+def create_dossier(request, parliament_num, doc_num=None, log_num=None):
+
+    # Same dossier prefetch regardless of whether the dossier belongs to a
+    # document or a review.
+    prefetch_q = Dossier.objects.by_user(request.user)
+
+    if doc_num is not None:
+
+        document = Document.objects.get(issue__parliament__parliament_num=parliament_num, doc_num=doc_num)
+        try:
+            Dossier.objects.get(user=request.user, document=document)
+        except Dossier.DoesNotExist:
+            Dossier(user=request.user, document=document).save()
+
+        # Data must be reloaded to reflect change.
+        document = Document.objects.prefetch_related(
+            Prefetch('dossiers', queryset=prefetch_q)
+        ).annotate_seen(
+            request.user
+        ).get(
+            issue__parliament__parliament_num=parliament_num,
+            doc_num=doc_num
+        )
+
+        html = render_to_string('core/stub/document.html', { 'document': document }, request=request)
+
+        return {
+            'document_id': document.id,
+            'html': html,
+        }
+
+    elif log_num is not None:
+
+        review = Review.objects.get(issue__parliament__parliament_num=parliament_num, log_num=log_num)
+        try:
+            Dossier.objects.get(user=request.user, review=review)
+        except Dossier.DoesNotExist:
+            Dossier(user=request.user, review=review).save()
+
+        # Data must be reloaded to reflect change.
+        review = Review.objects.prefetch_related(
+            Prefetch('dossiers', queryset=prefetch_q)
+        ).annotate_seen(
+            request.user
+        ).get(
+            issue__parliament__parliament_num=parliament_num,
+            log_num=log_num
+        )
+
+        html = render_to_string('core/stub/review.html', { 'review': review }, request=request)
+        print(html)
+
+        return {
+            'review_id': review.id,
+            'html': html,
+        }
 
 
 @login_required

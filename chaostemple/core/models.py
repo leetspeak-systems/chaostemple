@@ -238,6 +238,8 @@ class IssueMonitor(models.Model):
         stat.save()
 
     def delete(self):
+        DossierStatistic = apps.get_model('dossier', 'DossierStatistic')
+
         super(IssueMonitor, self).delete()
 
         try:

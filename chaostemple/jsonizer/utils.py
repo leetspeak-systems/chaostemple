@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.http import HttpResponse
 import json
+import traceback
 
 
 def jsonize(f):
@@ -13,7 +14,8 @@ def jsonize(f):
             return HttpResponse(json.dumps(m), content_type='text/json')
         except Exception as e:
             if settings.DEBUG:
-                return HttpResponse(json.dumps(json_error(e.args[0])), content_type='text/json')
+                output = '%s\n\n%s' % (e.args[0], traceback.format_exc())
+                return HttpResponse(json.dumps(json_error(output)), content_type='text/json')
             else:
                 raise
 

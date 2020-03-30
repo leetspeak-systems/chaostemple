@@ -3,7 +3,7 @@ from django.conf.urls import include, url
 from django.urls import path
 
 from core import views
-from core import json_views
+from core import dataviews
 
 urlpatterns = [
     url(r'^$', views.home, name='home'),
@@ -41,32 +41,32 @@ urlpatterns = [
     url(r'^user/access/$', views.user_access, name='user_access'),
     url(r'^parliament/(?P<parliament_num>\d+)/user/issues/monitored/$', views.user_issues_monitored, name='user_issues_monitored'),
 
-    url(r'^json/proposer/(?P<proposer_id>\d+)/subproposers/$', json_views.proposer_subproposers, name='json_proposers_subproposers'),
-    url(r'^json/issue/list/(?P<parliament_num>\d+)/$', json_views.list_issues, name='json_list_issues'),
-    path('json/parliament/<int:parliament_num>/document/<int:doc_num>/', json_views.document, name='json_document'),
-    path('json/parliament/<int:parliament_num>/review/<int:log_num>/', json_views.review, name='json_review'),
+    url(r'^json/proposer/(?P<proposer_id>\d+)/subproposers/$', dataviews.proposer_subproposers, name='json_proposers_subproposers'),
+    url(r'^json/issue/list/(?P<parliament_num>\d+)/$', dataviews.list_issues, name='json_list_issues'),
+    path('json/parliament/<int:parliament_num>/document/<int:doc_num>/', dataviews.document, name='json_document'),
+    path('json/parliament/<int:parliament_num>/review/<int:log_num>/', dataviews.review, name='json_review'),
 
-    url(r'^json/monitor/issue/toggle/(?P<issue_id>\d+)/$', json_views.issue_monitor_toggle, name='json_issue_monitor_toggle'),
-    url(r'^json/monitor/issue/menu/(?P<parliament_num>\d+)$', json_views.issue_monitor_menu, name='json_issue_monitor_menu'),
+    url(r'^json/monitor/issue/toggle/(?P<issue_id>\d+)/$', dataviews.issue_monitor_toggle, name='json_issue_monitor_toggle'),
+    url(r'^json/monitor/issue/menu/(?P<parliament_num>\d+)$', dataviews.issue_monitor_menu, name='json_issue_monitor_menu'),
 
-    path('json/settings/set/<str:setting_name>/<str:setting_value>/', json_views.setting_set),
+    path('json/settings/set/<str:setting_name>/<str:setting_value>/', dataviews.setting_set),
 
-    path('json/access/grant/group/<int:friend_group_id>/', json_views.access_grant),
-    path('json/access/grant/group/<int:friend_group_id>/issue/<int:issue_id>/', json_views.access_grant),
-    path('json/access/grant/user/<int:friend_id>/', json_views.access_grant),
-    path('json/access/grant/user/<int:friend_id>/issue/<int:issue_id>/', json_views.access_grant),
-    path('json/access/revoke/group/<int:friend_group_id>/', json_views.access_revoke),
-    path('json/access/revoke/group/<int:friend_group_id>/issue/<int:issue_id>/', json_views.access_revoke),
-    path('json/access/revoke/user/<int:friend_id>/', json_views.access_revoke),
-    path('json/access/revoke/user/<int:friend_id>/issue/<int:issue_id>/', json_views.access_revoke),
-    path('json/access/request/membership/<int:group_id>/', json_views.membership_request, { 'action': 'request' }),
+    path('json/access/grant/group/<int:friend_group_id>/', dataviews.access_grant),
+    path('json/access/grant/group/<int:friend_group_id>/issue/<int:issue_id>/', dataviews.access_grant),
+    path('json/access/grant/user/<int:friend_id>/', dataviews.access_grant),
+    path('json/access/grant/user/<int:friend_id>/issue/<int:issue_id>/', dataviews.access_grant),
+    path('json/access/revoke/group/<int:friend_group_id>/', dataviews.access_revoke),
+    path('json/access/revoke/group/<int:friend_group_id>/issue/<int:issue_id>/', dataviews.access_revoke),
+    path('json/access/revoke/user/<int:friend_id>/', dataviews.access_revoke),
+    path('json/access/revoke/user/<int:friend_id>/issue/<int:issue_id>/', dataviews.access_revoke),
+    path('json/access/request/membership/<int:group_id>/', dataviews.membership_request, { 'action': 'request' }),
     path('json/access/withdraw/membership-request/<int:group_id>/',
-        json_views.membership_request,
+        dataviews.membership_request,
         { 'action': 'withdraw' }
     ),
-    path('json/access/process/membership-request/', json_views.process_membership_request),
+    path('json/access/process/membership-request/', dataviews.process_membership_request),
 
-    path('json/subscription/toggle/<str:sub_type>/<int:sub_id>/', json_views.subscription_toggle),
+    path('json/subscription/toggle/<str:sub_type>/<int:sub_id>/', dataviews.subscription_toggle),
 
     url(r'^dossier/', include('dossier.urls')),
 ]

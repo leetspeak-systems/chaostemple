@@ -15,6 +15,7 @@ from althingi.models import SessionAgendaItem
 
 from core.models import Document
 from core.models import Issue
+from core.models import IssueMonitor
 from core.models import IssueUtilities
 from core.models import Review
 from core.models import Subscription
@@ -209,8 +210,6 @@ def delete_issue_dossiers(request, issue_id):
         user_id=request.user.id
     ).count() > 0
 
-    monitored_issues = request.extravars['monitored_issues']
-
     Dossier.objects.filter(issue_id=issue_id, user_id=request.user.id).delete()
 
     # If the issue is being monitored or is subscribed to, we want to retain
@@ -218,7 +217,8 @@ def delete_issue_dossiers(request, issue_id):
     # document/review counts. If the issue is not being monitored, however,
     # we'll delete the dossier statistic for the sake of data cleanliness.
     stat = issue.dossierstatistic_set.get(user_id=request.user.id)
-    if is_subscribed or issue in monitored_issues:
+    monitor_issue_ids = [m['issue_id'] for m in IssueMonitor.objects.filter(user=request.user).values('issue_id')]
+    if is_subscribed or issue.id in monitor_issue_ids:
         # Reset the statistics.
         stat.reset()
 
@@ -254,7 +254,7 @@ def delete_issue_dossiers(request, issue_id):
     stub_ctx.update({
         'issue': issue,
         'user': request.user,
-        'monitored_issues': monitored_issues,
+        'monitored_issues': request.extravars['monitored_issues'],
     })
     html_content = render_to_string('core/stub/issue.html', stub_ctx, request=request)
 

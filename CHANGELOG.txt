@@ -390,3 +390,8 @@
     * Displaying of other users' dossiers improved.
     * Documents/reviews considered new until opened (by current user) instead of new until seen.
     * Unnecessary clutter reduced in UI.
+
+1.6.1:
+    * Fixed error when unmonitoring an issue without dossier statistic.
+    * Fixed problem with "new"-labels not appearing every time they should.
+    * Code cleanup and refactoring under the hood.

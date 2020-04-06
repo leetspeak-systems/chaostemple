@@ -7,7 +7,7 @@ from django.db import migrations
 
 def transfer_emails_to_usernames(apps, schema_editor):
     User = apps.get_model('auth', 'User')
-    Seat = apps.get_model('althingi', 'Seat')
+    Seat = apps.get_model('djalthingi', 'Seat')
 
     for user in User.objects.select_related('userprofile__person').all():
 

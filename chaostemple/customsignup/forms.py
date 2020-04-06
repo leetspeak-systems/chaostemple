@@ -10,8 +10,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from core.models import UserProfile
 
-from althingi.althingi_settings import CURRENT_PARLIAMENT_NUM
-from althingi.models import Seat
+from djalthingi.althingi_settings import CURRENT_PARLIAMENT_NUM
+from djalthingi.models import Seat
 
 class CustomProfileDataForm(forms.Form):
     name = forms.CharField(label=_('Name'), max_length=200)

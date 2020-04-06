@@ -8,10 +8,10 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.template.loader import render_to_string
 
-from althingi.models import CommitteeAgenda
-from althingi.models import CommitteeAgendaItem
-from althingi.models import Session
-from althingi.models import SessionAgendaItem
+from djalthingi.models import CommitteeAgenda
+from djalthingi.models import CommitteeAgendaItem
+from djalthingi.models import Session
+from djalthingi.models import SessionAgendaItem
 
 from core.models import Document
 from core.models import Issue

@@ -17,13 +17,13 @@ from django.utils.safestring import mark_safe
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 
-from althingi.althingi_settings import CURRENT_PARLIAMENT_NUM
+from djalthingi.althingi_settings import CURRENT_PARLIAMENT_NUM
 
-from althingi.models import Issue as AlthingiIssue
-from althingi.models import IssueQuerySet as AlthingiIssueQuerySet
-from althingi.models import Document as AlthingiDocument
-from althingi.models import Person
-from althingi.models import Review as AlthingiReview
+from djalthingi.models import Issue as AlthingiIssue
+from djalthingi.models import IssueQuerySet as AlthingiIssueQuerySet
+from djalthingi.models import Document as AlthingiDocument
+from djalthingi.models import Person
+from djalthingi.models import Review as AlthingiReview
 
 # Custom query sets and model managers
 
@@ -343,10 +343,10 @@ class Subscription(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='subscriptions', on_delete=CASCADE)
     sub_type = models.CharField(max_length=20, choices=SUB_TYPE_CHOICES)
 
-    party = models.ForeignKey('althingi.Party', null=True, related_name='subscriptions', on_delete=CASCADE)
-    committee = models.ForeignKey('althingi.Committee', null=True, related_name='subscriptions', on_delete=CASCADE)
-    person = models.ForeignKey('althingi.Person', null=True, related_name='subscriptions', on_delete=CASCADE)
-    category = models.ForeignKey('althingi.Category', null=True, related_name='subscriptions', on_delete=CASCADE)
+    party = models.ForeignKey('djalthingi.Party', null=True, related_name='subscriptions', on_delete=CASCADE)
+    committee = models.ForeignKey('djalthingi.Committee', null=True, related_name='subscriptions', on_delete=CASCADE)
+    person = models.ForeignKey('djalthingi.Person', null=True, related_name='subscriptions', on_delete=CASCADE)
+    category = models.ForeignKey('djalthingi.Category', null=True, related_name='subscriptions', on_delete=CASCADE)
 
     class Meta:
         unique_together = ['user', 'party', 'committee', 'person']

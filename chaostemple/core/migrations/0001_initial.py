@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('althingi', '0001_initial'),
+        ('djalthingi', '0001_initial'),
     ]
 
     operations = [
@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
                 ('knowledge', models.IntegerField(choices=[(0, 'Unread'), (1, 'Briefly examined'), (2, 'Examined'), (3, 'Thoroughly examined')], default=0)),
                 ('support', models.CharField(choices=[(b'undefined', 'Undefined'), (b'strongopposition', 'Strong Opposition'), (b'oppose', 'Oppose'), (b'neutral', 'Neutral'), (b'support', 'Support'), (b'strongsupport', 'Strong Support'), (b'other', 'Other')], default=b'undefined', max_length=20)),
                 ('proposal', models.CharField(choices=[(b'none', 'None'), (b'minor', 'Minor'), (b'some', 'Some'), (b'major', 'Major')], default=b'none', max_length=20)),
-                ('document', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='dossiers', to='althingi.Document')),
+                ('document', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='dossiers', to='djalthingi.Document')),
             ],
         ),
         migrations.CreateModel(
@@ -107,7 +107,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=100)),
-                ('person', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='userprofile', to='althingi.Person')),
+                ('person', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='userprofile', to='djalthingi.Person')),
                 ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='userprofile', to=settings.AUTH_USER_MODEL)),
             ],
         ),
@@ -118,12 +118,12 @@ class Migration(migrations.Migration):
             options={
                 'proxy': True,
             },
-            bases=('althingi.issue',),
+            bases=('djalthingi.issue',),
         ),
         migrations.AddField(
             model_name='issuebookmark',
             name='issue',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='issue_bookmarks', to='althingi.Issue'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='issue_bookmarks', to='djalthingi.Issue'),
         ),
         migrations.AddField(
             model_name='issuebookmark',
@@ -133,7 +133,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='dossierstatistic',
             name='issue',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='althingi.Issue'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='djalthingi.Issue'),
         ),
         migrations.AddField(
             model_name='dossierstatistic',
@@ -143,12 +143,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='dossier',
             name='issue',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='dossiers', to='althingi.Issue'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='dossiers', to='djalthingi.Issue'),
         ),
         migrations.AddField(
             model_name='dossier',
             name='review',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='dossiers', to='althingi.Review'),
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='dossiers', to='djalthingi.Review'),
         ),
         migrations.AddField(
             model_name='dossier',

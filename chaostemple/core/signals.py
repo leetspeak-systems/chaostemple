@@ -1,10 +1,10 @@
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
-from althingi.exceptions import DataIntegrityException
+from djalthingi.exceptions import DataIntegrityException
 
-from althingi.models import Document
-from althingi.models import Review
+from djalthingi.models import Document
+from djalthingi.models import Review
 
 from dossier.models import Dossier
 

@@ -8,10 +8,10 @@ lib
 local
 share
 local_settings.py
-/chaostemple/static
-/chaostemple/althingi/static/althingi
-/chaostemple/althingi/management/commands/temp_*
-/chaostemple/althingi/xmlcache
-/chaostemple/althingi/settings.py
+/chaostemple/djstatic
+/chaostemple/djalthingi/static/althingi
+/chaostemple/djalthingi/management/commands/temp_*
+/chaostemple/djalthingi/xmlcache
+/chaostemple/djalthingi/settings.py
 /sql-changes
 /pip-selfcheck.json

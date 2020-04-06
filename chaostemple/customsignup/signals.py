@@ -2,7 +2,7 @@ from django.contrib.auth.models import Group
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from althingi.models import Person
+from djalthingi.models import Person
 
 from core.models import Access
 from core.models import UserProfile

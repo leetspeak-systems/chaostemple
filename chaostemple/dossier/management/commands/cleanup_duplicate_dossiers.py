@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 
-from althingi.althingi_settings import CURRENT_PARLIAMENT_NUM
-from althingi.exceptions import DataIntegrityException
+from djalthingi.althingi_settings import CURRENT_PARLIAMENT_NUM
+from djalthingi.exceptions import DataIntegrityException
 
 from core.models import Issue
 

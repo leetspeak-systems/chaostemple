@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('althingi', '0015_auto_20161229_1625'),
+        ('djalthingi', '0015_auto_20161229_1625'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
@@ -26,9 +26,9 @@ class Migration(migrations.Migration):
                 ('knowledge', models.IntegerField(choices=[(0, 'Unread'), (1, 'Briefly examined'), (2, 'Examined'), (3, 'Thoroughly examined')], default=0)),
                 ('support', models.CharField(choices=[('undefined', 'Undefined'), ('strongopposition', 'Strong Opposition'), ('oppose', 'Oppose'), ('neutral', 'Neutral'), ('support', 'Support'), ('strongsupport', 'Strong Support'), ('referral', 'Referral'), ('other', 'Other')], default='undefined', max_length=20)),
                 ('proposal', models.CharField(choices=[('none', 'None'), ('minor', 'Minor'), ('some', 'Some'), ('major', 'Major')], default='none', max_length=20)),
-                ('document', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='dossiers', to='althingi.Document')),
-                ('issue', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='dossiers', to='althingi.Issue')),
-                ('review', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='dossiers', to='althingi.Review')),
+                ('document', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='dossiers', to='djalthingi.Document')),
+                ('issue', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='dossiers', to='djalthingi.Issue')),
+                ('review', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='dossiers', to='djalthingi.Review')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='dossiers', to=settings.AUTH_USER_MODEL)),
             ],
         ),
@@ -75,7 +75,7 @@ class Migration(migrations.Migration):
                 ('review_proposal_major', models.IntegerField(default=0)),
                 ('review_count', models.IntegerField(default=0)),
                 ('review_memo_count', models.IntegerField(default=0)),
-                ('issue', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='althingi.Issue')),
+                ('issue', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='djalthingi.Issue')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='dossier_statistics', to=settings.AUTH_USER_MODEL)),
             ],
         ),

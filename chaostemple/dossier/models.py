@@ -15,9 +15,9 @@ from django.db.models import Q
 from django.db.models import When
 from django.utils.translation import ugettext_lazy as _
 
-from althingi.models import Document
-from althingi.models import Issue
-from althingi.models import Review
+from djalthingi.models import Document
+from djalthingi.models import Issue
+from djalthingi.models import Review
 
 from model_utils import FieldTracker
 

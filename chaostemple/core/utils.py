@@ -1,4 +1,4 @@
-from althingi.models import Person
+from djalthingi.models import Person
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.urls import reverse

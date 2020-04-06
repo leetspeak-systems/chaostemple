@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('althingi', '0045_issue_committee_agenda_item_count'),
+        ('djalthingi', '0045_issue_committee_agenda_item_count'),
         ('core', '0016_userprofile_setting_hide_concluded_from_monitors'),
     ]
 
@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
                 'indexes': [],
                 'constraints': [],
             },
-            bases=('althingi.document',),
+            bases=('djalthingi.document',),
         ),
         migrations.CreateModel(
             name='Review',
@@ -31,6 +31,6 @@ class Migration(migrations.Migration):
                 'indexes': [],
                 'constraints': [],
             },
-            bases=('althingi.review',),
+            bases=('djalthingi.review',),
         ),
     ]

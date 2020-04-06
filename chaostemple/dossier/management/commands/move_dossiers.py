@@ -2,11 +2,11 @@ from django.core.management.base import BaseCommand
 
 from sys import stdout
 
-from althingi.althingi_settings import CURRENT_PARLIAMENT_NUM
+from djalthingi.althingi_settings import CURRENT_PARLIAMENT_NUM
 
-from althingi.exceptions import DataIntegrityException
+from djalthingi.exceptions import DataIntegrityException
 
-from althingi.models import Review
+from djalthingi.models import Review
 
 from dossier.models import Dossier
 

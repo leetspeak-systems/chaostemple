@@ -36,7 +36,7 @@ INSTALLED_APPS = (
 
     'core',
     'dossier',
-    'althingi',
+    'djalthingi',
     'jsonizer',
     'customsignup',
 )

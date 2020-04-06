@@ -16,11 +16,11 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='dossier',
             name='document',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, related_name='dossiers', to='althingi.Document'),
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, related_name='dossiers', to='djalthingi.Document'),
         ),
         migrations.AlterField(
             model_name='dossier',
             name='review',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, related_name='dossiers', to='althingi.Review'),
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, related_name='dossiers', to='djalthingi.Review'),
         ),
     ]

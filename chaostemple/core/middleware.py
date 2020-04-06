@@ -9,10 +9,10 @@ from django.utils.translation import ugettext as _
 
 from core.breadcrumbs import make_breadcrumbs
 
-from althingi.althingi_settings import CURRENT_PARLIAMENT_NUM
-from althingi.models import CommitteeAgenda
-from althingi.models import Parliament
-from althingi.models import Session
+from djalthingi.althingi_settings import CURRENT_PARLIAMENT_NUM
+from djalthingi.models import CommitteeAgenda
+from djalthingi.models import Parliament
+from djalthingi.models import Session
 
 from core.models import AccessUtilities
 from core.models import Issue

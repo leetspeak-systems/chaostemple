@@ -41,16 +41,16 @@ from core.utils import complete_person
 from dossier.models import Dossier
 from dossier.models import DossierStatistic
 
-from althingi.althingi_settings import CURRENT_PARLIAMENT_NUM
-from althingi.models import Category
-from althingi.models import CategoryGroup
-from althingi.models import Committee
-from althingi.models import CommitteeAgenda
-from althingi.models import CommitteeSeat
-from althingi.models import Parliament
-from althingi.models import Party
-from althingi.models import Person
-from althingi.models import Session
+from djalthingi.althingi_settings import CURRENT_PARLIAMENT_NUM
+from djalthingi.models import Category
+from djalthingi.models import CategoryGroup
+from djalthingi.models import Committee
+from djalthingi.models import CommitteeAgenda
+from djalthingi.models import CommitteeSeat
+from djalthingi.models import Parliament
+from djalthingi.models import Party
+from djalthingi.models import Person
+from djalthingi.models import Session
 
 
 def home(request):

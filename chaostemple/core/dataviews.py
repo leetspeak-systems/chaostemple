@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404
 from django.template.defaultfilters import capfirst
 from django.template.loader import render_to_string
 
-from althingi.models import Proposer
+from djalthingi.models import Proposer
 
 from core.breadcrumbs import append_to_crumb_string
 

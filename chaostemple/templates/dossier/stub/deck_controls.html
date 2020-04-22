@@ -1,5 +1,7 @@
 {% load i18n %}
 
+{% if request.user.is_authenticated %}
+
 <div control="deck-controls">
 {% if document.seen or review.seen %}
     <button
@@ -19,3 +21,5 @@
     </button>
 {% endif %}
 </div>
+
+{% endif %}

@@ -395,3 +395,7 @@
     * Fixed error when unmonitoring an issue without dossier statistic.
     * Fixed problem with "new"-labels not appearing every time they should.
     * Code cleanup and refactoring under the hood.
+
+1.6.2:
+    * Minor UI fixes.
+    * Bugfix: Crash when viewing committee that has a person who has left a party.

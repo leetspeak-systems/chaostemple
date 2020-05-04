@@ -46,9 +46,11 @@
                     <tr>
                         <td>
                             {% with person.last_seat.0.party as party %}
-                            <span style="float: right;">
-                                <a href="{% breadcrumb_url 'parliament_persons' parliament_num party.slug %}">{{ party.abbreviation_short }}</a>
-                            </span>
+                            {% if party.slug %}
+                                <span style="float: right;">
+                                    <a href="{% breadcrumb_url 'parliament_persons' parliament_num party.slug %}">{{ party.abbreviation_short }}</a>
+                                </span>
+                            {% endif %}
                             {% endwith %}
                             <a href="{% breadcrumb_url 'person' person.slug person.subslug %}">{{ person }}</a>
                             {% if committee_seat.committee_seat_type in 'formaður,1. varaformaður,2. varaformaður' %}

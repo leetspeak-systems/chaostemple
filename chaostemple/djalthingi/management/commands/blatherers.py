@@ -91,9 +91,9 @@ class Command(BaseCommand):
             party_counts = {'': 0}
             party_mp_counts = {}
             for party in parliament.parties.annotate_mp_counts(parliament):
-                party_seconds[party.name] = 0
-                party_counts[party.name] = 0
-                party_mp_counts[party.name] = party.mp_count
+                party_seconds[party.abbreviation_long] = 0
+                party_counts[party.abbreviation_long] = 0
+                party_mp_counts[party.abbreviation_long] = party.mp_count
 
             rows = []
             for i, person in enumerate(persons):
@@ -113,10 +113,10 @@ class Command(BaseCommand):
 
                 hr = human_readable(seconds)
                 try:
-                    party = person.last_seat[0].party.name
+                    party = person.last_seat[0].party.abbreviation_long
                 except IndexError:
                     try:
-                        party = person.last_minister_seats[0].party.name
+                        party = person.last_minister_seats[0].party.abbreviation_long
                     except IndexError:
                         party = ''
 

@@ -25,7 +25,7 @@ from model_utils import FieldTracker
 class DossierManager(models.Manager):
     def by_user(self, user):
         '''
-        Filers dossiers by the appropriate visibility toward the given user.
+        Filters dossiers by the appropriate visibility toward the given user.
         Example:
 
             dossiers = Dossier.objects.by_user(request.user).filter(

@@ -179,26 +179,26 @@ def csv_parliament_issues(request, parliament_num):
             COUNT(DISTINCT cai.id) AS committee_meeting_count
         FROM
             -- Basic info
-            althingi_issue AS i
-            INNER JOIN althingi_parliament AS par ON par.id = i.parliament_id
+            djalthingi_issue AS i
+            INNER JOIN djalthingi_parliament AS par ON par.id = i.parliament_id
 
             -- Proposers
-            INNER JOIN althingi_proposer AS prop ON (
+            INNER JOIN djalthingi_proposer AS prop ON (
                 prop.issue_id = i.id
                 AND (
                     prop.order = 1
                     OR prop.order IS NULL
                 )
             )
-            LEFT OUTER JOIN althingi_person AS prop_pers ON (
+            LEFT OUTER JOIN djalthingi_person AS prop_pers ON (
                 prop_pers.id = prop.person_id
             )
-            LEFT OUTER JOIN althingi_committee AS prop_com ON (
+            LEFT OUTER JOIN djalthingi_committee AS prop_com ON (
                 prop_com.id = prop.committee_id
             )
 
             -- Timing of person's seat, party etc.
-            LEFT OUTER JOIN althingi_seat AS seat ON (
+            LEFT OUTER JOIN djalthingi_seat AS seat ON (
                 seat.person_id = prop_pers.id
                 AND (
                     seat.timing_out >= i.time_published
@@ -206,7 +206,7 @@ def csv_parliament_issues(request, parliament_num):
                 )
                 AND seat.timing_in <= i.time_published
             )
-            LEFT OUTER JOIN althingi_ministerseat AS mseat ON (
+            LEFT OUTER JOIN djalthingi_ministerseat AS mseat ON (
                 mseat.person_id = prop_pers.id
                 AND (
                     mseat.timing_out >= i.time_published
@@ -214,19 +214,19 @@ def csv_parliament_issues(request, parliament_num):
                 )
                 AND mseat.timing_in <= i.time_published
             )
-			LEFT OUTER JOIN althingi_minister AS mini ON (
+			LEFT OUTER JOIN djalthingi_minister AS mini ON (
 				mini.id = mseat.minister_id
             )
-            LEFT OUTER JOIN althingi_party AS party ON (
+            LEFT OUTER JOIN djalthingi_party AS party ON (
                 party.id = seat.party_id
                 OR party.id = mseat.party_id
             )
 
             -- Committee
-            LEFT OUTER JOIN althingi_committee AS com ON com.id = i.to_committee_id
-            LEFT OUTER JOIN althingi_rapporteur AS rap ON rap.issue_id = i.id
-            LEFT OUTER JOIN althingi_person AS rap_pers ON rap_pers.id = rap.person_id
-            LEFT OUTER JOIN althingi_committeeagendaitem AS cai ON cai.issue_id = i.id
+            LEFT OUTER JOIN djalthingi_committee AS com ON com.id = i.to_committee_id
+            LEFT OUTER JOIN djalthingi_rapporteur AS rap ON rap.issue_id = i.id
+            LEFT OUTER JOIN djalthingi_person AS rap_pers ON rap_pers.id = rap.person_id
+            LEFT OUTER JOIN djalthingi_committeeagendaitem AS cai ON cai.issue_id = i.id
         WHERE
             par.parliament_num = %s
             AND i.issue_group = 'A'

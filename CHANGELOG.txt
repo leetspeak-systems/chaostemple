@@ -399,3 +399,6 @@
 1.6.2:
     * Minor UI fixes.
     * Bugfix: Crash when viewing committee that has a person who has left a party.
+
+1.6.3:
+    * Bugfix: CSV export fixed.

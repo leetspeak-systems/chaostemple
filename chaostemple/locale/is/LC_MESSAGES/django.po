@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-01 13:38+0000\n"
+"POT-Creation-Date: 2020-06-01 18:45+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Helgi Hrafn Gunnarsson <helgi@binary.is>\n"
 "Language-Team: Icelandic <helgi@binary.is>\n"
@@ -86,11 +86,11 @@ msgstr "Þingfundir"
 msgid "parliamentary session"
 msgstr "þingfundur"
 
-#: core/breadcrumbs.py:183 core/models.py:360
+#: core/breadcrumbs.py:183 core/models.py:356
 msgid "Committees"
 msgstr "Nefndir"
 
-#: core/breadcrumbs.py:213 core/models.py:362 templates/base.html:129
+#: core/breadcrumbs.py:213 core/models.py:358 templates/base.html:129
 #: templates/core/parliament_categories.html:17
 #: templates/core/parliament_issue.html:181 templates/core/parliaments.html:47
 msgid "Categories"
@@ -110,23 +110,23 @@ msgstr "Þingmenn"
 msgid "b."
 msgstr "f."
 
-#: core/models.py:311
+#: core/models.py:307
 msgid "pending"
 msgstr ""
 
-#: core/models.py:312 djalthingi/models.py:433
+#: core/models.py:308 djalthingi/models.py:433
 msgid "rejected"
 msgstr "hafnað"
 
-#: core/models.py:313 djalthingi/models.py:434
+#: core/models.py:309 djalthingi/models.py:434
 msgid "accepted"
 msgstr "samþykkt"
 
-#: core/models.py:359
+#: core/models.py:355
 msgid "Parties"
 msgstr "Flokkar"
 
-#: core/models.py:361
+#: core/models.py:357
 msgid "MPs"
 msgstr "Þingmenn"
 
@@ -401,7 +401,7 @@ msgid "Reviews"
 msgstr "Umsagnir"
 
 #: dossier/models.py:99 templates/dossier/stub/deck_item.html:19
-#: templates/dossier/stub/dossier_buttons.html:30
+#: templates/dossier/stub/dossier_buttons.html:35
 msgid "Attention"
 msgstr "Aðvörun"
 
@@ -412,12 +412,12 @@ msgstr "Þekking"
 
 #: dossier/models.py:101 dossier/models.py:123
 #: templates/dossier/stub/deck_item.html:25
-#: templates/dossier/stub/dossier_buttons.html:52
+#: templates/dossier/stub/dossier_buttons.html:62
 msgid "Support"
 msgstr "Stuðningur"
 
 #: dossier/models.py:102 templates/dossier/stub/deck_item.html:31
-#: templates/dossier/stub/dossier_buttons.html:74
+#: templates/dossier/stub/dossier_buttons.html:89
 msgid "Proposals"
 msgstr "Tillögur"
 
@@ -1272,8 +1272,8 @@ msgid "About to save changes..."
 msgstr "Vista breytingar..."
 
 #: templates/dossier/dossier.html:13
-msgid "Saved."
-msgstr "Vistaðar."
+msgid "Changes saved."
+msgstr "Breytingar vistaðar."
 
 #: templates/dossier/dossier.html:14
 msgid "Could not save notes!"
@@ -1483,6 +1483,9 @@ msgstr "Upplýsingar"
 #: templates/termsandconditions/tc_accept_terms.html:51
 msgid "Accept all"
 msgstr "Samþykkja alla"
+
+#~ msgid "Saved."
+#~ msgstr "Vistaðar."
 
 #~ msgid "Are you sure you want to delete this memo?"
 #~ msgstr "Ertu viss um að þú viljir eyða þessum minnispunkti?"

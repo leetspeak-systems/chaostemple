@@ -29,20 +29,30 @@ from djalthingi.models import Review as AlthingiReview
 
 class IssueQuerySet(AlthingiIssueQuerySet):
 
-    def annotate_news(self, user_id):
+    def annotate_news(self, user):
         '''
         Annotates the query with the number of new_documents and new_reviews
         and a seen_count which is the total number of documents or reviews
         that the user has seen so far.
         '''
 
+        q_filter = Q(dossiers__user_id=user.id)
+        if user.userprofile.setting_seen_if_worked_by_others:
+            # If the seen-if-worked-by-others setting is selected, we will
+            # count other users' seen items as seen by us.
+            Dossier = apps.get_model('dossier', 'Dossier')
+            q_filter |= Q(dossiers__in=Dossier.objects.by_user(user))
+
         news_subquery = Issue.objects.filter(
-            dossierstatistic__user_id=user_id,
+            dossierstatistic__user_id=user.id,
             pk=OuterRef('pk')
         ).annotate(
-            seen_count=F('dossierstatistic__document_count') + F('dossierstatistic__review_count'),
-            new_documents=F('document_count') - F('dossierstatistic__document_count'),
-            new_reviews=F('review_count') - F('dossierstatistic__review_count')
+            seen_documents=Count('dossiers__document', filter=q_filter, distinct=True),
+            seen_reviews=Count('dossiers__review', filter=q_filter, distinct=True),
+
+            seen_count=F('seen_documents') + F('seen_reviews'),
+            new_documents=F('document_count') - F('seen_documents'),
+            new_reviews=F('review_count') - F('seen_reviews')
         )
 
         issues = self.annotate(
@@ -53,13 +63,13 @@ class IssueQuerySet(AlthingiIssueQuerySet):
 
         return issues
 
-    def incoming(self, user_id):
+    def incoming(self, user):
         '''
         Returns issues with new documents or new reviews.
         See also IssueQuerySet.annotate_news().
         '''
 
-        issues = self.annotate_news(user_id).exclude(new_documents=0, new_reviews=0).filter(
+        issues = self.annotate_news(user).exclude(new_documents=0, new_reviews=0).filter(
             dossierstatistic__user_id=user_id,
             dossierstatistic__has_useful_info=True
         )
@@ -78,10 +88,17 @@ class SeenQuerySet(models.QuerySet):
         if not user.is_authenticated:
             return self
 
+        q_filter = Q(dossiers__user=user)
+        if user.userprofile.setting_seen_if_worked_by_others:
+            # If the seen-if-worked-by-others setting is selected, we will
+            # count other users' seen items as seen by us.
+            Dossier = apps.get_model('dossier', 'Dossier')
+            q_filter |= Q(dossiers__in=Dossier.objects.by_user(user))
+
         return self.annotate(
             seen=Count(
                 'dossiers',
-                filter=Q(dossiers__user=user)
+                filter=q_filter
             )
         )
 
@@ -208,6 +225,7 @@ class UserProfile(models.Model):
 
     setting_auto_monitor = models.BooleanField(default=True)
     setting_hide_concluded_from_monitors = models.BooleanField(default=True)
+    setting_seen_if_worked_by_others = models.BooleanField(default=True)
 
     def display_full(self):
         return mark_safe('<a href="mailto: %s">%s</a> (%s)' % (self.user.email, self.name, self.initials))

@@ -76,7 +76,7 @@ class ExtraVarsMiddleware():
                 issue_monitors__user_id=request.user.id,
                 parliament__parliament_num=parliament_num
             ).annotate_news(
-                request.user.id
+                request.user
             ).exclude(
                 new_documents=0,
                 new_reviews=0
@@ -92,7 +92,7 @@ class ExtraVarsMiddleware():
             if settings.FEATURES['incoming_issues']:
                 incoming_issues = Issue.objects.select_related('parliament', 'to_committee').filter(
                     parliament__parliament_num=parliament_num
-                ).incoming(request.user.id).order_by('-issue_num')
+                ).incoming(request.user).order_by('-issue_num')
 
         # Get parliaments, next sessions and next committees (we use this virtually always)
         next_sessions = Session.objects.upcoming().select_related('parliament')

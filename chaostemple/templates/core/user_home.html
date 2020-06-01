@@ -82,6 +82,12 @@ $(document).ready(function() {
             {% trans 'Hide concluded issues from monitoring menu.' %}
             </p>
 
+            <p>
+            <input type="checkbox" control="setting" data-setting-name="seen_if_worked_by_others" {% if home_user.userprofile.setting_seen_if_worked_by_others %}checked="checked"{% endif %} />
+            &nbsp;
+            {% trans 'Mark documents/reviews that have been seen by others, as seen by you.' %}
+            </p>
+
         </div>
 
         {% if FEATURES.subscription_committee or FEATURES.subscription_category %}

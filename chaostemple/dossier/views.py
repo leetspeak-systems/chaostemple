@@ -26,30 +26,47 @@ from dossier.models import DossierStatistic
 from jsonizer.utils import jsonize
 
 
+# A utility function to create sensible kwargs parameters to either locate or
+# create a Dossier from given input.
+def kwargs_from_input(user, parliament_num, doc_num, log_num):
+    q_kwargs = {'user_id': user.id}
+    if doc_num is not None and log_num is None:
+        document = Document.objects.select_related('issue').get(
+            issue__parliament__parliament_num=parliament_num,
+            doc_num=doc_num
+        )
+        q_kwargs['dossier_type'] = 'document'
+        q_kwargs['document_id'] = document.id
+        q_kwargs['issue_id'] = document.issue_id
+    elif doc_num is None and log_num is not None:
+        review = Review.objects.select_related('issue').get(
+            issue__parliament__parliament_num=parliament_num,
+            log_num=log_num
+        )
+        q_kwargs['dossier_type'] = 'review'
+        q_kwargs['review_id'] = review.id
+        q_kwargs['issue_id'] = review.issue_id
+    else:
+        raise Exception('Only "doc_num" or "log_num" must be provided but not both')
+
+    return q_kwargs
+
+
 @login_required
 def dossier(request, parliament_num, doc_num=None, log_num=None):
 
-    # Default values.
-    document = None
-    review = None
+    d_kwargs = kwargs_from_input(request.user, parliament_num, doc_num, log_num)
+    try:
+        dossier = Dossier.objects.select_related('issue', 'document', 'issue').get(**d_kwargs)
+    except Dossier.DoesNotExist:
+        dossier = Dossier(**d_kwargs)
 
-    if doc_num is not None:
-        document = get_object_or_404(Document, issue__parliament__parliament_num=parliament_num, doc_num=doc_num)
-        issue = document.issue
-        dossier, created = Dossier.objects.get_or_create(user_id=request.user.id, document_id=document.id)
-    elif log_num is not None:
-        review = get_object_or_404(Review, issue__parliament__parliament_num=parliament_num, log_num=log_num)
-        issue = review.issue
-        dossier, created = Dossier.objects.get_or_create(user_id=request.user.id, review_id=review.id)
+    statistic = DossierStatistic.objects.filter(issue_id=dossier.issue_id, user_id=request.user.id).first()
 
-    statistic = DossierStatistic.objects.filter(issue_id=issue.id, user_id=request.user.id).first()
-
-    IssueUtilities.populate_issue_data([issue])
+    IssueUtilities.populate_issue_data([dossier.issue])
 
     ctx = {
-        'document': document,
-        'review': review,
-        'issue': issue,
+        'issue': dossier.issue,
         'dossier': dossier,
         'statistic': statistic,
 
@@ -63,13 +80,15 @@ def dossier(request, parliament_num, doc_num=None, log_num=None):
 
 @login_required
 @jsonize
-def dossier_fieldstate(request, dossier_id, fieldname):
+def dossier_fieldstate(request, parliament_num, doc_num=None, log_num=None, fieldname=None):
     fieldstate = request.GET.get('fieldstate', None)
 
     if not fieldname in Dossier.tracker.fields:
         raise Exception('"%s" is not a recognized fieldname of a dossier' % fieldname)
 
-    dossier = Dossier.objects.get(id=dossier_id, user=request.user)
+    q_kwargs = kwargs_from_input(request.user, parliament_num, doc_num, log_num)
+
+    dossier, created = Dossier.objects.get_or_create(**q_kwargs)
     if fieldstate is not None and getattr(dossier, fieldname) != fieldstate:
         # Ensure proper type of field
         fieldtype = type(getattr(dossier, fieldname))
@@ -267,8 +286,10 @@ def delete_issue_dossiers(request, issue_id):
 
 @login_required
 @jsonize
-def set_notes(request, dossier_id):
-    dossier = get_object_or_404(Dossier, id=dossier_id, user_id=request.user.id)
+def set_notes(request, parliament_num, doc_num=None, log_num=None):
+    d_kwargs = kwargs_from_input(request.user, parliament_num, doc_num, log_num)
+
+    dossier, created = Dossier.objects.get_or_create(**d_kwargs)
 
     notes = request.POST.get('notes', '')
 

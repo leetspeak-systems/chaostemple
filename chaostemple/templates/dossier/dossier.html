@@ -46,10 +46,10 @@ $(document).ready(function() {
 
 <div control="dossier-file-viewer">
 
-    {% if document %}
-        <iframe src="{% url 'parliament_document' parliament_num document.doc_num %}" width="100%" height="100%"></iframe>
-    {% elif review %}
-        <iframe src="{% url 'parliament_review' parliament_num review.log_num %}" width="100%" height="100%"></iframe>
+    {% if dossier.document %}
+        <iframe src="{% url 'parliament_document' parliament_num dossier.document.doc_num %}" width="100%" height="100%"></iframe>
+    {% elif dossier.review %}
+        <iframe src="{% url 'parliament_review' parliament_num dossier.review.log_num %}" width="100%" height="100%"></iframe>
     {% endif %}
 
 </div>
@@ -75,7 +75,7 @@ $(document).ready(function() {
     {% include 'dossier/stub/dossier_buttons.html' %}
 
     <div control="prosearea-container">
-        <textarea class="prosearea-editor" data-dossier-id="{{ dossier.id }}" name="dossier_notes_{{ dossier.id }}">{% if dossier.notes %}{{ dossier.notes }}{% else %}*{% endif %}</textarea>
+        <textarea class="prosearea-editor" data-dossier-type="{{ dossier.dossier_type }}" data-doc-num="{{ dossier.document.doc_num }}" data-log-num="{{ dossier.review.log_num }}" name="dossier_notes_{{ dossier.id }}">{% if dossier.notes %}{{ dossier.notes }}{% else %}*{% endif %}</textarea>
     </div>
 
 <div>

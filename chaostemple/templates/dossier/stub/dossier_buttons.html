@@ -16,7 +16,12 @@
             <ul class="dropdown-menu" role="menu">
                 {% for knowledgestate in knowledgestates %}
                     <li {% if dossier.knowledge == knowledgestate.0 %}class="active"{% endif %}>
-                        <a href="#" control="set-fieldstate" data-dossier-id="{{ dossier.id }}" data-fieldname="knowledge"
+                        <a href="#"
+                                control="set-fieldstate"
+                                data-dossier-type="{{ dossier.dossier_type }}"
+                                data-doc-num="{{ dossier.document.doc_num }}"
+                                data-log-num="{{ dossier.review.log_num }}"
+                                data-fieldname="knowledge"
                                 data-fieldstate="{{ knowledgestate.0 }}">{{ knowledgestate.1 }}</a>
                     </li>
                 {% endfor %}
@@ -38,7 +43,12 @@
             <ul class="dropdown-menu" role="menu">
                 {% for attentionstate in attentionstates %}
                     <li {% if dossier.attention == attentionstate.0 %}class="active"{% endif %}>
-                        <a href="#" control="set-fieldstate" data-dossier-id="{{ dossier.id }}" data-fieldname="attention"
+                        <a href="#"
+                                control="set-fieldstate"
+                                data-dossier-type="{{ dossier.dossier_type }}"
+                                data-doc-num="{{ dossier.document.doc_num }}"
+                                data-log-num="{{ dossier.review.log_num }}"
+                                data-fieldname="attention"
                                 data-fieldstate="{{ attentionstate.0 }}">{{ attentionstate.1 }}</a>
                     </li>
                 {% endfor %}
@@ -60,7 +70,12 @@
             <ul class="dropdown-menu" role="menu">
                 {% for supportstate in supportstates %}
                     <li {% if dossier.support == supportstate.0 %}class="active"{% endif %}>
-                        <a href="#" control="set-fieldstate" data-dossier-id="{{ dossier.id }}" data-fieldname="support"
+                        <a href="#"
+                                control="set-fieldstate"
+                                data-dossier-type="{{ dossier.dossier_type }}"
+                                data-doc-num="{{ dossier.document.doc_num }}"
+                                data-log-num="{{ dossier.review.log_num }}"
+                                data-fieldname="support"
                                 data-fieldstate="{{ supportstate.0 }}">{{ supportstate.1 }}</a>
                     </li>
                 {% endfor %}
@@ -82,7 +97,12 @@
             <ul class="dropdown-menu" role="menu">
                 {% for proposalstate in proposalstates %}
                     <li {% if dossier.proposal == proposalstate.0 %}class="active"{% endif %}>
-                        <a href="#" control="set-fieldstate" data-dossier-id="{{ dossier.id }}" data-fieldname="proposal"
+                        <a href="#"
+                                control="set-fieldstate"
+                                data-dossier-type="{{ dossier.dossier_type }}"
+                                data-doc-num="{{ dossier.document.doc_num }}"
+                                data-log-num="{{ dossier.review.log_num }}"
+                                data-fieldname="proposal"
                                 data-fieldstate="{{ proposalstate.0 }}">{{ proposalstate.1 }}</a>
                     </li>
                 {% endfor %}

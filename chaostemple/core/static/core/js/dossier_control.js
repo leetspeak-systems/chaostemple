@@ -19,7 +19,9 @@ $(document).ready(function() {
     // Save changed content.
     editor.addEventListener('save', function(evt) {
         var $this = $(this);
-        var dossier_id = $this.attr('data-dossier-id');
+        var dossier_type = $this.data('dossier-type');
+        var doc_num = $this.data('doc-num');
+        var log_num = $this.data('log-num');
         var notes = $this.val();
 
         $.jsonize({
@@ -29,7 +31,7 @@ $(document).ready(function() {
                 'failure': 'Failed to save notes!',
             },
             type: 'POST',
-            url: '/dossier/' + dossier_id + '/set-notes/',
+            url: '/dossier/parliament/' + PARLIAMENT_NUM + '/' + dossier_type + '/' + (dossier_type == 'document' ? doc_num : log_num) + '/set-notes/',
             data: { 'notes': notes },
             done: function(data, textStatus) {
                 if (data.ok) {
@@ -62,10 +64,12 @@ $(document).ready(function() {
 
     // Buttons: Fieldstates
     $(document).on('click', 'a[control="set-fieldstate"]', function() {
-        $this = $(this);
-        dossier_id = $this.data('dossier-id');
-        fieldname = $this.data('fieldname');
-        fieldstate = $this.data('fieldstate');
+        var $this = $(this);
+        var dossier_type = $this.data('dossier-type');
+        var doc_num = $this.data('doc-num');
+        var log_num = $this.data('log-num');
+        var fieldname = $this.data('fieldname');
+        var fieldstate = $this.data('fieldstate');
 
         $.jsonize({
             message: {
@@ -73,13 +77,13 @@ $(document).ready(function() {
                 'success': 'Fieldstate set.',
                 'failure': 'Failed to set fieldstate!',
             },
-            url: '/dossier/' + dossier_id + '/fieldstate/' + fieldname + '/',
+            url: '/dossier/parliament/' + PARLIAMENT_NUM + '/' + dossier_type + '/' + (dossier_type == 'document' ? doc_num : log_num) + '/fieldstate/' + fieldname + '/',
             data: { 'fieldstate': fieldstate },
             done: function(data, textStatus) {
                 // Update the relevant button's color, text and menu selection.
-                $('a[control="set-fieldstate"][data-dossier-id=' + dossier_id + '][data-fieldname=' + fieldname + ']').each(function() {
+                $('a[control="set-fieldstate"][data-fieldname=' + fieldname + ']').each(function() {
                     $anchor = $(this);
-                    $dropdown = $('button[control="dropdown-fieldstate"][data-id=' + dossier_id + '][data-fieldname=' + fieldname + ']');
+                    $dropdown = $('button[control="dropdown-fieldstate"][data-fieldname=' + fieldname + ']');
 
                     if ($anchor.data('fieldstate') == data[fieldname]) {
                         // Set the correct menu selection to active.

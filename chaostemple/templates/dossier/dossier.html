@@ -10,7 +10,7 @@
 <script language="javascript" type="text/javascript">
 
 var MSG_STATUS_UNSAVED = "{% trans 'About to save changes...' %}";
-var MSG_STATUS_SAVED = "{% trans 'Saved.' %}";
+var MSG_STATUS_SAVED = "{% trans 'Changes saved.' %}";
 var MSG_STATUS_ERROR = "{% trans 'Could not save notes!' %}";
 
 var fieldstate_css = {% autoescape off %}{% fieldstate_css %}{% endautoescape %}
@@ -54,21 +54,15 @@ $(document).ready(function() {
 
 </div>
 
+<!-- Placed at the bottom-right corner by CSS. -->
+<span control="dossier-status"></span>
+
 <div control="dossier-editor">
 
     <div class="panel panel-default">
-        <div class="panel-body">
-            <table style="width: 100%;">
-                <tr>
-                    <td>
-                        <span class="label label-default" control="dossier-status"></span>
-                    </td>
-                    <td control="dossier-editor-control">
-                        <button control="dossier-save" type="button" class="btn btn-default" disabled="true">{% trans 'Save' %}</button>
-                        <button control="dossier-close" type="button" class="btn btn-default">{% trans 'Close' %}</button>
-                    </td>
-                </tr>
-            </table>
+        <div class="panel-body" control="dossier-editor-control">
+            <button control="dossier-save" type="button" class="btn btn-default" disabled="true">{% trans 'Save' %}</button>
+            <button control="dossier-close" type="button" class="btn btn-default">{% trans 'Close' %}</button>
         </div>
     </div>
 

@@ -402,3 +402,8 @@
 
 1.6.3:
     * Bugfix: CSV export fixed.
+
+1.7:
+    * Documents/reviews seen by others are marked as seen by current user (configurable in user settings, default on).
+    * Dossiers not created (and thus documents/reviews not "seen") until data is entered, as opposed to when dossier is opened.
+    * Dossier UI improvements.

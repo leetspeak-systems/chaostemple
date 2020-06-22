@@ -41,6 +41,8 @@ class Command(BaseCommand):
         parser.add_argument('-t', '--today', nargs='*', help='Show only today')
         parser.add_argument('-i', '--issue', nargs='*', help='Only current issue (automatically skips speaker)')
         parser.add_argument('-s', '--skip-speaker', nargs='*', help='Skip speeches by speaker')
+        parser.add_argument('-m', '--only-main', nargs='*', help='Only include main speeches, not f.e. responses')
+        parser.add_argument('-e', '--iteration', nargs='*', help='Only speeches held in given iteration (1, 2, 3, F, S)')
         parser.add_argument('-c', '--sort-by-count', nargs='*', help='Sort by count')
 
     def handle(self, *args, **options):
@@ -76,6 +78,14 @@ class Command(BaseCommand):
             # Process option for skipping speaker.
             if options['skip_speaker'] is not None:
                 q_conditions['speeches__president'] = False
+
+            # Process option for only selecting main speeches.
+            if options['only_main'] is not None:
+                q_conditions['speeches__speech_type'] = 'ræða'
+
+            # Process option for selecting speeches by iteration.
+            if options['iteration'] is not None:
+                q_conditions['speeches__iteration'] = options['iteration'].pop()
 
             persons = Person.objects.filter(**q_conditions)
 

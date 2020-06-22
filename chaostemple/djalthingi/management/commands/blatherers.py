@@ -151,8 +151,12 @@ class Command(BaseCommand):
             for party, seconds in party_seconds.items():
                 count = party_counts[party]
 
-                ratio_seconds = round(100 * float(seconds) / total_seconds, 2)
-                ratio_count = round(100 * float(count) / total_count, 2)
+                if total_seconds == 0 or total_count == 0:
+                    ratio_seconds = 0
+                    ratio_count = 0
+                else:
+                    ratio_seconds = round(100 * float(seconds) / total_seconds, 2)
+                    ratio_count = round(100 * float(count) / total_count, 2)
 
                 if party in party_mp_counts:
                     mp_count = party_mp_counts[party]

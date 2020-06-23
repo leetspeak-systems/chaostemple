@@ -39,7 +39,8 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('-t', '--today', nargs='*', help='Show only today')
-        parser.add_argument('-i', '--issue', nargs='*', help='Only current issue (automatically skips speaker)')
+        parser.add_argument('-u', '--current-issue', nargs='*', help='Only current issue (automatically skips speaker)')
+        parser.add_argument('-i', '--issue', nargs='*', help='Only given issue_num (automatically skips speaker)')
         parser.add_argument('-s', '--skip-speaker', nargs='*', help='Skip speeches by speaker')
         parser.add_argument('-m', '--only-main', nargs='*', help='Only include main speeches, not f.e. responses')
         parser.add_argument('-e', '--iteration', nargs='*', help='Only speeches held in given iteration (1, 2, 3, F, S)')
@@ -68,12 +69,21 @@ class Command(BaseCommand):
             }
 
             # Process option for limiting to current issue.
-            if options['issue'] is not None:
+            if options['current_issue'] is not None:
                 last_issue = Speech.objects.last().issue
                 q_conditions['speeches__issue'] = last_issue
 
                 # Option implies skipping speaker.
                 options['skip_speaker'] = True
+
+            # Process option for limiting to given issue.
+            if options['issue'] is not None:
+                q_conditions['speeches__issue__issue_num'] = options['issue'].pop()
+                q_conditions['speeches__issue__issue_group'] = 'A'
+
+                # Option implies skipping speaker.
+                options['skip_speaker'] = True
+
 
             # Process option for skipping speaker.
             if options['skip_speaker'] is not None:

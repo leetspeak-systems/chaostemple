@@ -485,13 +485,15 @@ class Issue(models.Model):
     current_step = models.CharField(max_length=40, choices=ISSUE_STEPS, null=True)
     fate = models.CharField(max_length=40, choices=ISSUE_FATES, null=True)
 
-    # Django does not appear to support a default order for ManyToMany fields. Thus this fucking shit.
-    # (No, I'm not implementing a fucking through-model just to get ordering on ManyToMany fields.)
+    # Django does not appear to support a default order for ManyToMany fields,
+    # so we'll solve the problem this way instead of implementing and entire
+    # through-model just for having a default order.
     def previous_issues_ordered(self):
         return self.previous_issues.order_by('-parliament__parliament_num')
 
-    # Django does not appear to support a default order for ManyToMany fields. Thus this fucking shit.
-    # (No, I'm not implementing a fucking through-model just to get ordering on ManyToMany fields.)
+    # Django does not appear to support a default order for ManyToMany fields,
+    # so we'll solve the problem this way instead of implementing and entire
+    # through-model just for having a default order.
     def future_issues_ordered(self):
         return self.future_issues.order_by('parliament__parliament_num')
 

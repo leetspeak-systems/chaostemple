@@ -13,7 +13,7 @@
     {% include 'core/stub/committee_agenda_header.html' %}
 
     {% for committee_agenda_item in committee_agenda_items %}
-        {% include 'core/stub/committee_agenda_item.html' %}
+        {% include 'core/stub/issue.html' with issue=committee_agenda_item.issue %}
     {% endfor %}
 
 {% endblock %}

@@ -113,6 +113,8 @@
                 {% endif %}
                 </small>
             {% endif %}
+        {% elif committee_agenda_item %}
+            <strong>{{ committee_agenda_item.name }}</strong>
         {% endif %}
     </td>
 

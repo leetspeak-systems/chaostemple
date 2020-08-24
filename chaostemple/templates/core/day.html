@@ -91,7 +91,7 @@
 
                 <table class="table">
                 {% for committee_agenda_item in committee_agenda.committee_agenda_items_loaded %}
-                    {% include 'core/stub/small/committee_agenda_item.html' %}
+                    {% include 'core/stub/small/issue.html' with issue=committee_agenda_item.issue %}
                 {% endfor %}
                 </table>
 

@@ -144,6 +144,10 @@
                     </small>
                 {% endif %}
             </div>
+        {% elif committee_agenda_item %}
+            <div class="panel-body">
+                <strong>{{ committee_agenda_item.name }}</strong>
+            </div>
         {% endif %}
     </div>
 </div>

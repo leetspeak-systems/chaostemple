@@ -57,7 +57,7 @@ def dossier(request, parliament_num, doc_num=None, log_num=None):
 
     d_kwargs = kwargs_from_input(request.user, parliament_num, doc_num, log_num)
     try:
-        dossier = Dossier.objects.select_related('issue', 'document', 'issue').get(**d_kwargs)
+        dossier = Dossier.objects.select_related('issue', 'document', 'review').get(**d_kwargs)
     except Dossier.DoesNotExist:
         dossier = Dossier(**d_kwargs)
 

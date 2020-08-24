@@ -21,8 +21,10 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
+from django.template.defaultfilters import capfirst
 from django.utils import dateparse
 from django.utils import timezone
+from django.utils.translation import ugettext as _
 
 from chaostemple.settings import FEATURES
 from chaostemple.settings import MEANING_OF_RECENT
@@ -279,7 +281,16 @@ def parliament_issue(request, parliament_num, issue_num):
 
     IssueUtilities.populate_issue_data([issue])
 
+    # Construct the page title.
+    page_title = '%d. %s: %s' % (
+        issue.issue_num,
+        _('issue'),
+        capfirst(issue.name)
+    )
+
     ctx = {
+        'page_title': page_title,
+
         'issue': issue,
         'issue_sessions': issue_sessions,
         'issue_committee_agendas': issue_committee_agendas,

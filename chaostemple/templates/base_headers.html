@@ -10,7 +10,7 @@
 <link rel="icon" href="../../favicon.ico">
 -->
 
-<title>{{ PROJECT_NAME }} {{ PROJECT_VERSION }}</title>
+<title>{% if page_title %}{{ page_title }}{% else %}{{ PROJECT_NAME }} {{ PROJECT_VERSION }}{% endif %}</title>
 
 <!-- Bootstrap core CSS -->
 <link href="{% static 'core/js/bootstrap-3.3.7/css/bootstrap.min.css' %}" rel="stylesheet" />

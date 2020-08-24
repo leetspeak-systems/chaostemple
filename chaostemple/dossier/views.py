@@ -6,7 +6,9 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
+from django.template.defaultfilters import capfirst
 from django.template.loader import render_to_string
+from django.utils.translation import ugettext as _
 
 from djalthingi.models import CommitteeAgenda
 from djalthingi.models import CommitteeAgendaItem
@@ -65,7 +67,26 @@ def dossier(request, parliament_num, doc_num=None, log_num=None):
 
     IssueUtilities.populate_issue_data([dossier.issue])
 
+    # Construct the page title so that the user can more easily navigate
+    # different dossiers in different tabs/windows/whatever. It needs to
+    # fulfill two competing goals, being both short and descriptive.
+    if doc_num is not None:
+        page_title = '(%d) %s' % (
+            dossier.document.doc_num,
+            dossier.document.doc_type
+        )
+    elif log_num is not None:
+        page_title = dossier.review.sender_name
+    # Append the common part of the page title.
+    page_title += ': %s (%d. %s)' % (
+        capfirst(dossier.issue.name),
+        dossier.issue.issue_num,
+        _('issue')
+    )
+
     ctx = {
+        'page_title': page_title,
+
         'issue': dossier.issue,
         'dossier': dossier,
         'statistic': statistic,

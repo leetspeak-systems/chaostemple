@@ -9,12 +9,6 @@ $(document).ready(function() {
 
     // Other controls.
     let $dossier_status = $('span[control="dossier-status"]');
-    let $dossier_save = $('button[control="dossier-save"]');
-
-    // Hook up save-button.
-    $dossier_save.on('click', function() {
-        editor.view.save();
-    });
 
     // Save changed content.
     editor.addEventListener('save', function(evt) {
@@ -37,14 +31,10 @@ $(document).ready(function() {
                 if (data.ok) {
                     // Notify user of success.
                     $dossier_status.html(MSG_STATUS_SAVED);
-
-                    $dossier_save.attr('disabled', true);
                 }
                 else {
                     // Notify user that something went wrong.
                     $dossier_status.html(MSG_STATUS_ERROR);
-
-                    $dossier_save.attr('disabled', false);
                 }
             },
         });
@@ -53,12 +43,10 @@ $(document).ready(function() {
     // Notify user that content changed and has not yet been saved.
     editor.addEventListener('changed', function(evt) {
         $dossier_status.html(MSG_STATUS_UNSAVED);
-
-        $dossier_save.attr('disabled', false);
     });
 
     // Button: Close
-    $(document).on('click', 'button[control="dossier-close"]', function() {
+    $(document).on('click', 'i[control="dossier-close"]', function() {
         window.close()
     });
 

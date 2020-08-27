@@ -59,11 +59,8 @@ $(document).ready(function() {
 
 <div control="dossier-editor">
 
-    <div class="panel panel-default">
-        <div class="panel-body" control="dossier-editor-control">
-            <button control="dossier-save" type="button" class="btn btn-default" disabled="true">{% trans 'Save' %}</button>
-            <button control="dossier-close" type="button" class="btn btn-default">{% trans 'Close' %}</button>
-        </div>
+    <div control="dossier-editor-control">
+        <i class="glyphicon glyphicon-remove-sign" control="dossier-close"></i>
     </div>
 
     {% include 'dossier/stub/dossier_buttons.html' %}

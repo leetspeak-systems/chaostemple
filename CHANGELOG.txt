@@ -411,3 +411,6 @@
 1.7.1:
     * Descriptive (browser) page titles added for dossiers and issues to ease navigation when keeping multiple files open.
     * Dossier view: Save-button removed and close-button replaced with tiny icon to free up real estate.
+
+1.7.2:
+    * Icelandic Parliament number increased to 151. Version number ceremonially updated.

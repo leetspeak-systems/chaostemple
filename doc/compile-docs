@@ -1,0 +1,3 @@
+#!/bin/bash
+# Simple shell script to generate PDFs out of Markdown documentation.
+pandoc -t latex -o MuGl-Skýringar.pdf MuGl-Skýringar.md

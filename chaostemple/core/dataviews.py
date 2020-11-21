@@ -331,6 +331,9 @@ def process_membership_request(request):
 @jsonize
 def subscription_toggle(request, sub_type, sub_id):
 
+    if sub_type not in ['party', 'committee', 'person', 'category']:
+        raise Http404
+
     lookup = {
         'user': request.user,
         '%s_id' % sub_type: sub_id,

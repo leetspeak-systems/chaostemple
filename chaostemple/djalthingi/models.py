@@ -489,13 +489,21 @@ class Issue(models.Model):
     # so we'll solve the problem this way instead of implementing and entire
     # through-model just for having a default order.
     def previous_issues_ordered(self):
-        return self.previous_issues.order_by('-parliament__parliament_num')
+        return self.previous_issues.select_related(
+            'parliament'
+        ).order_by(
+            '-parliament__parliament_num'
+        )
 
     # Django does not appear to support a default order for ManyToMany fields,
     # so we'll solve the problem this way instead of implementing and entire
     # through-model just for having a default order.
     def future_issues_ordered(self):
-        return self.future_issues.order_by('parliament__parliament_num')
+        return self.future_issues.select_related(
+            'parliament'
+        ).order_by(
+            'parliament__parliament_num'
+        )
 
     def determine_status(self):
         # The overall status of an issue is composed of a sequence of steps.

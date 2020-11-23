@@ -104,6 +104,7 @@
                     {% include 'core/stub/issue_monitor.html' %}
                     {% if issue.subscriptions %}
                         <small>
+                        &nbsp;
                         {% trans 'Subscribed through:' %}
                         {% for sub in issue.subscriptions %}
                             <a href="{{ sub.subscribed_thing_link }}">{{ sub.subscribed_thing }}</a>{% if not forloop.last %},{% endif %}

@@ -144,6 +144,80 @@ class AccessUtilities():
 class IssueUtilities():
 
     @staticmethod
+    def bulk_update_has_useful_info(issues):
+        '''
+        Updates the `has_useful_info` attribute of the given issues'
+        DossierStatistic as quickly as possible. Assumes logged in user.
+        Creates DossierStatistic objects for those issues for which the user
+        still doesn't have any.
+        '''
+        DossierStatistic = apps.get_model('dossier', 'DossierStatistic')
+
+        # Get currently logged in user ID
+        user_id = AccessUtilities.get_user_id()
+
+        # Existing DossierStatistic objects.
+        stats = DossierStatistic.objects.filter(
+            user_id=user_id,
+            issue__in=issues
+        )
+
+        # List of IDs of issues monitored, which may be deemed useful later.
+        monitored_issue_ids = [m.issue_id for m in IssueMonitor.objects.filter(user_id=user_id)]
+
+        # Returns a list of issue IDs subscribed to.
+        subscribed_issue_ids = Subscription.objects.filter(
+            committee__issues__parliament__parliament_num=CURRENT_PARLIAMENT_NUM,
+            user_id=user_id,
+        ).values_list(
+            'committee__issues__id',
+            flat=True
+        ).union(
+            Subscription.objects.filter(
+                category__issues__parliament__parliament_num=CURRENT_PARLIAMENT_NUM,
+                user_id=user_id
+            ).values_list(
+                'category__issues__id',
+                flat=True
+            )
+        )
+
+        # A map of DossierStatistic objects, using issue_id a key.
+        stat_map = {stat.issue_id: stat for stat in stats}
+
+        # DossierStatistic objects that will need to be created.
+        stats_for_creation = []
+
+        # Iterate through the given issues and determine which
+        # DossierStatistic objects need to be updated and which ones need to
+        # be created.
+        for issue in issues:
+            if issue.id in stat_map:
+                # Update the data on the stat-objects. This does not save the
+                # data to database (because that would be slow), only updates
+                # the fields in the objects, which are then bulk-updated
+                # after this iteration.
+                stat_map[issue.id].update_has_useful_info(
+                    is_monitored=issue.id in monitored_issue_ids,
+                    is_subscribed=issue.id in subscribed_issue_ids
+                )
+            else:
+                # Create non-existing stats. Only objects, which are not
+                # saved to database until the bulk-create below.
+                stat = DossierStatistic(user_id=user_id, issue_id=issue.id)
+                stat.update_has_useful_info(
+                    is_monitored=issue.id in monitored_issue_ids,
+                    is_subscribed=issue.id in subscribed_issue_ids
+                )
+                stats_for_creation.append(stat)
+
+        # Bulk-update stats that need updating.
+        DossierStatistic.objects.bulk_update(stats, ['has_useful_info'])
+
+        # Bulk-crate stats that need creating.
+        DossierStatistic.objects.bulk_create(stats_for_creation)
+
+    @staticmethod
     def populate_issue_data(issues):
         DossierStatistic = apps.get_model('dossier', 'DossierStatistic')
 
@@ -391,8 +465,6 @@ class Subscription(models.Model):
         return None
 
     def save(self, *args, **kwargs):
-        DossierStatistic = apps.get_model('dossier', 'DossierStatistic')
-
         # Make sure that what's being subscribed to is sane.
         self.sub_type = ''
         fields = ['party', 'committee', 'person', 'category']
@@ -419,33 +491,25 @@ class Subscription(models.Model):
 
         super(Subscription, self).save(*args, **kwargs)
 
-        # Make sure that DossierStatistic objects exist for all issues. Those
-        # that already exist, we have to call save on, to trigger an update to
-        # has_useful_info. Those that don't exist, we'll have to create.
-        # TODO: This is rather slow. Should be faster.
-        issues = thing.issues.all() # "Things" are assumed to have issues.
-        stat_map = {stat.issue_id: stat for stat in DossierStatistic.objects.filter(
-            user_id=self.user_id,
-            issue__in=issues
-        )}
-        for issue in issues:
-            if issue.id in stat_map:
-                stat_map[issue.id].save()
-            else:
-                DossierStatistic(user_id=self.user_id, issue_id=issue.id).save()
+        # Make sure that DossierStatistic objects exist for all issues and
+        # that the `has_useful_info` attribute is properly set.
+        #
+        # NOTE: "Things", which may be a number of different types of models,
+        # are assumed to have issues. Examples: Committees, categories.
+        issues = thing.issues.exclude(dossierstatistic__user_id=self.user_id)
+        IssueUtilities.bulk_update_has_useful_info(issues)
 
     def delete(self):
         DossierStatistic = apps.get_model('dossier', 'DossierStatistic')
 
         # Save DossierStatistic objects to trigger update_has_useful_info.
         thing = self.subscribed_thing()
-        issues = thing.issues.all()
+        issues = thing.issues.exclude(dossierstatistic__user_id=self.user_id)
 
         super(Subscription, self).delete()
 
         # Must happen after the deletion, of course.
-        for stat in DossierStatistic.objects.filter(user_id=self.user_id, issue__in=issues):
-            stat.save()
+        IssueUtilities.bulk_update_has_useful_info(issues)
 
     def __str__(self):
         sub_type = self.sub_type if self.sub_type else 'undetermined'

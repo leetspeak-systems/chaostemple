@@ -8,6 +8,7 @@ from django.db.models import Prefetch
 from django.db.models import PROTECT
 from django.db.models import Q
 from django.db.models import SET_NULL
+from django.db.models import Subquery
 from django.db.models import When
 from django.template.defaultfilters import capfirst
 from django.template.defaultfilters import slugify
@@ -262,6 +263,39 @@ class SessionQuerySet(models.QuerySet):
             parliament__parliament_num=first_session.parliament.parliament_num,
             session_num__in=session_nums
         )
+
+
+class CommitteeQuerySet(models.QuerySet):
+    def currently_with_person(self, person, only_main=True):
+        if only_main:
+            # Means we're only interested in standing committees (which
+            # handle issues) where the user is a full member. This is almost
+            # always wanted.
+            #
+            # Subquery apparently needed, since otherwise the query ends up
+            # excluding any committee that has at least one committee_seat of
+            # the excluded type, which are all of them.
+            result = self.filter(
+                is_standing=True,
+                committee_seats__in=Subquery(CommitteeSeat.objects.filter(
+                    person_id=person.id,
+                    parliament__parliament_num=CURRENT_PARLIAMENT_NUM,
+                    timing_out=None
+                ).exclude(
+                    committee_seat_type__in=[
+                        'kjörinn varamaður',
+                        'áheyrnarfulltrúi'
+                    ]
+                ).values('pk'))
+            )
+        else:
+            result = self.filter(
+                person_id=person.id,
+                parliament__parliament_num=CURRENT_PARLIAMENT_NUM,
+                timing_out=None
+            )
+
+        return result
 
 
 class CommitteeAgendaQuerySet(models.QuerySet):
@@ -1128,6 +1162,7 @@ class Proposer(models.Model):
 
 
 class Committee(models.Model):
+    objects = CommitteeQuerySet.as_manager()
 
     NON_STANDING_COMMITTIES = (
         'forsætisnefnd',

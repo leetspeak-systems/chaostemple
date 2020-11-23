@@ -17,7 +17,9 @@ from djalthingi.models import Session
 from core.models import AccessUtilities
 from core.models import Issue
 from core.models import IssueUtilities
+from core.models import Subscription
 from core.models import UserProfile
+from dossier.models import DossierStatistic
 
 class AccessMiddleware():
     def __init__(self, get_response):
@@ -70,6 +72,8 @@ class ExtraVarsMiddleware():
         # Stuff for logged in users
         monitored_issues = None
         incoming_issues = None
+        subscribed_committees = None
+        subscribed_issues = None
         if request.user.is_authenticated:
             # Monitors
             monitored_issues = Issue.objects.select_related('parliament').filter(
@@ -84,9 +88,59 @@ class ExtraVarsMiddleware():
                 'issue_num'
             )
 
-            # Hide concluded issues from monitoring menu.
+            # Committee subscriptions
+            if settings.FEATURES['subscription_committee']:
+                subscribed_committees = [s.committee for s in Subscription.objects.select_related(
+                    'committee'
+                ).filter(
+                    user=request.user
+                )]
+
+                subscribed_issues = Issue.objects.select_related('parliament').filter(
+                    parliament_id=parliament.id,
+                    to_committee__in=subscribed_committees
+                )
+
+                # When new issues arrive into a committee to which the user
+                # is subscribed, it does not have a DossierStatistic and thus
+                # cannot show up in the user's news section. We need to
+                # create DossierStatistic objects for such issues. We can
+                # safely say that `has_useful_info` is True because we
+                # already know that:
+                #
+                # a) the issues are new to the user and
+                #
+                # b) they belong to an item subscribed to by the user.
+                #
+                # This is one of the criteria deeming an issue having useful
+                # information in `DossierStatistic.update_has_useful_info`.
+                #
+                # Create DossierStatistic objects for issues without one.
+                new_dossier_statistics = []
+                for issue in subscribed_issues.exclude(dossierstatistic__user_id=request.user.id):
+                    new_dossier_statistics.append(DossierStatistic(
+                        user_id=request.user.id,
+                        issue_id=issue.id,
+                        has_useful_info=True
+                    ))
+                if len(new_dossier_statistics) > 0:
+                    DossierStatistic.objects.bulk_create(new_dossier_statistics)
+
+                # Annotate subscribed issues with news.
+                subscribed_issues = subscribed_issues.annotate_news(
+                    request.user
+                ).exclude(
+                    new_documents=0,
+                    new_reviews=0
+                ).order_by(
+                    'issue_num'
+                )
+
+            # Hide concluded issues from relevant menus.
             if request.user.userprofile.setting_hide_concluded_from_monitors:
                 monitored_issues = monitored_issues.exclude(current_step='concluded')
+                if settings.FEATURES['subscription_committee']:
+                    subscribed_issues = subscribed_issues.exclude(current_step='concluded')
 
             # Get incoming things that the user has not yet seen
             if settings.FEATURES['incoming_issues']:
@@ -111,6 +165,8 @@ class ExtraVarsMiddleware():
             'next_sessions': next_sessions,
             'next_committee_agendas': next_committee_agendas,
             'monitored_issues': monitored_issues,
+            'subscribed_committees': subscribed_committees,
+            'subscribed_issues': subscribed_issues,
             'incoming_issues': incoming_issues,
             'view_name': request.resolver_match.view_name,
         }

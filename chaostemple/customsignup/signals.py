@@ -1,13 +1,43 @@
 from django.contrib.auth.models import Group
+from django.contrib.auth.signals import user_logged_in
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+from djalthingi.models import Committee
 from djalthingi.models import Person
 
 from core.models import Access
+from core.models import AccessUtilities
 from core.models import UserProfile
+from core.models import Subscription
 
 from django.contrib.auth.models import User
+
+
+@receiver(user_logged_in)
+def auto_subscription(sender, request, user, **kwargs):
+    '''
+    During login, automatically subscribe a user to their appropriate things.
+    For example, users that are members of a committee should be subscribed
+    to that committee.
+    '''
+
+    # Access information will need to be available to the subscription
+    # mechanism which gets activated if Subscription objects are saved below.
+    # This has the side-effect that `cache_access` is run twice during login,
+    # once here and once in the regular access-middleware. Shouldn't matter.
+    AccessUtilities.cache_access(user)
+
+    # Find committees to which the recently logged in user is a member.
+    committees = Committee.objects.currently_with_person(
+        user.userprofile.person
+    ).exclude(
+        subscriptions__user=user
+    )
+
+    # Subscribe the user to the committees they should be subscribed to.
+    for committee in committees:
+        Subscription.objects.get_or_create(user_id=user.id, committee_id=committee.id)
 
 
 @receiver(post_save, sender=Person)

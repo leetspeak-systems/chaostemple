@@ -20,7 +20,14 @@
                     <tr>
                         {% if FEATURES.subscription_committee and request.user.is_authenticated %}
                             <td style="width: 1px;">
-                                {% include 'core/stub/subscription.html' with type='committee' id=committee.id %}
+                                {% comment %}
+                                This if-statement is separate because we
+                                still want the cell to appear if the above
+                                if-statement is true.
+                                {% endcomment %}
+                                {% if committee not in current_committees %}
+                                    {% include 'core/stub/subscription.html' with type='committee' id=committee.id %}
+                                {% endif %}
                             </td>
                         {% endif %}
                         <td>

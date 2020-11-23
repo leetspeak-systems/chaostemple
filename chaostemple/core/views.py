@@ -406,11 +406,15 @@ def parliament_committees(request, parliament_num):
     ))
 
     subscriptions = None
+    current_committees = None
     if request.user.is_authenticated:
         subscriptions = Subscription.objects.filter(user=request.user, committee__in=committees)
 
+        current_committees = Committee.objects.currently_with_person(request.user.userprofile.person)
+
     ctx = {
         'committees': committees,
+        'current_committees': current_committees,
         'subscriptions': subscriptions,
     }
     return render(request, 'core/parliament_committees.html', ctx)

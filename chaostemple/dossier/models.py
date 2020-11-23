@@ -1,6 +1,7 @@
 import re
 
 from core.models import AccessUtilities
+from core.models import Subscription
 
 from django.apps import apps
 from django.conf import settings
@@ -344,7 +345,7 @@ class DossierStatistic(models.Model):
         self.update_has_useful_info()
         super(DossierStatistic, self).save(*args, **kwargs)
 
-    def update_has_useful_info(self):
+    def update_has_useful_info(self, is_monitored=None, is_subscribed=None):
 
         for dossier_type, dossier_type_name in Dossier.DOSSIER_TYPES:
             for status_type, status_type_name in Dossier.STATUS_TYPES:
@@ -362,12 +363,20 @@ class DossierStatistic(models.Model):
         # We will consider it useful info, if the issue is being monitored or
         # is a part of something that the user has subscribed to, and the user
         # has not yet seen some of its documents or reviews.
-        Subscription = apps.get_model('core', 'Subscription')
-        is_subscribed = Subscription.objects.filter(
-            Q(committee__issues=self.issue) | Q(category__issues=self.issue),
-            user_id=self.user_id
-        ).count() > 0
-        is_monitored = self.issue.issue_monitors.filter(user_id=self.user_id).count() > 0
+
+        # The option parameter `is_subscribed` is to save this call if it is
+        # already known by the calling function.
+        if is_subscribed is None:
+            is_subscribed = Subscription.objects.filter(
+                Q(committee__issues=self.issue) | Q(category__issues=self.issue),
+                user_id=self.user_id
+            ).count() > 0
+
+        # The optional parameter `is_monitored` is to save this call if it is
+        # already known by the calling function.
+        if is_monitored is None:
+            is_monitored = self.issue.issue_monitors.filter(user_id=self.user_id).count() > 0
+
         counts_differ = any([
             self.document_count != self.issue.document_count,
             self.review_count != self.issue.review_count,

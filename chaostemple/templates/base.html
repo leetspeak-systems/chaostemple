@@ -113,6 +113,22 @@
                             </ul>
                         </li>
 
+                        {% for sub_com in subscribed_committees %}
+                        <li class="dropdown" control="unnamed-control">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ sub_com }} <span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="{% url 'parliament_committee_issues' parliament_num sub_com.id %}"><strong>{% trans 'All issues in committee' %}</strong></a></li>
+                                <li class="divider"></li>
+                                <li class="dropdown-header">{% trans 'News of issues in committee' %}</li>
+                                {% for issue in subscribed_issues reversed %}
+                                    {% if issue.to_committee_id == sub_com.id %}
+                                        <li><a href="{% url 'parliament_issue' issue.parliament.parliament_num issue.issue_num %}">{% include 'core/stub/issue_menuentry.html' %}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </li>
+                        {% endfor %}
+
                     </ul>
 
                     <ul class="nav navbar-nav navbar-right">

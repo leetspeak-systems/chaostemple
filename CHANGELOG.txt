@@ -418,3 +418,6 @@
 1.8.0:
     * Minor performance improvements.
     * Committee subscriptions implemented.
+
+1.8.1:
+    * Bug fixed where a user without an associated person (i.e. MP) would not be able to log in.

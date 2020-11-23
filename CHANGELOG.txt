@@ -414,3 +414,7 @@
 
 1.7.2:
     * Icelandic Parliament number increased to 151. Version number ceremonially updated.
+
+1.8.0:
+    * Minor performance improvements.
+    * Committee subscriptions implemented.

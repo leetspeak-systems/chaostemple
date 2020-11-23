@@ -75,6 +75,11 @@ def day(request, input_date=None):
     requested_yesterday = requested_date - timezone.timedelta(days=1)
     requested_tomorrow = requested_date + timezone.timedelta(days=1)
 
+    # Contains issues that should be populated with issue data. Issues will
+    # be collected through iterations of committees and sessions agendas and
+    # then populated, all at once.
+    issues_to_populate = []
+
     # Get issues of specified day
     sessions = Session.objects.select_related('parliament').prefetch_related('session_agenda_items').on_date(requested_date)
     for session in sessions:
@@ -86,8 +91,8 @@ def day(request, input_date=None):
             'issue__proposers__committee'
         )
 
-        # Populate the dossier statistics
-        IssueUtilities.populate_issue_data([i.issue for i in session.session_agenda_items_loaded])
+        # Mark issues for populating data.
+        issues_to_poulate += [i.issue for i in session.session_agenda_items_loaded]
 
     # Get committee agendas of specified day
     committee_agendas = CommitteeAgenda.objects.select_related('committee', 'parliament').prefetch_related(
@@ -101,8 +106,11 @@ def day(request, input_date=None):
             'issue__proposers__person'
         )
 
-        # Populate the dossier statistics
-        IssueUtilities.populate_issue_data([a.issue for a in committee_agenda.committee_agenda_items_loaded])
+        # Mark issues for populating data.
+        issues_to_populate += [a.issue for a in committee_agenda.committee_agenda_items_loaded]
+
+    # Populate collected issues with data.
+    IssueUtilities.populate_issue_data(issues_to_populate)
 
     ctx = {
         'requested_yesterday': requested_yesterday,

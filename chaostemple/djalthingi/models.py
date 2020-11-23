@@ -155,7 +155,7 @@ class PersonQuerySet(models.QuerySet):
         else:
             p_queryset = CommitteeSeat.objects.filter(p_filter).order_by('-timing_out')
 
-        p = Prefetch('seats', queryset=p_queryset, to_attr='last_committee_seat')
+        p = Prefetch('committee_seats', queryset=p_queryset, to_attr='last_committee_seat')
 
         return self.prefetch_related(p).distinct()
 

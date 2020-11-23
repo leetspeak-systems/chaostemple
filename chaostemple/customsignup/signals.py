@@ -22,6 +22,12 @@ def auto_subscription(sender, request, user, **kwargs):
     to that committee.
     '''
 
+    person = user.userprofile.person
+
+    if person is None:
+        # User is not automatically discoverable.
+        return
+
     # Access information will need to be available to the subscription
     # mechanism which gets activated if Subscription objects are saved below.
     # This has the side-effect that `cache_access` is run twice during login,
@@ -30,7 +36,7 @@ def auto_subscription(sender, request, user, **kwargs):
 
     # Find committees to which the recently logged in user is a member.
     committees = Committee.objects.currently_with_person(
-        user.userprofile.person
+        person
     ).exclude(
         subscriptions__user=user
     )

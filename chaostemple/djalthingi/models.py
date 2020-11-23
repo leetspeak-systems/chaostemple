@@ -267,6 +267,9 @@ class SessionQuerySet(models.QuerySet):
 
 class CommitteeQuerySet(models.QuerySet):
     def currently_with_person(self, person, only_main=True):
+        if person is None:
+            return []
+
         if only_main:
             # Means we're only interested in standing committees (which
             # handle issues) where the user is a full member. This is almost

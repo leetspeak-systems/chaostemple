@@ -92,7 +92,7 @@ def day(request, input_date=None):
         )
 
         # Mark issues for populating data.
-        issues_to_poulate += [i.issue for i in session.session_agenda_items_loaded]
+        issues_to_populate += [i.issue for i in session.session_agenda_items_loaded]
 
     # Get committee agendas of specified day
     committee_agendas = CommitteeAgenda.objects.select_related('committee', 'parliament').prefetch_related(

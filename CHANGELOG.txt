@@ -421,3 +421,6 @@
 
 1.8.1:
     * Bug fixed where a user without an associated person (i.e. MP) would not be able to log in.
+
+1.8.2:
+    * Crash-bug fixed on today-page.

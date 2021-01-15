@@ -2025,12 +2025,13 @@ def _process_committee_agenda_xml(xml):
             max_order = order
 
         issue_xml = item_xml.find('mál')
-        if issue_xml is not None:
+        if issue_xml is not None and issue_xml.attrib['málsflokkur'] == 'A':
             # There can only be one issue per agenda item. Right?
             issue_num = int(issue_xml.attrib['málsnúmer'])
             issue_parliament_num = int(issue_xml.attrib['löggjafarþing'])
 
-            # It is assumed that issue_group will be 'A' (i.e. not 'B', which means an issue without documents)
+            # Only issues with issue_group 'A' are processed, i.e. issues
+            # with documents, not for example 'B' or 'N'.
             try:
                 issue = update_issue(issue_num, issue_parliament_num)
             except AlthingiException:

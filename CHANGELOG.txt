@@ -424,3 +424,6 @@
 
 1.8.2:
     * Crash-bug fixed on today-page.
+
+1.8.3:
+    * Bugfix: Make sure that only 'A' issues are processed for committee agenda items.

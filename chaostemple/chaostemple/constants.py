@@ -1,5 +1,5 @@
 from django.utils.translation import ugettext_lazy as _
 
 PROJECT_NAME = _('Temple of Chaos')
-PROJECT_VERSION = '1.8.2'
+PROJECT_VERSION = '1.8.3'
 

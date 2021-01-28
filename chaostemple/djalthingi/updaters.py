@@ -1523,7 +1523,7 @@ def _process_docless_issue(issue_xml):
 
         special_inquisitor = update_person(int(special_inquisitor_xml.attrib['id']), parliament.parliament_num)
         special_inquisitor_description = special_inquisitor_xml.text
-    except AttributeError:
+    except (AttributeError, ValueError):
         special_inquisitor = None
         special_inquisitor_description = None
 

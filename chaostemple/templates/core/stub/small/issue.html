@@ -105,8 +105,10 @@
             {% if issue.issue_type == 'um' %}
                 <br />
                 <small>
-                {% trans 'Inquisitor' %}:
-                <a href="{% breadcrumb_url 'person' issue.special_inquisitor.slug issue.special_inquisitor.subslug %}">{{ issue.special_inquisitor }}</a>.
+                {% if issue.special_inquisitor %}
+                    {% trans 'Inquisitor' %}:
+                    <a href="{% breadcrumb_url 'person' issue.special_inquisitor.slug issue.special_inquisitor.subslug %}">{{ issue.special_inquisitor }}</a>.
+                {% endif %}
                 {% if issue.special_responder %}
                     {% trans 'Responder' %}:
                     <a href="{% breadcrumb_url 'person' issue.special_responder.slug issue.special_responder.subslug %}">{{ issue.special_responder }}</a> ({{ issue.special_responder_description }}).

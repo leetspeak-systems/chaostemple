@@ -134,8 +134,10 @@
 
                 {% if issue.issue_type == 'um' %}
                     <small>
-                    {% trans 'Inquisitor' %}:
-                    <a href="{% breadcrumb_url 'person' issue.special_inquisitor.slug issue.special_inquisitor.subslug %}">{{ issue.special_inquisitor }}</a>.
+                    {% if issue.special_inquisitor %}
+                        {% trans 'Inquisitor' %}:
+                        <a href="{% breadcrumb_url 'person' issue.special_inquisitor.slug issue.special_inquisitor.subslug %}">{{ issue.special_inquisitor }}</a>.
+                    {% endif %}
                     {% if issue.special_responder %}
                         &nbsp;
                         {% trans 'Responder' %}:
@@ -147,7 +149,15 @@
             </div>
         {% elif committee_agenda_item %}
             <div class="panel-body">
-                <strong>{{ committee_agenda_item.name }}</strong>
+                <strong>
+                    {% comment %}
+                    I was here. Need to make the template.
+                    Still not content with the name.
+                    {% endcomment %}
+                    <a href="{% breadcrumb_url 'minuts' committee_agenda_item.committee_agenda.parliament.parliament_num committee_agenda_item.committee_agenda.committee_agenda_xml_id committee_agenda_item.name %}">
+                        {{ committee_agenda_item.name }}
+                    </a>
+                </strong>
             </div>
         {% endif %}
     </div>

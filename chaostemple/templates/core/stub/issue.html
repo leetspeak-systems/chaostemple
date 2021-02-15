@@ -149,15 +149,7 @@
             </div>
         {% elif committee_agenda_item %}
             <div class="panel-body">
-                <strong>
-                    {% comment %}
-                    I was here. Need to make the template.
-                    Still not content with the name.
-                    {% endcomment %}
-                    <a href="{% breadcrumb_url 'minuts' committee_agenda_item.committee_agenda.parliament.parliament_num committee_agenda_item.committee_agenda.committee_agenda_xml_id committee_agenda_item.name %}">
-                        {{ committee_agenda_item.name }}
-                    </a>
-                </strong>
+                <strong>{{ committee_agenda_item.name }}</strong>
             </div>
         {% endif %}
     </div>

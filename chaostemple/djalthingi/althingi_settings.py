@@ -9,12 +9,16 @@ CURRENT_PARLIAMENT_NUM = 151
 
 STATIC_DOCUMENT_DIR = os.path.join(BASE_DIR, 'djalthingi/static')
 XML_CACHE_DIR = os.path.join(BASE_DIR, 'djalthingi/xmlcache')
+XML_ERROR_DIR = os.path.join(XML_CACHE_DIR, 'invalid')
 
 DOWNLOAD_DOCUMENTS = False
 DOWNLOAD_REVIEWS = False
 
-# For development purposes - to cache XML documents for development on a bad or no internet connection
-USE_XML_CACHE = False
+# Development flags
+# - XML_USE_CACHE: Cache XML for no internet or to save bandwidth.
+# - XML_SAVE_INVALID: Save invalid XML files for ability to investigate.
+XML_USE_CACHE = False
+XML_SAVE_INVALID = False
 
 # Timeout in seconds for retrieving remote XML files
 REMOTE_CONTENT_TIMEOUT = 10

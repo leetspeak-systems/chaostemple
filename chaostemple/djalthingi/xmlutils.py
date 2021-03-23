@@ -1,6 +1,7 @@
 import os
 import requests
 
+from datetime import datetime
 from sys import stderr
 
 from lxml import etree
@@ -60,7 +61,7 @@ def get_xml(xml_url_name, *args, **kwargs):
     if not os.path.isdir(althingi_settings.XML_CACHE_DIR):
         os.makedirs(althingi_settings.XML_CACHE_DIR)
 
-    if althingi_settings.USE_XML_CACHE and os.path.isfile(cache_filename):
+    if althingi_settings.XML_USE_CACHE and os.path.isfile(cache_filename):
         with open(cache_filename, 'r') as f:
             xml_content = f.read()
             f.close()
@@ -81,7 +82,26 @@ def get_xml(xml_url_name, *args, **kwargs):
             f.close()
 
     # Return the parsed XML.
-    return etree.fromstring(xml_content.encode('utf-8'))
+    try:
+        return etree.fromstring(xml_content.encode('utf-8'))
+    except etree.XMLSyntaxError:
+        # When XML breaks, we'll want to save the document so that it can be
+        # researched by whoever receives notification of the error. Optional
+        # and configurable through settings variable.
+        if althingi_settings.XML_SAVE_INVALID:
+
+            if not os.path.isdir(althingi_settings.XML_ERROR_DIR):
+                os.makedirs(althingi_settings.XML_ERROR_DIR)
+
+            filename = '%s.%s' % (
+                datetime.now().strftime('%Y-%m-%d.%H-%M-%S'),
+                os.path.basename(cache_filename)
+            )
+            with open(os.path.join(althingi_settings.XML_ERROR_DIR, filename), 'w') as f:
+                f.write(xml_content)
+
+        # Pass on exception so that it gets caught by runtime environment.
+        raise
 
 
 # Clear XML cache.

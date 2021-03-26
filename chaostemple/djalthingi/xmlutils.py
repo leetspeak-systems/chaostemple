@@ -84,7 +84,21 @@ def get_xml(xml_url_name, *args, **kwargs):
     # Return the parsed XML.
     try:
         return etree.fromstring(xml_content.encode('utf-8'))
-    except etree.XMLSyntaxError:
+    except etree.XMLSyntaxError as ex:
+
+        # List of strings of errors that we would like to suppress because we
+        # already know that we're not going to do anything about them.
+        suppressed_errors = [
+            # Random/unknown errors on XML provider's side are shown as HTML,
+            # not XML. This happens sporadically and there's nothing we can do
+            # about it except try again.
+            "Entity 'THORN' not defined",
+        ]
+        for suppressed_error in suppressed_errors:
+            if suppressed_error in ex.msg:
+                print('Known but unspecified, unrecoverable error received from remote host. Quitting.')
+                quit()
+
         # When XML breaks, we'll want to save the document so that it can be
         # researched by whoever receives notification of the error. Optional
         # and configurable through settings variable.

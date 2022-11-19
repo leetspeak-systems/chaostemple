@@ -1,4 +1,4 @@
-django==2.2.24
+django==3.2.16
 django-registration-redux
 django-model-utils
 unidecode
@@ -6,6 +6,6 @@ dateutils
 markdown2
 lxml
 django-termsandconditions
-ics==0.5
+ics
 requests
 tabulate

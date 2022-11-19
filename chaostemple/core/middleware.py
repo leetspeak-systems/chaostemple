@@ -64,7 +64,7 @@ class ExtraVarsMiddleware():
                 raise Http404
 
             # We're missing data. We'll redirect to a help page if we're not already there.
-            if view_func.func_name != 'parliament_missing_data':
+            if view_func.__name__ != 'parliament_missing_data':
                 return redirect(reverse('parliament_missing_data'))
             else:
                 parliament = None

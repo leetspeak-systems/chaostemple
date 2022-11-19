@@ -13,5 +13,6 @@ local_settings.py
 /chaostemple/djalthingi/management/commands/temp_*
 /chaostemple/djalthingi/xmlcache
 /chaostemple/djalthingi/settings.py
+/chaostemple/static
 /sql-changes
 /pip-selfcheck.json

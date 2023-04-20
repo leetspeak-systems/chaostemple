@@ -338,6 +338,11 @@ def update_seats(person_xml_id, parliament_num=None):
             except AttributeError:
                 timing_out = None
 
+            # When `timing_in` and `timing_out` are the same, it's a mistake
+            # in the data and useless anyway.
+            if timing_in is not None and timing_in == timing_out:
+                continue
+
             constituency_xml_id = int(seat_xml.find('kjördæmi').attrib['id'])
             constituency_mp_num = int(seat_xml.find('kjördæmanúmer').text)
 
@@ -735,6 +740,11 @@ def update_committee_seats(person_xml_id, parliament_num=None):
                 timing_out = sensible_datetime(committee_seat_xml.find('tímabil/út').text)
             except AttributeError:
                 timing_out = None
+
+            # When `timing_in` and `timing_out` are the same, it's a mistake
+            # in the data and useless anyway.
+            if timing_in is not None and timing_in == timing_out:
+                continue
 
             try:
                 committee_seat = CommitteeSeat.objects.filter(

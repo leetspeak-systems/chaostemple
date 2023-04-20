@@ -8,8 +8,7 @@ lib
 local
 share
 local_settings.py
-/chaostemple/djstatic
-/chaostemple/djalthingi/static/althingi
+/chaostemple/djalthingi/static
 /chaostemple/djalthingi/management/commands/temp_*
 /chaostemple/djalthingi/xmlcache
 /chaostemple/djalthingi/settings.py

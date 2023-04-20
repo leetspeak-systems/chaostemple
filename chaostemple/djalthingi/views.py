@@ -2,7 +2,7 @@ import requests
 
 from djalthingi.models import Document
 from djalthingi.models import Review
-from django.http import Http404
+from djalthingi import althingi_settings
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 
@@ -40,11 +40,16 @@ def content_proxy_view(request, parliament_num, doc_num=None, log_num=None):
 
     # Check if we have a copy on the local disk.
     if pdf_filename:
-        filepath = 'althingi/static/%s' % pdf_filename
+        filepath = '%s/%s' % (
+            althingi_settings.STATIC_DOCUMENT_DIR,
+            pdf_filename
+        )
         with open(filepath, 'rb') as f:
             content = f.read()
     else:
         response = requests.get(pdf_link())
         content = response.content
 
-    return HttpResponse(content, content_type='application/pdf')
+    response = HttpResponse(content, content_type='application/pdf')
+    response['X-Frame-Options'] = 'SAMEORIGIN'
+    return response

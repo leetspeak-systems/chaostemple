@@ -123,18 +123,4 @@ TERMS_EXCLUDE_URL_PREFIX_LIST = ('/admin/', '/accounts/')
 EMAIL_SUBJECT_PREFIX = '[django-althingi] '
 
 from chaostemple.local_settings import *
-if DEBUG:
-    import imp
-    try:
-        imp.find_module('debug_toolbar')
-
-        INSTALLED_APPS += ('debug_toolbar.apps.DebugToolbarConfig',)
-        MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']
-        DEBUG_TOOLBAR_CONFIG = {
-            'JQUERY_URL': ''
-        }
-    except ImportError:
-        # Silently continue if django-debug-toolbar isn't installed
-        pass
-
 from chaostemple.constants import *

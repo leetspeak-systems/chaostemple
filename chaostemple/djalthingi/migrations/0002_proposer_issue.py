@@ -9,13 +9,18 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('djalthingi', '0001_initial'),
+        ("djalthingi", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='proposer',
-            name='issue',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='proposers', to='djalthingi.Issue'),
+            model_name="proposer",
+            name="issue",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="proposers",
+                to="djalthingi.Issue",
+            ),
         ),
     ]

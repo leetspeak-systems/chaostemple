@@ -8,12 +8,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('djalthingi', '0019_auto_20170427_1758'),
+        ("djalthingi", "0019_auto_20170427_1758"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='parliament',
-            options={'ordering': ['-parliament_num']},
+            name="parliament",
+            options={"ordering": ["-parliament_num"]},
         ),
     ]

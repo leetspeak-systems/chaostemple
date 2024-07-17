@@ -13,11 +13,11 @@ from dossier.models import Dossier
 @receiver(pre_delete, sender=Document)
 def delete_dossiers_on_deletion(sender, instance, **kwargs):
     if sender is Document:
-        dossier_kwargs = { 'document_id': instance.id }
+        dossier_kwargs = {"document_id": instance.id}
     elif sender is Review:
-        dossier_kwargs = { 'review_id': instance.id }
+        dossier_kwargs = {"review_id": instance.id}
     else:
-        return # Shouldn't happen, but better safe than sorry.
+        return  # Shouldn't happen, but better safe than sorry.
 
     dossiers = Dossier.objects.filter(**dossier_kwargs)
     for dossier in dossiers:
@@ -48,26 +48,28 @@ def delete_dossiers_on_deletion(sender, instance, **kwargs):
 
                 review = dossier.review
 
-                msg = 'Useful dossier found when trying to delete review.'
-                msg += ' User: %s.' % dossier.user
-                msg += ' Sender: %s.' % review.sender_name
-                msg += ' Review log_num: %d.' % review.log_num
-                msg += ' Issue: %d/%d.' % (
+                msg = "Useful dossier found when trying to delete review."
+                msg += " User: %s." % dossier.user
+                msg += " Sender: %s." % review.sender_name
+                msg += " Review log_num: %d." % review.log_num
+                msg += " Issue: %d/%d." % (
                     review.issue.issue_num,
-                    review.issue.parliament.parliament_num
+                    review.issue.parliament.parliament_num,
                 )
 
                 potential_replacements = Review.objects.filter(
                     issue_id=review.issue_id,
                     review_type=review.review_type,
-                    sender_name=review.sender_name
+                    sender_name=review.sender_name,
                 ).exclude(id=review.id)
 
                 if len(potential_replacements):
                     log_nums = [str(r.log_num) for r in potential_replacements]
-                    msg += ' Potential replacements (log_nums): %s.' % ', '.join(log_nums)
+                    msg += " Potential replacements (log_nums): %s." % ", ".join(
+                        log_nums
+                    )
                 else:
-                    msg += ' No potential replacements found.'
+                    msg += " No potential replacements found."
 
                 raise DataIntegrityException(msg)
 

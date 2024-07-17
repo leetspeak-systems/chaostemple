@@ -6,17 +6,24 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('djalthingi', '0043_committeeagenda_location'),
+        ("djalthingi", "0043_committeeagenda_location"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='issue',
-            name='from_government',
+            model_name="issue",
+            name="from_government",
         ),
         migrations.AddField(
-            model_name='issue',
-            name='proposer_type',
-            field=models.CharField(choices=[('government', 'Government issue'), ('parliamentarian', 'MP issue')], default='parliamentarian', max_length=30),
+            model_name="issue",
+            name="proposer_type",
+            field=models.CharField(
+                choices=[
+                    ("government", "Government issue"),
+                    ("parliamentarian", "MP issue"),
+                ],
+                default="parliamentarian",
+                max_length=30,
+            ),
         ),
     ]

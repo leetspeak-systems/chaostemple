@@ -8,23 +8,35 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('auth', '0009_alter_user_last_name_max_length'),
-        ('core', '0005_emails_as_usernames'),
+        ("auth", "0009_alter_user_last_name_max_length"),
+        ("core", "0005_emails_as_usernames"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='access',
-            options={'ordering': ['friend__userprofile__initials', 'friend_group__name']},
+            name="access",
+            options={
+                "ordering": ["friend__userprofile__initials", "friend_group__name"]
+            },
         ),
         migrations.AddField(
-            model_name='access',
-            name='friend_group',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='friend_group_access', to='auth.Group'),
+            model_name="access",
+            name="friend_group",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="friend_group_access",
+                to="auth.Group",
+            ),
         ),
         migrations.AlterField(
-            model_name='access',
-            name='friend',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='friend_access', to=settings.AUTH_USER_MODEL),
+            model_name="access",
+            name="friend",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="friend_access",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]

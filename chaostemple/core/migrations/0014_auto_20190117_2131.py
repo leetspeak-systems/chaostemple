@@ -7,14 +7,14 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('djalthingi', '0040_auto_20181204_1544'),
+        ("djalthingi", "0040_auto_20181204_1544"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('core', '0013_auto_20190117_2127'),
+        ("core", "0013_auto_20190117_2127"),
     ]
 
     operations = [
         migrations.RenameModel(
-            old_name='IssueBookmark',
-            new_name='IssueMonitor',
+            old_name="IssueBookmark",
+            new_name="IssueMonitor",
         ),
     ]

@@ -6,31 +6,29 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('djalthingi', '0045_issue_committee_agenda_item_count'),
-        ('core', '0016_userprofile_setting_hide_concluded_from_monitors'),
+        ("djalthingi", "0045_issue_committee_agenda_item_count"),
+        ("core", "0016_userprofile_setting_hide_concluded_from_monitors"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Document',
-            fields=[
-            ],
+            name="Document",
+            fields=[],
             options={
-                'proxy': True,
-                'indexes': [],
-                'constraints': [],
+                "proxy": True,
+                "indexes": [],
+                "constraints": [],
             },
-            bases=('djalthingi.document',),
+            bases=("djalthingi.document",),
         ),
         migrations.CreateModel(
-            name='Review',
-            fields=[
-            ],
+            name="Review",
+            fields=[],
             options={
-                'proxy': True,
-                'indexes': [],
-                'constraints': [],
+                "proxy": True,
+                "indexes": [],
+                "constraints": [],
             },
-            bases=('djalthingi.review',),
+            bases=("djalthingi.review",),
         ),
     ]

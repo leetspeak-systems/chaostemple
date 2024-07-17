@@ -9,34 +9,93 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('djalthingi', '0025_auto_20180212_1742'),
+        ("djalthingi", "0025_auto_20180212_1742"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='IssueStep',
+            name="IssueStep",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('code', models.CharField(max_length=50)),
-                ('order', models.IntegerField()),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("code", models.CharField(max_length=50)),
+                ("order", models.IntegerField()),
             ],
             options={
-                'ordering': ['order'],
+                "ordering": ["order"],
             },
         ),
         migrations.AddField(
-            model_name='issue',
-            name='current_step',
-            field=models.CharField(choices=[(b'distributed', 'Distributed'), (b'iteration-1-waiting', 'Awaiting 1st debate'), (b'iteration-1-current', 'Currently in 1st debate'), (b'iteration-1-finished', '1st debate concluded'), (b'committee-1-waiting', 'Sent to committee'), (b'committee-1-current', 'Currently in committee'), (b'committee-1-finished', 'Considered by committee'), (b'iteration-2-waiting', 'Awaiting 2nd debate'), (b'iteration-2-current', 'Currently in 2nd debate'), (b'iteration-2-finished', '2nd debate concluded'), (b'committee-2-waiting', 'Sent to committee (after 2nd debate)'), (b'committee-2-current', 'Currently in committee (after 2nd debate)'), (b'committee-2-finished', 'Considered by committee (after 2nd debate)'), (b'iteration-3-waiting', 'Awaiting 3rd debate'), (b'iteration-3-current', 'Currently in 3rd debate'), (b'iteration-3-finished', '3rd debate concluded'), (b'concluded', 'Issue concluded'), (b'distributed', 'Distributed'), (b'iteration-former-waiting', 'Awaiting former debate'), (b'iteration-former-current', 'Currently in former debate'), (b'iteration-former-finished', 'Former debate concluded'), (b'committee-former-waiting', 'Sent to committee'), (b'committee-former-current', 'Currently in committee'), (b'committee-former-finished', 'Considered by committee'), (b'iteration-latter-waiting', 'Awaiting latter debate'), (b'iteration-latter-current', 'Currently in latter debate'), (b'iteration-latter-finished', 'Latter debate concluded'), (b'concluded', 'Issue concluded')], max_length=40, null=True),
+            model_name="issue",
+            name="current_step",
+            field=models.CharField(
+                choices=[
+                    (b"distributed", "Distributed"),
+                    (b"iteration-1-waiting", "Awaiting 1st debate"),
+                    (b"iteration-1-current", "Currently in 1st debate"),
+                    (b"iteration-1-finished", "1st debate concluded"),
+                    (b"committee-1-waiting", "Sent to committee"),
+                    (b"committee-1-current", "Currently in committee"),
+                    (b"committee-1-finished", "Considered by committee"),
+                    (b"iteration-2-waiting", "Awaiting 2nd debate"),
+                    (b"iteration-2-current", "Currently in 2nd debate"),
+                    (b"iteration-2-finished", "2nd debate concluded"),
+                    (b"committee-2-waiting", "Sent to committee (after 2nd debate)"),
+                    (
+                        b"committee-2-current",
+                        "Currently in committee (after 2nd debate)",
+                    ),
+                    (
+                        b"committee-2-finished",
+                        "Considered by committee (after 2nd debate)",
+                    ),
+                    (b"iteration-3-waiting", "Awaiting 3rd debate"),
+                    (b"iteration-3-current", "Currently in 3rd debate"),
+                    (b"iteration-3-finished", "3rd debate concluded"),
+                    (b"concluded", "Issue concluded"),
+                    (b"distributed", "Distributed"),
+                    (b"iteration-former-waiting", "Awaiting former debate"),
+                    (b"iteration-former-current", "Currently in former debate"),
+                    (b"iteration-former-finished", "Former debate concluded"),
+                    (b"committee-former-waiting", "Sent to committee"),
+                    (b"committee-former-current", "Currently in committee"),
+                    (b"committee-former-finished", "Considered by committee"),
+                    (b"iteration-latter-waiting", "Awaiting latter debate"),
+                    (b"iteration-latter-current", "Currently in latter debate"),
+                    (b"iteration-latter-finished", "Latter debate concluded"),
+                    (b"concluded", "Issue concluded"),
+                ],
+                max_length=40,
+                null=True,
+            ),
         ),
         migrations.AddField(
-            model_name='issue',
-            name='fate',
-            field=models.CharField(choices=[(b'rejected', 'rejected'), (b'accepted', 'accepted'), (b'sent-to-government', 'sent to government')], max_length=40, null=True),
+            model_name="issue",
+            name="fate",
+            field=models.CharField(
+                choices=[
+                    (b"rejected", "rejected"),
+                    (b"accepted", "accepted"),
+                    (b"sent-to-government", "sent to government"),
+                ],
+                max_length=40,
+                null=True,
+            ),
         ),
         migrations.AddField(
-            model_name='issuestep',
-            name='issue',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='steps', to='djalthingi.Issue'),
+            model_name="issuestep",
+            name="issue",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="steps",
+                to="djalthingi.Issue",
+            ),
         ),
     ]

@@ -27,62 +27,72 @@ from djalthingi.models import Review as AlthingiReview
 
 # Custom query sets and model managers
 
+
 class IssueQuerySet(AlthingiIssueQuerySet):
 
     def annotate_news(self, user):
-        '''
+        """
         Annotates the query with the number of new_documents and new_reviews
         and a seen_count which is the total number of documents or reviews
         that the user has seen so far.
-        '''
+        """
 
         q_filter = Q(dossiers__user_id=user.id)
         if user.userprofile.setting_seen_if_worked_by_others:
             # If the seen-if-worked-by-others setting is selected, we will
             # count other users' seen items as seen by us.
-            Dossier = apps.get_model('dossier', 'Dossier')
+            Dossier = apps.get_model("dossier", "Dossier")
             q_filter |= Q(dossiers__in=Dossier.objects.by_user(user))
 
         news_subquery = Issue.objects.filter(
-            dossierstatistic__user_id=user.id,
-            pk=OuterRef('pk')
+            dossierstatistic__user_id=user.id, pk=OuterRef("pk")
         ).annotate(
-            seen_documents=Count('dossiers__document', filter=q_filter, distinct=True),
-            seen_reviews=Count('dossiers__review', filter=q_filter, distinct=True),
-
-            seen_count=F('seen_documents') + F('seen_reviews'),
-            new_documents=F('document_count') - F('seen_documents'),
-            new_reviews=F('review_count') - F('seen_reviews')
+            seen_documents=Count("dossiers__document", filter=q_filter, distinct=True),
+            seen_reviews=Count("dossiers__review", filter=q_filter, distinct=True),
+            seen_count=F("seen_documents") + F("seen_reviews"),
+            new_documents=F("document_count") - F("seen_documents"),
+            new_reviews=F("review_count") - F("seen_reviews"),
         )
 
         issues = self.annotate(
-            seen_count=Subquery(news_subquery.values('seen_count'), output_field=IntegerField()),
-            new_documents=Subquery(news_subquery.values('new_documents'), output_field=IntegerField()),
-            new_reviews=Subquery(news_subquery.values('new_reviews'), output_field=IntegerField())
+            seen_count=Subquery(
+                news_subquery.values("seen_count"), output_field=IntegerField()
+            ),
+            new_documents=Subquery(
+                news_subquery.values("new_documents"), output_field=IntegerField()
+            ),
+            new_reviews=Subquery(
+                news_subquery.values("new_reviews"), output_field=IntegerField()
+            ),
         )
 
         return issues
 
     def incoming(self, user):
-        '''
+        """
         Returns issues with new documents or new reviews.
         See also IssueQuerySet.annotate_news().
-        '''
+        """
 
-        issues = self.annotate_news(user).exclude(new_documents=0, new_reviews=0).filter(
-            dossierstatistic__user_id=user_id,
-            dossierstatistic__has_useful_info=True
+        issues = (
+            self.annotate_news(user)
+            .exclude(new_documents=0, new_reviews=0)
+            .filter(
+                dossierstatistic__user_id=user_id,
+                dossierstatistic__has_useful_info=True,
+            )
         )
 
         return issues
 
 
 class SeenQuerySet(models.QuerySet):
-    '''
+    """
     A query set for annotating the "seen" attribute on the Document and Review
     models. Used with proxy models below. Depends on being used with a model
     that has Dossier relationships called "dossiers".
-    '''
+    """
+
     def annotate_seen(self, user):
 
         if not user.is_authenticated:
@@ -92,93 +102,84 @@ class SeenQuerySet(models.QuerySet):
         if user.userprofile.setting_seen_if_worked_by_others:
             # If the seen-if-worked-by-others setting is selected, we will
             # count other users' seen items as seen by us.
-            Dossier = apps.get_model('dossier', 'Dossier')
+            Dossier = apps.get_model("dossier", "Dossier")
             q_filter |= Q(dossiers__in=Dossier.objects.by_user(user))
 
-        return self.annotate(
-            seen=Count(
-                'dossiers',
-                filter=q_filter
-            )
-        )
+        return self.annotate(seen=Count("dossiers", filter=q_filter))
 
 
 class SubscriptionManager(models.Manager):
     # Just so that the developer doesn't have to keep track of what things can
     # be subscribed to.
     def select_subscribed(self):
-        return self.select_related(
-            'committee',
-            'category'
-        ).prefetch_related(
-            'committee__issues',
-            'category__issues'
+        return self.select_related("committee", "category").prefetch_related(
+            "committee__issues", "category__issues"
         )
+
 
 # Model utilities
 
-class AccessUtilities():
+
+class AccessUtilities:
 
     cache = {}
 
     @staticmethod
     def get_access():
-        return AccessUtilities.cache[currentThread()]['access']
+        return AccessUtilities.cache[currentThread()]["access"]
 
     @staticmethod
     def get_user_id():
-        return AccessUtilities.cache[currentThread()]['user_id']
+        return AccessUtilities.cache[currentThread()]["user_id"]
 
     @staticmethod
     def cache_access(user):
         group_ids = [g.id for g in user.groups.all()]
 
         AccessUtilities.cache[currentThread()] = {
-            'access': Access.objects.filter(
+            "access": Access.objects.filter(
                 Q(friend_id=user.id, friend_group_id=None)
                 | Q(friend_group_id__in=group_ids, friend_id=None)
             ),
-            'user_id': user.id,
+            "user_id": user.id,
         }
 
-class IssueUtilities():
+
+class IssueUtilities:
 
     @staticmethod
     def bulk_update_has_useful_info(issues):
-        '''
+        """
         Updates the `has_useful_info` attribute of the given issues'
         DossierStatistic as quickly as possible. Assumes logged in user.
         Creates DossierStatistic objects for those issues for which the user
         still doesn't have any.
-        '''
-        DossierStatistic = apps.get_model('dossier', 'DossierStatistic')
+        """
+        DossierStatistic = apps.get_model("dossier", "DossierStatistic")
 
         # Get currently logged in user ID
         user_id = AccessUtilities.get_user_id()
 
         # Existing DossierStatistic objects.
-        stats = DossierStatistic.objects.filter(
-            user_id=user_id,
-            issue__in=issues
-        )
+        stats = DossierStatistic.objects.filter(user_id=user_id, issue__in=issues)
 
         # List of IDs of issues monitored, which may be deemed useful later.
-        monitored_issue_ids = [m.issue_id for m in IssueMonitor.objects.filter(user_id=user_id)]
+        monitored_issue_ids = [
+            m.issue_id for m in IssueMonitor.objects.filter(user_id=user_id)
+        ]
 
         # Returns a list of issue IDs subscribed to.
-        subscribed_issue_ids = Subscription.objects.filter(
-            committee__issues__parliament__parliament_num=CURRENT_PARLIAMENT_NUM,
-            user_id=user_id,
-        ).values_list(
-            'committee__issues__id',
-            flat=True
-        ).union(
+        subscribed_issue_ids = (
             Subscription.objects.filter(
-                category__issues__parliament__parliament_num=CURRENT_PARLIAMENT_NUM,
-                user_id=user_id
-            ).values_list(
-                'category__issues__id',
-                flat=True
+                committee__issues__parliament__parliament_num=CURRENT_PARLIAMENT_NUM,
+                user_id=user_id,
+            )
+            .values_list("committee__issues__id", flat=True)
+            .union(
+                Subscription.objects.filter(
+                    category__issues__parliament__parliament_num=CURRENT_PARLIAMENT_NUM,
+                    user_id=user_id,
+                ).values_list("category__issues__id", flat=True)
             )
         )
 
@@ -199,7 +200,7 @@ class IssueUtilities():
                 # after this iteration.
                 stat_map[issue.id].update_has_useful_info(
                     is_monitored=issue.id in monitored_issue_ids,
-                    is_subscribed=issue.id in subscribed_issue_ids
+                    is_subscribed=issue.id in subscribed_issue_ids,
                 )
             else:
                 # Create non-existing stats. Only objects, which are not
@@ -207,19 +208,19 @@ class IssueUtilities():
                 stat = DossierStatistic(user_id=user_id, issue_id=issue.id)
                 stat.update_has_useful_info(
                     is_monitored=issue.id in monitored_issue_ids,
-                    is_subscribed=issue.id in subscribed_issue_ids
+                    is_subscribed=issue.id in subscribed_issue_ids,
                 )
                 stats_for_creation.append(stat)
 
         # Bulk-update stats that need updating.
-        DossierStatistic.objects.bulk_update(stats, ['has_useful_info'])
+        DossierStatistic.objects.bulk_update(stats, ["has_useful_info"])
 
         # Bulk-crate stats that need creating.
         DossierStatistic.objects.bulk_create(stats_for_creation)
 
     @staticmethod
     def populate_issue_data(issues):
-        DossierStatistic = apps.get_model('dossier', 'DossierStatistic')
+        DossierStatistic = apps.get_model("dossier", "DossierStatistic")
 
         # Get currently logged in user ID
         user_id = AccessUtilities.get_user_id()
@@ -227,30 +228,37 @@ class IssueUtilities():
         access_filter = Q()
 
         # Get access objects and sort them
-        accesses = {'partial': [], 'full': []}
+        accesses = {"partial": [], "full": []}
         for access in AccessUtilities.get_access():
-            accesses['full' if access.full_access else 'partial'].append(access)
+            accesses["full" if access.full_access else "partial"].append(access)
 
         # Get dossier statistics from partial access given by other users
         partial_conditions = []
         dossier_statistics = DossierStatistic.objects.none()
-        for partial_access in accesses['partial']:
+        for partial_access in accesses["partial"]:
             for issue in partial_access.issues.all():
-                partial_conditions.append(Q(user_id=partial_access.user_id) & Q(issue_id=issue.id))
+                partial_conditions.append(
+                    Q(user_id=partial_access.user_id) & Q(issue_id=issue.id)
+                )
         if len(partial_conditions) > 0:
             access_filter = access_filter | Q(reduce(operator.or_, partial_conditions))
 
         # Get dossier statistics from full access given by other users
-        visible_user_ids = [a.user_id for a in accesses['full']]
-        access_filter = access_filter | Q(Q(user_id__in=visible_user_ids) | Q(user_id=user_id))
+        visible_user_ids = [a.user_id for a in accesses["full"]]
+        access_filter = access_filter | Q(
+            Q(user_id__in=visible_user_ids) | Q(user_id=user_id)
+        )
 
-        dossier_statistics = DossierStatistic.objects.select_related('user__userprofile').filter(
-            access_filter,
-            issue__in=issues
-        ).order_by('user__userprofile__initials')
+        dossier_statistics = (
+            DossierStatistic.objects.select_related("user__userprofile")
+            .filter(access_filter, issue__in=issues)
+            .order_by("user__userprofile__initials")
+        )
 
         # Retrieve the monitors for the given issues, if any.
-        monitor_map = { m.issue_id: m for m in IssueMonitor.objects.filter(user_id=user_id) }
+        monitor_map = {
+            m.issue_id: m for m in IssueMonitor.objects.filter(user_id=user_id)
+        }
 
         # Get subscriptions so that we can look them up by issue.
         subscription_map = {}
@@ -275,7 +283,7 @@ class IssueUtilities():
 
             for dossier_statistic in dossier_statistics:
                 if dossier_statistic.issue_id == issue.id:
-                    if not hasattr(issue, 'dossier_statistics'):
+                    if not hasattr(issue, "dossier_statistics"):
                         issue.dossier_statistics = []
 
                     if dossier_statistic.user_id == user_id:
@@ -288,12 +296,17 @@ class IssueUtilities():
 
 ### Models
 
+
 class UserProfile(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='userprofile', on_delete=CASCADE)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, related_name="userprofile", on_delete=CASCADE
+    )
 
     name = models.CharField(max_length=100)
     initials = models.CharField(max_length=10, null=True)
-    person = models.ForeignKey(Person, null=True, related_name='userprofile', on_delete=CASCADE)
+    person = models.ForeignKey(
+        Person, null=True, related_name="userprofile", on_delete=CASCADE
+    )
 
     last_seen = models.DateTimeField(null=True)
 
@@ -302,18 +315,25 @@ class UserProfile(models.Model):
     setting_seen_if_worked_by_others = models.BooleanField(default=True)
 
     def display_full(self):
-        return mark_safe('<a href="mailto: %s">%s</a> (%s)' % (self.user.email, self.name, self.initials))
+        return mark_safe(
+            '<a href="mailto: %s">%s</a> (%s)'
+            % (self.user.email, self.name, self.initials)
+        )
 
     def __str__(self):
         return self.initials if self.initials else self.user.email
 
 
 class IssueMonitor(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='issue_monitors', on_delete=CASCADE)
-    issue = models.ForeignKey(AlthingiIssue, related_name='issue_monitors', on_delete=CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name="issue_monitors", on_delete=CASCADE
+    )
+    issue = models.ForeignKey(
+        AlthingiIssue, related_name="issue_monitors", on_delete=CASCADE
+    )
 
     def save(self, *args, **kwargs):
-        DossierStatistic = apps.get_model('dossier', 'DossierStatistic')
+        DossierStatistic = apps.get_model("dossier", "DossierStatistic")
 
         super(IssueMonitor, self).save(*args, **kwargs)
 
@@ -330,7 +350,7 @@ class IssueMonitor(models.Model):
         stat.save()
 
     def delete(self):
-        DossierStatistic = apps.get_model('dossier', 'DossierStatistic')
+        DossierStatistic = apps.get_model("dossier", "DossierStatistic")
 
         super(IssueMonitor, self).delete()
 
@@ -365,33 +385,46 @@ class Review(AlthingiReview):
 
 
 class Access(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='access', on_delete=CASCADE)
-    friend = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, related_name='friend_access', on_delete=CASCADE)
-    friend_group = models.ForeignKey('auth.Group', null=True, related_name='friend_group_access', on_delete=CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name="access", on_delete=CASCADE
+    )
+    friend = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        related_name="friend_access",
+        on_delete=CASCADE,
+    )
+    friend_group = models.ForeignKey(
+        "auth.Group", null=True, related_name="friend_group_access", on_delete=CASCADE
+    )
 
     full_access = models.BooleanField(default=False)
-    issues = models.ManyToManyField('Issue')
+    issues = models.ManyToManyField("Issue")
 
     class Meta:
-        ordering = ['friend__userprofile__initials', 'friend_group__name']
+        ordering = ["friend__userprofile__initials", "friend_group__name"]
 
 
 class MembershipRequest(models.Model):
     STATUS_CHOICES = (
-        ('pending', _('pending')),
-        ('rejected', _('rejected')),
-        ('accepted', _('accepted')),
+        ("pending", _("pending")),
+        ("rejected", _("rejected")),
+        ("accepted", _("accepted")),
     )
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='membership_requests', on_delete=CASCADE)
-    group = models.ForeignKey('auth.Group', related_name='membership_requests', on_delete=CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name="membership_requests", on_delete=CASCADE
+    )
+    group = models.ForeignKey(
+        "auth.Group", related_name="membership_requests", on_delete=CASCADE
+    )
 
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
     decided_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         null=True,
-        related_name='decided_membership_requests',
-        on_delete=CASCADE
+        related_name="decided_membership_requests",
+        on_delete=CASCADE,
     )
 
     timing_requested = models.DateTimeField(auto_now_add=True)
@@ -402,12 +435,10 @@ class MembershipRequest(models.Model):
         if not status in dict(self.STATUS_CHOICES):
             return None
 
-        if status == 'accepted':
+        if status == "accepted":
             self.group.user_set.add(self.user)
             access, created = Access.objects.get_or_create(
-                user=self.user,
-                friend_group=self.group,
-                full_access=True
+                user=self.user, friend_group=self.group, full_access=True
             )
 
         self.status = status
@@ -416,33 +447,49 @@ class MembershipRequest(models.Model):
         self.save()
 
     def __str__(self):
-        return '%s (%s)' % (self.group, self.get_status_display())
+        return "%s (%s)" % (self.group, self.get_status_display())
 
     class Meta:
-        ordering = ['group__name', 'status']
+        ordering = ["group__name", "status"]
 
 
 class Subscription(models.Model):
     objects = SubscriptionManager()
 
     SUB_TYPE_CHOICES = (
-        ('party', _('Parties')),
-        ('committee', _('Committees')),
-        ('person', _('MPs')),
-        ('category', _('Categories')),
+        ("party", _("Parties")),
+        ("committee", _("Committees")),
+        ("person", _("MPs")),
+        ("category", _("Categories")),
     )
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='subscriptions', on_delete=CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name="subscriptions", on_delete=CASCADE
+    )
     sub_type = models.CharField(max_length=20, choices=SUB_TYPE_CHOICES)
 
-    party = models.ForeignKey('djalthingi.Party', null=True, related_name='subscriptions', on_delete=CASCADE)
-    committee = models.ForeignKey('djalthingi.Committee', null=True, related_name='subscriptions', on_delete=CASCADE)
-    person = models.ForeignKey('djalthingi.Person', null=True, related_name='subscriptions', on_delete=CASCADE)
-    category = models.ForeignKey('djalthingi.Category', null=True, related_name='subscriptions', on_delete=CASCADE)
+    party = models.ForeignKey(
+        "djalthingi.Party", null=True, related_name="subscriptions", on_delete=CASCADE
+    )
+    committee = models.ForeignKey(
+        "djalthingi.Committee",
+        null=True,
+        related_name="subscriptions",
+        on_delete=CASCADE,
+    )
+    person = models.ForeignKey(
+        "djalthingi.Person", null=True, related_name="subscriptions", on_delete=CASCADE
+    )
+    category = models.ForeignKey(
+        "djalthingi.Category",
+        null=True,
+        related_name="subscriptions",
+        on_delete=CASCADE,
+    )
 
     class Meta:
-        unique_together = ['user', 'party', 'committee', 'person']
-        ordering = ['sub_type']
+        unique_together = ["user", "party", "committee", "person"]
+        ordering = ["sub_type"]
 
     def subscribed_thing(self):
         try:
@@ -453,41 +500,46 @@ class Subscription(models.Model):
 
     def subscribed_thing_link(self):
         thing = self.subscribed_thing()
-        if self.sub_type == 'committee':
+        if self.sub_type == "committee":
             if thing.parliament_num_last is not None:
                 parliament_num = thing.parliament_num_last
             else:
                 parliament_num = CURRENT_PARLIAMENT_NUM
-            return reverse('parliament_committee', args=(parliament_num, thing.id))
-        elif self.sub_type == 'category':
-            return reverse('parliament_category', args=(CURRENT_PARLIAMENT_NUM, thing.slug))
+            return reverse("parliament_committee", args=(parliament_num, thing.id))
+        elif self.sub_type == "category":
+            return reverse(
+                "parliament_category", args=(CURRENT_PARLIAMENT_NUM, thing.slug)
+            )
 
         return None
 
     def save(self, *args, **kwargs):
         # Make sure that what's being subscribed to is sane.
-        self.sub_type = ''
-        fields = ['party', 'committee', 'person', 'category']
+        self.sub_type = ""
+        fields = ["party", "committee", "person", "category"]
         for field in fields:
             if getattr(self, field) is not None:
                 self.sub_type = field
                 break
 
         if not self.sub_type:
-            raise Exception('Subscription must be to one of fields: %s' % ', '.join(fields))
+            raise Exception(
+                "Subscription must be to one of fields: %s" % ", ".join(fields)
+            )
 
         # Only allow one thing to be subscribed to.
         for field in fields:
             if field != self.sub_type and getattr(self, field) is not None:
                 raise Exception(
-                    'Subscription may only be to one thing (currently %s)' % self.subscribed_thing()
+                    "Subscription may only be to one thing (currently %s)"
+                    % self.subscribed_thing()
                 )
 
         # Prevent duplicate subscriptions.
         thing = self.subscribed_thing()
-        lookup = {'user': self.user, self.sub_type: thing}
+        lookup = {"user": self.user, self.sub_type: thing}
         if Subscription.objects.filter(**lookup).count() > 0:
-            raise Exception('Already subscribed to that item')
+            raise Exception("Already subscribed to that item")
 
         super(Subscription, self).save(*args, **kwargs)
 
@@ -500,7 +552,7 @@ class Subscription(models.Model):
         IssueUtilities.bulk_update_has_useful_info(issues)
 
     def delete(self):
-        DossierStatistic = apps.get_model('dossier', 'DossierStatistic')
+        DossierStatistic = apps.get_model("dossier", "DossierStatistic")
 
         # Save DossierStatistic objects to trigger update_has_useful_info.
         thing = self.subscribed_thing()
@@ -512,5 +564,5 @@ class Subscription(models.Model):
         IssueUtilities.bulk_update_has_useful_info(issues)
 
     def __str__(self):
-        sub_type = self.sub_type if self.sub_type else 'undetermined'
-        return '%s subscribed to %s %s' % (self.user, sub_type, self.subscribed_thing())
+        sub_type = self.sub_type if self.sub_type else "undetermined"
+        return "%s subscribed to %s %s" % (self.user, sub_type, self.subscribed_thing())

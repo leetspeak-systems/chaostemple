@@ -38,28 +38,28 @@ from djalthingi.utils import get_last_parliament_num
 
 
 # Test dummies.
-test_dummy = (1166, 148, 'Helgi Hrafn Gunnarsson')
-broken_test_dummy = (3, 148, 'Broken Test Dummy')
+test_dummy = (1166, 148, "Helgi Hrafn Gunnarsson")
+broken_test_dummy = (3, 148, "Broken Test Dummy")
 
 # Test dummy vote castings.
 test_dummy_vote_casting = (54805, 148)
 broken_test_dummy_vote_casting = (1, 148)
 
 # Test dummy committee.
-test_dummy_committee = (201, 148, 'allsherjar- og menntamálanefnd')
-broken_test_dummy_committee = (1, 148, 'broken test dummy committee')
+test_dummy_committee = (201, 148, "allsherjar- og menntamálanefnd")
+broken_test_dummy_committee = (1, 148, "broken test dummy committee")
 
 # Test dummy issue.
-test_dummy_issue = (1, 148, 'fjárlög 2018')
-broken_test_dummy_issue = (139, 147, 'Broken Test Dummy Issue')
+test_dummy_issue = (1, 148, "fjárlög 2018")
+broken_test_dummy_issue = (139, 147, "Broken Test Dummy Issue")
 
 # Test dummy sessions
-test_dummy_session = (3, 148, '3. fundur')
-broken_test_dummy_session = (9, 147, 'Broken Test Dummy Session')
+test_dummy_session = (3, 148, "3. fundur")
+broken_test_dummy_session = (9, 147, "Broken Test Dummy Session")
 
 # Test dummy committee agenda.
-test_dummy_committee_agenda = (18462, 148, '21. desember 17, kl. 10:00 árdegis')
-broken_test_dummy_committee_agenda = (1, 148, 'Broken Test Dummy Committee Agenda')
+test_dummy_committee_agenda = (18462, 148, "21. desember 17, kl. 10:00 árdegis")
+broken_test_dummy_committee_agenda = (1, 148, "Broken Test Dummy Committee Agenda")
 
 
 class HiddenPrints:
@@ -79,17 +79,19 @@ class HiddenPrints:
         # either goes away in time or can be figured out. I'm leaving this the
         # way it is for now, because it works, even though I don't know why.
 
-        #sys.stdout = open(os.devnull, 'w')
+        # sys.stdout = open(os.devnull, 'w')
         sys.stdout = None
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         sys.stdout = self._original_stdout
+
 
 # A function decorator for hiding prints.
 def hidden_prints(test_function):
     def wrapped(*args, **kwargs):
         with HiddenPrints():
             return test_function(*args, **kwargs)
+
     return wrapped
 
 
@@ -100,11 +102,11 @@ class AlthingiUpdaterTest(TestCase):
 
     @hidden_prints
     def test_update_parliament(self):
-        '''
+        """
         Any updater function that takes parliament_num as a parameter will
         pass it on to the update_parliament function. Testing the
         parliament_num parameter in other functions in therefore redundant.
-        '''
+        """
 
         parliament_num = get_last_parliament_num()
 
@@ -120,7 +122,9 @@ class AlthingiUpdaterTest(TestCase):
         self.assertRaises(TypeError, update_parliament, str(parliament_num))
 
         # Fail: Get a parliament before the first one
-        self.assertRaises(AlthingiException, update_parliament, FIRST_PARLIAMENT_NUM - 1)
+        self.assertRaises(
+            AlthingiException, update_parliament, FIRST_PARLIAMENT_NUM - 1
+        )
 
         # Fail: Get a parliament from the (apparent) future
         self.assertRaises(AlthingiException, update_parliament, parliament_num + 1)
@@ -134,12 +138,16 @@ class AlthingiUpdaterTest(TestCase):
 
         # Fail: Good number passed as something else than a number.
         person_xml_id, parliament_num, name = test_dummy
-        with self.assertRaisesRegexp(TypeError, 'Parameter person_xml_id must be a number'):
+        with self.assertRaisesRegexp(
+            TypeError, "Parameter person_xml_id must be a number"
+        ):
             update_person(str(person_xml_id), parliament_num)
 
         # Fail: Fetch a person that we know does not exist.
         person_xml_id, parliament_num, name = broken_test_dummy
-        with self.assertRaisesRegexp(AlthingiException, 'Person with XML-ID \d+ not found'):
+        with self.assertRaisesRegexp(
+            AlthingiException, "Person with XML-ID \d+ not found"
+        ):
             update_person(person_xml_id, parliament_num)
 
         # Pass: Fetch a person known to exist.
@@ -152,12 +160,16 @@ class AlthingiUpdaterTest(TestCase):
 
         # Fail: Good number passed as something else than a number.
         person_xml_id, parliament_num, name = test_dummy
-        with self.assertRaisesRegexp(TypeError, 'Parameter person_xml_id must be a number'):
+        with self.assertRaisesRegexp(
+            TypeError, "Parameter person_xml_id must be a number"
+        ):
             update_seats(str(person_xml_id), parliament_num)
 
         # Fail: Fetch seats for a person that does not exist.
         person_xml_id, parliament_num, name = broken_test_dummy
-        with self.assertRaisesRegexp(AlthingiException, 'Person with XML-ID \d+ not found'):
+        with self.assertRaisesRegexp(
+            AlthingiException, "Person with XML-ID \d+ not found"
+        ):
             update_seats(person_xml_id, parliament_num)
 
         # Pass: Fetch the seats of a person known to exist.
@@ -173,12 +185,16 @@ class AlthingiUpdaterTest(TestCase):
 
         # Fail: Good number passed as something else than number.
         person_xml_id, parliament_num, name = test_dummy
-        with self.assertRaisesRegexp(TypeError, 'Parameter person_xml_id must be a number'):
+        with self.assertRaisesRegexp(
+            TypeError, "Parameter person_xml_id must be a number"
+        ):
             update_committee_seats(str(person_xml_id), parliament_num)
 
         # Fail: Fetch committee seats for a person that does not exist.
         person_xml_id, parliament_num, name = broken_test_dummy
-        with self.assertRaisesRegexp(AlthingiException, 'Person with XML-ID \d+ not found'):
+        with self.assertRaisesRegexp(
+            AlthingiException, "Person with XML-ID \d+ not found"
+        ):
             update_committee_seats(person_xml_id, parliament_num)
 
         # Pass: Fetch committee seats for a person known to be valid.
@@ -194,12 +210,16 @@ class AlthingiUpdaterTest(TestCase):
 
         # Fail: Good number passed as something else than number.
         committee_xml_id, parliament_num, name = test_dummy_committee
-        with self.assertRaisesRegexp(TypeError, 'Parameter committee_xml_id must be a number'):
+        with self.assertRaisesRegexp(
+            TypeError, "Parameter committee_xml_id must be a number"
+        ):
             update_committee(str(committee_xml_id), parliament_num)
 
         # Fail: Fetch committe that does not exist.
         committee_xml_id, parliament_num, name = broken_test_dummy_committee
-        with self.assertRaisesRegexp(AlthingiException, 'Committee with XML-ID \d+ does not exist'):
+        with self.assertRaisesRegexp(
+            AlthingiException, "Committee with XML-ID \d+ does not exist"
+        ):
             update_committee(committee_xml_id, parliament_num)
 
         # Pass: Fetch committee known to exist.
@@ -216,12 +236,14 @@ class AlthingiUpdaterTest(TestCase):
 
         # Fail: Good number passed as something else than number.
         issue_num, parliament_num, name = test_dummy_issue
-        with self.assertRaisesRegexp(TypeError, 'Parameter issue_num must be a number'):
+        with self.assertRaisesRegexp(TypeError, "Parameter issue_num must be a number"):
             update_issue(str(issue_num), parliament_num)
 
         # Fail: Fetch issue that does not exist.
         issue_num, parliament_num, name = broken_test_dummy_issue
-        with self.assertRaisesRegexp(AlthingiException, 'Issue \d+ in parliament \d+ does not exist'):
+        with self.assertRaisesRegexp(
+            AlthingiException, "Issue \d+ in parliament \d+ does not exist"
+        ):
             update_issue(issue_num, parliament_num)
 
         # Pass: Fetch issue known to exist.
@@ -238,12 +260,16 @@ class AlthingiUpdaterTest(TestCase):
 
         # Fail: Good number passed as something else than number.
         session_num, parliament_num, name = test_dummy_session
-        with self.assertRaisesRegexp(TypeError, 'Parameter session_num must be a number'):
+        with self.assertRaisesRegexp(
+            TypeError, "Parameter session_num must be a number"
+        ):
             update_session(str(session_num), parliament_num)
 
         # Fail: Fetch session that does not exist.
         session_num, parliament_num, name = broken_test_dummy_session
-        with self.assertRaisesRegexp(AlthingiException, 'Session \d+ in parliament \d+ does not exist'):
+        with self.assertRaisesRegexp(
+            AlthingiException, "Session \d+ in parliament \d+ does not exist"
+        ):
             update_session(session_num, parliament_num)
 
         # Pass: Fetch session that is known to exist.
@@ -267,12 +293,16 @@ class AlthingiUpdaterTest(TestCase):
     def test_update_committee_agendas(self):
 
         # Fail: Garbage datetime.
-        with self.assertRaisesRegexp(ValueError, 'Could not figure out datetime format for ".+"'):
-            update_committee_agendas(None, 'garbage')
+        with self.assertRaisesRegexp(
+            ValueError, 'Could not figure out datetime format for ".+"'
+        ):
+            update_committee_agendas(None, "garbage")
 
         # Fail: Properly formatted but incorrect datetime.
-        with self.assertRaisesRegexp(ValueError, 'Could not figure out datetime format for ".+"'):
-            update_committee_agendas(None, '2017-02-29')
+        with self.assertRaisesRegexp(
+            ValueError, 'Could not figure out datetime format for ".+"'
+        ):
+            update_committee_agendas(None, "2017-02-29")
 
         # Pass: Fetch committee agendas with a date limit from a week ago.
         date_limit = timezone.now() - timedelta(days=7)
@@ -286,18 +316,30 @@ class AlthingiUpdaterTest(TestCase):
     def test_update_committee_agenda(self):
 
         # Fail: Good number passed as something else than number.
-        committee_agenda_xml_id, parliament_num, timing_text = test_dummy_committee_agenda
-        with self.assertRaisesRegexp(TypeError, 'Parameter committee_agenda_xml_id must be a number'):
+        committee_agenda_xml_id, parliament_num, timing_text = (
+            test_dummy_committee_agenda
+        )
+        with self.assertRaisesRegexp(
+            TypeError, "Parameter committee_agenda_xml_id must be a number"
+        ):
             update_committee_agenda(str(committee_agenda_xml_id), parliament_num)
 
         # Fail: Fetch committee agenda that does not exist.
-        committee_agenda_xml_id, parliament_num, timing_text = broken_test_dummy_committee_agenda
-        with self.assertRaisesRegexp(AlthingiException, 'Committee agenda \d+ in parliament \d+ does not exist'):
+        committee_agenda_xml_id, parliament_num, timing_text = (
+            broken_test_dummy_committee_agenda
+        )
+        with self.assertRaisesRegexp(
+            AlthingiException, "Committee agenda \d+ in parliament \d+ does not exist"
+        ):
             update_committee_agenda(committee_agenda_xml_id, parliament_num)
 
         # Pass> Fetch a committee agenda known to exist.
-        committee_agenda_xml_id, parliament_num, timing_text = test_dummy_committee_agenda
-        committee_agenda = update_committee_agenda(committee_agenda_xml_id, parliament_num)
+        committee_agenda_xml_id, parliament_num, timing_text = (
+            test_dummy_committee_agenda
+        )
+        committee_agenda = update_committee_agenda(
+            committee_agenda_xml_id, parliament_num
+        )
         self.assertEquals(committee_agenda.timing_text, timing_text)
 
     @hidden_prints
@@ -313,12 +355,15 @@ class AlthingiUpdaterTest(TestCase):
 
         # Fail: Good number passed as something else than number.
         issue_num, parliament_num, name = test_dummy_issue
-        with self.assertRaisesRegexp(TypeError, 'Parameter issue_num must be a number'):
+        with self.assertRaisesRegexp(TypeError, "Parameter issue_num must be a number"):
             update_issue_status(str(issue_num), parliament_num)
 
         # Fail: Fetch issue that does not exist.
         issue_num, parliament_num, name = broken_test_dummy_issue
-        with self.assertRaisesRegexp(AlthingiException, 'Issue \d+/\d+ does not exist and is not automatically fetched. Try first running "issue=\d+ parliament=\d+".'):
+        with self.assertRaisesRegexp(
+            AlthingiException,
+            'Issue \d+/\d+ does not exist and is not automatically fetched. Try first running "issue=\d+ parliament=\d+".',
+        ):
             update_issue_status(issue_num, parliament_num)
 
     @hidden_prints
@@ -330,12 +375,16 @@ class AlthingiUpdaterTest(TestCase):
 
         # Fail: Good number passed as something else than number.
         person_xml_id, parliament_num, name = test_dummy
-        with self.assertRaisesRegexp(TypeError, 'Parameter person_xml_id must be a number'):
+        with self.assertRaisesRegexp(
+            TypeError, "Parameter person_xml_id must be a number"
+        ):
             update_minister_seats(str(person_xml_id), parliament_num)
 
         # Fail: Fetch minister seats for a person that does not exist.
         person_xml_id, parliament_num, name = broken_test_dummy
-        with self.assertRaisesRegexp(AlthingiException, 'Person with XML-ID \d+ not found'):
+        with self.assertRaisesRegexp(
+            AlthingiException, "Person with XML-ID \d+ not found"
+        ):
             update_minister_seats(person_xml_id, parliament_num)
 
         # Pass: Fetch minister seats for a person known to be valid.

@@ -5,6 +5,7 @@ from core.breadcrumbs import append_to_crumb_string
 
 register = template.Library()
 
+
 @register.simple_tag(takes_context=True)
 def parliament_url(context, parliament_num):
 
@@ -16,63 +17,68 @@ def parliament_url(context, parliament_num):
     # The key is the view that the user is viewing. Its value is a tuple which is built so:
     # (new_view_name, (variable_to_remove, another_variable_to_remove...)),
     parliament_selection_exceptions = {
-        'parliament_issue': ('parliament_issues', ('issue_num',)),
-        'parliament_session': ('parliament_sessions', ('session_num',)),
-        'parliament_committee': ('parliament_committees', ('committee_id',)),
-        'parliament_committee_agenda': ('parliament_committees', ('agenda_id', 'committee_id')),
+        "parliament_issue": ("parliament_issues", ("issue_num",)),
+        "parliament_session": ("parliament_sessions", ("session_num",)),
+        "parliament_committee": ("parliament_committees", ("committee_id",)),
+        "parliament_committee_agenda": (
+            "parliament_committees",
+            ("agenda_id", "committee_id"),
+        ),
     }
 
-    resolver_match = context['request'].resolver_match
+    resolver_match = context["request"].resolver_match
 
-    if 'parliament_num' in resolver_match.kwargs:
+    if "parliament_num" in resolver_match.kwargs:
         kwargs = dict(resolver_match.kwargs)
-        kwargs['parliament_num'] = parliament_num
+        kwargs["parliament_num"] = parliament_num
         if resolver_match.view_name in parliament_selection_exceptions:
-            view_name, vars_to_remove = parliament_selection_exceptions[resolver_match.view_name]
+            view_name, vars_to_remove = parliament_selection_exceptions[
+                resolver_match.view_name
+            ]
             for var_to_remove in vars_to_remove:
                 del kwargs[var_to_remove]
         else:
             view_name = resolver_match.view_name
         return reverse(view_name, kwargs=kwargs)
     else:
-        return reverse('parliament', kwargs={'parliament_num': parliament_num})
+        return reverse("parliament", kwargs={"parliament_num": parliament_num})
 
 
 @register.simple_tag(takes_context=True)
 def crumb_string(context, view_name, *args):
-    '''
+    """
     This template tag only generates a crumb_string as if the input is the current page.
     Used for overriding the currently visible page, for example when linking from menus.
-    '''
+    """
 
     return append_to_crumb_string(reverse(view_name, args=args), None)
 
 
 @register.simple_tag(takes_context=True)
 def breadcrumb_url(context, view_name, *args):
-    '''
+    """
     This template tag works like the default 'url' template tag, except that it adds the
     currently visible page to the crumb string in the URL, so that breadcrumbs work.
-    '''
+    """
 
     crumb_string = append_to_crumb_string(
-        context.request.get_full_path().split('?')[0],
-        context.request.GET.get('from', '')
+        context.request.get_full_path().split("?")[0],
+        context.request.GET.get("from", ""),
     )
 
-    return '%s?from=%s' % (reverse(view_name, args=args), crumb_string)
+    return "%s?from=%s" % (reverse(view_name, args=args), crumb_string)
 
 
 @register.filter()
 def breadcrumb_trace_url(breadcrumb):
-    view = breadcrumb['view']
+    view = breadcrumb["view"]
     path = reverse(view[0], args=view[1:])
-    if len(breadcrumb['crumb_string']):
-        path = path + '?from=' + breadcrumb['crumb_string']
+    if len(breadcrumb["crumb_string"]):
+        path = path + "?from=" + breadcrumb["crumb_string"]
 
     return path
 
 
 @register.filter()
 def breadcrumb_caption(breadcrumb):
-    return breadcrumb['caption']
+    return breadcrumb["caption"]

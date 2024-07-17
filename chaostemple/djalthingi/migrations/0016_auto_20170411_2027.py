@@ -8,19 +8,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('djalthingi', '0015_auto_20161229_1625'),
+        ("djalthingi", "0015_auto_20161229_1625"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='committee',
-            name='parliament_num_first',
+            model_name="committee",
+            name="parliament_num_first",
             field=models.IntegerField(default=146),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='committee',
-            name='parliament_num_last',
+            model_name="committee",
+            name="parliament_num_last",
             field=models.IntegerField(null=True),
         ),
     ]

@@ -50,7 +50,7 @@ from djalthingi.utils import sensible_datetime
 from djalthingi.xmlutils import get_xml
 
 
-'''
+"""
 already_haves
 -------------
 This variable contains information on which information has already been received in a given
@@ -70,26 +70,25 @@ time the importing script is run.
 Note that this caching is only per-running and does not (or at least shouldn't) live longer than
 the time it takes to run the import.
 
-'''
+"""
 already_haves = {
-    'category_grpups': {},
-    'parliaments': {},
-    'parties': {},
-    'persons': {},
-    'ministers': {},
-    'minister_seats': {},
-    'presidents': {},
-    'president_seats': {},
-    'seats': {},
-    'committees': {},
-    'committee_seats': {},
-    'constituencies': {},
-    'issues': {},
-    'sessions': {},
-    'speeches': {},
-    'vote_castings': {},
-
-    'xml': {},
+    "category_grpups": {},
+    "parliaments": {},
+    "parties": {},
+    "persons": {},
+    "ministers": {},
+    "minister_seats": {},
+    "presidents": {},
+    "president_seats": {},
+    "seats": {},
+    "committees": {},
+    "committee_seats": {},
+    "constituencies": {},
+    "issues": {},
+    "sessions": {},
+    "speeches": {},
+    "vote_castings": {},
+    "xml": {},
 }
 
 
@@ -104,27 +103,32 @@ def update_parliament(parliament_num):
 
     # Make sure that input makes sense
     if parliament_num is not None and not isinstance(parliament_num, int):
-        raise TypeError('Function update_parliament() expects either None or exactly one integer as input')
+        raise TypeError(
+            "Function update_parliament() expects either None or exactly one integer as input"
+        )
 
     # Default to most recent parliament number if nothing is provided
     parliament_num = parliament_num if parliament_num else last_parliament_num
 
     # Make sure that the parliament number makes sense (information before the 20th does not exist)
     if parliament_num < FIRST_PARLIAMENT_NUM or parliament_num > last_parliament_num:
-        raise AlthingiException('Parliament number must be between %d and %d' % (FIRST_PARLIAMENT_NUM, last_parliament_num))
+        raise AlthingiException(
+            "Parliament number must be between %d and %d"
+            % (FIRST_PARLIAMENT_NUM, last_parliament_num)
+        )
 
-    if parliament_num in already_haves['parliaments']:
-        return already_haves['parliaments'][parliament_num]
+    if parliament_num in already_haves["parliaments"]:
+        return already_haves["parliaments"][parliament_num]
 
-    xml = get_xml('PARLIAMENT_URL', parliament_num).find('þing')
+    xml = get_xml("PARLIAMENT_URL", parliament_num).find("þing")
 
     if xml is None:
-        raise AlthingiException('Parliament %s could not be found' % parliament_num)
+        raise AlthingiException("Parliament %s could not be found" % parliament_num)
 
-    era = xml.find('tímabil').text
-    timing_start = sensible_datetime(xml.find('þingsetning').text)
+    era = xml.find("tímabil").text
+    timing_start = sensible_datetime(xml.find("þingsetning").text)
     try:
-        timing_end = sensible_datetime(xml.find('þinglok').text)
+        timing_end = sensible_datetime(xml.find("þinglok").text)
     except AttributeError:
         timing_end = None
 
@@ -146,9 +150,9 @@ def update_parliament(parliament_num):
 
         if changed:
             parliament.save()
-            print('Updated parliament: %s' % parliament)
+            print("Updated parliament: %s" % parliament)
         else:
-            print('Already have parliament: %s' % parliament)
+            print("Already have parliament: %s" % parliament)
 
     except Parliament.DoesNotExist:
         parliament = Parliament()
@@ -158,9 +162,9 @@ def update_parliament(parliament_num):
         parliament.timing_end = timing_end
         parliament.save()
 
-        print('Added parliament: %s' % parliament)
+        print("Added parliament: %s" % parliament)
 
-    already_haves['parliaments'][parliament_num] = parliament
+    already_haves["parliaments"][parliament_num] = parliament
 
     return parliament
 
@@ -170,10 +174,14 @@ def update_persons(parliament_num=None):
     parliament = update_parliament(parliament_num)
 
     # We'll combine the lists of MPs and ministers.
-    xml_mp = get_xml('PERSONS_MPS_URL', parliament.parliament_num).findall('þingmaður')
-    xml_min = get_xml('PERSONS_MINISTERS_URL', parliament.parliament_num).findall('ráðherra')
+    xml_mp = get_xml("PERSONS_MPS_URL", parliament.parliament_num).findall("þingmaður")
+    xml_min = get_xml("PERSONS_MINISTERS_URL", parliament.parliament_num).findall(
+        "ráðherra"
+    )
 
-    person_xml_ids = [int(a.attrib['id']) for a in xml_mp] + [int(a.attrib['id']) for a in xml_min]
+    person_xml_ids = [int(a.attrib["id"]) for a in xml_mp] + [
+        int(a.attrib["id"]) for a in xml_min
+    ]
 
     for person_xml_id in person_xml_ids:
         update_person(person_xml_id, parliament.parliament_num)
@@ -185,53 +193,53 @@ def update_person(person_xml_id, parliament_num=None):
 
     # Make sure that input makes sense
     if person_xml_id is not None and not isinstance(person_xml_id, int):
-        raise TypeError('Parameter person_xml_id must be a number')
+        raise TypeError("Parameter person_xml_id must be a number")
 
-    if person_xml_id in already_haves['persons']:
+    if person_xml_id in already_haves["persons"]:
         update_seats(person_xml_id, parliament.parliament_num)
         update_committee_seats(person_xml_id, parliament.parliament_num)
         update_minister_seats(person_xml_id, parliament.parliament_num)
 
-        return already_haves['persons'][person_xml_id]
+        return already_haves["persons"][person_xml_id]
 
-    xml = get_xml('PERSON_URL', person_xml_id)
-    if xml.tag != 'þingmaður':
-        raise AlthingiException('Person with XML-ID %d not found' % person_xml_id)
+    xml = get_xml("PERSON_URL", person_xml_id)
+    if xml.tag != "þingmaður":
+        raise AlthingiException("Person with XML-ID %d not found" % person_xml_id)
 
     try:
-        email_name = xml.find('netfang/nafn').text
-        email_domain = xml.find('netfang/lén').text
-        email = '%s@%s' % (email_name, email_domain)
+        email_name = xml.find("netfang/nafn").text
+        email_domain = xml.find("netfang/lén").text
+        email = "%s@%s" % (email_name, email_domain)
     except AttributeError:
         email = None
 
     try:
-        facebook_url = xml.find('facebook').text
+        facebook_url = xml.find("facebook").text
     except AttributeError:
         facebook_url = None
 
     try:
-        twitter_url = xml.find('twitter').text
+        twitter_url = xml.find("twitter").text
     except AttributeError:
         twitter_url = None
 
     try:
-        youtube_url = xml.find('youtube').text
+        youtube_url = xml.find("youtube").text
     except AttributeError:
         youtube_url = None
 
     try:
-        blog_url = xml.find('blogg').text
+        blog_url = xml.find("blogg").text
     except AttributeError:
         blog_url = None
 
     try:
-        website_url = xml.find('vefur').text
+        website_url = xml.find("vefur").text
     except AttributeError:
         website_url = None
 
-    name = xml.find('nafn').text
-    birthdate = sensible_datetime(xml.find('fæðingardagur').text)
+    name = xml.find("nafn").text
+    birthdate = sensible_datetime(xml.find("fæðingardagur").text)
 
     try:
         person = Person.objects.get(person_xml_id=person_xml_id)
@@ -271,9 +279,9 @@ def update_person(person_xml_id, parliament_num=None):
 
         if changed:
             person.save()
-            print('Updated person: %s' % person)
+            print("Updated person: %s" % person)
         else:
-            print('Already have person: %s' % person)
+            print("Already have person: %s" % person)
 
     except Person.DoesNotExist:
         person = Person()
@@ -288,9 +296,9 @@ def update_person(person_xml_id, parliament_num=None):
         person.person_xml_id = person_xml_id
         person.save()
 
-        print('Added person: %s' % person)
+        print("Added person: %s" % person)
 
-    already_haves['persons'][person_xml_id] = person
+    already_haves["persons"][person_xml_id] = person
 
     update_seats(person_xml_id, parliament.parliament_num)
     update_committee_seats(person_xml_id, parliament.parliament_num)
@@ -306,35 +314,37 @@ def update_seats(person_xml_id, parliament_num=None):
     try:
         person = Person.objects.get(person_xml_id=person_xml_id)
     except Person.DoesNotExist:
-        raise AlthingiException('Person with XML ID %d does not exist in database (maybe try updating persons)?')
+        raise AlthingiException(
+            "Person with XML ID %d does not exist in database (maybe try updating persons)?"
+        )
 
-    ah_key = '%d-%d' % (parliament.parliament_num, person_xml_id)
-    if ah_key in already_haves['seats']:
-        return already_haves['seats'][ah_key]
+    ah_key = "%d-%d" % (parliament.parliament_num, person_xml_id)
+    if ah_key in already_haves["seats"]:
+        return already_haves["seats"][ah_key]
 
     update_constituencies(parliament.parliament_num)
     update_parties(parliament.parliament_num)
 
-    xml = get_xml('SEATS_URL', person_xml_id).findall('þingsetur/þingseta')
+    xml = get_xml("SEATS_URL", person_xml_id).findall("þingsetur/þingseta")
 
     seats = []
     for seat_xml in xml:
-        seat_parliament_num = int(seat_xml.find('þing').text)
+        seat_parliament_num = int(seat_xml.find("þing").text)
 
         if seat_parliament_num == parliament.parliament_num:
-            seat_type = seat_xml.find('tegund').text
+            seat_type = seat_xml.find("tegund").text
 
-            name_abbreviation = seat_xml.find('skammstöfun').text
+            name_abbreviation = seat_xml.find("skammstöfun").text
 
             try:
-                physical_seat_number = int(seat_xml.find('þingsalssæti').text)
+                physical_seat_number = int(seat_xml.find("þingsalssæti").text)
             except (AttributeError, TypeError):
                 physical_seat_number = None
 
-            timing_in = sensible_datetime(seat_xml.find('tímabil/inn').text)
+            timing_in = sensible_datetime(seat_xml.find("tímabil/inn").text)
 
             try:
-                timing_out = sensible_datetime(seat_xml.find('tímabil/út').text)
+                timing_out = sensible_datetime(seat_xml.find("tímabil/út").text)
             except AttributeError:
                 timing_out = None
 
@@ -343,20 +353,20 @@ def update_seats(person_xml_id, parliament_num=None):
             if timing_in is not None and timing_in == timing_out:
                 continue
 
-            constituency_xml_id = int(seat_xml.find('kjördæmi').attrib['id'])
-            constituency_mp_num = int(seat_xml.find('kjördæmanúmer').text)
+            constituency_xml_id = int(seat_xml.find("kjördæmi").attrib["id"])
+            constituency_mp_num = int(seat_xml.find("kjördæmanúmer").text)
 
-            party_xml_id = int(seat_xml.find('þingflokkur').attrib['id'])
+            party_xml_id = int(seat_xml.find("þingflokkur").attrib["id"])
 
             try:
                 seat = Seat.objects.get(
                     person=person,
                     parliament__parliament_num=parliament.parliament_num,
                     timing_in=timing_in,
-                    timing_out=timing_out
+                    timing_out=timing_out,
                 )
 
-                print('Already have seat: %s' % seat)
+                print("Already have seat: %s" % seat)
 
             except Seat.DoesNotExist:
                 seat = Seat()
@@ -367,24 +377,26 @@ def update_seats(person_xml_id, parliament_num=None):
                 seat.physical_seat_number = physical_seat_number
                 seat.timing_in = timing_in
                 seat.timing_out = timing_out
-                seat.constituency = Constituency.objects.get(constituency_xml_id=constituency_xml_id)
+                seat.constituency = Constituency.objects.get(
+                    constituency_xml_id=constituency_xml_id
+                )
                 seat.constituency_mp_num = constituency_mp_num
                 seat.party = Party.objects.get(party_xml_id=party_xml_id)
 
                 seat.save()
-                print('Added seat: %s' % seat)
+                print("Added seat: %s" % seat)
 
             seats.append(seat)
 
     deletable_seats = Seat.objects.filter(
         parliament__parliament_num=parliament.parliament_num,
-        person__person_xml_id=person_xml_id
+        person__person_xml_id=person_xml_id,
     ).exclude(id__in=[s.id for s in seats])
     for seat in deletable_seats:
         seat.delete()
-        print('Deleted non-existent seat: %s' % seat)
+        print("Deleted non-existent seat: %s" % seat)
 
-    already_haves['seats'][ah_key] = seats
+    already_haves["seats"][ah_key] = seats
 
     return seats
 
@@ -398,44 +410,52 @@ def update_vote_castings(parliament_num=None, days=None):
     update_committees(parliament.parliament_num)
 
     pref_persons = {p.person_xml_id: p for p in Person.objects.all()}
-    pref_sessions = {s.session_num: s for s in Session.objects.filter(parliament_id=parliament.id)}
-    pref_issues = {i.issue_num: i for i in Issue.objects.prefetch_related('documents').filter(
-        issue_group='A',
-        parliament_id=parliament.id,
-    )}
+    pref_sessions = {
+        s.session_num: s for s in Session.objects.filter(parliament_id=parliament.id)
+    }
+    pref_issues = {
+        i.issue_num: i
+        for i in Issue.objects.prefetch_related("documents").filter(
+            issue_group="A",
+            parliament_id=parliament.id,
+        )
+    }
     # We need names as keys because of weird XML explained below.
     pref_committees = {c.name: c for c in parliament.committees.all()}
     pref_ministers = {m.name: m for m in parliament.ministers.all()}
-    pref_vote_castings = {vc.vote_casting_xml_id: vc for vc in VoteCasting.objects.filter(
-        session__parliament__parliament_num=parliament.parliament_num
-    )}
+    pref_vote_castings = {
+        vc.vote_casting_xml_id: vc
+        for vc in VoteCasting.objects.filter(
+            session__parliament__parliament_num=parliament.parliament_num
+        )
+    }
     pref_votes = {
-        '%d-%d' % (
-            v.vote_casting.vote_casting_xml_id,
-            v.person.person_xml_id
-        ): v for v in Vote.objects.select_related('vote_casting','person').filter(
+        "%d-%d" % (v.vote_casting.vote_casting_xml_id, v.person.person_xml_id): v
+        for v in Vote.objects.select_related("vote_casting", "person").filter(
             vote_casting__session__parliament_id=parliament.id
         )
     }
 
     vote_casting_ids = []
-    for xml in get_xml('VOTE_CASTINGS_URL', parliament.parliament_num, days=days).findall('atkvæðagreiðsla'):
+    for xml in get_xml(
+        "VOTE_CASTINGS_URL", parliament.parliament_num, days=days
+    ).findall("atkvæðagreiðsla"):
 
-        vote_casting_xml_id = int(xml.attrib['atkvæðagreiðslunúmer'])
+        vote_casting_xml_id = int(xml.attrib["atkvæðagreiðslunúmer"])
 
-        issue_num = int(xml.attrib['málsnúmer'])
+        issue_num = int(xml.attrib["málsnúmer"])
 
-        issue_group = xml.attrib['málsflokkur']
+        issue_group = xml.attrib["málsflokkur"]
 
-        timing = sensible_datetime(xml.find('tími').text)
+        timing = sensible_datetime(xml.find("tími").text)
 
-        if issue_group == 'A':
+        if issue_group == "A":
             try:
                 issue = pref_issues[issue_num]
             except KeyError:
                 issue = update_issue(issue_num, parliament.parliament_num)
 
-            doc_num = int(xml.find('þingskjal').attrib['skjalsnúmer'])
+            doc_num = int(xml.find("þingskjal").attrib["skjalsnúmer"])
             try:
                 document = issue.documents.get(doc_num=doc_num)
             except Document.DoesNotExist:
@@ -445,7 +465,7 @@ def update_vote_castings(parliament_num=None, days=None):
                 document = None
 
         # NOTE / TODO: Waiting for B-issue types to appear in XML for vote castings.
-        #elif issue_group == 'B':
+        # elif issue_group == 'B':
         #    docless_issue_xml = vote_casting_xml.find('mál')
         #    issue = _process_docless_issue(docless_issue_xml)
         #    document = None
@@ -453,16 +473,16 @@ def update_vote_castings(parliament_num=None, days=None):
             issue = None
             document = None
 
-        vote_casting_type = xml.find('tegund').attrib['tegund']
+        vote_casting_type = xml.find("tegund").attrib["tegund"]
 
-        vote_casting_type_text = xml.find('tegund').text
+        vote_casting_type_text = xml.find("tegund").text
 
         try:
-            specifics = xml.find('nánar').text.strip()
+            specifics = xml.find("nánar").text.strip()
         except AttributeError:
-            specifics = ''
+            specifics = ""
 
-        session_num = int(xml.find('fundur').text)
+        session_num = int(xml.find("fundur").text)
         try:
             session = pref_sessions[session_num]
         except KeyError:
@@ -505,7 +525,7 @@ def update_vote_castings(parliament_num=None, days=None):
             #     except AttributeError:
             #         to_minister = None
 
-            to_mystery = xml.find('til').text
+            to_mystery = xml.find("til").text
 
             if to_mystery in pref_committees:
                 # It's a committee!
@@ -529,27 +549,27 @@ def update_vote_castings(parliament_num=None, days=None):
             to_minister = None
 
         try:
-            method = xml.find('samantekt/aðferð').text
+            method = xml.find("samantekt/aðferð").text
         except AttributeError:
             method = None
 
         try:
-            count_yes = int(xml.find('samantekt/já/fjöldi').text)
+            count_yes = int(xml.find("samantekt/já/fjöldi").text)
         except (AttributeError, TypeError):
             count_yes = None
 
         try:
-            count_no = int(xml.find('samantekt/nei/fjöldi').text)
+            count_no = int(xml.find("samantekt/nei/fjöldi").text)
         except (AttributeError, TypeError):
             count_no = None
 
         try:
-            count_abstain = int(xml.find('samantekt/greiðirekkiatkvæði/fjöldi').text)
+            count_abstain = int(xml.find("samantekt/greiðirekkiatkvæði/fjöldi").text)
         except (AttributeError, TypeError):
             count_abstain = None
 
         try:
-            conclusion = xml.find('samantekt/afgreiðsla').text
+            conclusion = xml.find("samantekt/afgreiðsla").text
         except AttributeError:
             conclusion = None
 
@@ -615,9 +635,9 @@ def update_vote_castings(parliament_num=None, days=None):
 
             if changed:
                 vote_casting.save()
-                print('Updated vote casting: %s' % vote_casting)
+                print("Updated vote casting: %s" % vote_casting)
             else:
-                print('Already have vote casting: %s' % vote_casting)
+                print("Already have vote casting: %s" % vote_casting)
 
         else:
             vote_casting = VoteCasting()
@@ -640,28 +660,28 @@ def update_vote_castings(parliament_num=None, days=None):
 
             vote_casting.save()
 
-            print('Added vote casting: %s' % vote_casting)
+            print("Added vote casting: %s" % vote_casting)
 
-        if method != 'yfirlýsing forseta/mál gengur':
+        if method != "yfirlýsing forseta/mál gengur":
 
-            xml = get_xml('VOTE_CASTING_URL', vote_casting_xml_id)
+            xml = get_xml("VOTE_CASTING_URL", vote_casting_xml_id)
 
             # Process actual votes, if they exist.
-            for vote_xml in xml.findall('atkvæðaskrá/þingmaður'):
-                person_xml_id = int(vote_xml.attrib['id'])
-                vote_response = vote_xml.find('atkvæði').text
+            for vote_xml in xml.findall("atkvæðaskrá/þingmaður"):
+                person_xml_id = int(vote_xml.attrib["id"])
+                vote_response = vote_xml.find("atkvæði").text
 
                 # NOTE: To be removed when XML is fixed.
-                if vote_response == 'f: óþekktur kóði':
-                    vote_response = 'boðaði fjarvist'
+                if vote_response == "f: óþekktur kóði":
+                    vote_response = "boðaði fjarvist"
 
                 try:
                     person = pref_persons[person_xml_id]
                 except KeyError:
                     person = update_person(person_xml_id, parliament.parliament_num)
 
-                if '%s-%s' % (vote_casting_xml_id, person_xml_id) in pref_votes:
-                    vote = pref_votes['%s-%s' % (vote_casting_xml_id, person_xml_id)]
+                if "%s-%s" % (vote_casting_xml_id, person_xml_id) in pref_votes:
+                    vote = pref_votes["%s-%s" % (vote_casting_xml_id, person_xml_id)]
 
                     changed = False
                     if vote.vote_response != vote_response:
@@ -670,9 +690,9 @@ def update_vote_castings(parliament_num=None, days=None):
 
                     if changed:
                         vote.save()
-                        print('Updated vote: %s' % vote)
+                        print("Updated vote: %s" % vote)
                     else:
-                        print('Already have vote: %s' % vote)
+                        print("Already have vote: %s" % vote)
                 else:
                     vote = Vote()
                     vote.vote_casting_id = vote_casting.id
@@ -681,15 +701,13 @@ def update_vote_castings(parliament_num=None, days=None):
 
                     vote.save()
 
-                    print('Added vote: %s' % vote)
+                    print("Added vote: %s" % vote)
 
         vote_casting_ids.append(vote_casting.id)
 
     deletable_vote_castings = VoteCasting.objects.filter(
         session__parliament_id=parliament.id
-    ).exclude(
-        id__in=vote_casting_ids
-    )
+    ).exclude(id__in=vote_casting_ids)
     if days is not None:
         # If we're limiting by day count, we'll only want to mark vote
         # castings within that range as deletable.
@@ -703,7 +721,7 @@ def update_vote_castings(parliament_num=None, days=None):
 
     for deletable_vote_casting in deletable_vote_castings:
         deletable_vote_casting.delete()
-        print('Deleted non-existent vote casting: %s' % deletable_vote_casting)
+        print("Deleted non-existent vote casting: %s" % deletable_vote_casting)
 
 
 def update_committee_seats(person_xml_id, parliament_num=None):
@@ -713,31 +731,37 @@ def update_committee_seats(person_xml_id, parliament_num=None):
     try:
         person = Person.objects.get(person_xml_id=person_xml_id)
     except Person.DoesNotExist:
-        raise AlthingiException('Person with XML ID %d does not exist in database (maybe try updating persons)?')
+        raise AlthingiException(
+            "Person with XML ID %d does not exist in database (maybe try updating persons)?"
+        )
 
-    ah_key = '%d-%d' % (parliament.parliament_num, person_xml_id)
-    if ah_key in already_haves['committee_seats']:
-        return already_haves['committee_seats'][ah_key]
+    ah_key = "%d-%d" % (parliament.parliament_num, person_xml_id)
+    if ah_key in already_haves["committee_seats"]:
+        return already_haves["committee_seats"][ah_key]
 
-    xml = get_xml('COMMITTEE_SEATS_URL', person_xml_id).findall('nefndasetur/nefndaseta')
+    xml = get_xml("COMMITTEE_SEATS_URL", person_xml_id).findall(
+        "nefndasetur/nefndaseta"
+    )
 
     committee_seats = []
     for committee_seat_xml in xml:
-        committee_seat_parliament_num = int(committee_seat_xml.find('þing').text)
+        committee_seat_parliament_num = int(committee_seat_xml.find("þing").text)
 
         if committee_seat_parliament_num == parliament.parliament_num:
 
-            committee_xml_id = int(committee_seat_xml.find('nefnd').attrib['id'])
+            committee_xml_id = int(committee_seat_xml.find("nefnd").attrib["id"])
             committee = update_committee(committee_xml_id, parliament.parliament_num)
 
-            committee_seat_type = committee_seat_xml.find('staða').text
+            committee_seat_type = committee_seat_xml.find("staða").text
 
-            order = committee_seat_xml.find('röð').text
+            order = committee_seat_xml.find("röð").text
 
-            timing_in = sensible_datetime(committee_seat_xml.find('tímabil/inn').text)
+            timing_in = sensible_datetime(committee_seat_xml.find("tímabil/inn").text)
 
             try:
-                timing_out = sensible_datetime(committee_seat_xml.find('tímabil/út').text)
+                timing_out = sensible_datetime(
+                    committee_seat_xml.find("tímabil/út").text
+                )
             except AttributeError:
                 timing_out = None
 
@@ -751,7 +775,7 @@ def update_committee_seats(person_xml_id, parliament_num=None):
                     person=person,
                     committee=committee,
                     parliament__parliament_num=parliament.parliament_num,
-                    timing_in=timing_in
+                    timing_in=timing_in,
                 ).get(Q(timing_out=timing_out) | Q(timing_out=None))
 
                 changed = False
@@ -761,9 +785,9 @@ def update_committee_seats(person_xml_id, parliament_num=None):
 
                 if changed:
                     committee_seat.save()
-                    print('Updated committee seat: %s' % committee_seat)
+                    print("Updated committee seat: %s" % committee_seat)
                 else:
-                    print('Already have committee seat: %s' % committee_seat)
+                    print("Already have committee seat: %s" % committee_seat)
 
             except CommitteeSeat.DoesNotExist:
                 committee_seat = CommitteeSeat()
@@ -776,11 +800,11 @@ def update_committee_seats(person_xml_id, parliament_num=None):
                 committee_seat.timing_out = timing_out
 
                 committee_seat.save()
-                print('Added committee seat: %s' % committee_seat)
+                print("Added committee seat: %s" % committee_seat)
 
             committee_seats.append(committee_seat)
 
-    already_haves['committee_seats'][ah_key] = committee_seats
+    already_haves["committee_seats"][ah_key] = committee_seats
 
     return committee_seats
 
@@ -789,10 +813,10 @@ def update_committees(parliament_num=None):
 
     parliament = update_parliament(parliament_num)
 
-    xml = get_xml('COMMITTEE_LIST_URL', parliament.parliament_num).findall('nefnd')
+    xml = get_xml("COMMITTEE_LIST_URL", parliament.parliament_num).findall("nefnd")
 
     for committee_xml in xml:
-        committee_xml_id = int(committee_xml.attrib['id'])
+        committee_xml_id = int(committee_xml.attrib["id"])
         update_committee(committee_xml_id, parliament.parliament_num)
 
 
@@ -802,11 +826,11 @@ def update_committee(committee_xml_id, parliament_num=None):
 
     # Make sure that input makes sense
     if committee_xml_id is not None and not isinstance(committee_xml_id, int):
-        raise TypeError('Parameter committee_xml_id must be a number')
+        raise TypeError("Parameter committee_xml_id must be a number")
 
-    ah_key = '%d-%d' % (parliament.parliament_num, committee_xml_id)
-    if ah_key in already_haves['committees']:
-        return already_haves['committees'][ah_key]
+    ah_key = "%d-%d" % (parliament.parliament_num, committee_xml_id)
+    if ah_key in already_haves["committees"]:
+        return already_haves["committees"][ah_key]
 
     # NOTE: This should be revisited when committees have their own, individual XML page
     def parse_committee_xml(xml_url_name, parliament_num=None):
@@ -820,26 +844,34 @@ def update_committee(committee_xml_id, parliament_num=None):
             xml_url = xml_urls[xml_url_name]
 
         # Cache the XML document, so that we only need to retrieve it once per run
-        if xml_url in already_haves['xml']:
-            xml = already_haves['xml'][xml_url]
+        if xml_url in already_haves["xml"]:
+            xml = already_haves["xml"][xml_url]
         else:
             if parliament_num:
-                xml = get_xml(xml_url_name, parliament_num).findall('nefnd')
+                xml = get_xml(xml_url_name, parliament_num).findall("nefnd")
             else:
-                xml = get_xml(xml_url_name).findall('nefnd')
-            already_haves['xml'][xml_url] = xml
+                xml = get_xml(xml_url_name).findall("nefnd")
+            already_haves["xml"][xml_url] = xml
 
         committee = None
         for committee_xml in xml:
-            if int(committee_xml.attrib['id']) == committee_xml_id:
+            if int(committee_xml.attrib["id"]) == committee_xml_id:
 
-                name = committee_xml.find('heiti').text
-                abbreviation_short = committee_xml.find('skammstafanir/stuttskammstöfun').text
-                abbreviation_long = committee_xml.find('skammstafanir/löngskammstöfun').text
+                name = committee_xml.find("heiti").text
+                abbreviation_short = committee_xml.find(
+                    "skammstafanir/stuttskammstöfun"
+                ).text
+                abbreviation_long = committee_xml.find(
+                    "skammstafanir/löngskammstöfun"
+                ).text
 
-                parliament_num_first = int(committee_xml.find('tímabil/fyrstaþing').text)
+                parliament_num_first = int(
+                    committee_xml.find("tímabil/fyrstaþing").text
+                )
                 try:
-                    parliament_num_last = int(committee_xml.find('tímabil/síðastaþing').text)
+                    parliament_num_last = int(
+                        committee_xml.find("tímabil/síðastaþing").text
+                    )
                 except AttributeError:
                     parliament_num_last = None
 
@@ -865,9 +897,9 @@ def update_committee(committee_xml_id, parliament_num=None):
 
                     if changed:
                         committee.save()
-                        print('Updated committee: %s' % committee)
+                        print("Updated committee: %s" % committee)
                     else:
-                        print('Already have committee: %s' % committee)
+                        print("Already have committee: %s" % committee)
 
                 except Committee.DoesNotExist:
                     committee = Committee()
@@ -881,28 +913,31 @@ def update_committee(committee_xml_id, parliament_num=None):
                     committee.save()
                     committee.parliaments.add(parliament)
 
-                    print('Added committee: %s' % committee)
+                    print("Added committee: %s" % committee)
 
-                break # We have found what we were looking for.
+                break  # We have found what we were looking for.
 
         return committee
 
-    committee = parse_committee_xml('COMMITTEE_LIST_URL', parliament.parliament_num)
+    committee = parse_committee_xml("COMMITTEE_LIST_URL", parliament.parliament_num)
     if committee is None:
         # if the variable 'committee' is still None at this point, it means that the committee we requested
         # does not exist in the appropriate parliament's XML. This is a mistake in the XML that the XML
         # maintainers should be notified of, but we can still remedy this by downloading a different,
         # much larger XML document which contains all committees regardless of parliament.
-        print('Warning: Committee with ID %d is missing from committee listing in parliament %d! Tell the XML keeper!' % (
-            committee_xml_id,
-            parliament.parliament_num
-        ), file=stderr)
-        committee = parse_committee_xml('COMMITTEE_FULL_LIST_URL')
+        print(
+            "Warning: Committee with ID %d is missing from committee listing in parliament %d! Tell the XML keeper!"
+            % (committee_xml_id, parliament.parliament_num),
+            file=stderr,
+        )
+        committee = parse_committee_xml("COMMITTEE_FULL_LIST_URL")
 
     if committee is None:
-        raise AlthingiException('Committee with XML-ID %d does not exist' % committee_xml_id)
+        raise AlthingiException(
+            "Committee with XML-ID %d does not exist" % committee_xml_id
+        )
 
-    already_haves['committees'][ah_key] = committee
+    already_haves["committees"][ah_key] = committee
 
     return committee
 
@@ -914,14 +949,14 @@ def update_issues(parliament_num=None):
 
     parliament = update_parliament(parliament_num)
 
-    xml = get_xml('ISSUE_LIST_URL', parliament.parliament_num).findall('mál')
+    xml = get_xml("ISSUE_LIST_URL", parliament.parliament_num).findall("mál")
 
     for issue_xml in xml:
         # We are only interested in A-issues (with documents).
-        if issue_xml.attrib['málsflokkur'] != 'A':
+        if issue_xml.attrib["málsflokkur"] != "A":
             continue
 
-        issue_num = int(issue_xml.attrib['málsnúmer'])
+        issue_num = int(issue_xml.attrib["málsnúmer"])
 
         update_issue(issue_num, parliament_num=parliament.parliament_num)
 
@@ -933,11 +968,11 @@ def update_issue(issue_num, parliament_num=None):
 
     # Make sure that input makes sense
     if issue_num is not None and not isinstance(issue_num, int):
-        raise TypeError('Parameter issue_num must be a number')
+        raise TypeError("Parameter issue_num must be a number")
 
-    ah_key = '%d-%d' % (parliament.parliament_num, issue_num)
-    if ah_key in already_haves['issues']:
-        return already_haves['issues'][ah_key]
+    ah_key = "%d-%d" % (parliament.parliament_num, issue_num)
+    if ah_key in already_haves["issues"]:
+        return already_haves["issues"][ah_key]
 
     update_categories()
 
@@ -946,35 +981,42 @@ def update_issue(issue_num, parliament_num=None):
     # issue is designated as [parliament_num, issue_num].
     previously_published_as = []
 
-    xml = get_xml('ISSUE_URL', parliament.parliament_num, issue_num)
+    xml = get_xml("ISSUE_URL", parliament.parliament_num, issue_num)
 
-    issue_xml = xml.find('mál')
-    rapporteurs_xml = xml.findall('framsögumenn/framsögumaður')
-    docstubs_xml = xml.findall('þingskjöl/þingskjal')
-    reviews_xml = xml.findall('erindaskrá/erindi')
+    issue_xml = xml.find("mál")
+    rapporteurs_xml = xml.findall("framsögumenn/framsögumaður")
+    docstubs_xml = xml.findall("þingskjöl/þingskjal")
+    reviews_xml = xml.findall("erindaskrá/erindi")
 
     if issue_xml is None:
-        raise AlthingiException('Issue %d in parliament %d does not exist' % (issue_num, parliament.parliament_num))
+        raise AlthingiException(
+            "Issue %d in parliament %d does not exist"
+            % (issue_num, parliament.parliament_num)
+        )
 
-    issue_type = issue_xml.find('málstegund').attrib['málstegund']
+    issue_type = issue_xml.find("málstegund").attrib["málstegund"]
 
-    name = issue_xml.find('málsheiti').text.strip()
+    name = issue_xml.find("málsheiti").text.strip()
 
-    description = issue_xml.find('efnisgreining').text
-    description = '' if description is None else description.strip()
+    description = issue_xml.find("efnisgreining").text
+    description = "" if description is None else description.strip()
 
     try:
-        review_deadline = sensible_datetime(xml.find('umsagnabeiðnir').attrib['frestur'])
+        review_deadline = sensible_datetime(
+            xml.find("umsagnabeiðnir").attrib["frestur"]
+        )
     except ValueError:
         review_deadline = None
 
     cat_xml_ids = []
-    for cgx in xml.findall('efnisflokkar/yfirflokkur'):
-        cat_xml_ids += [int(x.attrib['id']) for x in cgx.findall('efnisflokkur')]
-    cat_xml_ids.sort() # Order should match, but just in case.
+    for cgx in xml.findall("efnisflokkar/yfirflokkur"):
+        cat_xml_ids += [int(x.attrib["id"]) for x in cgx.findall("efnisflokkur")]
+    cat_xml_ids.sort()  # Order should match, but just in case.
 
     try:
-        issue = Issue.objects.get(issue_num=issue_num, issue_group='A', parliament=parliament)
+        issue = Issue.objects.get(
+            issue_num=issue_num, issue_group="A", parliament=parliament
+        )
 
         changed = False
         if issue.issue_type != issue_type:
@@ -993,7 +1035,9 @@ def update_issue(issue_num, parliament_num=None):
             issue.review_deadline = review_deadline
             changed = True
 
-        if [c.category_xml_id for c in issue.categories.order_by('category_xml_id')] != cat_xml_ids:
+        if [
+            c.category_xml_id for c in issue.categories.order_by("category_xml_id")
+        ] != cat_xml_ids:
             issue.categories.clear()
             for cat_xml_id in cat_xml_ids:
                 issue.categories.add(Category.objects.get(category_xml_id=cat_xml_id))
@@ -1001,15 +1045,15 @@ def update_issue(issue_num, parliament_num=None):
 
         if changed:
             issue.save()
-            print('Updated issue: %s' % issue.detailed())
+            print("Updated issue: %s" % issue.detailed())
         else:
-            print('Already have issue: %s' % issue.detailed())
+            print("Already have issue: %s" % issue.detailed())
 
     except Issue.DoesNotExist:
         issue = Issue()
         issue.issue_num = issue_num
         issue.issue_type = issue_type
-        issue.issue_group = 'A'
+        issue.issue_group = "A"
         issue.name = name
         issue.description = description
         issue.review_deadline = review_deadline
@@ -1019,75 +1063,79 @@ def update_issue(issue_num, parliament_num=None):
         for cat_xml_id in cat_xml_ids:
             issue.categories.add(Category.objects.get(category_xml_id=cat_xml_id))
 
-        print('Added issue: %s' % issue.detailed())
+        print("Added issue: %s" % issue.detailed())
 
     # Add or remove rapporteurs
     rapporteur_ids = []
     for rapporteur_xml in rapporteurs_xml:
-        person_xml_id = int(rapporteur_xml.attrib['id'])
+        person_xml_id = int(rapporteur_xml.attrib["id"])
         person = update_person(person_xml_id, parliament.parliament_num)
 
         try:
             rapporteur = Rapporteur.objects.get(issue_id=issue.id, person_id=person.id)
 
-            print('Already have rapporteur: %s' % rapporteur)
+            print("Already have rapporteur: %s" % rapporteur)
         except Rapporteur.DoesNotExist:
             rapporteur = Rapporteur()
             rapporteur.issue_id = issue.id
             rapporteur.person_id = person.id
             rapporteur.save()
 
-            print('Added rapporteur: %s' % rapporteur)
+            print("Added rapporteur: %s" % rapporteur)
 
         rapporteur_ids.append(rapporteur.id)
 
     # Delete rapporteurs that no longer exist online.
-    for rapporteur in Rapporteur.objects.filter(issue_id=issue.id).exclude(id__in=rapporteur_ids):
+    for rapporteur in Rapporteur.objects.filter(issue_id=issue.id).exclude(
+        id__in=rapporteur_ids
+    ):
         rapporteur.delete()
-        print('Deleted non-existent rapporteur: %s' % rapporteur)
+        print("Deleted non-existent rapporteur: %s" % rapporteur)
 
     # Check if issue was previously published
-    for previous_issue_xml in xml.findall('tengdMál/lagtFramÁðurSem/mál'):
-        previous_parliament_num = int(previous_issue_xml.attrib['þingnúmer'])
-        previous_issue_num = int(previous_issue_xml.attrib['málsnúmer'])
+    for previous_issue_xml in xml.findall("tengdMál/lagtFramÁðurSem/mál"):
+        previous_parliament_num = int(previous_issue_xml.attrib["þingnúmer"])
+        previous_issue_num = int(previous_issue_xml.attrib["málsnúmer"])
 
         previously_published_as.append([previous_parliament_num, previous_issue_num])
 
     # See if this issue has summary information
-    summary_xml_try = issue_xml.find('samantekt')
+    summary_xml_try = issue_xml.find("samantekt")
     if summary_xml_try is not None:
         # Yes, it has summary information
-        summary_xml = get_xml('ISSUE_SUMMARY_URL', parliament.parliament_num, issue.issue_num)
+        summary_xml = get_xml(
+            "ISSUE_SUMMARY_URL", parliament.parliament_num, issue.issue_num
+        )
 
-        purpose = summary_xml.find('markmið').text
+        purpose = summary_xml.find("markmið").text
         try:
-            change_description = summary_xml.find('helstuBreytingar').text
+            change_description = summary_xml.find("helstuBreytingar").text
         except AttributeError:
-            change_description = ''
+            change_description = ""
         try:
-            changes_to_law = summary_xml.find('breytingaráLögum').text
+            changes_to_law = summary_xml.find("breytingaráLögum").text
         except AttributeError:
-            changes_to_law = ''
+            changes_to_law = ""
         try:
-            cost_and_revenue = summary_xml.find('kostnaðurOgTekjur').text
+            cost_and_revenue = summary_xml.find("kostnaðurOgTekjur").text
         except AttributeError:
-            cost_and_revenue = ''
+            cost_and_revenue = ""
         try:
-            other_info = summary_xml.find('aðrarUpplýsingar').text
+            other_info = summary_xml.find("aðrarUpplýsingar").text
         except AttributeError:
-            other_info = ''
+            other_info = ""
         try:
-            review_description = summary_xml.find('umsagnir').text
+            review_description = summary_xml.find("umsagnir").text
         except AttributeError:
-            review_description = ''
+            review_description = ""
         try:
-            fate = summary_xml.find('afgreiðsla').text
+            fate = summary_xml.find("afgreiðsla").text
         except AttributeError:
-            fate = ''
+            fate = ""
         try:
-            media_coverage = summary_xml.find('fjölmiðlaumfjöllun').text
+            media_coverage = summary_xml.find("fjölmiðlaumfjöllun").text
         except AttributeError:
-            media_coverage = ''
+            media_coverage = ""
 
         try:
             issue_summary = IssueSummary.objects.get(issue_id=issue.id)
@@ -1127,9 +1175,9 @@ def update_issue(issue_num, parliament_num=None):
 
             if changed:
                 issue_summary.save()
-                print('Updated issue summary for issue: %s' % issue.detailed())
+                print("Updated issue summary for issue: %s" % issue.detailed())
             else:
-                print('Already have issue summary for issue: %s' % issue.detailed())
+                print("Already have issue summary for issue: %s" % issue.detailed())
 
         except IssueSummary.DoesNotExist:
             issue_summary = IssueSummary()
@@ -1144,13 +1192,18 @@ def update_issue(issue_num, parliament_num=None):
             issue_summary.media_coverage = media_coverage
             issue_summary.save()
 
-            print('Added issue summary for issue: %s' % issue.detailed())
+            print("Added issue summary for issue: %s" % issue.detailed())
 
     # Process documents.
-    doc_nums = [] # Keep track of legit documents. Sometimes docs get deleted from the XML and so should be deleted locally.
+    doc_nums = (
+        []
+    )  # Keep track of legit documents. Sometimes docs get deleted from the XML and so should be deleted locally.
     for i, docstub_xml in enumerate(docstubs_xml):
         # Make sure that this is indeed the correct issue.
-        if int(docstub_xml.attrib['málsnúmer']) != issue.issue_num or int(docstub_xml.attrib['þingnúmer']) != parliament.parliament_num:
+        if (
+            int(docstub_xml.attrib["málsnúmer"]) != issue.issue_num
+            or int(docstub_xml.attrib["þingnúmer"]) != parliament.parliament_num
+        ):
             continue
 
         is_main = False
@@ -1158,27 +1211,29 @@ def update_issue(issue_num, parliament_num=None):
             # If this is the zero-eth iterator, this is the main document.
             is_main = True
 
-        doc_num = int(docstub_xml.attrib['skjalsnúmer'])
+        doc_num = int(docstub_xml.attrib["skjalsnúmer"])
 
-        doc_xml = get_xml('DOCUMENT_URL', parliament.parliament_num, doc_num).find('þingskjal')
+        doc_xml = get_xml("DOCUMENT_URL", parliament.parliament_num, doc_num).find(
+            "þingskjal"
+        )
 
         doc_nums.append(doc_num)
 
-        doc_type = doc_xml.find('skjalategund').text
-        time_published = doc_xml.find('útbýting').text + "+00:00"
+        doc_type = doc_xml.find("skjalategund").text
+        time_published = doc_xml.find("útbýting").text + "+00:00"
 
         try:
-            path_html = doc_xml.find('slóð/html').text
+            path_html = doc_xml.find("slóð/html").text
         except AttributeError:
             path_html = None
 
         try:
-            path_pdf = doc_xml.find('slóð/pdf').text
+            path_pdf = doc_xml.find("slóð/pdf").text
         except AttributeError:
             path_pdf = None
 
         if path_html is None and path_pdf is None:
-            print('Document not published: %d' % doc_num)
+            print("Document not published: %d" % doc_num)
             continue
 
         try:
@@ -1186,9 +1241,13 @@ def update_issue(issue_num, parliament_num=None):
 
             if not doc.html_filename or not doc.pdf_filename:
                 if not doc.html_filename:
-                    doc.html_filename = maybe_download_document(path_html, parliament.parliament_num, issue_num)
+                    doc.html_filename = maybe_download_document(
+                        path_html, parliament.parliament_num, issue_num
+                    )
                 if not doc.pdf_filename:
-                    doc.pdf_filename = maybe_download_document(path_pdf, parliament.parliament_num, issue_num)
+                    doc.pdf_filename = maybe_download_document(
+                        path_pdf, parliament.parliament_num, issue_num
+                    )
                 doc.save()
 
             changed = False
@@ -1196,7 +1255,9 @@ def update_issue(issue_num, parliament_num=None):
                 doc.doc_type = doc_type
                 changed = True
 
-            if sensible_datetime(doc.time_published) != sensible_datetime(time_published):
+            if sensible_datetime(doc.time_published) != sensible_datetime(
+                time_published
+            ):
                 doc.time_published = time_published
                 changed = True
 
@@ -1210,14 +1271,18 @@ def update_issue(issue_num, parliament_num=None):
 
             if changed:
                 doc.save()
-                print('Updated document: %s' % doc)
+                print("Updated document: %s" % doc)
             else:
-                print('Already have document: %s' % doc)
+                print("Already have document: %s" % doc)
 
         except Document.DoesNotExist:
 
-            html_filename = maybe_download_document(path_html, parliament.parliament_num, issue_num)
-            pdf_filename = maybe_download_document(path_pdf, parliament.parliament_num, issue_num)
+            html_filename = maybe_download_document(
+                path_html, parliament.parliament_num, issue_num
+            )
+            pdf_filename = maybe_download_document(
+                path_pdf, parliament.parliament_num, issue_num
+            )
 
             doc = Document()
             doc.doc_num = doc_num
@@ -1231,31 +1296,41 @@ def update_issue(issue_num, parliament_num=None):
             doc.issue = issue
             doc.save()
 
-            print('Added document: %s' % doc)
+            print("Added document: %s" % doc)
 
         # Process proposers.
         proposer_ids = []
-        committeepart = None # Reset from possible previous iteration
+        committeepart = None  # Reset from possible previous iteration
 
-        committee_xml = doc_xml.find('flutningsmenn/nefnd')
+        committee_xml = doc_xml.find("flutningsmenn/nefnd")
         if committee_xml is not None:
             # NOTE: This try/except should be removed once the XML is fixed and committees are displayer properly.
             try:
-                committee_xml_id = int(committee_xml.attrib['id'])
+                committee_xml_id = int(committee_xml.attrib["id"])
             except ValueError:
-                print('Warning! Document is missing committee ID in Parliament %d, issue %d, document %d! Assumed "sérnefnd". Tell the XML keeper!' % (parliament.parliament_num, issue.issue_num, doc.doc_num), file=stderr)
-                committee_xml_id = Committee.objects.get(abbreviation_short='sn').committee_xml_id
+                print(
+                    'Warning! Document is missing committee ID in Parliament %d, issue %d, document %d! Assumed "sérnefnd". Tell the XML keeper!'
+                    % (parliament.parliament_num, issue.issue_num, doc.doc_num),
+                    file=stderr,
+                )
+                committee_xml_id = Committee.objects.get(
+                    abbreviation_short="sn"
+                ).committee_xml_id
 
             committee = update_committee(committee_xml_id, parliament.parliament_num)
 
-            committee_partname = committee_xml.find('hluti').text
+            committee_partname = committee_xml.find("hluti").text
             if committee_partname is None:
-                committee_partname = ''
+                committee_partname = ""
 
             try:
-                proposer = Proposer.objects.get(document=doc, committee=committee, committee_partname=committee_partname)
+                proposer = Proposer.objects.get(
+                    document=doc,
+                    committee=committee,
+                    committee_partname=committee_partname,
+                )
 
-                print('Already have proposer: %s on document %s' % (proposer, doc))
+                print("Already have proposer: %s on document %s" % (proposer, doc))
 
             except Proposer.DoesNotExist:
                 proposer = Proposer()
@@ -1264,22 +1339,25 @@ def update_issue(issue_num, parliament_num=None):
                 proposer.document = doc
                 proposer.save()
 
-                print('Added proposer: %s to document %s' % (proposer, doc))
+                print("Added proposer: %s to document %s" % (proposer, doc))
 
             proposer_ids.append(proposer.id)
 
-            persons_xml = committee_xml.findall('flutningsmaður')
+            persons_xml = committee_xml.findall("flutningsmaður")
             subproposer_ids = []
             for person_xml in persons_xml:
-                person_xml_id = int(person_xml.attrib['id'])
-                order = int(person_xml.attrib['röð'])
+                person_xml_id = int(person_xml.attrib["id"])
+                order = int(person_xml.attrib["röð"])
 
                 person = update_person(person_xml_id, parliament.parliament_num)
 
                 try:
                     subproposer = Proposer.objects.get(parent=proposer, person=person)
 
-                    print('Already have sub-proposer: %s on committee %s' % (subproposer, committee))
+                    print(
+                        "Already have sub-proposer: %s on committee %s"
+                        % (subproposer, committee)
+                    )
 
                 except Proposer.DoesNotExist:
                     subproposer = Proposer()
@@ -1288,28 +1366,33 @@ def update_issue(issue_num, parliament_num=None):
                     subproposer.parent = proposer
                     subproposer.save()
 
-                    print('Added sub-proposer: %s to committee %s' % (subproposer, committee))
+                    print(
+                        "Added sub-proposer: %s to committee %s"
+                        % (subproposer, committee)
+                    )
 
                 subproposer_ids.append(subproposer.id)
 
             # Delete sub-proposers that no longer exist online.
-            for subproposer in Proposer.objects.filter(parent=proposer).exclude(id__in=subproposer_ids):
+            for subproposer in Proposer.objects.filter(parent=proposer).exclude(
+                id__in=subproposer_ids
+            ):
                 subproposer.delete()
-                print('Deleted non-existent sub-proposer: %s' % subproposer)
+                print("Deleted non-existent sub-proposer: %s" % subproposer)
 
         else:
-            persons_xml = doc_xml.findall('flutningsmenn/flutningsmaður')
+            persons_xml = doc_xml.findall("flutningsmenn/flutningsmaður")
             for person_xml in persons_xml:
-                person_xml_id = int(person_xml.attrib['id'])
+                person_xml_id = int(person_xml.attrib["id"])
 
-                order = int(person_xml.attrib['röð'])
+                order = int(person_xml.attrib["röð"])
 
                 person = update_person(person_xml_id, parliament.parliament_num)
 
                 try:
                     proposer = Proposer.objects.get(document=doc, person=person)
 
-                    print('Already have proposer: %s on document %s' % (proposer, doc))
+                    print("Already have proposer: %s on document %s" % (proposer, doc))
 
                 except Proposer.DoesNotExist:
                     proposer = Proposer()
@@ -1318,73 +1401,86 @@ def update_issue(issue_num, parliament_num=None):
                     proposer.document = doc
                     proposer.save()
 
-                    print('Added proposer: %s to document %s' % (proposer, doc))
+                    print("Added proposer: %s to document %s" % (proposer, doc))
 
                 proposer_ids.append(proposer.id)
 
                 # Determine if this is a government issue by examining the
                 # first proposer of the main document.
                 if doc.is_main and order == 1:
-                    from_government = MinisterSeat.objects.filter(
-                        Q(timing_out__gte=doc.time_published) | Q(timing_out=None),
-                        timing_in__lte=doc.time_published,
-                        person_id=person.id,
-                    ).count() > 0
+                    from_government = (
+                        MinisterSeat.objects.filter(
+                            Q(timing_out__gte=doc.time_published) | Q(timing_out=None),
+                            timing_in__lte=doc.time_published,
+                            person_id=person.id,
+                        ).count()
+                        > 0
+                    )
 
-                    proposer_type = 'government' if from_government else 'parliamentarian'
+                    proposer_type = (
+                        "government" if from_government else "parliamentarian"
+                    )
 
                     if issue.proposer_type != proposer_type:
                         issue.proposer_type = proposer_type
                         issue.save()
 
-                        print('Updated issue proposer type: %s' % issue.proposer_type)
+                        print("Updated issue proposer type: %s" % issue.proposer_type)
 
         # Delete proposers that no longer exist online.
-        for proposer in Proposer.objects.filter(document=doc).exclude(id__in=proposer_ids):
+        for proposer in Proposer.objects.filter(document=doc).exclude(
+            id__in=proposer_ids
+        ):
             proposer.delete()
-            print('Deleted non-existent proposer: %s' % proposer)
+            print("Deleted non-existent proposer: %s" % proposer)
 
     # Delete local documents that no longer exist online.
-    for document in Document.objects.filter(issue_id=issue.id).exclude(doc_num__in=doc_nums):
+    for document in Document.objects.filter(issue_id=issue.id).exclude(
+        doc_num__in=doc_nums
+    ):
         document.delete()
-        print('Deleted non-existent document: %s' % document)
+        print("Deleted non-existent document: %s" % document)
 
     # Process reviews.
-    log_nums = [] # Keep track of legit reviews. Sometimes reviews get deleted from the XML and so should be deleted locally.
+    log_nums = (
+        []
+    )  # Keep track of legit reviews. Sometimes reviews get deleted from the XML and so should be deleted locally.
     for review_xml in reviews_xml:
-        log_num = int(review_xml.attrib['dagbókarnúmer'])
+        log_num = int(review_xml.attrib["dagbókarnúmer"])
 
         log_nums.append(log_num)
 
         try:
-            sender_name = review_xml.find('sendandi').text
+            sender_name = review_xml.find("sendandi").text
         except AttributeError:
             # Review with log_num 1057 in Parliament 112 lacks a name. Others do not exist.
-            sender_name = ''
+            sender_name = ""
         try:
-            sender_name_description = review_xml.find('skýring').text
+            sender_name_description = review_xml.find("skýring").text
         except AttributeError:
-            sender_name_description = ''
+            sender_name_description = ""
 
-        review_type = review_xml.find('tegunderindis').attrib['tegund']
+        review_type = review_xml.find("tegunderindis").attrib["tegund"]
         try:
-            date_arrived = sensible_datetime(review_xml.find('komudagur').text)
+            date_arrived = sensible_datetime(review_xml.find("komudagur").text)
         except AttributeError:
             date_arrived = None
         try:
-            date_sent = sensible_datetime(review_xml.find('sendingadagur').text)
+            date_sent = sensible_datetime(review_xml.find("sendingadagur").text)
         except AttributeError:
             date_sent = None
 
         try:
-            committee_xml_id = int(review_xml.find('viðtakandi/nefnd').attrib['id'])
+            committee_xml_id = int(review_xml.find("viðtakandi/nefnd").attrib["id"])
             committee = update_committee(committee_xml_id, parliament.parliament_num)
             committee_id = committee.id
         except AttributeError:
             committee_id = None
 
         try:
-            president_person_xml_id = int(review_xml.find('viðtakandi/forsetiAlþingis/nafn').attrib['id'])
+            president_person_xml_id = int(
+                review_xml.find("viðtakandi/forsetiAlþingis/nafn").attrib["id"]
+            )
             # We'll need the presidents if this is to work.
             update_presidents(parliament.parliament_num)
             president_seat = PresidentSeat.objects.main_on_date(parliament, date_sent)
@@ -1393,10 +1489,10 @@ def update_issue(issue_num, parliament_num=None):
 
         # sender_name can contain a lot of baggage if it's old data (around 116th parliament and earlir)
         sender_name = sender_name.strip()
-        while sender_name.find('  ') >= 0:
-            sender_name = sender_name.replace('  ', ' ')
+        while sender_name.find("  ") >= 0:
+            sender_name = sender_name.replace("  ", " ")
 
-        path_pdf = review_xml.find('slóð/pdf').text
+        path_pdf = review_xml.find("slóð/pdf").text
 
         try:
             review = Review.objects.get(log_num=log_num, issue=issue)
@@ -1431,18 +1527,22 @@ def update_issue(issue_num, parliament_num=None):
                 changed = True
 
             if not review.pdf_filename:
-                review.pdf_filename = maybe_download_review(path_pdf, log_num, parliament.parliament_num, issue_num)
+                review.pdf_filename = maybe_download_review(
+                    path_pdf, log_num, parliament.parliament_num, issue_num
+                )
                 review.save()
 
             if changed:
                 review.save()
-                print('Updated review: %s' % review)
+                print("Updated review: %s" % review)
             else:
-                print('Already have review: %s' % review)
+                print("Already have review: %s" % review)
 
         except Review.DoesNotExist:
 
-            pdf_filename = maybe_download_review(path_pdf, log_num, parliament.parliament_num, issue_num)
+            pdf_filename = maybe_download_review(
+                path_pdf, log_num, parliament.parliament_num, issue_num
+            )
 
             review = Review()
             review.issue = issue
@@ -1458,13 +1558,15 @@ def update_issue(issue_num, parliament_num=None):
             review.pdf_filename = pdf_filename
             review.save()
 
-            print('Added review: %s' % review)
+            print("Added review: %s" % review)
 
     # Delete local reviews that no longer exist online.
-    for review in Review.objects.filter(issue_id=issue.id).exclude(log_num__in=log_nums):
+    for review in Review.objects.filter(issue_id=issue.id).exclude(
+        log_num__in=log_nums
+    ):
         try:
             review.delete()
-            print('Deleted non-existent review: %s' % review)
+            print("Deleted non-existent review: %s" % review)
         except DataIntegrityException as ex:
             msg = ex.args[0]
 
@@ -1485,26 +1587,33 @@ def update_issue(issue_num, parliament_num=None):
             admin_emails = [admin_email for admin_name, admin_email in settings.ADMINS]
             try:
                 send_mail(
-                    '%s%s' % (settings.EMAIL_SUBJECT_PREFIX, 'Failed deleting non-existent review'),
+                    "%s%s"
+                    % (
+                        settings.EMAIL_SUBJECT_PREFIX,
+                        "Failed deleting non-existent review",
+                    ),
                     msg,
                     settings.SERVER_EMAIL,
-                    admin_emails
+                    admin_emails,
                 )
-                admins_notified_txt = 'admins notified'
+                admins_notified_txt = "admins notified"
             except ConnectionRefusedError:
-                admins_notified_txt = 'admins NOT notified'
+                admins_notified_txt = "admins NOT notified"
 
-            print('Failed deleting non-existent review (%s): %s' % (admins_notified_txt, review))
+            print(
+                "Failed deleting non-existent review (%s): %s"
+                % (admins_notified_txt, review)
+            )
 
-    already_haves['issues'][ah_key] = issue
+    already_haves["issues"][ah_key] = issue
 
     # Process previous publications of issue, if any
     for previous_parliament_num, previous_issue_num in previously_published_as:
         try:
             previous_issue = Issue.objects.get(
-                issue_group='A',
+                issue_group="A",
                 parliament__parliament_num=previous_parliament_num,
-                issue_num=previous_issue_num
+                issue_num=previous_issue_num,
             )
             issue.previous_issues.add(previous_issue)
             for more_previous_issue in previous_issue.previous_issues.all():
@@ -1520,40 +1629,47 @@ def update_issue(issue_num, parliament_num=None):
 
 def _process_docless_issue(issue_xml):
 
-    issue_num = int(issue_xml.attrib['málsnúmer'])
-    parliament_num = int(issue_xml.attrib['þingnúmer'])
+    issue_num = int(issue_xml.attrib["málsnúmer"])
+    parliament_num = int(issue_xml.attrib["þingnúmer"])
 
     parliament = update_parliament(parliament_num)
 
-    name = issue_xml.find('málsheiti').text
-    issue_type = issue_xml.find('málstegund').attrib['id']
+    name = issue_xml.find("málsheiti").text
+    issue_type = issue_xml.find("málstegund").attrib["id"]
 
     try:
-        special_inquisitor_xml = issue_xml.find('málshefjandi')
+        special_inquisitor_xml = issue_xml.find("málshefjandi")
 
-        special_inquisitor = update_person(int(special_inquisitor_xml.attrib['id']), parliament.parliament_num)
+        special_inquisitor = update_person(
+            int(special_inquisitor_xml.attrib["id"]), parliament.parliament_num
+        )
         special_inquisitor_description = special_inquisitor_xml.text
     except (AttributeError, ValueError):
         special_inquisitor = None
         special_inquisitor_description = None
 
     try:
-        special_responder_xml = issue_xml.find('til_andsvara')
+        special_responder_xml = issue_xml.find("til_andsvara")
 
-        special_responder = update_person(int(special_responder_xml.attrib['id']), parliament.parliament_num)
+        special_responder = update_person(
+            int(special_responder_xml.attrib["id"]), parliament.parliament_num
+        )
         special_responder_description = special_responder_xml.text
     except (AttributeError, ValueError):
         special_responder = None
         special_responder_description = None
 
-
     # Docless issue names can carry a lot of baggage if it's old data (around 116th parliament and earlier)
     name = name.strip()
-    while name.find('  ') >= 0:
-        name = name.replace('  ', ' ')
+    while name.find("  ") >= 0:
+        name = name.replace("  ", " ")
 
     try:
-        issue = Issue.objects.get(issue_num=issue_num, issue_group='B', parliament__parliament_num=parliament.parliament_num)
+        issue = Issue.objects.get(
+            issue_num=issue_num,
+            issue_group="B",
+            parliament__parliament_num=parliament.parliament_num,
+        )
 
         changed = False
         if issue.name != name:
@@ -1582,14 +1698,14 @@ def _process_docless_issue(issue_xml):
 
         if changed:
             issue.save()
-            print('Updated docless issue: %s' % issue.detailed())
+            print("Updated docless issue: %s" % issue.detailed())
         else:
-            print('Already have docless issue: %s' % issue.detailed())
+            print("Already have docless issue: %s" % issue.detailed())
 
     except Issue.DoesNotExist:
         issue = Issue()
         issue.issue_num = issue_num
-        issue.issue_group = 'B'
+        issue.issue_group = "B"
         issue.name = name
         issue.issue_type = issue_type
         issue.special_inquisitor = special_inquisitor
@@ -1600,7 +1716,7 @@ def _process_docless_issue(issue_xml):
         issue.parliament = parliament
         issue.save()
 
-        print('Added docless issue: %s' % issue.detailed())
+        print("Added docless issue: %s" % issue.detailed())
 
     return issue
 
@@ -1609,9 +1725,9 @@ def update_sessions(parliament_num=None):
 
     parliament = update_parliament(parliament_num)
 
-    xml = get_xml('SESSION_LIST_URL', parliament.parliament_num).findall('þingfundur')
+    xml = get_xml("SESSION_LIST_URL", parliament.parliament_num).findall("þingfundur")
     for session_xml in reversed(xml):
-        session_num = int(session_xml.attrib['númer'])
+        session_num = int(session_xml.attrib["númer"])
 
         update_session(session_num, parliament.parliament_num)
 
@@ -1622,38 +1738,43 @@ def update_session(session_num, parliament_num=None):
 
     # Make sure that input makes sense
     if session_num is not None and not isinstance(session_num, int):
-        raise TypeError('Parameter session_num must be a number')
+        raise TypeError("Parameter session_num must be a number")
 
-    ah_key = '%d-%d' % (session_num, parliament.parliament_num)
-    if ah_key in already_haves['sessions']:
-        return already_haves['sessions'][ah_key]
+    ah_key = "%d-%d" % (session_num, parliament.parliament_num)
+    if ah_key in already_haves["sessions"]:
+        return already_haves["sessions"][ah_key]
 
-    xml = get_xml('SESSION_AGENDA_URL', parliament.parliament_num, session_num).find('þingfundur')
+    xml = get_xml("SESSION_AGENDA_URL", parliament.parliament_num, session_num).find(
+        "þingfundur"
+    )
     if xml is None:
         # Check if session exists in database, because if it does, it shouldn't.
         try:
             nonexistent_session = Session.objects.get(
                 session_num=session_num,
-                parliament__parliament_num=parliament.parliament_num
+                parliament__parliament_num=parliament.parliament_num,
             )
             nonexistent_session.delete()
 
-            print('Deleted non-existent session: %s' % nonexistent_session)
+            print("Deleted non-existent session: %s" % nonexistent_session)
             return
 
         except Session.DoesNotExist:
-            raise AlthingiException('Session %d in parliament %d does not exist' % (session_num, parliament.parliament_num))
+            raise AlthingiException(
+                "Session %d in parliament %d does not exist"
+                % (session_num, parliament.parliament_num)
+            )
 
     session = _process_session_agenda_xml(xml)
 
-    already_haves['sessions'][ah_key] = session
+    already_haves["sessions"][ah_key] = session
 
     return session
 
 
 def update_next_sessions():
 
-    xml = get_xml('SESSION_NEXT_AGENDA_URL')
+    xml = get_xml("SESSION_NEXT_AGENDA_URL")
 
     sessions = []
     for session_xml in xml:
@@ -1662,9 +1783,15 @@ def update_next_sessions():
 
     # These are sessions that are upcoming according to the database but not according to the XML.
     # We run them through update_session() for consistency's sake, which will delete or update them appropriately.
-    dubious_sessions = Session.objects.select_related('parliament').upcoming().exclude(id__in=[s.id for s in sessions])
+    dubious_sessions = (
+        Session.objects.select_related("parliament")
+        .upcoming()
+        .exclude(id__in=[s.id for s in sessions])
+    )
     for dubious_session in dubious_sessions:
-        update_session(dubious_session.session_num, dubious_session.parliament.parliament_num)
+        update_session(
+            dubious_session.session_num, dubious_session.parliament.parliament_num
+        )
 
 
 def update_constituencies(parliament_num=None):
@@ -1672,41 +1799,49 @@ def update_constituencies(parliament_num=None):
     parliament = update_parliament(parliament_num)
 
     ah_key = parliament.parliament_num
-    if ah_key in already_haves['constituencies']:
-        return already_haves['constituencies'][ah_key]
+    if ah_key in already_haves["constituencies"]:
+        return already_haves["constituencies"][ah_key]
 
-    xml = get_xml('CONSTITUENCIES_URL', parliament.parliament_num).findall('kjördæmið')
+    xml = get_xml("CONSTITUENCIES_URL", parliament.parliament_num).findall("kjördæmið")
 
     constituencies = []
     for constituency_xml in xml:
 
-        constituency_xml_id = int(constituency_xml.attrib['id'])
+        constituency_xml_id = int(constituency_xml.attrib["id"])
 
-        if constituency_xml_id == 1: # Only there for ministers not in Parliament and is to be ignored.
+        if (
+            constituency_xml_id == 1
+        ):  # Only there for ministers not in Parliament and is to be ignored.
             continue
 
-        name = constituency_xml.find('heiti').text.strip()
+        name = constituency_xml.find("heiti").text.strip()
         try:
-            description = constituency_xml.find('lýsing').text.strip()
+            description = constituency_xml.find("lýsing").text.strip()
         except AttributeError:
-            description = ''
+            description = ""
 
-        abbreviation_short = constituency_xml.find('skammstafanir/stuttskammstöfun').text
+        abbreviation_short = constituency_xml.find(
+            "skammstafanir/stuttskammstöfun"
+        ).text
 
         try:
-            abbreviation_long = constituency_xml.find('skammstafanir/löngskammstöfun').text
+            abbreviation_long = constituency_xml.find(
+                "skammstafanir/löngskammstöfun"
+            ).text
         except AttributeError:
             abbreviation_long = None
 
-        parliament_num_first = int(constituency_xml.find('tímabil/fyrstaþing').text)
+        parliament_num_first = int(constituency_xml.find("tímabil/fyrstaþing").text)
 
         try:
-            parliament_num_last = int(constituency_xml.find('tímabil/síðastaþing').text)
+            parliament_num_last = int(constituency_xml.find("tímabil/síðastaþing").text)
         except AttributeError:
             parliament_num_last = None
 
         try:
-            constituency = Constituency.objects.get(constituency_xml_id=constituency_xml_id)
+            constituency = Constituency.objects.get(
+                constituency_xml_id=constituency_xml_id
+            )
 
             changed = False
             if constituency.name != name:
@@ -1734,9 +1869,9 @@ def update_constituencies(parliament_num=None):
 
             if changed:
                 constituency.save()
-                print('Updated constituency: %s' % constituency)
+                print("Updated constituency: %s" % constituency)
             else:
-                print('Already have constituency: %s' % constituency)
+                print("Already have constituency: %s" % constituency)
 
         except Constituency.DoesNotExist:
             constituency = Constituency()
@@ -1750,11 +1885,11 @@ def update_constituencies(parliament_num=None):
             constituency.save()
             constituency.parliaments.add(parliament)
 
-            print('Added constituency: %s' % constituency)
+            print("Added constituency: %s" % constituency)
 
         constituencies.append(constituency)
 
-    already_haves['constituencies'][parliament.parliament_num] = constituencies
+    already_haves["constituencies"][parliament.parliament_num] = constituencies
 
     return constituencies
 
@@ -1764,27 +1899,27 @@ def update_parties(parliament_num=None):
     parliament = update_parliament(parliament_num)
 
     ah_key = parliament.parliament_num
-    if ah_key in already_haves['parties']:
-        return already_haves['parties'][ah_key]
+    if ah_key in already_haves["parties"]:
+        return already_haves["parties"][ah_key]
 
-    xml = get_xml('PARTIES_URL', parliament.parliament_num).findall('þingflokkur')
+    xml = get_xml("PARTIES_URL", parliament.parliament_num).findall("þingflokkur")
 
     parties = []
     for party_xml in xml:
 
-        party_xml_id = party_xml.attrib['id']
+        party_xml_id = party_xml.attrib["id"]
 
-        name = party_xml.find('heiti').text.strip()
+        name = party_xml.find("heiti").text.strip()
 
-        if name == '':
+        if name == "":
             continue
 
-        abbreviation_short = party_xml.find('skammstafanir/stuttskammstöfun').text
-        abbreviation_long = party_xml.find('skammstafanir/löngskammstöfun').text
+        abbreviation_short = party_xml.find("skammstafanir/stuttskammstöfun").text
+        abbreviation_long = party_xml.find("skammstafanir/löngskammstöfun").text
 
-        parliament_num_first = int(party_xml.find('tímabil/fyrstaþing').text)
+        parliament_num_first = int(party_xml.find("tímabil/fyrstaþing").text)
         try:
-            parliament_num_last = int(party_xml.find('tímabil/síðastaþing').text)
+            parliament_num_last = int(party_xml.find("tímabil/síðastaþing").text)
         except AttributeError:
             parliament_num_last = None
 
@@ -1814,9 +1949,9 @@ def update_parties(parliament_num=None):
 
             if changed:
                 party.save()
-                print('Updated party: %s' % party)
+                print("Updated party: %s" % party)
             else:
-                print('Already have party: %s' % party)
+                print("Already have party: %s" % party)
 
         except Party.DoesNotExist:
             party = Party()
@@ -1830,13 +1965,14 @@ def update_parties(parliament_num=None):
             party.save()
             party.parliaments.add(parliament)
 
-            print('Added party: %s' % party)
+            print("Added party: %s" % party)
 
         parties.append(party)
 
-    already_haves['parties'][parliament.parliament_num] = parties
+    already_haves["parties"][parliament.parliament_num] = parties
 
     return parties
+
 
 def update_committee_agendas(parliament_num=None, date_limit=None):
 
@@ -1845,17 +1981,23 @@ def update_committee_agendas(parliament_num=None, date_limit=None):
     if date_limit is not None:
         date_limit = sensible_datetime(date_limit)
 
-    xml = get_xml('COMMITTEE_AGENDA_LIST_URL', parliament.parliament_num).findall('nefndarfundur')
+    xml = get_xml("COMMITTEE_AGENDA_LIST_URL", parliament.parliament_num).findall(
+        "nefndarfundur"
+    )
 
     committee_agendas = []
     for committee_agenda_stub_xml in reversed(xml):
 
-        meeting_date = sensible_datetime(committee_agenda_stub_xml.find('hefst/dagur').text)
+        meeting_date = sensible_datetime(
+            committee_agenda_stub_xml.find("hefst/dagur").text
+        )
         if date_limit is not None and meeting_date < date_limit:
             break
 
-        committee_agenda_xml_id = int(committee_agenda_stub_xml.attrib['númer'])
-        committee_agenda = update_committee_agenda(committee_agenda_xml_id, parliament.parliament_num)
+        committee_agenda_xml_id = int(committee_agenda_stub_xml.attrib["númer"])
+        committee_agenda = update_committee_agenda(
+            committee_agenda_xml_id, parliament.parliament_num
+        )
 
         committee_agendas.append(committee_agenda)
 
@@ -1867,7 +2009,9 @@ def update_committee_agendas(parliament_num=None, date_limit=None):
             parliament__parliament_num=parliament.parliament_num
         ).exclude(id__in=[a.id for a in committee_agendas]):
             # Safe delete. The function will delete the agenda if it truly no longer exists.
-            update_committee_agenda(committee_agenda.committee_agenda_xml_id, parliament.parliament_num)
+            update_committee_agenda(
+                committee_agenda.committee_agenda_xml_id, parliament.parliament_num
+            )
 
     return committee_agendas
 
@@ -1879,13 +2023,22 @@ def update_next_committee_agendas(parliament_num=None):
     now = datetime.now()
     today = datetime(now.year, now.month, now.day)
 
-    agendas = update_committee_agendas(parliament_num=parliament.parliament_num, date_limit=today)
+    agendas = update_committee_agendas(
+        parliament_num=parliament.parliament_num, date_limit=today
+    )
 
     # These are agendas that are upcoming according to the database but not according to the XML.
     # We run them through update_committee_agenda() for consistency's sake, which will delete or update them appropriately.
-    dubious_agendas = CommitteeAgenda.objects.select_related('parliament').upcoming().exclude(id__in=[a.id for a in agendas])
+    dubious_agendas = (
+        CommitteeAgenda.objects.select_related("parliament")
+        .upcoming()
+        .exclude(id__in=[a.id for a in agendas])
+    )
     for dubious_agenda in dubious_agendas:
-        update_committee_agenda(dubious_agenda.committee_agenda_xml_id, dubious_agenda.parliament.parliament_num)
+        update_committee_agenda(
+            dubious_agenda.committee_agenda_xml_id,
+            dubious_agenda.parliament.parliament_num,
+        )
 
 
 def update_committee_agenda(committee_agenda_xml_id, parliament_num=None):
@@ -1893,70 +2046,74 @@ def update_committee_agenda(committee_agenda_xml_id, parliament_num=None):
     parliament = update_parliament(parliament_num)
 
     # Make sure that input makes sense
-    if committee_agenda_xml_id is not None and not isinstance(committee_agenda_xml_id, int):
-        raise TypeError('Parameter committee_agenda_xml_id must be a number')
+    if committee_agenda_xml_id is not None and not isinstance(
+        committee_agenda_xml_id, int
+    ):
+        raise TypeError("Parameter committee_agenda_xml_id must be a number")
 
-    xml = get_xml('COMMITTEE_AGENDA_URL', committee_agenda_xml_id)
+    xml = get_xml("COMMITTEE_AGENDA_URL", committee_agenda_xml_id)
 
-    if not 'númer' in xml.attrib:
+    if not "númer" in xml.attrib:
         try:
             # Committee agenda has been deleted in XML, meaning cancelled.
-            CommitteeAgenda.objects.get(committee_agenda_xml_id=committee_agenda_xml_id).delete()
+            CommitteeAgenda.objects.get(
+                committee_agenda_xml_id=committee_agenda_xml_id
+            ).delete()
 
-            print('Deleted non-existent committee agenda: %d' % committee_agenda_xml_id)
+            print("Deleted non-existent committee agenda: %d" % committee_agenda_xml_id)
             return
         except CommitteeAgenda.DoesNotExist:
-            raise AlthingiException('Committee agenda %d in parliament %d does not exist' % (
-                committee_agenda_xml_id,
-                parliament.parliament_num
-            ))
+            raise AlthingiException(
+                "Committee agenda %d in parliament %d does not exist"
+                % (committee_agenda_xml_id, parliament.parliament_num)
+            )
 
-    elif int(xml.attrib['þingnúmer']) != parliament.parliament_num:
+    elif int(xml.attrib["þingnúmer"]) != parliament.parliament_num:
         # Committee agenda exists, but not in this parliament. (A corrected
         # mistake in the XML, most likely.)
         CommitteeAgenda.objects.get(
             committee_agenda_xml_id=committee_agenda_xml_id,
-            parliament__parliament_num=parliament.parliament_num
+            parliament__parliament_num=parliament.parliament_num,
         ).delete()
-        print('Deleted committee agenda from parliament: %d (parliament %d)' % (
-            committee_agenda_xml_id,
-            parliament.parliament_num)
+        print(
+            "Deleted committee agenda from parliament: %d (parliament %d)"
+            % (committee_agenda_xml_id, parliament.parliament_num)
         )
         return
 
-    return _process_committee_agenda_xml(xml) # Returns CommitteeAgenda object
+    return _process_committee_agenda_xml(xml)  # Returns CommitteeAgenda object
 
 
 # NOTE: To become a private function once we turn this into some sort of class
 def _process_committee_agenda_xml(xml):
 
-    parliament_num = int(xml.attrib['þingnúmer'])
-    committee_agenda_xml_id = int(xml.attrib['númer'])
-    committee_xml_id = int(xml.find('nefnd').attrib['id'])
+    parliament_num = int(xml.attrib["þingnúmer"])
+    committee_agenda_xml_id = int(xml.attrib["númer"])
+    committee_xml_id = int(xml.find("nefnd").attrib["id"])
 
     parliament = update_parliament(parliament_num)
     committee = update_committee(committee_xml_id, parliament_num)
 
-    if xml.find('hefst/dagurtími') is None:
+    if xml.find("hefst/dagurtími") is None:
         # Sometimes only the date is known, not the datetime.
-        if xml.find('hefst/dagur') is None:
+        if xml.find("hefst/dagur") is None:
             timing_start_planned = None
         else:
-            timing_start_planned = sensible_datetime(xml.find('hefst/dagur').text)
+            timing_start_planned = sensible_datetime(xml.find("hefst/dagur").text)
     else:
-        timing_start_planned = sensible_datetime(xml.find('hefst/dagurtími').text)
+        timing_start_planned = sensible_datetime(xml.find("hefst/dagurtími").text)
 
-    if xml.find('hefst/texti') is not None:
-        timing_text = xml.find('hefst/texti').text
+    if xml.find("hefst/texti") is not None:
+        timing_text = xml.find("hefst/texti").text
     else:
         timing_text = None
 
     try:
-        timing_start = sensible_datetime(xml.find('fundursettur').text)
+        timing_start = sensible_datetime(xml.find("fundursettur").text)
     except AttributeError:
         timing_start = None
     try:
-        timing_end = sensible_datetime(xml.find('fuslit').text)
+        timing_end = sensible_datetime(xml.find("fuslit").text)
     except AttributeError:
         timing_end = None
 
@@ -1972,14 +2129,13 @@ def _process_committee_agenda_xml(xml):
         # <1> /altext/xml/nefndarfundir/
         # <2> /altext/xml/nefndarfundir/nefndarfundur/?dagskrarnumer=20955
         #
-        location = xml.find('staður').text
+        location = xml.find("staður").text
     except AttributeError:
         location = None
 
     try:
         committee_agenda = CommitteeAgenda.objects.get(
-            committee_agenda_xml_id=committee_agenda_xml_id,
-            parliament=parliament
+            committee_agenda_xml_id=committee_agenda_xml_id, parliament=parliament
         )
 
         changed = False
@@ -2001,9 +2157,9 @@ def _process_committee_agenda_xml(xml):
 
         if changed:
             committee_agenda.save()
-            print('Updated committee agenda: %s' % committee_agenda)
+            print("Updated committee agenda: %s" % committee_agenda)
         else:
-            print('Already have committee agenda: %s' % committee_agenda)
+            print("Already have committee agenda: %s" % committee_agenda)
 
     except CommitteeAgenda.DoesNotExist:
         committee_agenda = CommitteeAgenda()
@@ -2017,28 +2173,28 @@ def _process_committee_agenda_xml(xml):
         committee_agenda.location = location
         committee_agenda.save()
 
-        print('Added committee agenda: %s' % committee_agenda)
+        print("Added committee agenda: %s" % committee_agenda)
 
     max_order = 0
-    items_xml = xml.findall('dagskrá/dagskrárliðir/dagskrárliður')
+    items_xml = xml.findall("dagskrá/dagskrárliðir/dagskrárliður")
     for item_xml in items_xml:
-        order = int(item_xml.attrib['númer'])
+        order = int(item_xml.attrib["númer"])
 
         try:
-            name = item_xml.find('heiti').text
+            name = item_xml.find("heiti").text
         except AttributeError:
-            name = '[ Missing name ]'
+            name = "[ Missing name ]"
 
         issue = None
 
         if order > max_order:
             max_order = order
 
-        issue_xml = item_xml.find('mál')
-        if issue_xml is not None and issue_xml.attrib['málsflokkur'] == 'A':
+        issue_xml = item_xml.find("mál")
+        if issue_xml is not None and issue_xml.attrib["málsflokkur"] == "A":
             # There can only be one issue per agenda item. Right?
-            issue_num = int(issue_xml.attrib['málsnúmer'])
-            issue_parliament_num = int(issue_xml.attrib['löggjafarþing'])
+            issue_num = int(issue_xml.attrib["málsnúmer"])
+            issue_parliament_num = int(issue_xml.attrib["löggjafarþing"])
 
             # Only issues with issue_group 'A' are processed, i.e. issues
             # with documents, not for example 'B' or 'N'.
@@ -2053,7 +2209,9 @@ def _process_committee_agenda_xml(xml):
                 continue
 
         try:
-            item = CommitteeAgendaItem.objects.get(order=order, committee_agenda=committee_agenda)
+            item = CommitteeAgendaItem.objects.get(
+                order=order, committee_agenda=committee_agenda
+            )
 
             changed = False
             if item.name != name:
@@ -2065,9 +2223,9 @@ def _process_committee_agenda_xml(xml):
 
             if changed:
                 item.save()
-                print('Updated committee agenda item: %s' % item)
+                print("Updated committee agenda item: %s" % item)
             else:
-                print('Already have committee agenda item: %s' % item)
+                print("Already have committee agenda item: %s" % item)
 
         except CommitteeAgendaItem.DoesNotExist:
             item = CommitteeAgendaItem()
@@ -2077,40 +2235,45 @@ def _process_committee_agenda_xml(xml):
             item.issue = issue
             item.save()
 
-            print('Added committee agenda item: %s' % item)
+            print("Added committee agenda item: %s" % item)
 
     # Delete items higher than the max_order since that means items has been dropped
-    CommitteeAgendaItem.objects.filter(order__gt=max_order, committee_agenda=committee_agenda).delete()
+    CommitteeAgendaItem.objects.filter(
+        order__gt=max_order, committee_agenda=committee_agenda
+    ).delete()
 
     return committee_agenda
+
 
 # NOTE: To become a private function once we turn this into some sort of class
 def _process_session_agenda_xml(session_xml):
 
-    parliament_num = int(session_xml.attrib['þingnúmer'])
-    session_num = int(session_xml.attrib['númer'])
+    parliament_num = int(session_xml.attrib["þingnúmer"])
+    session_num = int(session_xml.attrib["númer"])
 
     parliament = update_parliament(parliament_num)
 
-    name = session_xml.find('fundarheiti').text
+    name = session_xml.find("fundarheiti").text
 
     try:
-        timing_start_planned = sensible_datetime(session_xml.find('hefst/dagurtími').text)
+        timing_start_planned = sensible_datetime(
+            session_xml.find("hefst/dagurtími").text
+        )
     except AttributeError:
         timing_start_planned = None
 
     try:
-        timing_text = session_xml.find('hefst/texti').text
+        timing_text = session_xml.find("hefst/texti").text
     except AttributeError:
         timing_text = None
 
     try:
-        timing_start = sensible_datetime(session_xml.find('fundursettur').text)
+        timing_start = sensible_datetime(session_xml.find("fundursettur").text)
     except AttributeError:
         timing_start = None
 
     try:
-        timing_end = sensible_datetime(session_xml.find('fuslit').text)
+        timing_end = sensible_datetime(session_xml.find("fuslit").text)
     except AttributeError:
         timing_end = None
 
@@ -2133,9 +2296,9 @@ def _process_session_agenda_xml(session_xml):
 
         if changed:
             session.save()
-            print('Updated session: %s' % session)
+            print("Updated session: %s" % session)
         else:
-            print('Already have session: %s' % session)
+            print("Already have session: %s" % session)
 
     except Session.DoesNotExist:
         session = Session()
@@ -2147,40 +2310,44 @@ def _process_session_agenda_xml(session_xml):
         session.timing_end = timing_end
         session.timing_text = timing_text
         session.save()
-        print('Added session: %s' % session)
+        print("Added session: %s" % session)
 
     max_order = 0
-    for session_agenda_item_xml in session_xml.findall('dagskrá/dagskrárliður'):
-        issue_xml = session_agenda_item_xml.find('mál')
-        comment_xml = session_agenda_item_xml.find('athugasemd')
+    for session_agenda_item_xml in session_xml.findall("dagskrá/dagskrárliður"):
+        issue_xml = session_agenda_item_xml.find("mál")
+        comment_xml = session_agenda_item_xml.find("athugasemd")
 
-        order = int(session_agenda_item_xml.attrib['númer'])
+        order = int(session_agenda_item_xml.attrib["númer"])
 
-        discussion_type = session_agenda_item_xml.find('umræða').attrib['tegund']
-        discussion_continued = bool(session_agenda_item_xml.find('umræða').attrib['framhald'])
+        discussion_type = session_agenda_item_xml.find("umræða").attrib["tegund"]
+        discussion_continued = bool(
+            session_agenda_item_xml.find("umræða").attrib["framhald"]
+        )
 
         if comment_xml is not None:
-            comment_type = comment_xml.attrib['tegund']
-            comment_text = comment_xml.find('dagskrártexti').text
-            comment_description = comment_xml.find('skýring').text
+            comment_type = comment_xml.attrib["tegund"]
+            comment_text = comment_xml.find("dagskrártexti").text
+            comment_description = comment_xml.find("skýring").text
         else:
             comment_type = None
             comment_text = None
             comment_description = None
 
-        issue_num = int(issue_xml.attrib['málsnúmer'])
-        issue_group = issue_xml.attrib['málsflokkur']
+        issue_num = int(issue_xml.attrib["málsnúmer"])
+        issue_group = issue_xml.attrib["málsflokkur"]
 
-        if issue_group == 'A':
+        if issue_group == "A":
             issue = update_issue(issue_num, parliament.parliament_num)
-        elif issue_group == 'B':
+        elif issue_group == "B":
             issue = _process_docless_issue(issue_xml)
 
         if order > max_order:
             max_order = order
 
         try:
-            item = SessionAgendaItem.objects.select_related('issue').get(session_id=session.id, order=order)
+            item = SessionAgendaItem.objects.select_related("issue").get(
+                session_id=session.id, order=order
+            )
 
             changed = False
             if item.issue_id != issue.id:
@@ -2204,9 +2371,9 @@ def _process_session_agenda_xml(session_xml):
 
             if changed:
                 item.save()
-                print('Updated session agenda item: %s' % item)
+                print("Updated session agenda item: %s" % item)
             else:
-                print('Already have session agenda item: %s' % item)
+                print("Already have session agenda item: %s" % item)
 
         except SessionAgendaItem.DoesNotExist:
             item = SessionAgendaItem()
@@ -2220,12 +2387,14 @@ def _process_session_agenda_xml(session_xml):
             item.issue = issue
             item.save()
 
-            print('Added session agenda item: %s' % item)
+            print("Added session agenda item: %s" % item)
 
-    for item in SessionAgendaItem.objects.filter(session_id=session.id, order__gt=max_order):
+    for item in SessionAgendaItem.objects.filter(
+        session_id=session.id, order__gt=max_order
+    ):
         item.delete()
 
-        print('Deleted session agenda item %s' % item)
+        print("Deleted session agenda item %s" % item)
 
     return session
 
@@ -2234,51 +2403,59 @@ def update_speeches(parliament_num=None, days=None):
 
     parliament = update_parliament(parliament_num)
 
-    if parliament.parliament_num in already_haves['speeches']:
-        return already_haves['speeches'][parliament.parliament_num]
+    if parliament.parliament_num in already_haves["speeches"]:
+        return already_haves["speeches"][parliament.parliament_num]
 
-    xml = get_xml('SPEECHES_URL', parliament.parliament_num, days=days)
+    xml = get_xml("SPEECHES_URL", parliament.parliament_num, days=days)
 
     pref_persons = dict((p.person_xml_id, p) for p in Person.objects.all())
-    pref_sessions = dict((s.session_num, s) for s in Session.objects.filter(parliament_id=parliament.id))
-    pref_issues = dict((i.issue_num, i) for i in Issue.objects.filter(
-        issue_group='A',
-        parliament_id=parliament.id,
-    ))
-    pref_speeches = dict((s.timing_start, s) for s in Speech.objects.filter(session__parliament_id=parliament.id))
+    pref_sessions = dict(
+        (s.session_num, s) for s in Session.objects.filter(parliament_id=parliament.id)
+    )
+    pref_issues = dict(
+        (i.issue_num, i)
+        for i in Issue.objects.filter(
+            issue_group="A",
+            parliament_id=parliament.id,
+        )
+    )
+    pref_speeches = dict(
+        (s.timing_start, s)
+        for s in Speech.objects.filter(session__parliament_id=parliament.id)
+    )
 
     speeches = []
     speech_orders = {}
-    for speech_xml in xml.findall('ræða'):
+    for speech_xml in xml.findall("ræða"):
 
-        timing_start = sensible_datetime(speech_xml.find('ræðahófst').text)
+        timing_start = sensible_datetime(speech_xml.find("ræðahófst").text)
 
-        timing_end = sensible_datetime(speech_xml.find('ræðulauk').text)
+        timing_end = sensible_datetime(speech_xml.find("ræðulauk").text)
 
         seconds = (timing_end - timing_start).seconds
 
-        person_xml_id = int(speech_xml.find('ræðumaður').attrib['id'])
+        person_xml_id = int(speech_xml.find("ræðumaður").attrib["id"])
         try:
             person = pref_persons[person_xml_id]
         except KeyError:
             person = update_person(person_xml_id)
 
-        president = speech_xml.find('ræðumaður/forsetiAlþingis') is not None
+        president = speech_xml.find("ræðumaður/forsetiAlþingis") is not None
 
-        session_num = int(speech_xml.find('fundur').text)
+        session_num = int(speech_xml.find("fundur").text)
         try:
             session = pref_sessions[session_num]
         except KeyError:
             session = update_session(session_num, parliament.parliament_num)
 
-        issue_group = issue_group = speech_xml.find('mál/málsflokkur').text
-        if issue_group == 'A':
-            issue_num = int(speech_xml.find('mál/málsnúmer').text)
+        issue_group = issue_group = speech_xml.find("mál/málsflokkur").text
+        if issue_group == "A":
+            issue_num = int(speech_xml.find("mál/málsnúmer").text)
             try:
                 issue = pref_issues[issue_num]
             except KeyError:
                 issue = update_issue(issue_num, parliament.parliament_num)
-        elif issue_group == 'B':
+        elif issue_group == "B":
             # NOTE/TODO: We're skipping this for now, until the
             # independent B-issue XML file is complete, which should be
             # very soon since it's already almost complete. (2018-02-12)
@@ -2286,11 +2463,11 @@ def update_speeches(parliament_num=None, days=None):
         else:
             issue = None
 
-        date = sensible_datetime(speech_xml.find('dagur').text)
+        date = sensible_datetime(speech_xml.find("dagur").text)
 
-        speech_type = speech_xml.find('tegundræðu').text
+        speech_type = speech_xml.find("tegundræðu").text
 
-        iteration = speech_xml.find('umræða').text
+        iteration = speech_xml.find("umræða").text
 
         # In speeches in the 115th Parliament and older, the time of day is
         # unknown. Since speeches don't have unique IDs either, it is
@@ -2309,27 +2486,27 @@ def update_speeches(parliament_num=None, days=None):
             order_in_issue = None
 
         try:
-            html_remote_path = speech_xml.find('slóðir/html').text
+            html_remote_path = speech_xml.find("slóðir/html").text
         except AttributeError:
             html_remote_path = None
 
         try:
-            sgml_remote_path = speech_xml.find('slóðir/sgml').text
+            sgml_remote_path = speech_xml.find("slóðir/sgml").text
         except AttributeError:
             sgml_remote_path = None
 
         try:
-            xml_remote_path = speech_xml.find('slóðir/xml').text
+            xml_remote_path = speech_xml.find("slóðir/xml").text
         except AttributeError:
             xml_remote_path = None
 
         try:
-            text_remote_path = speech_xml.find('slóðir/text').text
+            text_remote_path = speech_xml.find("slóðir/text").text
         except AttributeError:
             text_remote_path = None
 
         try:
-            sound_remote_path = speech_xml.find('slóðir/hljóð').text
+            sound_remote_path = speech_xml.find("slóðir/hljóð").text
         except AttributeError:
             sound_remote_path = None
 
@@ -2407,9 +2584,9 @@ def update_speeches(parliament_num=None, days=None):
 
             if changed:
                 speech.save()
-                print('Updated speech: %s' % speech)
+                print("Updated speech: %s" % speech)
             else:
-                print('Already have speech: %s' % speech)
+                print("Already have speech: %s" % speech)
 
         else:
             speech = Speech(timing_start=timing_start)
@@ -2431,13 +2608,11 @@ def update_speeches(parliament_num=None, days=None):
             speech.sound_remote_path = sound_remote_path
             speech.save()
 
-            print('Added speech: %s' % speech)
+            print("Added speech: %s" % speech)
 
         speeches.append(speech)
 
-    deletable_speeches = Speech.objects.filter(
-        session__parliament=parliament
-    ).exclude(
+    deletable_speeches = Speech.objects.filter(session__parliament=parliament).exclude(
         timing_start__in=[s.timing_start for s in speeches],
     )
     if days is not None:
@@ -2453,9 +2628,9 @@ def update_speeches(parliament_num=None, days=None):
 
     for deletable_speech in deletable_speeches:
         deletable_speech.delete()
-        print('Deleted non-existent speech: %s' % deletable_speech)
+        print("Deleted non-existent speech: %s" % deletable_speech)
 
-    already_haves['speeches'][parliament.parliament_num] = speeches
+    already_haves["speeches"][parliament.parliament_num] = speeches
 
     return speeches
 
@@ -2464,7 +2639,7 @@ def update_issue_statuses(parliament_num=None):
 
     parliament = update_parliament(parliament_num)
 
-    for issue_num in [i.issue_num for i in parliament.issues.filter(issue_group='A')]:
+    for issue_num in [i.issue_num for i in parliament.issues.filter(issue_group="A")]:
         update_issue_status(issue_num, parliament.parliament_num)
 
 
@@ -2472,25 +2647,35 @@ def update_issue_status(issue_num, parliament_num=None):
 
     # Make sure that input makes sense
     if issue_num is not None and not isinstance(issue_num, int):
-        raise TypeError('Parameter issue_num must be a number')
+        raise TypeError("Parameter issue_num must be a number")
 
     parliament = update_parliament(parliament_num)
 
     try:
-        issue = parliament.issues.get(issue_num=issue_num, issue_group='A')
+        issue = parliament.issues.get(issue_num=issue_num, issue_group="A")
     except Issue.DoesNotExist:
-        msg = 'Issue %d/%d does not exist and is not automatically fetched.' % (issue_num, parliament.parliament_num)
-        msg += ' Try first running "issue=%d parliament=%d".' % (issue_num, parliament.parliament_num)
+        msg = "Issue %d/%d does not exist and is not automatically fetched." % (
+            issue_num,
+            parliament.parliament_num,
+        )
+        msg += ' Try first running "issue=%d parliament=%d".' % (
+            issue_num,
+            parliament.parliament_num,
+        )
         raise AlthingiException(msg)
 
     # Figure out issue's status, if supported.
     status = issue.determine_status()
     if status is not None:
 
-        current_step_order_query = issue.steps.all() # Current according to database, that is.
+        current_step_order_query = (
+            issue.steps.all()
+        )  # Current according to database, that is.
 
         # Map the current steps to their order according to database.
-        current_step_order_map = OrderedDict([(s.code, s.order) for s in current_step_order_query])
+        current_step_order_map = OrderedDict(
+            [(s.code, s.order) for s in current_step_order_query]
+        )
 
         if len(current_step_order_query) != len(current_step_order_map):
             # This means that there are duplicates of at least one step in the
@@ -2506,12 +2691,15 @@ def update_issue_status(issue_num, parliament_num=None):
         for step, taken in status.items():
             # Has this step been taken in the issue type's legislative process?
             if taken:
-                order += 1 # Must be the next step, then!
+                order += 1  # Must be the next step, then!
 
                 if not step in current_step_order_map:
                     IssueStep(issue=issue, code=step, order=order).save()
                     changed = True
-                elif step in current_step_order_map and current_step_order_map[step] != order:
+                elif (
+                    step in current_step_order_map
+                    and current_step_order_map[step] != order
+                ):
                     IssueStep.objects.filter(issue=issue, code=step).update(order=order)
                     changed = True
 
@@ -2533,23 +2721,23 @@ def update_issue_status(issue_num, parliament_num=None):
         issue.steps.exclude(code__in=status.keys()).delete()
 
         if changed:
-            print('Updated status of issue: %s' % issue)
+            print("Updated status of issue: %s" % issue)
         else:
-            print('Already have status of issue: %s' % issue)
+            print("Already have status of issue: %s" % issue)
 
     # Determine the committee which the issue belongs to, if any.
     committee = issue.determine_committee()
     if issue.to_committee != committee:
         issue.to_committee = committee
         issue.save()
-        print('Updated committee of issue %s to %s' % (issue, issue.to_committee))
+        print("Updated committee of issue %s to %s" % (issue, issue.to_committee))
 
     # Determine the minister which the issue was sent to, if any.
     minister = issue.determine_minister()
     if issue.to_minister != minister:
         issue.to_minister = minister
         issue.save()
-        print('Updated minister of issue %s to %s' % (issue, issue.to_minister))
+        print("Updated minister of issue %s to %s" % (issue, issue.to_minister))
 
     # Determine the issue's fate (if any).
     # This is done so near the end of the processing of the issue because it
@@ -2566,25 +2754,24 @@ def update_ministers(parliament_num=None):
 
     parliament = update_parliament(parliament_num)
 
-    if parliament.parliament_num in already_haves['ministers']:
-        return already_haves['ministers']
+    if parliament.parliament_num in already_haves["ministers"]:
+        return already_haves["ministers"]
 
-
-    xml = get_xml('MINISTER_LIST_URL', parliament.parliament_num)
+    xml = get_xml("MINISTER_LIST_URL", parliament.parliament_num)
 
     ministers = []
-    for minister_xml in xml.findall('ráðherraembætti'):
+    for minister_xml in xml.findall("ráðherraembætti"):
 
-        minister_xml_id = int(minister_xml.attrib['id'])
+        minister_xml_id = int(minister_xml.attrib["id"])
 
-        name = minister_xml.find('heiti').text.strip()
+        name = minister_xml.find("heiti").text.strip()
 
-        abbreviation_short = minister_xml.find('skammstafanir/stuttskammstöfun').text
-        abbreviation_long = minister_xml.find('skammstafanir/löngskammstöfun').text
+        abbreviation_short = minister_xml.find("skammstafanir/stuttskammstöfun").text
+        abbreviation_long = minister_xml.find("skammstafanir/löngskammstöfun").text
 
-        parliament_num_first = int(minister_xml.find('tímabil/fyrstaþing').text)
+        parliament_num_first = int(minister_xml.find("tímabil/fyrstaþing").text)
         try:
-            parliament_num_last = int(minister_xml.find('tímabil/síðastaþing').text)
+            parliament_num_last = int(minister_xml.find("tímabil/síðastaþing").text)
         except AttributeError:
             parliament_num_last = None
 
@@ -2618,9 +2805,9 @@ def update_ministers(parliament_num=None):
 
             if changed:
                 minister.save()
-                print('Updated minister: %s' % minister)
+                print("Updated minister: %s" % minister)
             else:
-                print('Already have minister: %s' % minister)
+                print("Already have minister: %s" % minister)
 
         except Minister.DoesNotExist:
             minister = Minister(minister_xml_id=minister_xml_id)
@@ -2633,11 +2820,11 @@ def update_ministers(parliament_num=None):
 
             minister.parliaments.add(parliament)
 
-            print('Added minister: %s' % minister)
+            print("Added minister: %s" % minister)
 
         ministers.append(minister)
 
-    already_haves['ministers'][parliament.parliament_num] = ministers
+    already_haves["ministers"][parliament.parliament_num] = ministers
 
     return ministers
 
@@ -2649,35 +2836,41 @@ def update_minister_seats(person_xml_id, parliament_num=None):
     try:
         person = Person.objects.get(person_xml_id=person_xml_id)
     except Person.DoesNotExist:
-        raise AlthingiException('Person with XML ID %d does not exist in database (maybe try updating persons)?')
+        raise AlthingiException(
+            "Person with XML ID %d does not exist in database (maybe try updating persons)?"
+        )
 
-    ah_key = '%d-%d' % (parliament.parliament_num, person_xml_id)
-    if ah_key in already_haves['minister_seats']:
-        return already_haves['minister_seats'][ah_key]
+    ah_key = "%d-%d" % (parliament.parliament_num, person_xml_id)
+    if ah_key in already_haves["minister_seats"]:
+        return already_haves["minister_seats"][ah_key]
 
     update_ministers(parliament.parliament_num)
     update_parties(parliament.parliament_num)
 
-    xml = get_xml('MINISTER_SEATS_URL', person_xml_id).findall('ráðherrasetur/ráðherraseta')
+    xml = get_xml("MINISTER_SEATS_URL", person_xml_id).findall(
+        "ráðherrasetur/ráðherraseta"
+    )
 
     minister_seats = []
     for minister_seat_xml in xml:
-        minister_seat_parliament_num = int(minister_seat_xml.find('þing').text)
+        minister_seat_parliament_num = int(minister_seat_xml.find("þing").text)
 
         if minister_seat_parliament_num == parliament.parliament_num:
 
-            minister_xml_id = int(minister_seat_xml.find('embætti').attrib['id'])
+            minister_xml_id = int(minister_seat_xml.find("embætti").attrib["id"])
             minister = Minister.objects.get(minister_xml_id=minister_xml_id)
 
-            timing_in = sensible_datetime(minister_seat_xml.find('tímabil/inn').text)
+            timing_in = sensible_datetime(minister_seat_xml.find("tímabil/inn").text)
 
             try:
-                timing_out = sensible_datetime(minister_seat_xml.find('tímabil/út').text)
+                timing_out = sensible_datetime(
+                    minister_seat_xml.find("tímabil/út").text
+                )
             except AttributeError:
                 timing_out = None
 
             try:
-                party_xml_id = int(minister_seat_xml.find('þingflokkur').attrib['id'])
+                party_xml_id = int(minister_seat_xml.find("þingflokkur").attrib["id"])
                 party = Party.objects.get(party_xml_id=party_xml_id)
             except AttributeError:
                 party = None
@@ -2687,7 +2880,7 @@ def update_minister_seats(person_xml_id, parliament_num=None):
                     person=person,
                     minister=minister,
                     parliament__parliament_num=parliament.parliament_num,
-                    timing_in=timing_in
+                    timing_in=timing_in,
                 ).get(Q(timing_out=timing_out) | Q(timing_out=None))
 
                 changed = False
@@ -2701,9 +2894,9 @@ def update_minister_seats(person_xml_id, parliament_num=None):
 
                 if changed:
                     minister_seat.save()
-                    print('Updated minister seat: %s' % minister_seat)
+                    print("Updated minister seat: %s" % minister_seat)
                 else:
-                    print('Already have minister seat: %s' % minister_seat)
+                    print("Already have minister seat: %s" % minister_seat)
 
             except MinisterSeat.DoesNotExist:
                 minister_seat = MinisterSeat()
@@ -2715,11 +2908,11 @@ def update_minister_seats(person_xml_id, parliament_num=None):
                 minister_seat.party = party
 
                 minister_seat.save()
-                print('Added minister seat: %s' % minister_seat)
+                print("Added minister seat: %s" % minister_seat)
 
             minister_seats.append(minister_seat)
 
-    already_haves['minister_seats'][ah_key] = minister_seats
+    already_haves["minister_seats"][ah_key] = minister_seats
 
     return minister_seats
 
@@ -2730,32 +2923,38 @@ def update_presidents(parliament_num=None):
     parliament = update_parliament(parliament_num)
 
     ah_key = parliament.parliament_num
-    if ah_key in already_haves['presidents'] and ah_key in already_haves['president_seats']:
-        return already_haves['presidents'][ah_key], already_haves['president_seats'][ah_key]
+    if (
+        ah_key in already_haves["presidents"]
+        and ah_key in already_haves["president_seats"]
+    ):
+        return (
+            already_haves["presidents"][ah_key],
+            already_haves["president_seats"][ah_key],
+        )
 
-    xml = get_xml('PRESIDENT_LIST_URL', parliament.parliament_num).findall('forseti')
+    xml = get_xml("PRESIDENT_LIST_URL", parliament.parliament_num).findall("forseti")
 
     # Certain presidential offices have a sequential order, hard-coded here
     # since there is no more reasonable way to determine them, and they are
     # not subject to change in the future.
     orders_of_succession = {
-        'forseti': 1,
-        '1. varaforseti': 2,
-        '2. varaforseti': 3,
-        '3. varaforseti': 4,
-        '4. varaforseti': 5,
-        '5. varaforseti': 6,
-        '6. varaforseti': 7,
+        "forseti": 1,
+        "1. varaforseti": 2,
+        "2. varaforseti": 3,
+        "3. varaforseti": 4,
+        "4. varaforseti": 5,
+        "5. varaforseti": 6,
+        "6. varaforseti": 7,
     }
 
     presidents = []
     for node in xml:
-        president_xml_id = int(node.find('embætti').attrib['id'])
-        name = node.find('embætti/embættisheiti').text
-        abbreviation = node.find('embætti/skammstöfun').text
-        president_type = node.find('embætti/embættisflokkur').attrib['flokkur']
+        president_xml_id = int(node.find("embætti").attrib["id"])
+        name = node.find("embætti/embættisheiti").text
+        abbreviation = node.find("embætti/skammstöfun").text
+        president_type = node.find("embætti/embættisflokkur").attrib["flokkur"]
 
-        is_main = name == 'forseti' # No other way to detect this.
+        is_main = name == "forseti"  # No other way to detect this.
 
         if name in orders_of_succession:
             order = orders_of_succession[name]
@@ -2792,9 +2991,9 @@ def update_presidents(parliament_num=None):
 
             if changed:
                 president.save()
-                print('Updated president: %s' % president)
+                print("Updated president: %s" % president)
             else:
-                print('Already have president: %s' % president)
+                print("Already have president: %s" % president)
 
         except President.DoesNotExist:
             president = President(president_xml_id=president_xml_id)
@@ -2806,11 +3005,11 @@ def update_presidents(parliament_num=None):
 
             president.parliaments.add(parliament)
 
-            print('Added president: %s' % president)
+            print("Added president: %s" % president)
 
         presidents.append(president)
 
-    already_haves['presidents'][ah_key] = presidents
+    already_haves["presidents"][ah_key] = presidents
 
     # NOTE: Elsewhere in this script, for example when updating seats,
     # ministerial seats and committee seats, they are updated per person, i.e.
@@ -2823,17 +3022,17 @@ def update_presidents(parliament_num=None):
 
     president_seats = []
     for node in xml:
-        person_xml_id = int(node.attrib['id'])
+        person_xml_id = int(node.attrib["id"])
         person = update_person(person_xml_id)
 
-        timing_in = sensible_datetime(node.find('inn').text)
+        timing_in = sensible_datetime(node.find("inn").text)
 
         try:
-            timing_out = sensible_datetime(node.find('út').text)
+            timing_out = sensible_datetime(node.find("út").text)
         except AttributeError:
             timing_out = None
 
-        president_xml_id = int(node.find('embætti').attrib['id'])
+        president_xml_id = int(node.find("embætti").attrib["id"])
         president = President.objects.get(president_xml_id=president_xml_id)
 
         try:
@@ -2841,7 +3040,7 @@ def update_presidents(parliament_num=None):
                 person=person,
                 president=president,
                 parliament=parliament,
-                timing_in=timing_in
+                timing_in=timing_in,
             ).get(Q(timing_out=timing_out) | Q(timing_out=None))
 
             changed = False
@@ -2851,9 +3050,9 @@ def update_presidents(parliament_num=None):
 
             if changed:
                 president.save()
-                print('Updated president seat: %s' % president_seat)
+                print("Updated president seat: %s" % president_seat)
             else:
-                print('Already have president seat: %s' % president_seat)
+                print("Already have president seat: %s" % president_seat)
 
         except PresidentSeat.DoesNotExist:
             president_seat = PresidentSeat()
@@ -2864,11 +3063,11 @@ def update_presidents(parliament_num=None):
             president_seat.timing_out = timing_out
             president_seat.save()
 
-            print('Added president seat: %s' % president_seat)
+            print("Added president seat: %s" % president_seat)
 
         president_seats.append(president_seat)
 
-    already_haves['president_seats'][ah_key] = president_seats
+    already_haves["president_seats"][ah_key] = president_seats
 
     return presidents, president_seats
 
@@ -2877,18 +3076,20 @@ def update_categories():
     # Categories are currently not dependent on specific parliaments, which is
     # unusual and may change in the future.
 
-    if 'category_groups' in already_haves:
-        return already_haves['category_groups']
+    if "category_groups" in already_haves:
+        return already_haves["category_groups"]
 
-    xml = get_xml('CATEGORIES_LIST_URL').findall('yfirflokkur')
+    xml = get_xml("CATEGORIES_LIST_URL").findall("yfirflokkur")
 
     cat_groups = []
     for node in xml:
-        category_group_xml_id = int(node.attrib['id'])
-        name = node.find('heiti').text
+        category_group_xml_id = int(node.attrib["id"])
+        name = node.find("heiti").text
 
         try:
-            cat_group = CategoryGroup.objects.get(category_group_xml_id=category_group_xml_id)
+            cat_group = CategoryGroup.objects.get(
+                category_group_xml_id=category_group_xml_id
+            )
 
             changed = False
             if cat_group.name != name:
@@ -2897,24 +3098,24 @@ def update_categories():
 
             if changed:
                 cat_group.save()
-                print('Updated category group: %s' % cat_group)
+                print("Updated category group: %s" % cat_group)
             else:
-                print('Already have category group: %s' % cat_group)
+                print("Already have category group: %s" % cat_group)
 
         except CategoryGroup.DoesNotExist:
             cat_group = CategoryGroup(category_group_xml_id=category_group_xml_id)
             cat_group.name = name
             cat_group.save()
 
-            print('Added category group: %s' % cat_group)
+            print("Added category group: %s" % cat_group)
 
         cat_groups.append(cat_group)
 
         # Let's do the categories themselves!
-        for subnode in node.findall('efnisflokkur'):
-            category_xml_id = int(subnode.attrib['id'])
-            name = subnode.find('heiti').text
-            description = subnode.find('lýsing').text or ''
+        for subnode in node.findall("efnisflokkur"):
+            category_xml_id = int(subnode.attrib["id"])
+            name = subnode.find("heiti").text
+            description = subnode.find("lýsing").text or ""
             group = cat_group
 
             try:
@@ -2935,9 +3136,9 @@ def update_categories():
 
                 if changed:
                     category.save()
-                    print('Updated category: %s' % category)
+                    print("Updated category: %s" % category)
                 else:
-                    print('Already have category: %s' % category)
+                    print("Already have category: %s" % category)
 
             except Category.DoesNotExist:
                 category = Category(category_xml_id=category_xml_id)
@@ -2946,8 +3147,8 @@ def update_categories():
                 category.group = group
                 category.save()
 
-                print('Added category: %s' % category)
+                print("Added category: %s" % category)
 
-    already_haves['category_groups'] = cat_groups
+    already_haves["category_groups"] = cat_groups
 
     return cat_groups

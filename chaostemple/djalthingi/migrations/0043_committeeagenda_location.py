@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('djalthingi', '0042_review_pending_deletion'),
+        ("djalthingi", "0042_review_pending_deletion"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='committeeagenda',
-            name='location',
+            model_name="committeeagenda",
+            name="location",
             field=models.CharField(max_length=100, null=True),
         ),
     ]

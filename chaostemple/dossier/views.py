@@ -31,23 +31,21 @@ from jsonizer.utils import jsonize
 # A utility function to create sensible kwargs parameters to either locate or
 # create a Dossier from given input.
 def kwargs_from_input(user, parliament_num, doc_num, log_num):
-    q_kwargs = {'user_id': user.id}
+    q_kwargs = {"user_id": user.id}
     if doc_num is not None and log_num is None:
-        document = Document.objects.select_related('issue').get(
-            issue__parliament__parliament_num=parliament_num,
-            doc_num=doc_num
+        document = Document.objects.select_related("issue").get(
+            issue__parliament__parliament_num=parliament_num, doc_num=doc_num
         )
-        q_kwargs['dossier_type'] = 'document'
-        q_kwargs['document_id'] = document.id
-        q_kwargs['issue_id'] = document.issue_id
+        q_kwargs["dossier_type"] = "document"
+        q_kwargs["document_id"] = document.id
+        q_kwargs["issue_id"] = document.issue_id
     elif doc_num is None and log_num is not None:
-        review = Review.objects.select_related('issue').get(
-            issue__parliament__parliament_num=parliament_num,
-            log_num=log_num
+        review = Review.objects.select_related("issue").get(
+            issue__parliament__parliament_num=parliament_num, log_num=log_num
         )
-        q_kwargs['dossier_type'] = 'review'
-        q_kwargs['review_id'] = review.id
-        q_kwargs['issue_id'] = review.issue_id
+        q_kwargs["dossier_type"] = "review"
+        q_kwargs["review_id"] = review.id
+        q_kwargs["issue_id"] = review.issue_id
     else:
         raise Exception('Only "doc_num" or "log_num" must be provided but not both')
 
@@ -59,11 +57,15 @@ def dossier(request, parliament_num, doc_num=None, log_num=None):
 
     d_kwargs = kwargs_from_input(request.user, parliament_num, doc_num, log_num)
     try:
-        dossier = Dossier.objects.select_related('issue', 'document', 'review').get(**d_kwargs)
+        dossier = Dossier.objects.select_related("issue", "document", "review").get(
+            **d_kwargs
+        )
     except Dossier.DoesNotExist:
         dossier = Dossier(**d_kwargs)
 
-    statistic = DossierStatistic.objects.filter(issue_id=dossier.issue_id, user_id=request.user.id).first()
+    statistic = DossierStatistic.objects.filter(
+        issue_id=dossier.issue_id, user_id=request.user.id
+    ).first()
 
     IssueUtilities.populate_issue_data([dossier.issue])
 
@@ -71,38 +73,35 @@ def dossier(request, parliament_num, doc_num=None, log_num=None):
     # different dossiers in different tabs/windows/whatever. It needs to
     # fulfill two competing goals, being both short and descriptive.
     if doc_num is not None:
-        page_title = '(%d) %s' % (
-            dossier.document.doc_num,
-            dossier.document.doc_type
-        )
+        page_title = "(%d) %s" % (dossier.document.doc_num, dossier.document.doc_type)
     elif log_num is not None:
         page_title = dossier.review.sender_name
     # Append the common part of the page title.
-    page_title += ': %s (%d. %s)' % (
+    page_title += ": %s (%d. %s)" % (
         capfirst(dossier.issue.name),
         dossier.issue.issue_num,
-        _('issue')
+        _("issue"),
     )
 
     ctx = {
-        'page_title': page_title,
-
-        'issue': dossier.issue,
-        'dossier': dossier,
-        'statistic': statistic,
-
-        'attentionstates': Dossier.ATTENTION_STATES,
-        'knowledgestates': Dossier.KNOWLEDGE_STATES,
-        'supportstates': Dossier.SUPPORT_STATES,
-        'proposalstates': Dossier.PROPOSAL_STATES,
+        "page_title": page_title,
+        "issue": dossier.issue,
+        "dossier": dossier,
+        "statistic": statistic,
+        "attentionstates": Dossier.ATTENTION_STATES,
+        "knowledgestates": Dossier.KNOWLEDGE_STATES,
+        "supportstates": Dossier.SUPPORT_STATES,
+        "proposalstates": Dossier.PROPOSAL_STATES,
     }
-    return render(request, 'dossier/dossier.html', ctx)
+    return render(request, "dossier/dossier.html", ctx)
 
 
 @login_required
 @jsonize
-def dossier_fieldstate(request, parliament_num, doc_num=None, log_num=None, fieldname=None):
-    fieldstate = request.GET.get('fieldstate', None)
+def dossier_fieldstate(
+    request, parliament_num, doc_num=None, log_num=None, fieldname=None
+):
+    fieldstate = request.GET.get("fieldstate", None)
 
     if not fieldname in Dossier.tracker.fields:
         raise Exception('"%s" is not a recognized fieldname of a dossier' % fieldname)
@@ -134,53 +133,55 @@ def create_dossier(request, parliament_num, doc_num=None, log_num=None):
 
     if doc_num is not None:
 
-        document = Document.objects.get(issue__parliament__parliament_num=parliament_num, doc_num=doc_num)
+        document = Document.objects.get(
+            issue__parliament__parliament_num=parliament_num, doc_num=doc_num
+        )
         try:
             Dossier.objects.get(user=request.user, document=document)
         except Dossier.DoesNotExist:
             Dossier(user=request.user, document=document).save()
 
         # Data must be reloaded to reflect change.
-        document = Document.objects.prefetch_related(
-            Prefetch('dossiers', queryset=prefetch_q)
-        ).annotate_seen(
-            request.user
-        ).get(
-            issue__parliament__parliament_num=parliament_num,
-            doc_num=doc_num
+        document = (
+            Document.objects.prefetch_related(Prefetch("dossiers", queryset=prefetch_q))
+            .annotate_seen(request.user)
+            .get(issue__parliament__parliament_num=parliament_num, doc_num=doc_num)
         )
 
-        html = render_to_string('core/stub/document.html', { 'document': document }, request=request)
+        html = render_to_string(
+            "core/stub/document.html", {"document": document}, request=request
+        )
 
         return {
-            'document_id': document.id,
-            'html': html,
+            "document_id": document.id,
+            "html": html,
         }
 
     elif log_num is not None:
 
-        review = Review.objects.get(issue__parliament__parliament_num=parliament_num, log_num=log_num)
+        review = Review.objects.get(
+            issue__parliament__parliament_num=parliament_num, log_num=log_num
+        )
         try:
             Dossier.objects.get(user=request.user, review=review)
         except Dossier.DoesNotExist:
             Dossier(user=request.user, review=review).save()
 
         # Data must be reloaded to reflect change.
-        review = Review.objects.prefetch_related(
-            Prefetch('dossiers', queryset=prefetch_q)
-        ).annotate_seen(
-            request.user
-        ).get(
-            issue__parliament__parliament_num=parliament_num,
-            log_num=log_num
+        review = (
+            Review.objects.prefetch_related(Prefetch("dossiers", queryset=prefetch_q))
+            .annotate_seen(request.user)
+            .get(issue__parliament__parliament_num=parliament_num, log_num=log_num)
         )
 
-        html = render_to_string('core/stub/review.html', { 'review': review }, request=request)
+        html = render_to_string(
+            "core/stub/review.html", {"review": review}, request=request
+        )
         print(html)
 
         return {
-            'review_id': review.id,
-            'html': html,
+            "review_id": review.id,
+            "html": html,
         }
 
 
@@ -197,21 +198,20 @@ def delete_dossier(request, parliament_num, doc_num=None, log_num=None):
         Dossier.objects.get(
             user=request.user,
             document__issue__parliament__parliament_num=parliament_num,
-            document__doc_num=doc_num
+            document__doc_num=doc_num,
         ).delete()
 
         document = Document.objects.prefetch_related(
-            Prefetch('dossiers', queryset=prefetch_q)
-        ).get(
-            issue__parliament__parliament_num=parliament_num,
-            doc_num=doc_num
+            Prefetch("dossiers", queryset=prefetch_q)
+        ).get(issue__parliament__parliament_num=parliament_num, doc_num=doc_num)
+
+        html = render_to_string(
+            "core/stub/document.html", {"document": document}, request=request
         )
 
-        html = render_to_string('core/stub/document.html', { 'document': document }, request=request)
-
         return {
-            'document_id': document.id,
-            'html': html,
+            "document_id": document.id,
+            "html": html,
         }
 
     elif log_num is not None:
@@ -219,21 +219,20 @@ def delete_dossier(request, parliament_num, doc_num=None, log_num=None):
         Dossier.objects.get(
             user=request.user,
             review__issue__parliament__parliament_num=parliament_num,
-            review__log_num=log_num
+            review__log_num=log_num,
         ).delete()
 
         review = Review.objects.prefetch_related(
-            Prefetch('dossiers', queryset=prefetch_q)
-        ).get(
-            issue__parliament__parliament_num=parliament_num,
-            log_num=log_num
+            Prefetch("dossiers", queryset=prefetch_q)
+        ).get(issue__parliament__parliament_num=parliament_num, log_num=log_num)
+
+        html = render_to_string(
+            "core/stub/review.html", {"review": review}, request=request
         )
 
-        html = render_to_string('core/stub/review.html', { 'review': review }, request=request)
-
         return {
-            'review_id': review.id,
-            'html': html,
+            "review_id": review.id,
+            "html": html,
         }
 
 
@@ -243,12 +242,15 @@ def delete_issue_dossiers(request, issue_id):
 
     stub_ctx = {}
 
-    issue = Issue.objects.select_related('parliament').get(id=issue_id)
+    issue = Issue.objects.select_related("parliament").get(id=issue_id)
 
-    is_subscribed = Subscription.objects.filter(
-        Q(committee__issues=issue) | Q(category__issues=issue),
-        user_id=request.user.id
-    ).count() > 0
+    is_subscribed = (
+        Subscription.objects.filter(
+            Q(committee__issues=issue) | Q(category__issues=issue),
+            user_id=request.user.id,
+        ).count()
+        > 0
+    )
 
     Dossier.objects.filter(issue_id=issue_id, user_id=request.user.id).delete()
 
@@ -257,7 +259,10 @@ def delete_issue_dossiers(request, issue_id):
     # document/review counts. If the issue is not being monitored, however,
     # we'll delete the dossier statistic for the sake of data cleanliness.
     stat = issue.dossierstatistic_set.get(user_id=request.user.id)
-    monitor_issue_ids = [m['issue_id'] for m in IssueMonitor.objects.filter(user=request.user).values('issue_id')]
+    monitor_issue_ids = [
+        m["issue_id"]
+        for m in IssueMonitor.objects.filter(user=request.user).values("issue_id")
+    ]
     if is_subscribed or issue.id in monitor_issue_ids:
         # Reset the statistics.
         stat.reset()
@@ -270,37 +275,45 @@ def delete_issue_dossiers(request, issue_id):
     IssueUtilities.populate_issue_data([issue])
 
     # Get session agenda header information if needed
-    session_agenda_item_id = int(request.GET.get('session_agenda_item_id', 0) or 0)
+    session_agenda_item_id = int(request.GET.get("session_agenda_item_id", 0) or 0)
     if session_agenda_item_id:
-        stub_ctx['session_agenda_item'] = SessionAgendaItem.objects.get(id=session_agenda_item_id)
-
-    # Get committee agenda header information if needed
-    committee_agenda_item_id = int(request.GET.get('committee_agenda_item_id', 0) or 0)
-    if committee_agenda_item_id:
-        stub_ctx['committee_agenda_item'] = CommitteeAgendaItem.objects.get(id=committee_agenda_item_id)
-
-    # Get upcoming session infomation if needed
-    upcoming_session_ids = request.GET.get('upcoming_session_ids', '')
-    if len(upcoming_session_ids):
-        stub_ctx['upcoming_sessions'] = Session.objects.filter(id__in=[int(val) for val in upcoming_session_ids.split(',')])
-
-    # Get upcoming committee agenda information if needed
-    upcoming_committee_agenda_ids = request.GET.get('upcoming_committee_agenda_ids', '')
-    if len(upcoming_committee_agenda_ids):
-        stub_ctx['upcoming_committee_agendas'] = CommitteeAgenda.objects.filter(
-            id__in=[int(val) for val in upcoming_committee_agenda_ids.split(',')]
+        stub_ctx["session_agenda_item"] = SessionAgendaItem.objects.get(
+            id=session_agenda_item_id
         )
 
-    stub_ctx.update({
-        'issue': issue,
-        'user': request.user,
-        'monitored_issues': request.extravars['monitored_issues'],
-    })
-    html_content = render_to_string('core/stub/issue.html', stub_ctx, request=request)
+    # Get committee agenda header information if needed
+    committee_agenda_item_id = int(request.GET.get("committee_agenda_item_id", 0) or 0)
+    if committee_agenda_item_id:
+        stub_ctx["committee_agenda_item"] = CommitteeAgendaItem.objects.get(
+            id=committee_agenda_item_id
+        )
+
+    # Get upcoming session infomation if needed
+    upcoming_session_ids = request.GET.get("upcoming_session_ids", "")
+    if len(upcoming_session_ids):
+        stub_ctx["upcoming_sessions"] = Session.objects.filter(
+            id__in=[int(val) for val in upcoming_session_ids.split(",")]
+        )
+
+    # Get upcoming committee agenda information if needed
+    upcoming_committee_agenda_ids = request.GET.get("upcoming_committee_agenda_ids", "")
+    if len(upcoming_committee_agenda_ids):
+        stub_ctx["upcoming_committee_agendas"] = CommitteeAgenda.objects.filter(
+            id__in=[int(val) for val in upcoming_committee_agenda_ids.split(",")]
+        )
+
+    stub_ctx.update(
+        {
+            "issue": issue,
+            "user": request.user,
+            "monitored_issues": request.extravars["monitored_issues"],
+        }
+    )
+    html_content = render_to_string("core/stub/issue.html", stub_ctx, request=request)
 
     ctx = {
-        'issue_id': issue_id,
-        'html_content': html_content,
+        "issue_id": issue_id,
+        "html_content": html_content,
     }
     return ctx
 
@@ -312,9 +325,9 @@ def set_notes(request, parliament_num, doc_num=None, log_num=None):
 
     dossier, created = Dossier.objects.get_or_create(**d_kwargs)
 
-    notes = request.POST.get('notes', '')
+    notes = request.POST.get("notes", "")
 
     dossier.notes = notes
     dossier.save()
 
-    return {'notes': notes}
+    return {"notes": notes}

@@ -8,23 +8,36 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0001_initial'),
+        ("core", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='dossierstatistic',
-            name='document_support_referral',
+            model_name="dossierstatistic",
+            name="document_support_referral",
             field=models.IntegerField(default=0),
         ),
         migrations.AddField(
-            model_name='dossierstatistic',
-            name='review_support_referral',
+            model_name="dossierstatistic",
+            name="review_support_referral",
             field=models.IntegerField(default=0),
         ),
         migrations.AlterField(
-            model_name='dossier',
-            name='support',
-            field=models.CharField(choices=[(b'undefined', 'Undefined'), (b'strongopposition', 'Strong Opposition'), (b'oppose', 'Oppose'), (b'neutral', 'Neutral'), (b'support', 'Support'), (b'strongsupport', 'Strong Support'), (b'referral', 'Referral'), (b'other', 'Other')], default=b'undefined', max_length=20),
+            model_name="dossier",
+            name="support",
+            field=models.CharField(
+                choices=[
+                    (b"undefined", "Undefined"),
+                    (b"strongopposition", "Strong Opposition"),
+                    (b"oppose", "Oppose"),
+                    (b"neutral", "Neutral"),
+                    (b"support", "Support"),
+                    (b"strongsupport", "Strong Support"),
+                    (b"referral", "Referral"),
+                    (b"other", "Other"),
+                ],
+                default=b"undefined",
+                max_length=20,
+            ),
         ),
     ]

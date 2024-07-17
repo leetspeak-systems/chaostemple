@@ -9,30 +9,69 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('djalthingi', '0016_auto_20170411_2027'),
+        ("djalthingi", "0016_auto_20170411_2027"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='VoteCasting',
+            name="VoteCasting",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('timing', models.DateTimeField()),
-                ('vote_casting_type', models.CharField(max_length=100)),
-                ('specifics', models.CharField(max_length=100)),
-                ('method', models.CharField(max_length=50, null=True)),
-                ('count_yes', models.IntegerField(null=True)),
-                ('count_no', models.IntegerField(null=True)),
-                ('count_abstain', models.IntegerField(null=True)),
-                ('conclusion', models.CharField(max_length=100, null=True)),
-                ('vote_casting_xml_id', models.IntegerField()),
-                ('document', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='vote_castings', to='djalthingi.Document')),
-                ('issue', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='vote_castings', to='djalthingi.Issue')),
-                ('session', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='vote_castings', to='djalthingi.Session')),
-                ('to_committee', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='vote_castings', to='djalthingi.Committee')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("timing", models.DateTimeField()),
+                ("vote_casting_type", models.CharField(max_length=100)),
+                ("specifics", models.CharField(max_length=100)),
+                ("method", models.CharField(max_length=50, null=True)),
+                ("count_yes", models.IntegerField(null=True)),
+                ("count_no", models.IntegerField(null=True)),
+                ("count_abstain", models.IntegerField(null=True)),
+                ("conclusion", models.CharField(max_length=100, null=True)),
+                ("vote_casting_xml_id", models.IntegerField()),
+                (
+                    "document",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="vote_castings",
+                        to="djalthingi.Document",
+                    ),
+                ),
+                (
+                    "issue",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="vote_castings",
+                        to="djalthingi.Issue",
+                    ),
+                ),
+                (
+                    "session",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="vote_castings",
+                        to="djalthingi.Session",
+                    ),
+                ),
+                (
+                    "to_committee",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="vote_castings",
+                        to="djalthingi.Committee",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['timing'],
+                "ordering": ["timing"],
             },
         ),
     ]

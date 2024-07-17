@@ -9,13 +9,17 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('djalthingi', '0009_auto_20161212_0131'),
+        ("djalthingi", "0009_auto_20161212_0131"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='review',
-            name='committee',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='djalthingi.Committee'),
+            model_name="review",
+            name="committee",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="djalthingi.Committee",
+            ),
         ),
     ]

@@ -8,49 +8,49 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0002_auto_20161218_2015'),
+        ("core", "0002_auto_20161218_2015"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='dossier',
-            name='document',
+            model_name="dossier",
+            name="document",
         ),
         migrations.RemoveField(
-            model_name='dossier',
-            name='issue',
+            model_name="dossier",
+            name="issue",
         ),
         migrations.RemoveField(
-            model_name='dossier',
-            name='review',
+            model_name="dossier",
+            name="review",
         ),
         migrations.RemoveField(
-            model_name='dossier',
-            name='user',
+            model_name="dossier",
+            name="user",
         ),
         migrations.RemoveField(
-            model_name='dossierstatistic',
-            name='issue',
+            model_name="dossierstatistic",
+            name="issue",
         ),
         migrations.RemoveField(
-            model_name='dossierstatistic',
-            name='user',
+            model_name="dossierstatistic",
+            name="user",
         ),
         migrations.RemoveField(
-            model_name='memo',
-            name='dossier',
+            model_name="memo",
+            name="dossier",
         ),
         migrations.RemoveField(
-            model_name='memo',
-            name='user',
+            model_name="memo",
+            name="user",
         ),
         migrations.DeleteModel(
-            name='Dossier',
+            name="Dossier",
         ),
         migrations.DeleteModel(
-            name='DossierStatistic',
+            name="DossierStatistic",
         ),
         migrations.DeleteModel(
-            name='Memo',
+            name="Memo",
         ),
     ]

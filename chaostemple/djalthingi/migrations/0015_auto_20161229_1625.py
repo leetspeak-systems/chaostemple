@@ -8,17 +8,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('djalthingi', '0014_party_slug'),
+        ("djalthingi", "0014_party_slug"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='party',
-            options={'ordering': ['special', 'name']},
+            name="party",
+            options={"ordering": ["special", "name"]},
         ),
         migrations.AddField(
-            model_name='party',
-            name='special',
+            model_name="party",
+            name="special",
             field=models.BooleanField(default=False),
         ),
     ]

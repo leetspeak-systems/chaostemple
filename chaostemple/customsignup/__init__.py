@@ -1,1 +1,1 @@
-default_app_config = 'customsignup.apps.CustomsignupConfig'
+default_app_config = "customsignup.apps.CustomsignupConfig"

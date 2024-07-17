@@ -6,10 +6,10 @@ from django.db import migrations
 
 
 def transfer_emails_to_usernames(apps, schema_editor):
-    User = apps.get_model('auth', 'User')
-    Seat = apps.get_model('djalthingi', 'Seat')
+    User = apps.get_model("auth", "User")
+    Seat = apps.get_model("djalthingi", "Seat")
 
-    for user in User.objects.select_related('userprofile__person').all():
+    for user in User.objects.select_related("userprofile__person").all():
 
         userprofile = user.userprofile
         person = userprofile.person
@@ -27,7 +27,7 @@ def transfer_emails_to_usernames(apps, schema_editor):
 
 
 def reverse_initials(apps, schema_editor):
-    UserProfile = apps.get_model('core', 'UserProfile')
+    UserProfile = apps.get_model("core", "UserProfile")
 
     # We can't recover the usernames as they were before, but we can certainly
     # make more data unrecoverable!
@@ -39,7 +39,7 @@ def reverse_initials(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0004_userprofile_initials'),
+        ("core", "0004_userprofile_initials"),
     ]
 
     operations = [

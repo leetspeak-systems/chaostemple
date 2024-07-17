@@ -5,9 +5,10 @@ from django.template.defaultfilters import time
 
 register = template.Library()
 
+
 @register.filter
 def fancy_session_timing(session, skipdate=False):
-    '''Display appropriate timing of session depending on context and available information'''
+    """Display appropriate timing of session depending on context and available information"""
 
     timing = session.timing_start_planned
 
@@ -16,5 +17,4 @@ def fancy_session_timing(session, skipdate=False):
     elif session.timing_text:
         return capfirst(session.timing_text)
     else:
-        return ''
-
+        return ""

@@ -7,18 +7,28 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('djalthingi', '0037_remove_issue_final_vote_complete'),
+        ("djalthingi", "0037_remove_issue_final_vote_complete"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='issue',
-            name='to_committee',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, related_name='issues', to='djalthingi.Committee'),
+            model_name="issue",
+            name="to_committee",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="issues",
+                to="djalthingi.Committee",
+            ),
         ),
         migrations.AddField(
-            model_name='issue',
-            name='to_minister',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, related_name='issues', to='djalthingi.Minister'),
+            model_name="issue",
+            name="to_minister",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="issues",
+                to="djalthingi.Minister",
+            ),
         ),
     ]

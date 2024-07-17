@@ -16,11 +16,11 @@ from django.contrib.auth.models import User
 
 @receiver(user_logged_in)
 def auto_subscription(sender, request, user, **kwargs):
-    '''
+    """
     During login, automatically subscribe a user to their appropriate things.
     For example, users that are members of a committee should be subscribed
     to that committee.
-    '''
+    """
 
     person = user.userprofile.person
 
@@ -35,9 +35,7 @@ def auto_subscription(sender, request, user, **kwargs):
     AccessUtilities.cache_access(user)
 
     # Find committees to which the recently logged in user is a member.
-    committees = Committee.objects.currently_with_person(
-        person
-    ).exclude(
+    committees = Committee.objects.currently_with_person(person).exclude(
         subscriptions__user=user
     )
 
@@ -49,7 +47,7 @@ def auto_subscription(sender, request, user, **kwargs):
 @receiver(post_save, sender=Person)
 @receiver(post_save, sender=User)
 def configure_person_and_userprofile(sender, instance, **kwargs):
-    '''When a Person or User is saved, check if they can be matched by email'''
+    """When a Person or User is saved, check if they can be matched by email"""
 
     if sender is Person and instance.email:
         try:
@@ -81,7 +79,7 @@ def configure_person_and_userprofile(sender, instance, **kwargs):
 
     # Configure userprofile according to information about the associated person.
     if person is not None:
-        last_seat = person.seats.select_related('party').last()
+        last_seat = person.seats.select_related("party").last()
 
         userprofile.person = person
         userprofile.name = person.name
@@ -96,7 +94,9 @@ def configure_person_and_userprofile(sender, instance, **kwargs):
         # Automatically give access to everyone in the party group. Note that
         # a user can choose to strip access from his own group by removing the
         # full access.
-        access, created = Access.objects.get_or_create(user_id=user.id, friend_group_id=group.id)
+        access, created = Access.objects.get_or_create(
+            user_id=user.id, friend_group_id=group.id
+        )
         if created:
             access.full_access = True
             access.save()

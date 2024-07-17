@@ -9,41 +9,62 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('djalthingi', '0029_review_president_seat'),
+        ("djalthingi", "0029_review_president_seat"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Category',
+            name="Category",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=200)),
-                ('description', models.CharField(max_length=1000)),
-                ('category_xml_id', models.IntegerField(unique=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=200)),
+                ("description", models.CharField(max_length=1000)),
+                ("category_xml_id", models.IntegerField(unique=True)),
             ],
             options={
-                'ordering': ['name'],
+                "ordering": ["name"],
             },
         ),
         migrations.CreateModel(
-            name='CategoryGroup',
+            name="CategoryGroup",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=200)),
-                ('category_group_xml_id', models.IntegerField(unique=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=200)),
+                ("category_group_xml_id", models.IntegerField(unique=True)),
             ],
             options={
-                'ordering': ['name'],
+                "ordering": ["name"],
             },
         ),
         migrations.AddField(
-            model_name='category',
-            name='group',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='djalthingi.CategoryGroup'),
+            model_name="category",
+            name="group",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="djalthingi.CategoryGroup",
+            ),
         ),
         migrations.AddField(
-            model_name='issue',
-            name='categories',
-            field=models.ManyToManyField(related_name='issues', to='djalthingi.Category'),
+            model_name="issue",
+            name="categories",
+            field=models.ManyToManyField(
+                related_name="issues", to="djalthingi.Category"
+            ),
         ),
     ]

@@ -9,24 +9,63 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('djalthingi', '0039_speech_president'),
-        ('core', '0007_membershiprequest'),
+        ("djalthingi", "0039_speech_president"),
+        ("core", "0007_membershiprequest"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Subscription',
+            name="Subscription",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('sub_type', models.CharField(max_length=20)),
-                ('committee', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='subscriptions', to='djalthingi.Committee')),
-                ('party', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='subscriptions', to='djalthingi.Party')),
-                ('person', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='subscriptions', to='djalthingi.Person')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='subscriptions', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("sub_type", models.CharField(max_length=20)),
+                (
+                    "committee",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="subscriptions",
+                        to="djalthingi.Committee",
+                    ),
+                ),
+                (
+                    "party",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="subscriptions",
+                        to="djalthingi.Party",
+                    ),
+                ),
+                (
+                    "person",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="subscriptions",
+                        to="djalthingi.Person",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="subscriptions",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.AlterUniqueTogether(
-            name='subscription',
-            unique_together={('user', 'party', 'committee', 'person')},
+            name="subscription",
+            unique_together={("user", "party", "committee", "person")},
         ),
     ]

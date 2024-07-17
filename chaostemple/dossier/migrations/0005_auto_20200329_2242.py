@@ -6,19 +6,19 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('dossier', '0004_dossier_is_useful'),
+        ("dossier", "0004_dossier_is_useful"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='dossierstatistic',
-            name='document_memo_count',
+            model_name="dossierstatistic",
+            name="document_memo_count",
         ),
         migrations.RemoveField(
-            model_name='dossierstatistic',
-            name='review_memo_count',
+            model_name="dossierstatistic",
+            name="review_memo_count",
         ),
         migrations.DeleteModel(
-            name='Memo',
+            name="Memo",
         ),
     ]

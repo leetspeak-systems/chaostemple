@@ -7,18 +7,53 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('djalthingi', '0035_committee_is_standing'),
+        ("djalthingi", "0035_committee_is_standing"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='votecasting',
-            name='to_minister',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='vote_castings', to='djalthingi.Minister'),
+            model_name="votecasting",
+            name="to_minister",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="vote_castings",
+                to="djalthingi.Minister",
+            ),
         ),
         migrations.AlterField(
-            model_name='issue',
-            name='issue_type',
-            field=models.CharField(choices=[('l', 'lagafrumvarp'), ('a', 'þingsályktunartillaga'), ('q', 'fyrirspurn til skriflegs svars'), ('m', 'fyrirspurn'), ('b', 'beiðni um skýrslu'), ('s', 'skýrsla'), ('n', 'álit'), ('v', 'vantrauststillaga'), ('f', 'frestun á fundum Alþingis'), ('al', 'almennar stjórnmálaumræður'), ('av', 'ávarp'), ('dr', 'drengskaparheit'), ('fh', 'framhaldsfundir Alþingis'), ('ft', 'óundirbúinn fyrirspurnatími'), ('kb', 'rannsókn kjörbréfs'), ('ko', 'kosningar'), ('mi', 'minning'), ('ra', 'stefnuræða forsætisráðherra'), ('sr', 'skýrsla ráðherra'), ('st', 'störf þingsins'), ('sþ', 'munnleg skýrsla þingmanns'), ('tk', 'tilkynningar forseta'), ('tr', 'tilkynning frá ríkisstjórninni'), ('um', 'sérstök umræða'), ('yf', 'yfirlýsing forseta'), ('þi', 'þingsetning')], max_length=2),
+            model_name="issue",
+            name="issue_type",
+            field=models.CharField(
+                choices=[
+                    ("l", "lagafrumvarp"),
+                    ("a", "þingsályktunartillaga"),
+                    ("q", "fyrirspurn til skriflegs svars"),
+                    ("m", "fyrirspurn"),
+                    ("b", "beiðni um skýrslu"),
+                    ("s", "skýrsla"),
+                    ("n", "álit"),
+                    ("v", "vantrauststillaga"),
+                    ("f", "frestun á fundum Alþingis"),
+                    ("al", "almennar stjórnmálaumræður"),
+                    ("av", "ávarp"),
+                    ("dr", "drengskaparheit"),
+                    ("fh", "framhaldsfundir Alþingis"),
+                    ("ft", "óundirbúinn fyrirspurnatími"),
+                    ("kb", "rannsókn kjörbréfs"),
+                    ("ko", "kosningar"),
+                    ("mi", "minning"),
+                    ("ra", "stefnuræða forsætisráðherra"),
+                    ("sr", "skýrsla ráðherra"),
+                    ("st", "störf þingsins"),
+                    ("sþ", "munnleg skýrsla þingmanns"),
+                    ("tk", "tilkynningar forseta"),
+                    ("tr", "tilkynning frá ríkisstjórninni"),
+                    ("um", "sérstök umræða"),
+                    ("yf", "yfirlýsing forseta"),
+                    ("þi", "þingsetning"),
+                ],
+                max_length=2,
+            ),
         ),
     ]

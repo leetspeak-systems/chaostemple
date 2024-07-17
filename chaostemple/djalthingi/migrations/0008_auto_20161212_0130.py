@@ -8,18 +8,38 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('djalthingi', '0007_auto_20161212_0032'),
+        ("djalthingi", "0007_auto_20161212_0032"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='issue',
-            name='issue_group',
-            field=models.CharField(choices=[('A', '\xfeingm\xe1l me\xf0 \xfeingskj\xf6lum'), ('B', '\xfeingm\xe1l \xe1n \xfeingskjala')], default=b'A', max_length=1),
+            model_name="issue",
+            name="issue_group",
+            field=models.CharField(
+                choices=[
+                    ("A", "\xfeingm\xe1l me\xf0 \xfeingskj\xf6lum"),
+                    ("B", "\xfeingm\xe1l \xe1n \xfeingskjala"),
+                ],
+                default=b"A",
+                max_length=1,
+            ),
         ),
         migrations.AlterField(
-            model_name='issue',
-            name='issue_type',
-            field=models.CharField(choices=[('l', 'lagafrumvarp'), ('a', '\xfeings\xe1lyktunartillaga'), ('m', 'fyrirspurn'), ('q', 'fyrirspurn til skriflegs svars'), ('s', 'sk\xfdrsla'), ('b', 'bei\xf0ni um sk\xfdrslu'), ('f', 'frestun \xe1 fundum Al\xfeingis'), ('n', '\xe1lit'), ('v', 'vantrauststillaga')], max_length=2),
+            model_name="issue",
+            name="issue_type",
+            field=models.CharField(
+                choices=[
+                    ("l", "lagafrumvarp"),
+                    ("a", "\xfeings\xe1lyktunartillaga"),
+                    ("m", "fyrirspurn"),
+                    ("q", "fyrirspurn til skriflegs svars"),
+                    ("s", "sk\xfdrsla"),
+                    ("b", "bei\xf0ni um sk\xfdrslu"),
+                    ("f", "frestun \xe1 fundum Al\xfeingis"),
+                    ("n", "\xe1lit"),
+                    ("v", "vantrauststillaga"),
+                ],
+                max_length=2,
+            ),
         ),
     ]

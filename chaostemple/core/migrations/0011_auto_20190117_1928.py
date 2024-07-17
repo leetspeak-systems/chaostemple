@@ -6,18 +6,26 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0010_subscription_category'),
+        ("core", "0010_subscription_category"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='userprofile',
-            name='setting_auto_bookmark',
+            model_name="userprofile",
+            name="setting_auto_bookmark",
             field=models.BooleanField(default=True),
         ),
         migrations.AlterField(
-            model_name='subscription',
-            name='sub_type',
-            field=models.CharField(choices=[('party', 'Flokkar'), ('committee', 'Nefndir'), ('person', 'Þingmenn'), ('category', 'Efnisflokkar')], max_length=20),
+            model_name="subscription",
+            name="sub_type",
+            field=models.CharField(
+                choices=[
+                    ("party", "Flokkar"),
+                    ("committee", "Nefndir"),
+                    ("person", "Þingmenn"),
+                    ("category", "Efnisflokkar"),
+                ],
+                max_length=20,
+            ),
         ),
     ]

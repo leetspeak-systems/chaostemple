@@ -9,18 +9,18 @@ from django.db import models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('djalthingi', '0023_parliament_last_full_update'),
+        ("djalthingi", "0023_parliament_last_full_update"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='votecasting',
-            old_name='vote_casting_type',
-            new_name='vote_casting_type_text',
+            model_name="votecasting",
+            old_name="vote_casting_type",
+            new_name="vote_casting_type_text",
         ),
         migrations.AddField(
-            model_name='votecasting',
-            name='vote_casting_type',
+            model_name="votecasting",
+            name="vote_casting_type",
             field=models.CharField(default=None, max_length=2),
             preserve_default=False,
         ),

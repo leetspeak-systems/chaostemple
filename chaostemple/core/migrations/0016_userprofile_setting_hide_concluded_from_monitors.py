@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0015_auto_20190323_1737'),
+        ("core", "0015_auto_20190323_1737"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='userprofile',
-            name='setting_hide_concluded_from_monitors',
+            model_name="userprofile",
+            name="setting_hide_concluded_from_monitors",
             field=models.BooleanField(default=True),
         ),
     ]

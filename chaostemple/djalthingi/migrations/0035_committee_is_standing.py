@@ -4,27 +4,27 @@ from django.db import migrations, models
 
 
 def configure_standing_committees(apps, schema_editor):
-    Committee = apps.get_model('djalthingi', 'Committee')
+    Committee = apps.get_model("djalthingi", "Committee")
 
     NON_STANDING_COMMITTIES = (
-        'forsætisnefnd',
-        'Íslandsdeild Alþjóðaþingmannasambandsins',
-        'Íslandsdeild Evrópuráðsþingsins',
-        'Íslandsdeild NATO-þingsins',
-        'Íslandsdeild Norðurlandaráðs',
-        'Íslandsdeild Vestnorræna ráðsins',
-        'Íslandsdeild Vestur-Evrópusambandsins',
-        'Íslandsdeild þingmannanefnda EFTA og EES',
-        'Íslandsdeild þingmannanefndar EFTA',
-        'Íslandsdeild þingmannaráðstefnunnar um norðurskautsmál',
-        'Íslandsdeild þings Öryggis- og samvinnustofnunar Evrópu',
-        'kjörbréfanefnd',
-        'sérnefnd um stjórnarskrármál',
-        'sérnefnd um stjórnarskrármál (385. mál á 136. þingi)',
-        'starfshópur utanríkismálanefndar um Evrópumál',
-        'Þingmannanefnd Íslands og Evrópusambandsins af hálfu Alþingis',
-        'þingmannanefnd til að fjalla um skýrslu rannsóknarnefndar Alþingis',
-        'þingskapanefnd',
+        "forsætisnefnd",
+        "Íslandsdeild Alþjóðaþingmannasambandsins",
+        "Íslandsdeild Evrópuráðsþingsins",
+        "Íslandsdeild NATO-þingsins",
+        "Íslandsdeild Norðurlandaráðs",
+        "Íslandsdeild Vestnorræna ráðsins",
+        "Íslandsdeild Vestur-Evrópusambandsins",
+        "Íslandsdeild þingmannanefnda EFTA og EES",
+        "Íslandsdeild þingmannanefndar EFTA",
+        "Íslandsdeild þingmannaráðstefnunnar um norðurskautsmál",
+        "Íslandsdeild þings Öryggis- og samvinnustofnunar Evrópu",
+        "kjörbréfanefnd",
+        "sérnefnd um stjórnarskrármál",
+        "sérnefnd um stjórnarskrármál (385. mál á 136. þingi)",
+        "starfshópur utanríkismálanefndar um Evrópumál",
+        "Þingmannanefnd Íslands og Evrópusambandsins af hálfu Alþingis",
+        "þingmannanefnd til að fjalla um skýrslu rannsóknarnefndar Alþingis",
+        "þingskapanefnd",
     )
 
     for committee in Committee.objects.all():
@@ -40,14 +40,14 @@ def dummy_function(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('djalthingi', '0034_auto_20180319_2009'),
+        ("djalthingi", "0034_auto_20180319_2009"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='committee',
-            name='is_standing',
+            model_name="committee",
+            name="is_standing",
             field=models.BooleanField(default=True),
         ),
-        migrations.RunPython(configure_standing_committees, dummy_function)
+        migrations.RunPython(configure_standing_committees, dummy_function),
     ]

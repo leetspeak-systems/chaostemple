@@ -8,13 +8,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('djalthingi', '0004_session_timing_text'),
+        ("djalthingi", "0004_session_timing_text"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='review',
-            name='sender_name_description',
-            field=models.CharField(default=b'', max_length=200),
+            model_name="review",
+            name="sender_name_description",
+            field=models.CharField(default=b"", max_length=200),
         ),
     ]

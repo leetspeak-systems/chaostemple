@@ -10,25 +10,27 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('djalthingi', '0012_issue_time_published'),
+        ("djalthingi", "0012_issue_time_published"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='parliament',
-            name='era',
-            field=models.CharField(default='', max_length=9),
+            model_name="parliament",
+            name="era",
+            field=models.CharField(default="", max_length=9),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='parliament',
-            name='timing_end',
+            model_name="parliament",
+            name="timing_end",
             field=models.DateTimeField(null=True),
         ),
         migrations.AddField(
-            model_name='parliament',
-            name='timing_start',
-            field=models.DateTimeField(default=datetime.datetime(1970, 1, 1, 0, 0, tzinfo=timezone.utc)),
+            model_name="parliament",
+            name="timing_start",
+            field=models.DateTimeField(
+                default=datetime.datetime(1970, 1, 1, 0, 0, tzinfo=timezone.utc)
+            ),
             preserve_default=False,
         ),
     ]

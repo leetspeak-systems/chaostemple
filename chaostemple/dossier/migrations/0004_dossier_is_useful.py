@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('dossier', '0003_dossier_notes'),
+        ("dossier", "0003_dossier_notes"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='dossier',
-            name='is_useful',
+            model_name="dossier",
+            name="is_useful",
             field=models.BooleanField(default=False),
         ),
     ]

@@ -6,38 +6,38 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('djalthingi', '0001_squashed_0045_issue_committee_agenda_item_count'),
+        ("djalthingi", "0001_squashed_0045_issue_committee_agenda_item_count"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='category',
-            name='slug',
+            model_name="category",
+            name="slug",
             field=models.CharField(max_length=200),
         ),
         migrations.AlterField(
-            model_name='categorygroup',
-            name='slug',
+            model_name="categorygroup",
+            name="slug",
             field=models.CharField(max_length=200),
         ),
         migrations.AlterField(
-            model_name='parliament',
-            name='era',
+            model_name="parliament",
+            name="era",
             field=models.CharField(max_length=9),
         ),
         migrations.AlterField(
-            model_name='parliament',
-            name='timing_start',
+            model_name="parliament",
+            name="timing_start",
             field=models.DateTimeField(),
         ),
         migrations.AlterField(
-            model_name='party',
-            name='slug',
+            model_name="party",
+            name="slug",
             field=models.CharField(max_length=100),
         ),
         migrations.AlterField(
-            model_name='votecasting',
-            name='vote_casting_type',
+            model_name="votecasting",
+            name="vote_casting_type",
             field=models.CharField(max_length=2),
         ),
     ]

@@ -8,25 +8,66 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('auth', '0009_alter_user_last_name_max_length'),
+        ("auth", "0009_alter_user_last_name_max_length"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('core', '0006_auto_20180315_1813'),
+        ("core", "0006_auto_20180315_1813"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='MembershipRequest',
+            name="MembershipRequest",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('status', models.CharField(choices=[('pending', 'pending'), ('rejected', 'hafnað'), ('accepted', 'samþykkt')], default='pending', max_length=20)),
-                ('timing_requested', models.DateTimeField(auto_now_add=True)),
-                ('timing_decided', models.DateTimeField(null=True)),
-                ('decided_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='decided_membership_requests', to=settings.AUTH_USER_MODEL)),
-                ('group', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='membership_requests', to='auth.Group')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='membership_requests', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("pending", "pending"),
+                            ("rejected", "hafnað"),
+                            ("accepted", "samþykkt"),
+                        ],
+                        default="pending",
+                        max_length=20,
+                    ),
+                ),
+                ("timing_requested", models.DateTimeField(auto_now_add=True)),
+                ("timing_decided", models.DateTimeField(null=True)),
+                (
+                    "decided_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="decided_membership_requests",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "group",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="membership_requests",
+                        to="auth.Group",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="membership_requests",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'ordering': ['group__name', 'status'],
+                "ordering": ["group__name", "status"],
             },
         ),
     ]

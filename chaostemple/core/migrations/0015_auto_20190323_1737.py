@@ -6,12 +6,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0014_auto_20190117_2131'),
+        ("core", "0014_auto_20190117_2131"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='subscription',
-            options={'ordering': ['sub_type']},
+            name="subscription",
+            options={"ordering": ["sub_type"]},
         ),
     ]

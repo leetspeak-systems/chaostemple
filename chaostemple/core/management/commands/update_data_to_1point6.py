@@ -7,7 +7,7 @@ from dossier.models import DossierStatistic
 class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
-        '''
+        """
         Temporary command for updating data to conform to new functionality in
         version 1.6. See comments in code for details.
 
@@ -17,42 +17,42 @@ class Command(BaseCommand):
         screw up anyone's work.
 
         Remove this file if 2020-03-20 was a long time ago.
-        '''
+        """
 
         # Step 1. Generate is_useful values for dossiers.
-        print('Generating usefulness information for dossiers...', end='', flush=True)
+        print("Generating usefulness information for dossiers...", end="", flush=True)
         dossiers = Dossier.objects.all()
         for dossier in dossiers:
             dossier.save()
-            print('.', end='', flush=True)
-        print(' done')
+            print(".", end="", flush=True)
+        print(" done")
 
         # Step 2. Delete non-useful dossiers.
-        print('Deleting non-useful dossiers...', end='', flush=True)
+        print("Deleting non-useful dossiers...", end="", flush=True)
         Dossier.objects.filter(is_useful=False).delete()
-        print(' done')
+        print(" done")
 
         # Step 3. Turn "memos" into "notes".
-        print('Turning memos into notes...', end='', flush=True)
-        dossiers = Dossier.objects.prefetch_related('memos')
+        print("Turning memos into notes...", end="", flush=True)
+        dossiers = Dossier.objects.prefetch_related("memos")
         for dossier in dossiers:
 
             memos = dossier.memos.all()
 
-            notes = ''
+            notes = ""
             for memo in memos:
-                notes += '* %s\n\n' % memo.content.strip('*').strip()
+                notes += "* %s\n\n" % memo.content.strip("*").strip()
 
             dossier.notes = notes
             dossier.save()
 
-            print('.', end='', flush=True)
-        print(' done')
+            print(".", end="", flush=True)
+        print(" done")
 
         # Step 4. Update dossier statistics to reflect deletions and updates.
-        print('Updating dossier statistics...', end='', flush=True)
+        print("Updating dossier statistics...", end="", flush=True)
         stats = DossierStatistic.objects.all()
         for stat in stats:
             stat.update_stats_quite_inefficiently_please(show_output=False)
-            print('.', end='', flush=True)
-        print(' done')
+            print(".", end="", flush=True)
+        print(" done")

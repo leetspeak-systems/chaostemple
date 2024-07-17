@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('djalthingi', '0041_issue_from_government'),
+        ("djalthingi", "0041_issue_from_government"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='review',
-            name='pending_deletion',
+            model_name="review",
+            name="pending_deletion",
             field=models.BooleanField(default=False),
         ),
     ]

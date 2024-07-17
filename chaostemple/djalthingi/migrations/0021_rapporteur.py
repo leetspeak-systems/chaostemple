@@ -9,16 +9,38 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('djalthingi', '0020_auto_20170427_1830'),
+        ("djalthingi", "0020_auto_20170427_1830"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Rapporteur',
+            name="Rapporteur",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('issue', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='rapporteurs', to='djalthingi.Issue')),
-                ('person', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='rapporteurs', to='djalthingi.Person')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "issue",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="rapporteurs",
+                        to="djalthingi.Issue",
+                    ),
+                ),
+                (
+                    "person",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="rapporteurs",
+                        to="djalthingi.Person",
+                    ),
+                ),
             ],
         ),
     ]

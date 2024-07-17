@@ -8,12 +8,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('djalthingi', '0002_proposer_issue'),
+        ("djalthingi", "0002_proposer_issue"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='committeeagenda',
-            options={'ordering': ['timing_start_planned', 'committee__name']},
+            name="committeeagenda",
+            options={"ordering": ["timing_start_planned", "committee__name"]},
         ),
     ]

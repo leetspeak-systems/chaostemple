@@ -7,13 +7,17 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('djalthingi', '0039_speech_president'),
+        ("djalthingi", "0039_speech_president"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='category',
-            name='group',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='categories', to='djalthingi.CategoryGroup'),
+            model_name="category",
+            name="group",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="categories",
+                to="djalthingi.CategoryGroup",
+            ),
         ),
     ]

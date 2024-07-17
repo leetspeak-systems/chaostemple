@@ -1,7 +1,8 @@
+import json
 from django import template
 from django.template import loader
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from dossier.models import Dossier
 
@@ -42,7 +43,7 @@ def fieldstate_css(status_type=None, value=None):
     if status_type is not None and value is not None:
         return fieldstate_css_dict[status_type][value]
     else:
-        return fieldstate_css_dict
+        return json.dumps(fieldstate_css_dict)
 
 
 @register.simple_tag(takes_context=True)
@@ -84,8 +85,6 @@ def display_dossier_statistics(context, issue, size='normal'):
             template_user = loader.get_template('core/stub/issue_dossier_statistic_user.html')
             template_statistic = loader.get_template('core/stub/issue_dossier_statistic.html')
             template_status_type = loader.get_template('core/stub/issue_dossier_statistic_status_type.html')
-
-        fieldstate_css_dict = fieldstate_css()
 
         # Determine all the users we need to display dossiers for
         user_count = len(set([d.user_id for d in issue.dossier_statistics if d.has_useful_info]))

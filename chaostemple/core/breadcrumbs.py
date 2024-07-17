@@ -6,7 +6,7 @@ from django.utils import dateparse
 from django.utils import timezone
 from django.utils.http import urlsafe_base64_decode
 from django.utils.http import urlsafe_base64_encode
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from djalthingi.althingi_settings import CURRENT_PARLIAMENT_NUM
 from djalthingi.models import Category

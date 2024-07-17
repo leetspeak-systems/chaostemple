@@ -15,7 +15,7 @@ from django.db.models import Subquery
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.utils import timezone
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from djalthingi.althingi_settings import CURRENT_PARLIAMENT_NUM
 

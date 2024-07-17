@@ -14,7 +14,7 @@ from django.db.models import IntegerField
 from django.db.models import PROTECT
 from django.db.models import Q
 from django.db.models import When
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from djalthingi.models import Document
 from djalthingi.models import Issue

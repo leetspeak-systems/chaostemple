@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.template.defaultfilters import capfirst
 from django.template.loader import render_to_string
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from djalthingi.models import CommitteeAgenda
 from djalthingi.models import CommitteeAgendaItem

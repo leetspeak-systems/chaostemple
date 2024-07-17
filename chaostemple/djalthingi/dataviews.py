@@ -13,7 +13,7 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 from django.template.defaultfilters import capfirst
 from django.urls import reverse
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from ics import Calendar
 from ics import Event

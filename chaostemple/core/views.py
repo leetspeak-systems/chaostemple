@@ -24,7 +24,7 @@ from django.shortcuts import render
 from django.template.defaultfilters import capfirst
 from django.utils import dateparse
 from django.utils import timezone
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from chaostemple.settings import FEATURES
 from chaostemple.settings import MEANING_OF_RECENT

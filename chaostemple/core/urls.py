@@ -1,53 +1,54 @@
 from django.conf import settings
-from django.conf.urls import include, url
+from django.urls import include
 from django.urls import path
+from django.urls import re_path
 
 from core import views
 from core import dataviews
 
 urlpatterns = [
-    url(r'^$', views.home, name='home'),
-    url(r'^day/$', views.day, name='day'),
-    url(r'^day/(?P<input_date>(\d{4}-[01]\d-[0-3]\d){0,1})/$', views.day, name='day'),
-    url(r'^upcoming/$', views.upcoming, name='upcoming'),
+    re_path(r'^$', views.home, name='home'),
+    re_path(r'^day/$', views.day, name='day'),
+    re_path(r'^day/(?P<input_date>(\d{4}-[01]\d-[0-3]\d){0,1})/$', views.day, name='day'),
+    re_path(r'^upcoming/$', views.upcoming, name='upcoming'),
     path('parliaments/', views.parliaments, name='parliaments'),
     path('parliament/<int:parliament_num>/stats/', views.parliament_stats, name='parliament_stats'),
     path('parliament/<int:parliament_num>/', views.parliaments, name='parliament'),
-    url(r'^parliament/(?P<parliament_num>\d+)/documents/new/', views.parliament_documents_new, name='parliament_documents_new'),
-    url(r'^parliament/(?P<parliament_num>\d+)/issues/$', views.parliament_issues, name='parliament_issues'),
-    url(r'^parliament/(?P<parliament_num>\d+)/issue/(?P<issue_num>\d+)/$', views.parliament_issue, name='parliament_issue'),
+    re_path(r'^parliament/(?P<parliament_num>\d+)/documents/new/', views.parliament_documents_new, name='parliament_documents_new'),
+    re_path(r'^parliament/(?P<parliament_num>\d+)/issues/$', views.parliament_issues, name='parliament_issues'),
+    re_path(r'^parliament/(?P<parliament_num>\d+)/issue/(?P<issue_num>\d+)/$', views.parliament_issue, name='parliament_issue'),
     path('parliament/<int:parliament_num>/categories/', views.parliament_categories, name='parliament_categories'),
     path('parliament/<int:parliament_num>/category/<str:category_slug>/', views.parliament_category, name='parliament_category'),
     path('parliament/<int:parliament_num>/category/<str:category_slug>/issues/', views.parliament_category, {'view': 'issues'}, name='parliament_category_issues'),
-    url(r'^parliament/(?P<parliament_num>\d+)/sessions/$', views.parliament_sessions, name='parliament_sessions'),
-    url(r'^parliament/(?P<parliament_num>\d+)/session/(?P<session_num>\d+)/$', views.parliament_session, name='parliament_session'),
-    url(r'^parliament/(?P<parliament_num>\d+)/committees/$', views.parliament_committees, name='parliament_committees'),
-    url(r'^parliament/(?P<parliament_num>\d+)/committee/(?P<committee_id>\d+)/$', views.parliament_committee, name='parliament_committee'),
+    re_path(r'^parliament/(?P<parliament_num>\d+)/sessions/$', views.parliament_sessions, name='parliament_sessions'),
+    re_path(r'^parliament/(?P<parliament_num>\d+)/session/(?P<session_num>\d+)/$', views.parliament_session, name='parliament_session'),
+    re_path(r'^parliament/(?P<parliament_num>\d+)/committees/$', views.parliament_committees, name='parliament_committees'),
+    re_path(r'^parliament/(?P<parliament_num>\d+)/committee/(?P<committee_id>\d+)/$', views.parliament_committee, name='parliament_committee'),
     path('parliament/<int:parliament_num>/committee/<int:committee_id>/issues/', views.parliament_committee_issues, name='parliament_committee_issues'),
-    url(r'^parliament/(?P<parliament_num>\d+)/committee/(?P<committee_id>\d+)/agenda/(?P<agenda_id>\d+)/$', views.parliament_committee_agenda, name='parliament_committee_agenda'),
-    url(r'^parliament/(?P<parliament_num>\d+)/parties/$', views.parliament_parties, name='parliament_parties'),
+    re_path(r'^parliament/(?P<parliament_num>\d+)/committee/(?P<committee_id>\d+)/agenda/(?P<agenda_id>\d+)/$', views.parliament_committee_agenda, name='parliament_committee_agenda'),
+    re_path(r'^parliament/(?P<parliament_num>\d+)/parties/$', views.parliament_parties, name='parliament_parties'),
     path('parliament/<int:parliament_num>/party/<str:party_slug>/', views.parliament_party, name='parliament_party'),
     path('parliament/<int:parliament_num>/party/<str:party_slug>/issues/', views.parliament_party_issues, name='parliament_party_issues'),
-    url(r'^parliament/(?P<parliament_num>\d+)/persons/$', views.parliament_persons, name='parliament_persons'),
-    url(r'^parliament/(?P<parliament_num>\d+)/persons/party/(?P<party_slug>[A-Za-z0-9\-]+)/$', views.parliament_persons, name='parliament_persons'),
+    re_path(r'^parliament/(?P<parliament_num>\d+)/persons/$', views.parliament_persons, name='parliament_persons'),
+    re_path(r'^parliament/(?P<parliament_num>\d+)/persons/party/(?P<party_slug>[A-Za-z0-9\-]+)/$', views.parliament_persons, name='parliament_persons'),
     path('parliament/<int:parliament_num>/issue-overview/<str:slug_type>/<str:slug>/', views.parliament_issue_overview, name='parliament_issue_overview'),
     path('parliament/<int:parliament_num>/issue-overview/<str:slug_type>/<str:slug>/<str:subslug>/', views.parliament_issue_overview, name='parliament_issue_overview'),
-    url(r'^parliament/missing-data/', views.parliament_missing_data, name='parliament_missing_data'),
+    re_path(r'^parliament/missing-data/', views.parliament_missing_data, name='parliament_missing_data'),
 
-    url(r'^person/(?P<slug>[A-Za-z\-]+)/$', views.person, name='person'),
-    url(r'^person/(?P<slug>[A-Za-z\-]+)/(?P<subslug>[A-Za-z0-9\-]+)/$', views.person, name='person'),
+    re_path(r'^person/(?P<slug>[A-Za-z\-]+)/$', views.person, name='person'),
+    re_path(r'^person/(?P<slug>[A-Za-z\-]+)/(?P<subslug>[A-Za-z0-9\-]+)/$', views.person, name='person'),
 
-    url(r'^user/home/$', views.user_home, name='user_home'),
-    url(r'^user/access/$', views.user_access, name='user_access'),
-    url(r'^parliament/(?P<parliament_num>\d+)/user/issues/monitored/$', views.user_issues_monitored, name='user_issues_monitored'),
+    re_path(r'^user/home/$', views.user_home, name='user_home'),
+    re_path(r'^user/access/$', views.user_access, name='user_access'),
+    re_path(r'^parliament/(?P<parliament_num>\d+)/user/issues/monitored/$', views.user_issues_monitored, name='user_issues_monitored'),
 
-    url(r'^json/proposer/(?P<proposer_id>\d+)/subproposers/$', dataviews.proposer_subproposers, name='json_proposers_subproposers'),
-    url(r'^json/issue/list/(?P<parliament_num>\d+)/$', dataviews.list_issues, name='json_list_issues'),
+    re_path(r'^json/proposer/(?P<proposer_id>\d+)/subproposers/$', dataviews.proposer_subproposers, name='json_proposers_subproposers'),
+    re_path(r'^json/issue/list/(?P<parliament_num>\d+)/$', dataviews.list_issues, name='json_list_issues'),
     path('json/parliament/<int:parliament_num>/document/<int:doc_num>/', dataviews.document, name='json_document'),
     path('json/parliament/<int:parliament_num>/review/<int:log_num>/', dataviews.review, name='json_review'),
 
-    url(r'^json/monitor/issue/toggle/(?P<issue_id>\d+)/$', dataviews.issue_monitor_toggle, name='json_issue_monitor_toggle'),
-    url(r'^json/monitor/issue/menu/(?P<parliament_num>\d+)$', dataviews.issue_monitor_menu, name='json_issue_monitor_menu'),
+    re_path(r'^json/monitor/issue/toggle/(?P<issue_id>\d+)/$', dataviews.issue_monitor_toggle, name='json_issue_monitor_toggle'),
+    re_path(r'^json/monitor/issue/menu/(?P<parliament_num>\d+)$', dataviews.issue_monitor_menu, name='json_issue_monitor_menu'),
 
     path('json/settings/set/<str:setting_name>/<str:setting_value>/', dataviews.setting_set),
 
@@ -68,13 +69,13 @@ urlpatterns = [
 
     path('json/subscription/toggle/<str:sub_type>/<int:sub_id>/', dataviews.subscription_toggle),
 
-    url(r'^dossier/', include('dossier.urls')),
+    re_path(r'^dossier/', include('dossier.urls')),
 ]
 
 if settings.FEATURES['incoming_issues']:
     urlpatterns += [
-        url(r'^user/issues/incoming/$', views.user_issues_incoming, name='user_issues_incoming'),
-        url(r'^parliament/(?P<parliament_num>\d+)/user/issues/open/$', views.user_issues_open, name='user_issues_open'),
+        re_path(r'^user/issues/incoming/$', views.user_issues_incoming, name='user_issues_incoming'),
+        re_path(r'^parliament/(?P<parliament_num>\d+)/user/issues/open/$', views.user_issues_open, name='user_issues_open'),
     ]
 
 

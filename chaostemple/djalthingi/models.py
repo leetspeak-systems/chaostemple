@@ -14,7 +14,7 @@ from django.template.defaultfilters import capfirst
 from django.template.defaultfilters import slugify
 from django.templatetags.static import static
 from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from collections import OrderedDict
 from unidecode import unidecode

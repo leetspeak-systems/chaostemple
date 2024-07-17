@@ -3049,7 +3049,7 @@ def update_presidents(parliament_num=None):
                 changed = True
 
             if changed:
-                president.save()
+                president_seat.save()
                 print("Updated president seat: %s" % president_seat)
             else:
                 print("Already have president seat: %s" % president_seat)

@@ -922,11 +922,25 @@ class Issue(models.Model):
 
             # Check if issue was sent to government.
             try:
-                vote_casting = self.vote_castings.get(vote_casting_type="ft")
-                if vote_casting.conclusion == "samþykkt":
-                    return "sent-to-government"
-                # Else nothing. Life goes on.
+                # In issue 920/154, two vote castings for dismissal
+                # (i."frávísun") were held. One suggested dismissing the issue
+                # altering the day's plenary agenda, and the other one
+                # dismissing it and sending it back to the government.
+                #
+                # The data makes no distinction between these two types of
+                # vote castings, with both marked with type "ft", so we must
+                # assume here that they are the same.
+                #
+                # For this reason, they are both called "sent-to-government",
+                # as that result is assumed to be the issue's fate, had the
+                # motion to dismiss and change the agenda been approved.
+                vote_casting = self.vote_castings.get(
+                    vote_casting_type="ft",
+                    conclusion="samþykkt"
+                )
+                return "sent-to-government"
             except VoteCasting.DoesNotExist:
+                # Else nothing. Life goes on.
                 pass
 
             if self.issue_type == "l":

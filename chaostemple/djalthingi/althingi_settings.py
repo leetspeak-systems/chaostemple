@@ -6,7 +6,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 FIRST_PARLIAMENT_NUM = 20
 
-CURRENT_PARLIAMENT_NUM = 153
+CURRENT_PARLIAMENT_NUM = 154
 
 STATIC_DOCUMENT_DIR = os.path.join(BASE_DIR, "djalthingi/static")
 XML_CACHE_DIR = os.path.join(BASE_DIR, "djalthingi/xmlcache")

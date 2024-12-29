@@ -11,6 +11,7 @@ DEBUG = True
 JSONIZER_DEBUG = True
 
 ALLOWED_HOSTS = ['localhost']
+CSRF_TRUSTED_ORIGINS = ["http://localhost"]
 INTERNAL_IPS = ('127.0.0.1',)
 
 # Email addresses from these domains can easily signup without admin

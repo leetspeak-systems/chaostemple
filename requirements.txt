@@ -9,3 +9,5 @@ django-termsandconditions
 ics
 requests
 tabulate
+daphne
+whitenoise

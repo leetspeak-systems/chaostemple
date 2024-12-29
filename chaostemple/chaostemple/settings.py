@@ -50,6 +50,7 @@ REGISTRATION_AUTO_LOGIN = True
 REGISTRATION_OPEN = True
 
 MIDDLEWARE = [
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -105,6 +106,8 @@ MEANING_OF_RECENT = relativedelta(months=1)
 
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+WHITENOISE_MAX_AGE = 31536000  # Cache static files for one year
 
 LOGIN_REDIRECT_URL = "/"
 

@@ -1,3 +1,4 @@
 ipython
 ipdb
 black
+django-stubs

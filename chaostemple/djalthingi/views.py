@@ -17,6 +17,9 @@ def content_proxy_view(request, parliament_num, doc_num=None, log_num=None):
     disk in subsequent requests.
     """
 
+    pdf_filename: str = ""
+    pdf_link: str = ""
+
     if doc_num is not None:
         # We are retrieving a `document`.
         document = get_object_or_404(
@@ -24,7 +27,7 @@ def content_proxy_view(request, parliament_num, doc_num=None, log_num=None):
         )
 
         pdf_filename = document.pdf_filename
-        pdf_link = document.pdf_link
+        pdf_link = document.pdf_link()
 
     elif log_num is not None:
         # We are retrieving a `review`.
@@ -33,7 +36,7 @@ def content_proxy_view(request, parliament_num, doc_num=None, log_num=None):
         )
 
         pdf_filename = review.pdf_filename
-        pdf_link = review.pdf_link
+        pdf_link = review.pdf_link()
 
     # Check if we have a copy on the local disk.
     if pdf_filename:
@@ -41,7 +44,7 @@ def content_proxy_view(request, parliament_num, doc_num=None, log_num=None):
         with open(filepath, "rb") as f:
             content = f.read()
     else:
-        response = requests.get(pdf_link())
+        response = requests.get(pdf_link)
         content = response.content
 
     response = HttpResponse(content, content_type="application/pdf")

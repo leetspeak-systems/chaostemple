@@ -279,18 +279,21 @@ class Dossier(models.Model):
             ]
         )
 
+        # Take note of fields that changed.
+        changed = self.tracker.changed()
+
         # Make sure that standard stuff happens.
         super(Dossier, self).save(*args, **kwargs)
 
         # Treat DossierStatistic.
         if input_statistic is None:
-            statistic, c = DossierStatistic.objects.get_or_create(
+            statistic, created = DossierStatistic.objects.get_or_create(
                 issue_id=self.issue_id, user_id=self.user_id
             )
         else:
             statistic = input_statistic
 
-        for field, old_value in self.tracker.changed().items():
+        for field, old_value in changed.items():
             self.update_statistic(statistic, field, old_value, getattr(self, field))
 
         if new:

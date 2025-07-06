@@ -7,6 +7,7 @@ from sys import stderr
 from lxml import etree
 
 from djalthingi import althingi_settings
+from time import sleep
 
 xml_urls = {
     "CATEGORIES_LIST_URL": "http://www.althingi.is/altext/xml/efnisflokkar/",
@@ -56,70 +57,89 @@ def xml_cache_filename(xml_url_name, *args, **kwargs):
 # Retrieve XML and cache it
 def get_xml(xml_url_name, *args, **kwargs):
 
-    cache_filename = xml_cache_filename(xml_url_name, *args, **kwargs)
+    def get_xml_content():
+        """
+        Internal function to abstract the cache away.
+        """
+        cache_filename = xml_cache_filename(xml_url_name, *args, **kwargs)
 
-    if not os.path.isdir(althingi_settings.XML_CACHE_DIR):
-        os.makedirs(althingi_settings.XML_CACHE_DIR)
+        if not os.path.isdir(althingi_settings.XML_CACHE_DIR):
+            os.makedirs(althingi_settings.XML_CACHE_DIR)
 
-    if althingi_settings.XML_USE_CACHE and os.path.isfile(cache_filename):
-        with open(cache_filename, "r") as f:
-            xml_content = f.read()
-            f.close()
+        if althingi_settings.XML_USE_CACHE and os.path.isfile(cache_filename):
+            with open(cache_filename, "r") as f:
+                xml_content = f.read()
+                f.close()
 
-    else:
-        url = xml_urls[xml_url_name] % args
+        else:
+            url = xml_urls[xml_url_name] % args
 
-        if "days" in kwargs and kwargs["days"] is not None:
-            url += "&" if "?" in url else "?"
-            url += "dagar=%d" % kwargs["days"]
+            if "days" in kwargs and kwargs["days"] is not None:
+                url += "&" if "?" in url else "?"
+                url += "dagar=%d" % kwargs["days"]
 
-        response = get_response(url)
-        xml_content = response.text
+            response = get_response(url)
+            xml_content = response.text
 
-        # Write the XML contents to cache file.
-        with open(cache_filename, "w") as f:
-            f.write(xml_content)
-            f.close()
-
-    # Return the parsed XML.
-    try:
-        return etree.fromstring(xml_content.encode("utf-8"))
-    except etree.XMLSyntaxError as ex:
-
-        # List of strings of errors that we would like to suppress because we
-        # already know that we're not going to do anything about them.
-        suppressed_errors = [
-            # Random/unknown errors on XML provider's side are shown as HTML,
-            # not XML. This happens sporadically and there's nothing we can do
-            # about it except try again.
-            "Entity 'THORN' not defined",
-        ]
-        for suppressed_error in suppressed_errors:
-            if suppressed_error in ex.msg:
-                print(
-                    "Known but unspecified, unrecoverable error received from remote host. Quitting."
-                )
-                quit()
-
-        # When XML breaks, we'll want to save the document so that it can be
-        # researched by whoever receives notification of the error. Optional
-        # and configurable through settings variable.
-        if althingi_settings.XML_SAVE_INVALID:
-
-            if not os.path.isdir(althingi_settings.XML_ERROR_DIR):
-                os.makedirs(althingi_settings.XML_ERROR_DIR)
-
-            filename = "%s.%s" % (
-                datetime.now().strftime("%Y-%m-%d.%H-%M-%S"),
-                os.path.basename(cache_filename),
-            )
-            with open(
-                os.path.join(althingi_settings.XML_ERROR_DIR, filename), "w"
-            ) as f:
+            # Write the XML contents to cache file.
+            with open(cache_filename, "w") as f:
                 f.write(xml_content)
+                f.close()
 
-        # Pass on exception so that it gets caught by runtime environment.
-        raise
+            return xml_content
+
+    # We sporadically get some kind of error document that makes no sense in
+    # an XML context, instead of the XML content we expect. So we'll try a
+    # couple of times.
+    tries = 2
+    while tries > 0:
+        try:
+            xml_content = get_xml_content()
+            result = etree.fromstring(xml_content.encode("utf-8"))
+            return result
+        except etree.XMLSyntaxError as ex:
+
+            if tries > 0:
+                # Sleeping for an arbitrary amount of time, hoping that the
+                # error goes away in the meantime.
+                sleep(2)
+                tries -= 1
+                continue
+
+            # List of strings of errors that we would like to suppress because we
+            # already know that we're not going to do anything about them.
+            suppressed_errors = [
+                # Random/unknown errors on XML provider's side are shown as HTML,
+                # not XML. This happens sporadically and there's nothing we can do
+                # about it except try again.
+                "Entity 'THORN' not defined",
+            ]
+            for suppressed_error in suppressed_errors:
+                if suppressed_error in ex.msg:
+                    print(
+                        "Known but unspecified, unrecoverable error received from remote host. Quitting."
+                    )
+                    quit()
+
+            # When XML breaks, we'll want to save the document so that it can be
+            # researched by whoever receives notification of the error. Optional
+            # and configurable through settings variable.
+            if althingi_settings.XML_SAVE_INVALID:
+
+                if not os.path.isdir(althingi_settings.XML_ERROR_DIR):
+                    os.makedirs(althingi_settings.XML_ERROR_DIR)
+
+                filename = "%s.%s" % (
+                    datetime.now().strftime("%Y-%m-%d.%H-%M-%S"),
+                    os.path.basename(cache_filename),
+                )
+                with open(
+                    os.path.join(althingi_settings.XML_ERROR_DIR, filename), "w"
+                ) as f:
+                    f.write(xml_content)
+
+            # Pass on exception so that it gets caught by runtime environment.
+            raise
 
 
 # Clear XML cache.

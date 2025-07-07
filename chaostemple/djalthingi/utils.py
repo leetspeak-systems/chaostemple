@@ -199,3 +199,14 @@ def monkey_patch_ical(ical_text, name, description=None, time_zone=None, duratio
 # use in CSV exporting.
 def quote(input_string):
     return '"%s"' % input_string if input_string not in [None, "None"] else '""'
+
+
+def human_readable_seconds(seconds):
+    """
+    Turns seconds into a human-readable string representing length of time.
+    """
+    minutes, seconds = divmod(seconds, 60)
+    hours, minutes = divmod(minutes, 60)
+    days, hours = divmod(hours, 24)
+    hr = "%d days, %02d:%02d:%02d" % (days, hours, minutes, seconds)
+    return hr

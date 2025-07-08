@@ -12,6 +12,11 @@ urlpatterns = [
         name="csv_parliament_issues",
     ),
     path(
+        "parliament/<int:parliament_num>/issue/<int:issue_num>/speeches/csv/",
+        dataviews.csv_parliament_issue_speeches,
+        name="csv_parliament_issue_speeches",
+    ),
+    path(
         "parliament/<int:parliament_num>/document/<int:doc_num>/",
         views.content_proxy_view,
         name="parliament_document",

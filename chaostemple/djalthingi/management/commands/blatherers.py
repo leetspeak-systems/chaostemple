@@ -1,3 +1,4 @@
+import operator
 from djalthingi.althingi_settings import CURRENT_PARLIAMENT_NUM
 from djalthingi.stats import stats_speeches
 from djalthingi.utils import human_readable_seconds
@@ -56,10 +57,15 @@ class Command(BaseCommand):
             mp_rows, party_rows = stats_speeches(CURRENT_PARLIAMENT_NUM, options)
 
             # Massage the data for printing to screen.
-            for i, mp_row in enumerate(mp_rows):
+            for mp_row in mp_rows:
                 mp_row[3] = human_readable_seconds(mp_row[3])
             for party_row in party_rows:
                 party_row[1] = human_readable_seconds(party_row[1])
+
+            # Sort rows by speech count if requested.
+            if options["sort_by_count"] is not None:
+                mp_rows = sorted(mp_rows, key=operator.itemgetter(4))
+                party_rows = sorted(party_rows, key=operator.itemgetter(2))
 
             print(tabulate(
                 mp_rows,

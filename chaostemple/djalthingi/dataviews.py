@@ -1,14 +1,17 @@
+from asyncio import SelectorEventLoop
 from djalthingi.althingi_settings import CURRENT_PARLIAMENT_NUM
 from djalthingi.exceptions import AlthingiException
 from djalthingi.models import Committee
 from djalthingi.models import CommitteeAgenda
 from djalthingi.models import Issue
+from djalthingi.stats import stats_speeches
 from djalthingi.templatetags.external_urls import external_issue_url
 from djalthingi.utils import icelandic_am_pm
 from djalthingi.utils import ICELANDIC_MONTHS
 from djalthingi.utils import monkey_patch_ical
 from djalthingi.utils import quote
 
+from django.http import HttpRequest
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.template.defaultfilters import capfirst
@@ -158,6 +161,41 @@ def ical(request):
         content_type = "text/calendar"
 
     return HttpResponse(ical_text, content_type="%s; charset=utf-8" % content_type)
+
+
+def csv_parliament_issue_speeches(request: HttpRequest, parliament_num: int, issue_num: int):
+
+    # FIXME: Clean this mess up. Done in a hurry.
+
+    options = {
+        'today': None,
+        'current_issue': None,
+        'issue': [issue_num],
+        'skip_speaker': None,
+        'only_main': None,
+        'iteration': None,
+        'sort_by_count': None
+    }
+
+    mp_rows, party_rows = stats_speeches(parliament_num, options)
+
+    lines = []
+    lines.append(",".join([
+        "Nr.",
+        "Nafn",
+        "Flokkur",
+        "Tími",
+        "Fj.",
+        "Tími %",
+        "Fj. %",
+    ]))
+    for mp_row in mp_rows:
+        values = [str(v) for v in mp_row]
+        lines.append('"' + '","'.join(values) + '",')
+
+    csv_text = "\n".join(lines) + "\n"
+
+    return HttpResponse(csv_text, content_type="text/csv")
 
 
 def csv_parliament_issues(request, parliament_num):

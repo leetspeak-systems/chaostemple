@@ -8,6 +8,8 @@ from django.db.models import Sum
 from django.utils import timezone
 
 
+# FIXME: `options` is vestigial and should be replaced with relevant options.
+# Some functionality should also be moved to the administration command.
 def stats_speeches(parliament_num: int, options):
 
     if options["today"] is not None:
@@ -116,11 +118,8 @@ def stats_speeches(parliament_num: int, options):
         row.append(round(100 * float(row[3]) / total_seconds, 2))
         row.append(round(100 * float(row[4]) / total_count, 2))
 
-    # Sort rows by speech count if requested.
-    if options["sort_by_count"] is not None:
-        mp_rows = sorted(mp_rows, key=operator.itemgetter(4))
-    else:
-        mp_rows = sorted(mp_rows, key=operator.itemgetter(3))
+    # Default is to sort by duration.
+    mp_rows = sorted(mp_rows, key=operator.itemgetter(3))
 
     row_count = len(mp_rows)
     for i, row in enumerate(mp_rows):
@@ -156,10 +155,7 @@ def stats_speeches(parliament_num: int, options):
             ]
         )
 
-    # Sort party rows by speech count if requested.
-    if options["sort_by_count"] is not None:
-        party_rows = sorted(party_rows, key=operator.itemgetter(2))
-    else:
-        party_rows = sorted(party_rows, key=operator.itemgetter(1))
+    # Default is to sort by duration.
+    party_rows = sorted(party_rows, key=operator.itemgetter(1))
 
     return mp_rows, party_rows

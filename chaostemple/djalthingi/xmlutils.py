@@ -1,6 +1,5 @@
 import os
-import requests
-
+from cloudscraper import create_scraper
 from datetime import datetime
 from sys import stderr
 
@@ -151,16 +150,16 @@ def clear_xml_cache():
 
 
 def get_response(web_url):
+    scraper = create_scraper()
 
     retry_count = 2
 
     success = False
     while not success and retry_count > -1:
         try:
-            response = requests.get(
+            response = scraper.get(
                 web_url,
                 timeout=althingi_settings.REMOTE_CONTENT_TIMEOUT,
-                headers={"Cache-Control": "no-cache"},
             )
             success = True
         except IOError:

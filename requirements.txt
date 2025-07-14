@@ -11,3 +11,4 @@ requests
 tabulate
 daphne
 whitenoise
+git+https://github.com/venomous/cloudscraper@3.0.0

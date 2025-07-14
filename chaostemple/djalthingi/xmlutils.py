@@ -152,7 +152,7 @@ def clear_xml_cache():
 def get_response(web_url):
     scraper = create_scraper()
 
-    retry_count = 2
+    retry_count = 5
 
     success = False
     while not success and retry_count > -1:
@@ -165,6 +165,9 @@ def get_response(web_url):
         except IOError:
             print("Retrieving remote content failed, retries left: %s..." % retry_count)
             retry_count = retry_count - 1
+
+            # Waiting a bit before trying again.
+            sleep(2)
 
     if success:
         return response

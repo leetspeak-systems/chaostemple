@@ -67,9 +67,9 @@ def maybe_download_document(remote_path, parliament_num, issue_num):
     content = get_response(remote_path).content
     localpath = os.path.join(althingi_settings.STATIC_DOCUMENT_DIR, local_filename)
     mkpath(os.path.dirname(localpath))
-    outfile = open(localpath, "wb")
-    outfile.write(content)
-    outfile.close()
+    with open(localpath, "wb") as outfile:
+        outfile.write(content)
+        outfile.close()
 
     stdout.write("done\n")
 
@@ -97,9 +97,9 @@ def maybe_download_review(remote_path, log_num, parliament_num, issue_num):
     content = response.content
     localpath = os.path.join(althingi_settings.STATIC_DOCUMENT_DIR, local_filename)
     mkpath(os.path.dirname(localpath))
-    outfile = open(localpath, "wb")
-    outfile.write(content)
-    outfile.close()
+    with open(localpath, "wb") as outfile:
+        outfile.write(content)
+        outfile.close()
 
     stdout.write("done\n")
 

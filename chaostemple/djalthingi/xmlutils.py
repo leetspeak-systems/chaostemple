@@ -162,6 +162,7 @@ def get_response(web_url):
                 timeout=althingi_settings.REMOTE_CONTENT_TIMEOUT,
             )
             success = True
+            scraper.close()
         except IOError:
             print("Retrieving remote content failed, retries left: %s..." % retry_count)
             retry_count = retry_count - 1

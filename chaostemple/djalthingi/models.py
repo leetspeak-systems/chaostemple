@@ -1262,13 +1262,13 @@ class Document(models.Model):
 
     def html_content(self):
         if len(self.html_content_raw) == 0:
-            raise InvalidDocumentException()
+            raise InvalidDocumentException("Content is empty.")
 
         html_doc = etree.fromstring(self.html_content_raw, etree.HTMLParser())
 
         content_divs = html_doc.xpath("//div[@id='thingskjal']")
         if len(content_divs) != 1:
-            raise InvalidDocumentException()
+            raise InvalidDocumentException("Couldn't find expected element 'thingskjal' in content.")
         content_div = content_divs[0]
 
         # Remove the header.

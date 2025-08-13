@@ -16,8 +16,8 @@ def parliament_document(request: HttpRequest, parliament_num: int, doc_num: int)
 
     try:
         content = document.html_content()
-    except InvalidDocumentException:
-        raise Http404
+    except InvalidDocumentException as ex:
+        content = ex.__str__()
 
     response = HttpResponse(content)
     response["X-Frame-Options"] = "SAMEORIGIN"

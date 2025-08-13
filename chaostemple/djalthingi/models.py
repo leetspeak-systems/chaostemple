@@ -2,8 +2,11 @@ import requests
 from collections import OrderedDict
 from djalthingi.althingi_settings import CURRENT_PARLIAMENT_NUM
 from djalthingi.althingi_settings import STATIC_DOCUMENT_DIR
+from djalthingi.exceptions import AlthingiException
 from djalthingi.exceptions import DataIntegrityException
+from djalthingi.exceptions import InvalidDocumentException
 from djalthingi.utils import format_date
+from djalthingi.xmlutils import get_response
 from django.db import models
 from django.db.models import CASCADE
 from django.db.models import Case
@@ -1236,29 +1239,38 @@ class Document(models.Model):
 
     html_remote_path = models.CharField(max_length=500, null=True)
     html_filename = models.CharField(max_length=50)
+    html_content_raw = models.TextField(default="")
     pdf_remote_path = models.CharField(max_length=500, null=True)
     pdf_filename = models.CharField(max_length=50)
 
     xhtml = models.TextField()
 
-    def html_content_unprocessed(self):
-        if self.html_filename:
-            filepath = "%s/%s" % (STATIC_DOCUMENT_DIR, self.html_filename)
-            with open(filepath, "rb") as f:
-                content = f.read()
-        else:
-            response = requests.get(self.html_remote_path)
-            content = response.content
+    def update_html_content(self) -> bool:
+        """
+        Fetches the entire HTML page of the document in question, and saves it
+        in the model.
 
-        return content
+        Note that it's in a raw format, and is not processed at all. Processing
+        it further is the responsibility of some other mechanism, hence the
+        variable name `html_content_raw`.
+        """
+        response = get_response(self.html_remote_path)
+        if response.status_code != 200:
+            raise AlthingiException("Could not download document HTML at: %s" % self.html_remote_path)
+        self.html_content_raw = response.text
+
+        return True
 
     def html_content(self):
-        original_html = self.html_content_unprocessed()
-        html_doc = etree.fromstring(original_html, etree.HTMLParser())
+        if len(self.html_content_raw) == 0:
+            raise InvalidDocumentException()
 
-        # FIXME: This is assumed to work, but should be more gracefully handled
-        # when the element isn't found.
-        content_div = html_doc.xpath("//div[@id='thingskjal']")[0]
+        html_doc = etree.fromstring(self.html_content_raw, etree.HTMLParser())
+
+        content_divs = html_doc.xpath("//div[@id='thingskjal']")
+        if len(content_divs) != 1:
+            raise InvalidDocumentException()
+        content_div = content_divs[0]
 
         # Remove the header.
         header_p = content_div.find("p")

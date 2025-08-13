@@ -1,5 +1,7 @@
+from djalthingi.exceptions import InvalidDocumentException
 from djalthingi.models import Document
 from djalthingi.models import Review
+from django.http import Http404
 from django.http import HttpRequest
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -12,7 +14,10 @@ def parliament_document(request: HttpRequest, parliament_num: int, doc_num: int)
         doc_num=doc_num
     )
 
-    content = document.html_content()
+    try:
+        content = document.html_content()
+    except InvalidDocumentException:
+        raise Http404
 
     response = HttpResponse(content)
     response["X-Frame-Options"] = "SAMEORIGIN"

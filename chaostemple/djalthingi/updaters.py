@@ -1,16 +1,9 @@
 from collections import OrderedDict
 from datetime import datetime
 from datetime import timedelta
-from django.conf import settings
-from django.core.mail import send_mail
-from django.db.models import Q
-from django.utils import timezone
-from sys import stderr
-from sys import stdout
-from xml.parsers.expat import ExpatError
-
 from djalthingi.althingi_settings import FIRST_PARLIAMENT_NUM
-
+from djalthingi.exceptions import AlthingiException
+from djalthingi.exceptions import DataIntegrityException
 from djalthingi.models import Category
 from djalthingi.models import CategoryGroup
 from djalthingi.models import Committee
@@ -38,16 +31,16 @@ from djalthingi.models import SessionAgendaItem
 from djalthingi.models import Speech
 from djalthingi.models import Vote
 from djalthingi.models import VoteCasting
-
-from djalthingi.exceptions import AlthingiException
-from djalthingi.exceptions import DataIntegrityException
-
 from djalthingi.utils import get_last_parliament_num
 from djalthingi.utils import maybe_download_document
 from djalthingi.utils import maybe_download_review
 from djalthingi.utils import sensible_datetime
-
 from djalthingi.xmlutils import get_xml
+from django.conf import settings
+from django.core.mail import send_mail
+from django.db.models import Q
+from django.utils import timezone
+from sys import stderr
 
 
 """
@@ -1239,16 +1232,11 @@ def update_issue(issue_num, parliament_num=None):
         try:
             doc = Document.objects.get(doc_num=doc_num, issue=issue)
 
-            if not doc.html_filename or not doc.pdf_filename:
-                if not doc.html_filename:
-                    doc.html_filename = maybe_download_document(
-                        path_html, parliament.parliament_num, issue_num
-                    )
-                if not doc.pdf_filename:
-                    doc.pdf_filename = maybe_download_document(
-                        path_pdf, parliament.parliament_num, issue_num
-                    )
-                doc.save()
+            if not doc.pdf_filename:
+                doc.pdf_filename = maybe_download_document(
+                    path_pdf, parliament.parliament_num, issue_num
+                )
+                changed = True
 
             changed = False
             if doc.doc_type != doc_type:
@@ -1269,6 +1257,10 @@ def update_issue(issue_num, parliament_num=None):
                 doc.pdf_remote_path = path_pdf
                 changed = True
 
+            if len(doc.html_content_raw) == 0 and len(doc.html_remote_path) > 0:
+                doc.update_html_content()
+                changed = True
+
             if changed:
                 doc.save()
                 print("Updated document: %s" % doc)
@@ -1277,9 +1269,6 @@ def update_issue(issue_num, parliament_num=None):
 
         except Document.DoesNotExist:
 
-            html_filename = maybe_download_document(
-                path_html, parliament.parliament_num, issue_num
-            )
             pdf_filename = maybe_download_document(
                 path_pdf, parliament.parliament_num, issue_num
             )
@@ -1290,10 +1279,12 @@ def update_issue(issue_num, parliament_num=None):
             doc.time_published = time_published
             doc.is_main = is_main
             doc.html_remote_path = path_html
-            doc.html_filename = html_filename
             doc.pdf_remote_path = path_pdf
             doc.pdf_filename = pdf_filename
             doc.issue = issue
+
+            doc.update_html_content()
+
             doc.save()
 
             print("Added document: %s" % doc)

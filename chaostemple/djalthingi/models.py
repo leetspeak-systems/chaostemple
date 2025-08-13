@@ -1,3 +1,9 @@
+import requests
+from collections import OrderedDict
+from djalthingi.althingi_settings import CURRENT_PARLIAMENT_NUM
+from djalthingi.althingi_settings import STATIC_DOCUMENT_DIR
+from djalthingi.exceptions import DataIntegrityException
+from djalthingi.utils import format_date
 from django.db import models
 from django.db.models import CASCADE
 from django.db.models import Case
@@ -15,14 +21,8 @@ from django.template.defaultfilters import slugify
 from django.templatetags.static import static
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-
-from collections import OrderedDict
+from lxml import etree
 from unidecode import unidecode
-import urllib
-
-from djalthingi.althingi_settings import CURRENT_PARLIAMENT_NUM
-from djalthingi.exceptions import DataIntegrityException
-from djalthingi.utils import format_date
 
 
 class IssueQuerySet(models.QuerySet):
@@ -1129,11 +1129,16 @@ class Review(models.Model):
     # created a useful dossier tied to it.
     pending_deletion = models.BooleanField(default=False)
 
-    def pdf_link(self):
+    def pdf_content(self):
         if self.pdf_filename:
-            return static(self.pdf_filename)
+            filepath = "%s/%s" % (STATIC_DOCUMENT_DIR, self.pdf_filename)
+            with open(filepath, "rb") as f:
+                content = f.read()
         else:
-            return self.pdf_remote_path
+            response = requests.get(self.pdf_remote_path)
+            content = response.content
+
+        return content
 
     def save(self, *args, **kwargs):
         is_new = self.pk is None
@@ -1236,23 +1241,32 @@ class Document(models.Model):
 
     xhtml = models.TextField()
 
-    def html_link(self):
+    def html_content_unprocessed(self):
         if self.html_filename:
-            return static(self.html_filename)
+            filepath = "%s/%s" % (STATIC_DOCUMENT_DIR, self.html_filename)
+            with open(filepath, "rb") as f:
+                content = f.read()
         else:
-            return self.html_remote_path
+            response = requests.get(self.html_remote_path)
+            content = response.content
 
-    def pdf_link(self):
-        if self.pdf_filename:
-            return static(self.pdf_filename)
-        else:
-            return self.pdf_remote_path
+        return content
 
-    def preferred_link(self):
-        preferred = self.html_link()
-        if not preferred:
-            preferred = self.pdf_link()
-        return preferred
+    def html_content(self):
+        original_html = self.html_content_unprocessed()
+        html_doc = etree.fromstring(original_html, etree.HTMLParser())
+
+        # FIXME: This is assumed to work, but should be more gracefully handled
+        # when the element isn't found.
+        content_div = html_doc.xpath("//div[@id='thingskjal']")[0]
+
+        # Remove the header.
+        header_p = content_div.find("p")
+        header_hr = content_div.find("hr")
+        content_div.remove(header_p)
+        content_div.remove(header_hr)
+
+        return etree.tostring(content_div)
 
     def save(self, *args, **kwargs):
         is_new = self.pk is None

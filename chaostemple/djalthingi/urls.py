@@ -18,12 +18,12 @@ urlpatterns = [
     ),
     path(
         "parliament/<int:parliament_num>/document/<int:doc_num>/",
-        views.content_proxy_view,
+        views.parliament_document,
         name="parliament_document",
     ),
     path(
         "parliament/<int:parliament_num>/review/<int:log_num>/",
-        views.content_proxy_view,
+        views.parliament_review,
         name="parliament_review",
     ),
 ]

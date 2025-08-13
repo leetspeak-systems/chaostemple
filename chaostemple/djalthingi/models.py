@@ -1238,7 +1238,6 @@ class Document(models.Model):
     is_main = models.BooleanField(default=False)
 
     html_remote_path = models.CharField(max_length=500, null=True)
-    html_filename = models.CharField(max_length=50)
     html_content_raw = models.TextField(default="")
     pdf_remote_path = models.CharField(max_length=500, null=True)
     pdf_filename = models.CharField(max_length=50)

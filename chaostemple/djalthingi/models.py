@@ -1224,8 +1224,8 @@ class Document(models.Model):
         ("stjórnartillaga", "stjórnartillaga"),
         ("svar", "svar"),
         ("vantraust", "vantraust"),
-        ("þál. (samhlj.)", "þingsályktunartillaga (samhljóða)"),
-        ("þál. í heild", "þingsályktunartillaga í heild"),
+        ("þál. (samhlj.)", "þingsályktun (samhljóða)"),
+        ("þál. í heild", "þingsályktun í heild"),
         ("þáltill.", "þingsályktunartillaga"),
         ("þáltill. n.", "þingsályktunartillaga nefndar"),
     )
@@ -1235,7 +1235,18 @@ class Document(models.Model):
     doc_num = models.IntegerField()
     doc_type = models.CharField(max_length=50, choices=DOCUMENT_TYPES)
     time_published = models.DateTimeField()
+
+    # Main document is the proposed one, the first document.
     is_main = models.BooleanField(default=False)
+
+    # Is approved law.
+    is_law = models.BooleanField(default=False)
+
+    # Is approved resolution.
+    is_resolution = models.BooleanField(default=False)
+
+    # Is approved something, in which case it's the final product.
+    is_final = models.BooleanField(default=False)
 
     html_remote_path = models.CharField(max_length=500, null=True)
     html_content_raw = models.TextField(default="")

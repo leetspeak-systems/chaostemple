@@ -1199,10 +1199,14 @@ def update_issue(issue_num, parliament_num=None):
         ):
             continue
 
-        is_main = False
-        if i == 0:
-            # If this is the zero-eth iterator, this is the main document.
-            is_main = True
+        # If this is the zero-eth iterator, this is the main document.
+        is_main = True if i == 0 else False
+
+        # Determine if the document is a law, or a resolution, and in either
+        # case it's a "final" document, meaning that it's the final result.
+        is_law = docstub_xml.find("skjalategund").text.startswith("lög ")
+        is_resolution = docstub_xml.find("skjalategund").text.startswith("þál. ")
+        is_final = is_law or is_resolution
 
         doc_num = int(docstub_xml.attrib["skjalsnúmer"])
 
@@ -1249,6 +1253,22 @@ def update_issue(issue_num, parliament_num=None):
                 doc.time_published = time_published
                 changed = True
 
+            if doc.is_main != is_main:
+                doc.is_main = is_main
+                changed = True
+
+            if doc.is_law != is_law:
+                doc.is_law = is_law
+                changed = True
+
+            if doc.is_resolution != is_resolution:
+                doc.is_resolution = is_resolution
+                changed = True
+
+            if doc.is_final != is_final:
+                doc.is_final = is_final
+                changed = True
+
             if doc.html_remote_path != path_html:
                 doc.html_remote_path = path_html
                 changed = True
@@ -1278,6 +1298,9 @@ def update_issue(issue_num, parliament_num=None):
             doc.doc_type = doc_type
             doc.time_published = time_published
             doc.is_main = is_main
+            doc.is_law = is_law
+            doc.is_resolution = is_resolution
+            doc.is_final = is_final
             doc.html_remote_path = path_html
             doc.pdf_remote_path = path_pdf
             doc.pdf_filename = pdf_filename

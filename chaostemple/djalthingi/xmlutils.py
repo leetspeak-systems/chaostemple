@@ -6,6 +6,7 @@ from sys import stderr
 from lxml import etree
 
 from djalthingi import althingi_settings
+from djalthingi.exceptions import AlthingiException
 from time import sleep
 
 xml_urls = {
@@ -162,8 +163,17 @@ def get_response(web_url):
                 timeout=althingi_settings.REMOTE_CONTENT_TIMEOUT,
             )
             success = True
+
+            if response.status_code != 200:
+                raise AlthingiException(
+                    "Got unexpected HTTP code %d from: %s" % (
+                        response.status_code,
+                        web_url
+                    )
+                )
+
             scraper.close()
-        except IOError:
+        except (AlthingiException, IOError):
             print("Retrieving remote content failed, retries left: %s..." % retry_count)
             retry_count = retry_count - 1
 

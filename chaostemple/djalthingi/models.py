@@ -1,3 +1,4 @@
+import re
 import requests
 from collections import OrderedDict
 from djalthingi.althingi_settings import CURRENT_PARLIAMENT_NUM
@@ -5,6 +6,7 @@ from djalthingi.althingi_settings import STATIC_DOCUMENT_DIR
 from djalthingi.exceptions import AlthingiException
 from djalthingi.exceptions import DataIntegrityException
 from djalthingi.exceptions import InvalidDocumentException
+from django.urls import reverse
 from djalthingi.utils import format_date
 from djalthingi.xmlutils import get_response
 from django.db import models
@@ -25,6 +27,7 @@ from django.templatetags.static import static
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from lxml import etree
+from lxml.etree import _Element
 from unidecode import unidecode
 
 
@@ -1241,6 +1244,7 @@ class Document(models.Model):
 
     # Is approved law.
     is_law = models.BooleanField(default=False)
+    law_identifier = models.CharField(max_length=10, null=True)
 
     # Is approved resolution.
     is_resolution = models.BooleanField(default=False)
@@ -1250,6 +1254,7 @@ class Document(models.Model):
 
     html_remote_path = models.CharField(max_length=500, null=True)
     html_content_raw = models.TextField(default="")
+    html_content = models.TextField(default="")
     pdf_remote_path = models.CharField(max_length=500, null=True)
     pdf_filename = models.CharField(max_length=50)
 
@@ -1269,26 +1274,75 @@ class Document(models.Model):
             raise AlthingiException("Could not download document HTML at: %s" % self.html_remote_path)
         self.html_content_raw = response.text
 
+        self.generate_html_content()
+        self.generate_law_identifier()
+
+    def get_content_div(self) -> _Element:
+        """
+        Figures out the proper element in the raw HTML document that contains
+        the document's content, and returns it.
+        """
+        html_doc = etree.fromstring(self.html_content_raw, etree.HTMLParser())
+        div_document_formatted = html_doc.xpath("//div[@id='thingskjal']")
+        div_law_formatted = html_doc.xpath("//div[@class='article box news']/div[@class='boxbody']")
+        if len(div_document_formatted) == 1:
+            content_div = div_document_formatted[0]
+        elif len(div_law_formatted) == 1:
+            content_div = div_law_formatted[0]
+        else:
+            raise InvalidDocumentException("Couldn't find expected container element in content.")
+
+        return content_div
+
+    def generate_law_identifier(self) -> bool:
+        """
+        If this document is an approevd law, it attempts to figure out the law
+        identifier and write it to the database.
+        """
+        if self.is_law:
+            content_div = self.get_content_div()
+            em = content_div.find("em")
+
+            if em is None:
+                # This can happen for a small subset of laws, like
+                # "fjáraukalög". We still don't know how to detect their law
+                # identifiers. Their law identifiers only seem to show up in
+                # stjornartidindi.is, but not in the parliamentary data.
+                #
+                # This may also happen when something has been approved in
+                # parliament, but hasn't been published in the gazette and thus
+                # does not yet have a law identifier.
+                self.law_identifier = "not-found"
+                return False
+
+            match = re.match("Lög nr\. (\d{1,3}) \d{1,2}\. \w+ (\d{1,4})\.", content_div.find("em").text)
+            nr, year = match.groups()
+            self.law_identifier = "%s/%s" % (nr, year)
+
+            return True
+
+        return False
+
+    def generate_html_content(self) -> bool:
+        content_div = self.get_content_div()
+
+        # Remove garbage from beginning. Everything up until and including the
+        # first `hr` element.
+        content_div.text = ""
+        for elem in content_div.getchildren():
+            content_div.remove(elem)
+            if elem.tag == "hr":
+                break
+
+        self.html_content = etree.tostring(content_div, encoding=str)
+
         return True
 
-    def html_content(self):
-        if len(self.html_content_raw) == 0:
-            raise InvalidDocumentException("Content is empty.")
-
-        html_doc = etree.fromstring(self.html_content_raw, etree.HTMLParser())
-
-        content_divs = html_doc.xpath("//div[@id='thingskjal']")
-        if len(content_divs) != 1:
-            raise InvalidDocumentException("Couldn't find expected element 'thingskjal' in content.")
-        content_div = content_divs[0]
-
-        # Remove the header.
-        header_p = content_div.find("p")
-        header_hr = content_div.find("hr")
-        content_div.remove(header_p)
-        content_div.remove(header_hr)
-
-        return etree.tostring(content_div)
+    def html_content_path(self) -> str:
+        """
+        Returns the path of the HTML content of this document.
+        """
+        return reverse("parliament_document", args=[self.issue.parliament.parliament_num, self.doc_num])
 
     def save(self, *args, **kwargs):
         is_new = self.pk is None

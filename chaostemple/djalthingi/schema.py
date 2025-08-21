@@ -15,4 +15,6 @@ class DocumentSchema(Schema):
     doc_num: int
     doc_type: str
     html_content_path: str
+    law_identifier: str
+    html_remote_path: str
     issue: IssueSchema

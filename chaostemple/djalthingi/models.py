@@ -1244,7 +1244,7 @@ class Document(models.Model):
 
     # Is approved law.
     is_law = models.BooleanField(default=False)
-    law_identifier = models.CharField(max_length=10, null=True)
+    law_identifier = models.CharField(max_length=10, null=True, db_index=True)
 
     # Is approved resolution.
     is_resolution = models.BooleanField(default=False)

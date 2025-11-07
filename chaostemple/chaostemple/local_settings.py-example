@@ -42,6 +42,10 @@ FEATURES = {
 #     [mysqld]
 #     max_allowed_packet = 64M
 #
+#     [mysqldump]
+#     max_allowed_packet = 1G
+#     net_buffer_length = 16384
+#
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',

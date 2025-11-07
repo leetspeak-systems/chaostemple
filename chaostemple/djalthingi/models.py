@@ -1548,7 +1548,7 @@ class Minister(models.Model):
     name = models.CharField(max_length=100)
 
     abbreviation_short = models.CharField(max_length=20)
-    abbreviation_long = models.CharField(max_length=30)
+    abbreviation_long = models.CharField(max_length=50)
 
     parliament_num_first = models.IntegerField()
     parliament_num_last = models.IntegerField(null=True)

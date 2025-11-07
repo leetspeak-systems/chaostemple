@@ -4,6 +4,7 @@ from datetime import timedelta
 from djalthingi.althingi_settings import FIRST_PARLIAMENT_NUM
 from djalthingi.exceptions import AlthingiException
 from djalthingi.exceptions import DataIntegrityException
+from djalthingi.gazette import get_gazette_law_info
 from djalthingi.models import Category
 from djalthingi.models import CategoryGroup
 from djalthingi.models import Committee
@@ -2647,6 +2648,41 @@ def update_speeches(parliament_num=None, days=None):
     already_haves["speeches"][parliament.parliament_num] = speeches
 
     return speeches
+
+
+def update_gazette_infos(parliament_num=None):
+
+    parliament = update_parliament(parliament_num)
+
+    docs = Document.objects.filter(
+        issue__parliament=parliament,
+        is_law=True,
+        law_time_published=None
+    ).exclude(
+        law_identifier=None
+    )
+
+    # I was here. Or was I?
+    #import ipdb; ipdb.set_trace()
+
+    for doc in docs:
+        update_gazette_info(doc.law_identifier, parliament_num=None)
+
+
+def update_gazette_info(law_identifier: str):
+
+    # I was here. Currently disconnected and can't reasonably fix this without
+    # an internet connection.
+    raise Exception("Unimplemented.")
+
+    doc = Document.objects.get(
+        is_law=True,
+        law_identifier=law_identifier
+    )
+
+    info = get_law_gazette_info(law_identifier)
+
+    import ipdb; ipdb.set_trace()
 
 
 def update_issue_statuses(parliament_num=None):

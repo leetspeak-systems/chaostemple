@@ -1,3 +1,4 @@
+import dateparser
 import re
 import requests
 from collections import OrderedDict
@@ -25,6 +26,7 @@ from django.template.defaultfilters import capfirst
 from django.template.defaultfilters import slugify
 from django.templatetags.static import static
 from django.utils import timezone
+from django.utils.timezone import make_aware
 from django.utils.translation import gettext_lazy as _
 from lxml import etree
 from lxml.etree import _Element
@@ -1242,9 +1244,20 @@ class Document(models.Model):
     # Main document is the proposed one, the first document.
     is_main = models.BooleanField(default=False)
 
-    # Is approved law.
+    # Fields for documents that end up being final law.
     is_law = models.BooleanField(default=False)
     law_identifier = models.CharField(max_length=10, null=True, db_index=True)
+    law_time_voted = models.DateTimeField(null=True, blank=True)
+    law_time_signed = models.DateTimeField(null=True, blank=True)
+    law_time_published = models.DateTimeField(null=True, blank=True)
+    # FIXME: Not sure how to do `law_time_enacted`, since it's usually the day
+    # after `law_time_published` except presumably in special circumstances
+    # when they need to take effect immediately during a sensitive time or
+    # legal crisis or something. Currently, the only place we know where to get
+    # it from, is not from the Parliamentary documents, nor the Gazette, but
+    # actually the codex as published by Parliament. So we may have to look
+    # this up by finalized law number as it appears in the codex.
+    # law_time_enacted = models.DateTimeField(null=True, blank=True)
 
     # Is approved resolution.
     is_resolution = models.BooleanField(default=False)
@@ -1275,7 +1288,7 @@ class Document(models.Model):
         self.html_content_raw = response.text
 
         self.generate_html_content()
-        self.generate_law_identifier()
+        self.generate_law_metadata()
 
     def get_content_div(self) -> _Element:
         """
@@ -1294,10 +1307,12 @@ class Document(models.Model):
 
         return content_div
 
-    def generate_law_identifier(self) -> bool:
+    def generate_law_metadata(self) -> bool:
         """
-        If this document is an approevd law, it attempts to figure out the law
-        identifier and write it to the database.
+        If this document is an approved law, it attempts to figure out the law
+        identifier and publishing date and write it to the database.
+
+        Returns `True` if something was changed.
         """
         if self.is_law:
             content_div = self.get_content_div()
@@ -1312,18 +1327,41 @@ class Document(models.Model):
                 # This may also happen when something has been approved in
                 # parliament, but hasn't been published in the gazette and thus
                 # does not yet have a law identifier.
-                self.law_identifier = "not-found"
-                return False
+                changed = False
+                if self.law_identifier is not None:
+                    self.law_identifier = None
+                    changed = True
 
-            match = re.match("Lög nr\. (\d{1,3}) \d{1,2}\. \w+ (\d{1,4})\.", content_div.find("em").text)
-            nr, year = match.groups()
-            self.law_identifier = "%s/%s" % (nr, year)
+                return changed
 
-            return True
+            match = re.match(r"Lög nr\. (\d{1,3}) (\d{1,2}\. \w+ \d{1,4})\.", content_div.find("em").text)
+            nr, raw_date = match.groups()
+            law_time_published = make_aware(dateparser.parse(raw_date))
+            year = law_time_published.year
+            law_identifier = "%s/%s" % (nr, year)
+
+            changed = False
+            if self.law_identifier != law_identifier:
+                self.law_identifier = law_identifier
+                changed = True
+
+            if self.law_time_published != law_time_published:
+                self.law_time_published = law_time_published
+                changed = True
+
+            return changed
 
         return False
 
     def generate_html_content(self) -> bool:
+        """
+        Generates the HTML content of the document from the raw data. The
+        difference is that the raw data contains all sorts of extra stuff like
+        the page around the content, containers and such, but this content
+        should be the actual document content, free from other distractions.
+
+        Returns `True` if something changes.
+        """
         content_div = self.get_content_div()
 
         # Remove garbage from beginning. Everything up until and including the
@@ -1334,9 +1372,20 @@ class Document(models.Model):
             if elem.tag == "hr":
                 break
 
-        self.html_content = etree.tostring(content_div, encoding=str)
+        # Remove all comment elements. They are typically inserted by an
+        # exporting mechanism such as from Word/WordPerfect to HTML.
+        for elem in content_div.iterchildren():
+            if elem.tag is etree.Comment:
+                content_div.remove(elem)
 
-        return True
+        html_content = etree.tostring(content_div, encoding=str)
+
+        changed = False
+        if self.html_content != html_content:
+            self.html_content = html_content
+            changed = True
+
+        return changed
 
     def html_content_path(self) -> str:
         """

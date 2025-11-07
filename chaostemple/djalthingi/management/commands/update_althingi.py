@@ -9,6 +9,8 @@ from djalthingi.updaters import update_committee_agenda
 from djalthingi.updaters import update_committee_agendas
 from djalthingi.updaters import update_committees
 from djalthingi.updaters import update_constituencies
+from djalthingi.updaters import update_gazette_infos
+from djalthingi.updaters import update_gazette_info
 from djalthingi.updaters import update_issues
 from djalthingi.updaters import update_issue
 from djalthingi.updaters import update_issue_status
@@ -86,6 +88,12 @@ class Command(BaseCommand):
             "  committee_agenda=<agenda_xml_id>  Updates committee agenda by XML ID (see Althingi's XML)"
         )
         print(
+            "  gazette_infos                     Updates gazette infos in default or specified parliament"
+        )
+        print(
+            "  gazette_info=<law_identifier>     Updates gazette info by law identifier (f.e. '124/2024')"
+        )
+        print(
             "  constituencies                    Updates constituencies in default or specified parliament"
         )
         print(
@@ -98,9 +106,9 @@ class Command(BaseCommand):
             "  categories                        Updates issue categories and category groups"
         )
         print(
-            "  all                               Updates issues, sessions, persons, parties, constituencies and committee agendas in default or specified parliament"
+            "  all                               Updates everything; parties, constituencies, categories, committees, persons, ministers, presidents, issues, sessions, speeches, committee agendas, vote castings, issue statuses and gazette infos, in default or specified parliament"
         )
-        print
+        print()
         print("Options:")
         print(
             "  parliament=<parliament_num>       Specify parliament number (defaults to current)"
@@ -298,6 +306,20 @@ class Command(BaseCommand):
                     self.error("Invalid issue number")
                 update_issue_status(issue_num, parliament_num)
 
+            if "gazette_infos" in args:
+                has_run = True
+                update_gazette_infos(parliament_num)
+
+            if "gazette_info" in args:
+                has_run = True
+                try:
+                    law_identifier = args["law_identifier"]
+                    # Make sure that it's a valid `law_identifier`.
+                    _, _ = [int(p) for p in law_identifier.split("/")]
+                except (TypeError, ValueError):
+                    self.error("Invalid law_identifier")
+                update_gazette_info(law_identifier)
+
             if "categories" in args:
                 has_run = True
                 update_categories()
@@ -311,14 +333,18 @@ class Command(BaseCommand):
                 update_persons(parliament_num)
                 update_ministers(parliament_num)
                 update_presidents(parliament_num)
+
                 update_issues(parliament_num)
                 update_sessions(parliament_num)
                 update_speeches(parliament_num)
                 update_committee_agendas(parliament_num)
                 update_vote_castings(parliament_num)
 
-                # This must happen last because it builds on prior data.
+                # Happens here because it builds on prior data.
                 update_issue_statuses(parliament_num)
+
+                # Happens here because it builds on prior data.
+                update_gazette_infos(parliament_num)
 
                 # Mark parliament as fully updated.
                 parliament = Parliament.objects.get(parliament_num=parliament_num)

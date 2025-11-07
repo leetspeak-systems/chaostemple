@@ -1,3 +1,4 @@
+from datetime import datetime
 from ninja import Schema
 
 
@@ -15,6 +16,7 @@ class DocumentSchema(Schema):
     doc_num: int
     doc_type: str
     html_content_path: str
-    law_identifier: str
+    law_identifier: str | None
+    law_time_published: datetime | None
     html_remote_path: str
     issue: IssueSchema

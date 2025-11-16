@@ -5,7 +5,7 @@ attrs==25.4.0
 autobahn==25.10.2
 Automat==25.4.16
 brotli==1.2.0
-certifi==2025.10.5
+certifi==2025.11.12
 cffi==2.0.0
 charset-normalizer==3.4.4
 cloudscraper @ git+https://github.com/venomous/cloudscraper@9ea528a8675f1bebd49ff853d142e94988a95178
@@ -16,7 +16,7 @@ dateparser==1.2.2
 dateutils==0.6.12
 Django==5.2.8
 django-model-utils==5.0.0
-django-ninja==1.4.5
+django-ninja==1.5.0
 django-registration-redux==2.13
 django-termsandconditions==2.0.12
 hyperlink==21.0.0
@@ -55,4 +55,4 @@ Unidecode==1.4.0
 urllib3==2.5.0
 websocket-client==1.9.0
 whitenoise==6.11.0
-zope.interface==8.0.1
+zope.interface==8.1.1
